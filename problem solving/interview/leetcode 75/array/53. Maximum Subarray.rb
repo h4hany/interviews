@@ -1,0 +1,16 @@
+#!/user/bin/ruby
+# https://leetcode.com/problems/maximum-subarray/
+# @param {Integer[]} nums
+# @return {Integer}
+def max_sub_array(nums)
+  n = nums.length
+  sum = nums[0]
+  max_sum = nums[0]
+  1.upto(n-1) do |i|
+    sum = [nums[i], sum + nums[i]].max
+    max_sum = [max_sum, sum].max
+  end
+  max_sum
+end
+nums = [-2,1,-3,4,-1,2,1,-5,4]
+puts  max_sub_array(nums)
