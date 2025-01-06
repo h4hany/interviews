@@ -56,6 +56,8 @@ end
 
 2. How would you implement a function to determine if a string has all unique characters?
 
+### **Answer**
+
 ```ruby
 
 def has_unique_characters_optimized?(str)
@@ -73,6 +75,8 @@ end
 3. Given a binary tree, write a function to find the height of the tree. The height of a tree is the length of the
    longest path from the root to a leaf node.
 
+### **Answer**
+
 ```ruby
 
 def height(root)
@@ -86,6 +90,8 @@ end
 
 4. Write a function to find the first non-repeating character in a string. If it doesn't exist, return nil. How would
    you solve this?
+
+### **Answer**
 
 ```ruby
 
@@ -103,6 +109,8 @@ end
 5. Write a function to reverse the words in a sentence while maintaining the word order. For example: Input: "Hello
    World" Output: "olleH dlroW"
 
+### **Answer**
+
 ```ruby 
 
 def reverse(str)
@@ -118,6 +126,8 @@ end
 Input: "listen", "silent"
 Output: true
 
+### **Answer**
+
 ```ruby
 
 def angram(str1, str2)
@@ -132,6 +142,8 @@ end
 
 Input: "abcabcbb"
 Output: "abc"
+
+### **Answer**
 
 ```ruby
 
@@ -185,6 +197,8 @@ end
 Input: [1, 3, 5] and [2, 4, 6,9]
 Output: [1, 2, 3, 4, 5, 6,9]
 
+### **Answer**
+
 ```ruby 
 
 def merge_sorted_arrays(arr1, arr2)
@@ -225,6 +239,8 @@ Output: 3
 Input: [1, 2, 3, 4]
 Output: nil
 
+### **Answer**
+
 ```ruby
 
 def majority_element(arr)
@@ -250,6 +266,8 @@ Input: "A man, a plan, a canal, Panama"
 Output: true
 Input: "race a car"
 Output: false
+
+### **Answer**
 
 ```ruby
 
