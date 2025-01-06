@@ -489,14 +489,507 @@ post_info = Post.pluck(:id, :title)
 
 - **Purpose:** Returns an ActiveRecord relation, where you can chain further query methods. It allows you to specify
   multiple columns to be selected in a query.
-- Less efficient than pluck when dealing with large datasets because it retrieves full objects with only certain attributes loaded.
+- Less efficient than pluck when dealing with large datasets because it retrieves full objects with only certain
+  attributes loaded.
 - **When to Use:** Use select when you want to retrieve multiple columns and still want the results as ActiveRecord
   objects (with all the model's behavior, like callbacks and methods).
-
 
 ```ruby
 # Get a collection of post objects with only the id and title attributes loaded
 posts = Post.select(:id, :title)
 
+
+```
+
+11. What is the purpose of the unscoped method in Rails, and when would you use it?
+
+### **Answer**
+
+- **Purpose of unscoped:**
+  unscoped is used to remove any default scope that might be applied to a query, allowing you to query the database
+  without the constraints of the default scope.
+
+- **When to Use It:**
+  When you need to bypass the default_scope for a specific query.
+  For example, fetching all records (including those that a default_scope would typically exclude).
+  Be cautious with unscoped as it may lead to fetching sensitive or unexpected data, especially if used inappropriately.
+- **Difference Between unscoped and unscope:**
+    - **unscoped:** Removes all default scopes applied to a model.
+    - **unscope:** Removes specific conditions (e.g., :where, :order) from a query.
+
+```ruby
+
+class Post < ActiveRecord::Base
+  default_scope { where(published: true) }
+end
+
+# By default, only published posts are returned
+Post.all
+# SELECT * FROM posts WHERE published = true
+
+# Using unscoped to bypass the default scope
+Post.unscoped.where("created_at > ?", 1.week.ago)
+# SELECT * FROM posts WHERE created_at > '2025-01-01'
+Post.where(published: true).order(:created_at).unscope(:order)
+
+```
+
+---
+
+12. What is the difference between before_create and before_save callbacks in Rails? When would you use one over the
+    other?
+
+### **Answer**
+
+**Difference Between before_create and before_save:**
+
+- **before_create:**
+  Runs only once, before the record is inserted into the database (after validation and before the INSERT SQL query).
+  It only runs for create operations (e.g., Model.create or save on a new object).
+  Use Case: Ideal for actions that should only happen when a new record is created, such as generating a unique token.
+
+```ruby
+
+class User < ActiveRecord::Base
+  before_create :generate_token
+
+  def generate_token
+    self.token = SecureRandom.hex(10)
+  end
+end
+
+```
+
+- **before_save:**
+  Runs before the record is saved to the database, whether it is a new record or an existing record being updated.
+  It runs for both create and update operations.
+  Use Case: Useful for actions that should happen every time the record is saved, like normalizing or modifying an
+  attribute.
+
+```ruby
+
+class Post < ActiveRecord::Base
+  before_save :normalize_title
+
+  def normalize_title
+    self.title = title.downcase
+  end
+end
+
+```
+
+---
+
+13. What is the touch method in Rails? What are some use cases for it?
+
+### **Answer**
+
+The touch method in Rails updates the updated_at timestamp of a record to the current time (or a custom timestamp
+column, if specified) without making changes to any other attributes. It triggers a database update but avoids running
+validations.
+
+**Use Cases for touch:**
+
+- **Updating the Timestamp Without Changing Attributes:**
+  Useful for signaling that a record has been modified or refreshed without altering its data.
+
+````ruby
+product.touch
+# Updates `updated_at` to the current time.
+````
+
+- **Cascading Updates to Associated Records:**
+  When an association is configured with touch: true, saving or updating the associated record will also update the
+  parent
+  record's updated_at.
+
+```ruby
+
+class Order < ActiveRecord::Base
+  belongs_to :user, touch: true
+end
+
+order.save
+
+# This will also update the `updated_at` timestamp of the associated user.
+```
+
+- **Custom Timestamps:**
+  You can specify a custom timestamp column to update.
+
+```ruby
+product.touch(:published_at)
+
+# Updates the `published_at` column to the current time.
+```
+
+- **Maintaining Cache Expiry:**
+  Commonly used to invalidate or refresh caches by signaling that related data has changed.
+
+---
+
+14. What are ActiveRecord transactions in Rails? Why are they important, and how do you use them?
+
+### **Answer**
+
+ActiveRecord transactions are a way to group multiple database queries into a single atomic operation. If any query in
+the block fails, all changes made within the transaction are rolled back, ensuring data integrity.
+
+- **Why Are Transactions Important?**
+    - **Data Integrity:** Prevent partial updates when an error occurs.
+    - **Atomicity:** Ensures that all queries within a block succeed together or none at all.
+    - **Error Handling:** Makes it easier to manage failure scenarios in database operations.
+- **How to Use Transactions:**
+  Transactions are implemented using the ActiveRecord::Base.transaction method:
+- **Use Case Example:**
+  Imagine a scenario where a user places an order and pays for it. You want to ensure both the Order and Payment records
+  are created successfully, or neither is created.
+- **Common Pitfalls:**
+    - **Nesting Transactions:** Avoid unnecessary nesting, as Rails might not fully support rollback behavior in nested
+      blocks.
+    - **Long Transactions:** Keep transactions short to avoid locking tables for extended periods.
+    - **Database-Specific Behavior:** Ensure your database supports transactions for the operations you're performing (
+      e.g., some DDL commands may not support transactions).
+
+```ruby
+# how to use
+ActiveRecord::Base.transaction do
+  user = User.create!(name: "John")
+  order = Order.create!(user_id: user.id, total: 100)
+
+  # If any of these fails (e.g., validation error), the transaction rolls back.
+end
+
+# use case example
+ActiveRecord::Base.transaction do
+  order = Order.create!(user_id: user.id, total: 100)
+  Payment.create!(order_id: order.id, amount: 100)
+end
+
+
+```
+
+---
+
+15. What is the difference between save, save!, and update_attributes in Rails?
+
+### **Answer**
+
+Difference Between save, save!, and update_attributes:
+
+- **save:**
+    - Saves the object to the database if validations pass.
+    - Returns true on success and false on failure.
+    - Does not raise exceptions if validation fails.
+
+- **save!:**
+    - Saves the object to the database if validations pass.
+    - Raises an exception (ActiveRecord::RecordInvalid) if validations fail.
+- **update_attributes (Deprecated in Rails 6):**
+
+    - Used to update specific attributes of a model and save the changes.
+    - Returns true if the update succeeds and false otherwise.
+    - Deprecated in favor of update starting from Rails 6.
+
+```ruby
+user = User.new(name: nil) # Assuming name is required
+if user.save
+  puts "Saved successfully"
+else
+  puts "Failed to save"
+end
+
+user = User.new(name: nil)
+user.save! # This will raise an error if the validation fails
+
+user = User.find(1)
+user.update_attributes(name: "Updated Name") # Deprecated
+user.update(name: "Updated Name") # Preferred in Rails 6+
+
+```
+
+---
+
+16. What is the difference between find, find_by, and where in Rails?
+
+### **Answer**
+
+Differences Between find, find_by, and where:
+
+- **find:**
+    - Finds a record by its primary key (id).
+    - Raises an exception (ActiveRecord::RecordNotFound) if the record is not found.
+
+- **find_by:**
+    - Retrieves the first record that matches a specific condition.
+    - Returns nil if no record is found (no exception is raised).
+
+- **where:**
+    - Retrieves all records that match one or more conditions.
+    - Returns an ActiveRecord::Relation object, which can be chained for further queries or converted to an array using
+      .to_a.
+
+---
+
+17. What is the difference between optimistic and pessimistic locking in Rails?
+
+### **Answer**
+
+- **Optimistic Locking:**
+    - Used to prevent conflicting updates by multiple users.
+    - Relies on a version number (or timestamp) column in the database (commonly lock_version).
+    - Each time a record is updated, Rails checks the version to ensure no other updates have been made since it was
+      loaded.
+    - If the version number has changed, Rails raises an ActiveRecord::StaleObjectError.
+
+```ruby
+
+class Product < ApplicationRecord
+end
+
+product = Product.find(1)
+product.name = "Updated Name"
+product.save # Fails if another update changed the version
+
+```
+
+- **Pessimistic Locking:**
+    - Locks the record in the database to prevent other users from modifying it until the lock is released.
+    - Accomplished using SQL locking mechanisms (e.g., SELECT ... FOR UPDATE).
+    - Useful when updates are frequent or the operation is critical.
+
+```ruby
+
+product = Product.lock.find(1) # Applies a database lock
+product.name = "Updated Name"
+product.save
+
+
+```
+
+---
+
+18. What are Rails helpers, and how do they differ from concerns?
+
+### **Answer**
+
+- **Rails Helpers:**
+    - **Purpose:** Helpers are modules used to encapsulate reusable methods for views.
+    - **Scope:** Typically associated with the presentation layer. They make views cleaner by offloading logic or
+      formatting-related tasks.
+    - **Usage:** Automatically available in their respective views and can also be made available globally.
+
+```ruby
+
+module ApplicationHelper
+  def format_date(date)
+    date.strftime("%B %d, %Y")
+  end
+end
+
+```
+
+- **Rails Concerns:**
+    - **Purpose:** Concerns are modules designed to encapsulate shared logic across models or controllers.
+    - **Scope:** Focused on business logic or shared functionality that spans multiple models or controllers.
+    - **Usage:** Included in models or controllers using include or extend.
+
+```ruby
+
+module Archivable
+  extend ActiveSupport::Concern
+
+  included do
+    scope :archived, -> { where(archived: true) }
+  end
+
+  def archive
+    update(archived: true)
+  end
+end
+
+class Post < ApplicationRecord
+  include Archivable
+end
+
+```
+
+---
+
+19. What are Rails engines, and when would you use them?
+
+### **Answer**
+
+- **Definition:** Rails engines are self-contained Rails applications that can be mounted within a parent Rails
+  application. They enable modular development by allowing features or functionality to be packaged and reused across
+  different projects.
+- **Types:**
+    - **Full Engines:** Operate as standalone Rails apps.
+    - **Mountable Engines:** Share their functionality with a parent app but don’t operate independently.
+- **When to Use Rails Engines:**
+    - To encapsulate complex features like authentication (e.g., Devise) or content management (e.g., Spree).
+    - To share reusable functionality across multiple Rails applications.
+    - To separate distinct business logic into isolated modules for better code organization.
+- **Example:**
+    - **Creating an Engine:**
+      ```bash
+      rails plugin new discount_engine --mountable
+      ```
+    - **Folder Structure:** The engine will have its own app, config, db, and other directories like a Rails app.
+    - **Mounting the Engine:** In the parent app's routes.rb: `mount DiscountEngine::Engine, at: '/discounts'`
+    - **Using the Engine's Functionality:** The parent app can access routes and functionality provided by the engine.
+
+---
+
+20. What is the difference between dependent: :destroy and dependent: :delete_all in Rails?
+
+### **Answer**
+
+- **dependent: :destroy:**
+    - **Description:** Ensures that when the parent object is destroyed, the associated child records are also destroyed
+      by calling their destroy method.
+    - **Behavior:** This triggers callbacks (such as before_destroy, after_destroy) for each associated record.
+    - **Use Case:** Use this when you want to run the model’s callbacks and validations before deleting associated
+      records.
+
+- **dependent: :delete_all:**
+    - **Description:** This deletes all associated records directly from the database without triggering callbacks or
+      validations.
+    - **Behavior:** It is faster than :destroy because it performs a raw SQL DELETE operation. However, it bypasses
+      Active Record callbacks and validations.
+    - **Use Case:** Use this when you need better performance and don't need to run callbacks or validations for the
+      child records.
+
+```ruby
+
+class Post < ApplicationRecord
+  has_many :comments, dependent: :destroy
+end
+
+post = Post.find(1)
+post.destroy # Comments will be destroyed, triggering their callbacks
+
+class Post < ApplicationRecord
+  has_many :comments, dependent: :delete_all
+end
+
+post = Post.find(1)
+post.destroy # Comments will be deleted directly from the database without callbacks
+
+```
+
+---
+
+21. What are service objects in Rails, and why would you use them?
+
+### **Answer**
+
+Service objects are plain Ruby classes used to encapsulate complex business logic that doesn’t belong to models,
+controllers, or views. They follow the principle of "Single Responsibility," ensuring each class has a single,
+well-defined purpose.
+
+- **Why Use Service Objects?**
+    - **Keep Models and Controllers Clean:** They move complex logic out of models and controllers, making them easier
+      to maintain.
+    - **Enhance Testability:** Isolated logic in service objects is easier to test independently.
+    - **Apply SOLID Principles:** Promotes separation of concerns and reduces coupling.
+    - **Reusability:** Code in service objects can be reused in multiple places (e.g., background jobs or API calls).
+
+```ruby
+#Without Service Object (Fat Controller):
+
+class OrdersController < ApplicationController
+  def create
+    @order = Order.new(order_params)
+    if @order.save
+      send_confirmation_email(@order)
+      charge_credit_card(@order)
+      render json: @order, status: :created
+    else
+      render json: @order.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def send_confirmation_email(order)
+    # Email logic here
+  end
+
+  def charge_credit_card(order)
+    # Payment logic here
+  end
+end
+
+#With Service Object:
+
+class OrderService
+  def initialize(order_params)
+    @order_params = order_params
+  end
+
+  def create_order
+    order = Order.new(@order_params)
+    if order.save
+      send_confirmation_email(order)
+      charge_credit_card(order)
+      return order
+    else
+      raise ActiveRecord::RecordInvalid, order
+    end
+  end
+
+  private
+
+  def send_confirmation_email(order)
+    # Email logic here
+  end
+
+  def charge_credit_card(order)
+    # Payment logic here
+  end
+end
+
+class OrdersController < ApplicationController
+  def create
+    service = OrderService.new(order_params)
+    order = service.create_order
+    render json: order, status: :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: e.record.errors, status: :unprocessable_entity
+  end
+end
+
+```
+
+---
+
+22. What is Rails Active Job, and why would you use it?
+
+### **Answer**
+
+Active Job is a framework for declaring jobs and making them run on various queueing backends. It provides a consistent
+interface for job processing, enabling developers to write jobs once and use them with any backend, such as Sidekiq,
+Resque, or Delayed Job.
+
+- **Why Use Active Job?**
+    - **Offload Long-Running Tasks:** For example, sending bulk emails or generating reports.
+    - **Improve User Experience:** Users don’t have to wait for time-consuming tasks to complete.
+    - **Queue Flexibility:** Supports multiple backends without changing job definitions.
+    - **Retry Logic:** Automatically retries jobs on failure.
+    - **Asynchronous Execution:** Allows jobs to run independently of the main application process.
+
+```ruby
+
+class UserMailerJob < ApplicationJob
+  queue_as :default
+
+  def perform(user)
+    UserMailer.welcome_email(user).deliver_now
+  end
+end
+
+user = User.find(1)
+UserMailerJob.perform_later(user)
 
 ```
