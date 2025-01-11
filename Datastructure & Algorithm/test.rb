@@ -66,5 +66,21 @@ def plaindrom(str)
   true
 end
 
-str = "A man, a plan, a canal, Panama"
-puts plaindrom(str)
+# str = "A man, a plan, a canal, Panama"
+# puts plaindrom(str)
+
+def first_non_repeating(arr)
+  return 'Empty array' if arr.empty?
+  hash = {}
+  arr.each do |el|
+    hash[el] = hash[el].nil? ? 1 : hash[el] + 1
+  end
+  hash.each do |k, v|
+    return k if v == 1
+  end
+  'No non-repeating element'
+end
+
+arr = [4, 5, 1, 2, 0, 4]
+
+puts first_non_repeating(arr)

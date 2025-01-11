@@ -442,11 +442,8 @@ stock.update_price(155)
 #### Answer
 
 The Strategy Design Pattern is a **behavioral pattern** that allows you to define a family of algorithms, encapsulate
-each
-one,
-and make them interchangeable. This pattern enables the client to choose the algorithm to use at runtime without
-changing
-the client code.
+each one, and make them interchangeable. This pattern enables the client to choose the algorithm to use at runtime
+without changing the client code.
 
 - **Key Components of the Strategy Pattern:**
     - **Context**: The class that contains a reference to the strategy interface.
