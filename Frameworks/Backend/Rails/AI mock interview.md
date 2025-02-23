@@ -1,4 +1,4 @@
-_### AI Mocked Interview
+### AI Mocked Interview
 
 ### **prompt**
 
