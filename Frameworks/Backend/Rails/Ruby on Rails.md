@@ -458,3 +458,347 @@
       
         @posts = Post.includes(:comments)
       ```
+
+## **19. What is the difference between `includes`, `joins`, `preload`, and `eager_load` in Rails?**
+
+**Weight:** 8
+
+- **Answer:**
+    - **`includes`**: Uses LEFT OUTER JOIN or separate queries depending on conditions. Can prevent N+1 queries.
+    - **`joins`**: Uses INNER JOIN. Doesn't load associated data, only joins tables for filtering.
+    - **`preload`**: Always uses separate queries. Loads associations in a second query.
+    - **`eager_load`**: Always uses LEFT OUTER JOIN. Loads all associations in a single query.
+- **Code Example:**
+  ```ruby
+  # includes - smart loading
+  Post.includes(:comments)  # May use JOIN or separate queries
+
+  # joins - for filtering only
+  Post.joins(:comments).where(comments: { approved: true })
+
+  # preload - separate queries
+  Post.preload(:comments)
+
+  # eager_load - single query with JOIN
+  Post.eager_load(:comments)
+  ```
+
+## **20. What is the difference between `save`, `save!`, `create`, and `create!` in Rails?**
+
+**Weight:** 8
+
+- **Answer:**
+    - **`save`**: Saves the record, returns `true` or `false` (doesn't raise on validation failure).
+    - **`save!`**: Saves the record, raises exception on validation failure.
+    - **`create`**: Creates and saves a new record, returns the object (even if invalid).
+    - **`create!`**: Creates and saves a new record, raises exception on validation failure.
+- **Code Example:**
+  ```ruby
+  user = User.new(name: "John")
+  user.save        # Returns true/false
+  user.save!       # Raises exception if invalid
+
+  User.create(name: "John")   # Returns user object (may be invalid)
+  User.create!(name: "John") # Raises exception if invalid
+  ```
+
+## **21. What is the difference between `update` and `update_attributes` in Rails?**
+
+**Weight:** 7
+
+- **Answer:**
+    - **`update`**: Updates attributes and saves the record. Returns `true` or `false`.
+    - **`update_attributes`**: Alias for `update` (deprecated in Rails 6.0+).
+- **Code Example:**
+  ```ruby
+  user.update(name: "Jane")           # Recommended
+  user.update_attributes(name: "Jane") # Deprecated
+  ```
+
+## **22. What is the difference between `find`, `find_by`, and `where` in Rails?**
+
+**Weight:** 7
+
+- **Answer:**
+    - **`find`**: Finds by primary key, raises `ActiveRecord::RecordNotFound` if not found.
+    - **`find_by`**: Finds the first record matching conditions, returns `nil` if not found.
+    - **`where`**: Returns a relation (lazy loading), returns empty relation if not found.
+- **Code Example:**
+  ```ruby
+  User.find(1)                    # Raises error if not found
+  User.find_by(email: "test@example.com")  # Returns nil if not found
+  User.where(email: "test@example.com")    # Returns relation (may be empty)
+  ```
+
+## **23. What is the difference between `pluck` and `select` in Rails?**
+
+**Weight:** 6
+
+- **Answer:**
+    - **`pluck`**: Extracts specific column values directly from the database, returns an array.
+    - **`select`**: Returns ActiveRecord objects with only specified attributes loaded.
+- **Code Example:**
+  ```ruby
+  User.pluck(:name)           # ["John", "Jane"] (array of values)
+  User.select(:name)          # [<User name: "John">, <User name: "Jane">] (objects)
+  ```
+
+## **24. What is the difference between `first`, `last`, and `take` in Rails?**
+
+**Weight:** 6
+
+- **Answer:**
+    - **`first`**: Returns the first record, ordered by primary key (or specified order).
+    - **`last`**: Returns the last record, ordered by primary key (or specified order).
+    - **`take`**: Returns a record without any ordering (faster, but order is not guaranteed).
+- **Code Example:**
+  ```ruby
+  User.first    # First user by id
+  User.last     # Last user by id
+  User.take     # Any user (no ordering)
+  ```
+
+## **25. What is the difference between `count`, `length`, and `size` in Rails?**
+
+**Weight:** 6
+
+- **Answer:**
+    - **`count`**: Always executes a SQL COUNT query.
+    - **`length`**: Loads all records into memory and counts them.
+    - **`size`**: Smart - uses `count` if collection not loaded, `length` if already loaded.
+- **Code Example:**
+  ```ruby
+  User.count    # SQL: SELECT COUNT(*) FROM users
+  User.length   # Loads all users, then counts in memory
+  User.size     # Uses count if not loaded, length if loaded
+  ```
+
+## **26. What is the difference between `before_save` and `before_create` callbacks in Rails?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`before_save`**: Runs before both create and update operations.
+    - **`before_create`**: Runs only before create operations.
+- **Code Example:**
+  ```ruby
+  class User < ApplicationRecord
+    before_save :normalize_email      # Runs on create and update
+    before_create :set_default_role   # Runs only on create
+  end
+  ```
+
+## **27. What is the difference between `validates` and `validates!` in Rails?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`validates`**: Adds validation that runs on `save` (can be skipped with `save(validate: false)`).
+    - **`validates!`**: Adds validation that always runs, even with `save(validate: false)`.
+- **Code Example:**
+  ```ruby
+  class User < ApplicationRecord
+    validates :email, presence: true      # Can be skipped
+    validates! :email, format: { with: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i }  # Cannot be skipped
+  end
+  ```
+
+## **28. What is the difference between `dependent: :destroy` and `dependent: :delete_all` in Rails?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`dependent: :destroy`**: Calls `destroy` on each associated record (runs callbacks).
+    - **`dependent: :delete_all`**: Deletes records directly from database (no callbacks, faster).
+- **Code Example:**
+  ```ruby
+  class User < ApplicationRecord
+    has_many :posts, dependent: :destroy      # Runs callbacks
+    has_many :comments, dependent: :delete_all # No callbacks, faster
+  end
+  ```
+
+## **29. What is the difference between `belongs_to` and `has_one` in Rails?**
+
+**Weight:** 4
+
+- **Answer:**
+    - **`belongs_to`**: Used on the model that has the foreign key (many-to-one relationship).
+    - **`has_one`**: Used on the model without the foreign key (one-to-one relationship).
+- **Code Example:**
+  ```ruby
+  class User < ApplicationRecord
+    has_one :profile
+  end
+
+  class Profile < ApplicationRecord
+    belongs_to :user  # Has user_id foreign key
+  end
+  ```
+
+## **30. What is the difference between `has_many` and `has_many :through` in Rails?**
+
+**Weight:** 4
+
+- **Answer:**
+    - **`has_many`**: Direct one-to-many relationship.
+    - **`has_many :through`**: Many-to-many relationship through a join model.
+- **Code Example:**
+  ```ruby
+  class Doctor < ApplicationRecord
+    has_many :appointments
+    has_many :patients, through: :appointments
+  end
+
+  class Appointment < ApplicationRecord
+    belongs_to :doctor
+    belongs_to :patient
+  end
+
+  class Patient < ApplicationRecord
+    has_many :appointments
+    has_many :doctors, through: :appointments
+  end
+  ```
+
+## **31. What is the difference between `scope` and class methods in Rails?**
+
+**Weight:** 4
+
+- **Answer:**
+    - **`scope`**: Syntactic sugar for class methods that return ActiveRecord::Relation.
+    - **Class methods**: More flexible, can return anything.
+- **Code Example:**
+  ```ruby
+  class Post < ApplicationRecord
+    scope :published, -> { where(published: true) }
+    
+    def self.recent
+      order(created_at: :desc).limit(10)
+    end
+  end
+  ```
+
+## **32. What is the difference between `after_commit` and `after_save` callbacks in Rails?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`after_save`**: Runs after the record is saved, but within the same transaction.
+    - **`after_commit`**: Runs after the database transaction is committed (safer for external operations).
+- **Code Example:**
+  ```ruby
+  class Order < ApplicationRecord
+    after_save :send_notification      # Runs in transaction
+    after_commit :send_email           # Runs after commit (safer)
+  end
+  ```
+
+## **33. What is the difference between `update_column` and `update_columns` in Rails?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`update_column`**: Updates a single column, skips validations and callbacks.
+    - **`update_columns`**: Updates multiple columns, skips validations and callbacks.
+- **Code Example:**
+  ```ruby
+  user.update_column(:name, "John")                    # Single column
+  user.update_columns(name: "John", email: "john@example.com")  # Multiple columns
+  ```
+
+## **34. What is the difference between `touch` and `update_attribute` in Rails?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`touch`**: Updates the `updated_at` timestamp (and optionally other timestamps).
+    - **`update_attribute`**: Updates a single attribute, bypasses validations but runs callbacks.
+- **Code Example:**
+  ```ruby
+  user.touch                    # Updates updated_at
+  user.touch(:last_seen_at)     # Updates specific timestamp
+  user.update_attribute(:name, "John")  # Updates name, bypasses validations
+  ```
+
+## **35. What is the difference between `delete` and `destroy` in Rails?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`delete`**: Removes record directly from database, no callbacks, no validations.
+    - **`destroy`**: Runs callbacks and validations before removing the record.
+- **Code Example:**
+  ```ruby
+  user.delete    # Direct SQL DELETE, no callbacks
+  user.destroy   # Runs callbacks, then deletes
+  ```
+
+## **36. What is the difference between `find_or_create_by` and `find_or_initialize_by` in Rails?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`find_or_create_by`**: Finds a record or creates it if not found (saves to database).
+    - **`find_or_initialize_by`**: Finds a record or initializes it if not found (doesn't save).
+- **Code Example:**
+  ```ruby
+  User.find_or_create_by(email: "test@example.com")      # Saves to DB
+  User.find_or_initialize_by(email: "test@example.com")  # Doesn't save
+  ```
+
+## **37. What is the difference between `present?` and `exists?` in Rails?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`present?`**: Rails method that checks if object is not blank (works on any object).
+    - **`exists?`**: ActiveRecord method that checks if record exists in database (efficient query).
+- **Code Example:**
+  ```ruby
+  User.where(email: "test@example.com").present?  # Loads records
+  User.exists?(email: "test@example.com")         # Efficient query
+  ```
+
+## **38. What is the difference between `reload` and `reset` in Rails?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`reload`**: Reloads the record from the database, discarding unsaved changes.
+    - **`reset`**: Resets the association cache, forcing it to reload on next access.
+- **Code Example:**
+  ```ruby
+  user.reload              # Reloads user from database
+  user.posts.reset         # Resets posts association cache
+  ```
+
+## **39. What is the difference between `merge` and `joins` in Rails?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`merge`**: Merges conditions from another relation.
+    - **`joins`**: Joins tables for filtering, doesn't load associated data.
+- **Code Example:**
+  ```ruby
+  Post.joins(:comments).merge(Comment.where(approved: true))
+  ```
+
+## **40. What is the difference between `inverse_of` and `foreign_key` in Rails associations?**
+
+**Weight:** 1
+
+- **Answer:**
+    - **`inverse_of`**: Explicitly sets the inverse association to avoid multiple queries.
+    - **`foreign_key`**: Specifies the foreign key column name.
+- **Code Example:**
+  ```ruby
+  class User < ApplicationRecord
+    has_many :posts, inverse_of: :author
+  end
+
+  class Post < ApplicationRecord
+    belongs_to :author, class_name: "User", foreign_key: "user_id"
+  end
+  ```

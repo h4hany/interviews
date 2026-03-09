@@ -367,7 +367,7 @@
     - Ruby's parallelism model is based on processes, which are independent instances of the Ruby interpreter that run
       in separate memory spaces.
 
-## **23. Explain the concept of ‘JIT’ (just-in-time) compilation in Ruby.**
+## **23. Explain the concept of 'JIT' (just-in-time) compilation in Ruby.**
 
 **Weight:** 1
 
@@ -378,3 +378,312 @@
     - JIT compilation can optimize hot code paths and reduce the overhead of interpretation.
     - Ruby 3 introduced MJIT (method-based just-in-time compilation) to enhance performance, making Ruby closer in speed
       to lower-level languages.
+
+## **24. What is the difference between `include` and `extend` in Ruby?**
+
+**Weight:** 8
+
+- **Answer:**
+    - `include`: Adds module methods as instance methods to the class.
+    - `extend`: Adds module methods as class methods to the class.
+- **Code Example:**
+  ```ruby
+  module Greetings
+    def greet
+      "Hello!"
+    end
+  end
+
+  class Person
+    include Greetings  # greet becomes an instance method
+  end
+
+  class Admin
+    extend Greetings   # greet becomes a class method
+  end
+
+  Person.new.greet     # "Hello!"
+  Admin.greet          # "Hello!"
+  ```
+
+## **25. What is the difference between `private`, `protected`, and `public` methods in Ruby?**
+
+**Weight:** 7
+
+- **Answer:**
+    - **`public`**: Methods are accessible from anywhere (default).
+    - **`protected`**: Methods can be called by any instance of the same class or its subclasses.
+    - **`private`**: Methods can only be called from within the same instance (not even with `self` explicitly, except for assignment methods).
+- **Code Example:**
+  ```ruby
+  class Example
+    def public_method
+      "Public"
+    end
+
+    protected
+    def protected_method
+      "Protected"
+    end
+
+    private
+    def private_method
+      "Private"
+    end
+  end
+  ```
+
+## **26. What is the difference between `class variables` and `instance variables` in Ruby?**
+
+**Weight:** 7
+
+- **Answer:**
+    - **Instance variables** (`@variable`): Belong to a specific instance of a class. Each object has its own copy.
+    - **Class variables** (`@@variable`): Shared among all instances of a class and its subclasses.
+- **Code Example:**
+  ```ruby
+  class Counter
+    @@count = 0  # Class variable
+
+    def initialize
+      @instance_count = 0  # Instance variable
+    end
+
+    def increment
+      @@count += 1
+      @instance_count += 1
+    end
+
+    def self.total
+      @@count
+    end
+  end
+  ```
+
+## **27. What is `attr_accessor`, `attr_reader`, and `attr_writer` in Ruby?**
+
+**Weight:** 6
+
+- **Answer:**
+    - **`attr_accessor`**: Creates both getter and setter methods.
+    - **`attr_reader`**: Creates only a getter method.
+    - **`attr_writer`**: Creates only a setter method.
+- **Code Example:**
+  ```ruby
+  class Person
+    attr_accessor :name    # Creates @name, name, and name= methods
+    attr_reader :age       # Creates only @age and age methods
+    attr_writer :email     # Creates only @email and email= methods
+  end
+  ```
+
+## **28. What is the difference between `yield` and `block_given?` in Ruby?**
+
+**Weight:** 6
+
+- **Answer:**
+    - **`yield`**: Executes the block passed to the method.
+    - **`block_given?`**: Checks if a block was passed to the method.
+- **Code Example:**
+  ```ruby
+  def example
+    if block_given?
+      yield
+    else
+      puts "No block given"
+    end
+  end
+
+  example { puts "Block executed" }  # "Block executed"
+  example                             # "No block given"
+  ```
+
+## **29. What is the difference between `super` and `super()` in Ruby?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`super`**: Calls the parent method with the same arguments passed to the current method.
+    - **`super()`**: Calls the parent method with no arguments.
+- **Code Example:**
+  ```ruby
+  class Parent
+    def greet(name)
+      "Hello, #{name}!"
+    end
+  end
+
+  class Child < Parent
+    def greet(name)
+      super        # Calls Parent#greet(name)
+      super()      # Calls Parent#greet() - may cause ArgumentError
+    end
+  end
+  ```
+
+## **30. What is the difference between `require`, `require_relative`, `load`, and `autoload` in Ruby?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`require`**: Loads a file from the load path (only once).
+    - **`require_relative`**: Loads a file relative to the current file (only once).
+    - **`load`**: Loads a file every time it's called (can reload).
+    - **`autoload`**: Defers loading until the constant is first accessed.
+- **Code Example:**
+  ```ruby
+  require 'json'                    # From load path
+  require_relative './my_module'    # Relative to current file
+  load './config.rb'                # Reloads every time
+  autoload :MyClass, './my_class'  # Loads when MyClass is first used
+  ```
+
+## **31. What is the difference between `each`, `map`, `select`, and `reject` in Ruby?**
+
+**Weight:** 5
+
+- **Answer:**
+    - **`each`**: Iterates over elements, returns the original collection.
+    - **`map`**: Transforms each element, returns a new array.
+    - **`select`**: Filters elements that match a condition, returns a new array.
+    - **`reject`**: Filters elements that don't match a condition, returns a new array.
+- **Code Example:**
+  ```ruby
+  [1, 2, 3, 4, 5].each { |n| puts n }           # Returns [1, 2, 3, 4, 5]
+  [1, 2, 3].map { |n| n * 2 }                   # Returns [2, 4, 6]
+  [1, 2, 3, 4, 5].select { |n| n.even? }        # Returns [2, 4]
+  [1, 2, 3, 4, 5].reject { |n| n.even? }        # Returns [1, 3, 5]
+  ```
+
+## **32. What is the difference between `nil` and `false` in Ruby?**
+
+**Weight:** 4
+
+- **Answer:**
+    - **`nil`**: Represents the absence of a value. It's an object (instance of `NilClass`).
+    - **`false`**: A boolean value representing falsity. It's an object (instance of `FalseClass`).
+    - Both are falsy in boolean context, but they are different objects.
+- **Code Example:**
+  ```ruby
+  nil.nil?        # true
+  false.nil?      # false
+  nil == false    # false
+  !nil            # true
+  !false          # true
+  ```
+
+## **33. What is the difference between `String` and `Symbol` in terms of memory?**
+
+**Weight:** 4
+
+- **Answer:**
+    - **Strings**: Each string is a new object, even if the content is the same. More memory usage.
+    - **Symbols**: Same symbol with the same name is the same object. More memory efficient.
+- **Code Example:**
+  ```ruby
+  "hello".object_id != "hello".object_id  # Different objects
+  :hello.object_id == :hello.object_id    # Same object
+  ```
+
+## **34. What is the difference between `raise` and `fail` in Ruby?**
+
+**Weight:** 3
+
+- **Answer:**
+    - `raise` and `fail` are aliases - they do exactly the same thing.
+    - Convention: Use `raise` for exceptions, `fail` is less common.
+- **Code Example:**
+  ```ruby
+  raise "Error message"
+  fail "Error message"  # Same as raise
+  ```
+
+## **35. What is the difference between `Array#<<` and `Array#push` in Ruby?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`<<`**: Adds a single element to the end of the array.
+    - **`push`**: Can add one or multiple elements to the end of the array.
+- **Code Example:**
+  ```ruby
+  arr = [1, 2, 3]
+  arr << 4              # [1, 2, 3, 4]
+  arr.push(5, 6)        # [1, 2, 3, 4, 5, 6]
+  ```
+
+## **36. What is the difference between `Hash#merge` and `Hash#merge!` in Ruby?**
+
+**Weight:** 3
+
+- **Answer:**
+    - **`merge`**: Returns a new hash with merged contents, doesn't modify the original.
+    - **`merge!`**: Modifies the original hash in place.
+- **Code Example:**
+  ```ruby
+  h1 = { a: 1, b: 2 }
+  h2 = { b: 3, c: 4 }
+  
+  h1.merge(h2)    # { a: 1, b: 3, c: 4 } (h1 unchanged)
+  h1.merge!(h2)   # { a: 1, b: 3, c: 4 } (h1 modified)
+  ```
+
+## **37. What is the difference between `Time`, `Date`, and `DateTime` in Ruby?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`Time`**: Represents a specific point in time with timezone support.
+    - **`Date`**: Represents a calendar date (year, month, day) without time.
+    - **`DateTime`**: Legacy class, use `Time` or `Date` instead in modern Ruby.
+- **Code Example:**
+  ```ruby
+  Time.now           # Current time with timezone
+  Date.today         # Current date
+  DateTime.now       # Legacy, avoid in new code
+  ```
+
+## **38. What is the difference between `String#gsub` and `String#gsub!` in Ruby?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`gsub`**: Returns a new string with substitutions, doesn't modify the original.
+    - **`gsub!`**: Modifies the original string in place, returns `nil` if no substitutions were made.
+- **Code Example:**
+  ```ruby
+  str = "hello world"
+  str.gsub("world", "Ruby")    # Returns "hello Ruby" (str unchanged)
+  str.gsub!("world", "Ruby")    # Modifies str to "hello Ruby"
+  ```
+
+## **39. What is the difference between `Array#uniq` and `Array#uniq!` in Ruby?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`uniq`**: Returns a new array with duplicate elements removed.
+    - **`uniq!`**: Removes duplicate elements from the original array in place, returns `nil` if no duplicates.
+- **Code Example:**
+  ```ruby
+  arr = [1, 2, 2, 3, 3, 3]
+  arr.uniq      # Returns [1, 2, 3] (arr unchanged)
+  arr.uniq!     # Modifies arr to [1, 2, 3]
+  ```
+
+## **40. What is the difference between `nil?`, `empty?`, and `blank?` in Ruby (Rails)?**
+
+**Weight:** 2
+
+- **Answer:**
+    - **`nil?`**: Checks if object is `nil` (Ruby core).
+    - **`empty?`**: Checks if collection/string is empty (Ruby core).
+    - **`blank?`**: Rails method that returns `true` for `nil`, empty strings, empty arrays, etc.
+- **Code Example:**
+  ```ruby
+  nil.nil?           # true
+  "".empty?          # true
+  "".blank?          # true (Rails)
+  nil.blank?         # true (Rails)
+  [].blank?          # true (Rails)
+  ```

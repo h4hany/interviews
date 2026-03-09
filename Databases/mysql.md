@@ -121,6 +121,24 @@ FROM users
        LEFT JOIN orders ON users.user_id = orders.user_id;
 ```
 
+## 9. What is the difference between `WHERE` and `HAVING` clauses?
+
+- **WHERE**: Filters rows before grouping. It cannot be used with aggregate functions.
+- **HAVING**: Filters groups after the `GROUP BY` clause. It can be used with aggregate functions.
+
+```sql
+-- WHERE filters individual rows
+SELECT user_id, order_id, total_amount
+FROM orders
+WHERE total_amount > 100;
+
+-- HAVING filters groups after aggregation
+SELECT user_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent
+FROM orders
+GROUP BY user_id
+HAVING COUNT(*) > 5 AND SUM(total_amount) > 1000;
+```
+
 ## 10. What is a subquery, and how is it used in MySQL?
 
 A subquery is a query nested inside another query, often used to retrieve a result that can be used in the outer query.
@@ -152,6 +170,41 @@ UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
 COMMIT;
 ```
+
+## 12.1. What is BASE, and how does it differ from ACID?
+
+BASE is an acronym that stands for:
+- **Basically Available**: The system guarantees availability in terms of the CAP theorem. The system will respond to any request, but it may not be consistent.
+- **Soft state**: The state of the system may change over time, even without input, due to eventual consistency.
+- **Eventual consistency**: The system will become consistent over time, assuming no new updates are made to the system.
+
+**Key Differences:**
+
+| ACID | BASE |
+|------|------|
+| Strong consistency | Eventual consistency |
+| Focus on data consistency | Focus on availability |
+| Used in relational databases (MySQL, PostgreSQL) | Used in NoSQL databases (MongoDB, Cassandra) |
+| Prioritizes correctness | Prioritizes availability and performance |
+| Synchronous updates | Asynchronous updates |
+| Better for transactional systems | Better for distributed systems at scale |
+
+**When to use ACID:**
+- Financial transactions
+- Critical data that must be consistent immediately
+- Systems where data integrity is paramount
+
+**When to use BASE:**
+- High-traffic web applications
+- Social media platforms
+- Real-time analytics
+- Systems where availability is more important than immediate consistency
+
+**Example:**
+In a social media application using BASE:
+- When a user posts a comment, it may not immediately appear to all users (eventual consistency)
+- The system remains available even if some data is temporarily inconsistent
+- The comment will eventually be visible to everyone once the system propagates the update
 ## 13. What is an `AUTO_INCREMENT` field in MySQL?
 
 An `AUTO_INCREMENT` field is used to automatically generate a unique number when a new record is inserted into a table.
@@ -301,3 +354,249 @@ slaves). It is used for load balancing, backup, and redundancy.
 
 Partitioning divides large tables into smaller, more manageable pieces, improving query performance by limiting the
 amount of data to scan. It is particularly useful for time-based data, like logs or events.
+
+## 31. What is a view in MySQL, and when would you use it?
+
+A view is a virtual table based on the result of a SQL statement. It contains rows and columns like a real table, but the data is dynamically retrieved from one or more underlying tables.
+
+**Benefits:**
+- Simplifies complex queries
+- Provides security by restricting access to specific columns
+- Abstracts the underlying table structure
+- Can be used to present aggregated data
+
+```sql
+-- Create a view
+CREATE VIEW active_users AS
+SELECT user_id, full_name, email
+FROM users
+WHERE status = 'active';
+
+-- Use the view
+SELECT * FROM active_users;
+```
+
+## 32. What is the difference between `UNION` and `UNION ALL`?
+
+- **UNION**: Combines results from multiple SELECT statements and removes duplicate rows.
+- **UNION ALL**: Combines results from multiple SELECT statements and includes all rows, including duplicates.
+
+**UNION ALL is faster** because it doesn't need to check for duplicates.
+
+```sql
+-- UNION (removes duplicates)
+SELECT name FROM table1
+UNION
+SELECT name FROM table2;
+
+-- UNION ALL (keeps duplicates)
+SELECT name FROM table1
+UNION ALL
+SELECT name FROM table2;
+```
+
+## 33. What is a composite key in MySQL?
+
+A composite key is a primary key that consists of two or more columns. It is used when a single column cannot uniquely identify a row.
+
+```sql
+CREATE TABLE order_items
+(
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    PRIMARY KEY (order_id, product_id)
+);
+```
+
+## 34. What is the difference between clustered and non-clustered indexes?
+
+- **Clustered Index**: The table data is physically stored in the same order as the index. There can be only one clustered index per table (usually the primary key). The data rows are stored in the leaf nodes of the index.
+- **Non-clustered Index**: Creates a separate structure that points to the data. The leaf nodes contain pointers to the actual data rows. A table can have multiple non-clustered indexes.
+
+**In MySQL:**
+- InnoDB uses clustered indexes (primary key is clustered)
+- MyISAM uses non-clustered indexes
+
+## 35. What are constraints in MySQL, and what types exist?
+
+Constraints are rules enforced on data columns to ensure data integrity and accuracy.
+
+**Types of constraints:**
+- **PRIMARY KEY**: Uniquely identifies each row
+- **FOREIGN KEY**: Ensures referential integrity
+- **UNIQUE**: Ensures all values in a column are unique
+- **NOT NULL**: Ensures a column cannot have NULL values
+- **CHECK**: Ensures values meet specific conditions (MySQL 8.0.16+)
+- **DEFAULT**: Sets a default value for a column
+
+```sql
+CREATE TABLE users
+(
+    user_id INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    age INT CHECK (age >= 18),
+    status VARCHAR(20) DEFAULT 'active',
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+```
+
+## 36. What is a cursor in MySQL, and when would you use it?
+
+A cursor is a database object used to retrieve and manipulate rows one at a time from a result set. It is typically used in stored procedures when you need to process rows individually.
+
+```sql
+DELIMITER //
+CREATE PROCEDURE ProcessOrders()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE order_id INT;
+    DECLARE total_amount DECIMAL(10, 2);
+    
+    DECLARE order_cursor CURSOR FOR
+        SELECT order_id, total_amount FROM orders WHERE status = 'pending';
+    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN order_cursor;
+    
+    read_loop: LOOP
+        FETCH order_cursor INTO order_id, total_amount;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- Process each order
+        UPDATE orders SET status = 'processed' WHERE order_id = order_id;
+    END LOOP;
+    
+    CLOSE order_cursor;
+END //
+DELIMITER ;
+```
+
+## 37. Explain transaction isolation levels in detail.
+
+Transaction isolation levels determine how transactions interact with each other and what data they can see.
+
+**Isolation Levels (from least to most strict):**
+
+1. **READ UNCOMMITTED**: 
+   - Lowest isolation level
+   - Allows dirty reads (reading uncommitted data)
+   - No locks are placed
+   - Can lead to inconsistent data
+
+2. **READ COMMITTED**:
+   - Prevents dirty reads
+   - Allows non-repeatable reads (same query returns different results)
+   - Uses shared locks for reads
+
+3. **REPEATABLE READ** (MySQL InnoDB default):
+   - Prevents dirty reads and non-repeatable reads
+   - Allows phantom reads (new rows appear in subsequent reads)
+   - Uses range locks
+
+4. **SERIALIZABLE**:
+   - Highest isolation level
+   - Prevents all concurrency issues (dirty reads, non-repeatable reads, phantom reads)
+   - Uses table-level locks
+   - Can cause significant performance issues
+
+```sql
+-- Set isolation level
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+START TRANSACTION;
+-- Your queries here
+COMMIT;
+```
+
+## 38. What is connection pooling, and why is it important?
+
+Connection pooling is a technique where a pool of database connections is created and reused, rather than creating a new connection for each request.
+
+**Benefits:**
+- Reduces connection overhead
+- Improves performance
+- Limits the number of concurrent connections
+- Better resource management
+
+**How it works:**
+1. A pool of connections is created at application startup
+2. When a request needs a database connection, it borrows one from the pool
+3. After the request completes, the connection is returned to the pool
+4. Connections are reused for subsequent requests
+
+## 39. What are database locks in MySQL, and what types exist?
+
+Locks are mechanisms used to control concurrent access to data, preventing conflicts when multiple transactions access the same data.
+
+**Types of locks:**
+
+1. **Shared Lock (Read Lock)**:
+   - Allows multiple transactions to read the same data
+   - Prevents other transactions from writing to the locked data
+   - Used in SELECT queries
+
+2. **Exclusive Lock (Write Lock)**:
+   - Prevents other transactions from reading or writing
+   - Used in INSERT, UPDATE, DELETE operations
+
+3. **Table Lock**:
+   - Locks the entire table
+   - Used by MyISAM storage engine
+
+4. **Row Lock**:
+   - Locks individual rows
+   - Used by InnoDB storage engine
+   - More granular and allows better concurrency
+
+```sql
+-- Explicit locking
+SELECT * FROM orders WHERE order_id = 1 FOR UPDATE;  -- Exclusive lock
+SELECT * FROM orders WHERE order_id = 1 LOCK IN SHARE MODE;  -- Shared lock
+```
+
+## 40. What is the difference between a database view and a table?
+
+| View | Table |
+|------|-------|
+| Virtual table (no physical storage) | Physical table (data is stored) |
+| Data is dynamically retrieved | Data is permanently stored |
+| Cannot have indexes (in older MySQL versions) | Can have indexes |
+| Cannot be directly updated (depends on complexity) | Can be directly updated |
+| Based on SELECT query | Stores actual data |
+| Takes less storage space | Takes more storage space |
+
+## 41. What is a database schema, and how does it differ from a database?
+
+- **Database**: A collection of data organized in a structured way. It contains tables, views, stored procedures, etc.
+- **Schema**: In MySQL, schema and database are essentially the same thing. A schema is a logical container for database objects (tables, views, etc.). In other databases like PostgreSQL, schema and database are different concepts.
+
+```sql
+-- In MySQL, these are equivalent:
+CREATE DATABASE mydb;
+CREATE SCHEMA mydb;
+```
+
+## 42. What is the difference between `INNER JOIN` and using `WHERE` clause for joins?
+
+Both can achieve similar results, but `INNER JOIN` is the standard SQL way and is more readable for explicit joins.
+
+```sql
+-- Using INNER JOIN (preferred)
+SELECT u.full_name, o.order_id
+FROM users u
+INNER JOIN orders o ON u.user_id = o.user_id;
+
+-- Using WHERE clause (old style, less clear)
+SELECT u.full_name, o.order_id
+FROM users u, orders o
+WHERE u.user_id = o.user_id;
+```
+
+**Benefits of INNER JOIN:**
+- More readable and explicit
+- Separates join conditions from filter conditions
+- Easier to convert to LEFT/RIGHT JOINs
+- Better for complex queries with multiple joins

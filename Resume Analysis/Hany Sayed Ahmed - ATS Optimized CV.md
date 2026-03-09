@@ -270,3 +270,4 @@ This resume is optimized for Applicant Tracking Systems (ATS) with the following
 **Last Updated:** January 2025
 
 
+
