@@ -368,6 +368,84 @@ This repository is continuously updated with:
 
 ---
 
+## 🌐 Web Interface
+
+This repository includes a beautiful, modern web-based interface for easy navigation through all your interview preparation materials.
+
+### GitHub Pages (Recommended)
+
+**This interface works perfectly on GitHub Pages!** 🎉
+
+1. **Enable GitHub Pages:**
+   - Go to your repository settings
+   - Navigate to "Pages" section
+   - Select source branch (usually `main` or `master`)
+   - Save
+
+2. **Access your site:**
+   - Your site will be available at: `https://h4hany.github.io/interviews/`
+   - The interface automatically detects GitHub Pages and adjusts paths accordingly
+
+3. **Custom Domain (Optional):**
+   - You can use a custom domain by adding a `CNAME` file
+
+### Local Development
+
+For local testing, you need to run a local server (browsers block file:// due to CORS):
+
+1. **Option 1: Using Python (Recommended)**
+   ```bash
+   # Python 3
+   python -m http.server 8000
+   
+   # Then open: http://localhost:8000
+   ```
+
+2. **Option 2: Using Node.js**
+   ```bash
+   npx http-server -p 8000
+   
+   # Then open: http://localhost:8000
+   ```
+
+3. **Option 3: Using PHP**
+   ```bash
+   php -S localhost:8000
+   
+   # Then open: http://localhost:8000
+   ```
+
+### Features
+
+- 🎨 **Modern UI/UX**: Beautiful, clean interface with smooth animations
+- 📁 **File Tree Navigation**: Browse all markdown files in an organized sidebar
+- 🔍 **Search**: Quickly find files by name with instant filtering
+- 🌙 **Dark Mode**: Toggle between light and dark themes (saved in localStorage)
+- 📱 **Fully Responsive**: Works perfectly on desktop, tablet, and mobile devices
+- 🔗 **Deep Linking**: Share direct links to specific files (works with GitHub Pages)
+- ⬅️ **Back Button**: Navigate through your reading history
+- 📊 **Welcome Dashboard**: Quick stats and quick links to popular topics
+- 🎯 **Breadcrumb Navigation**: See where you are in the file structure
+- ⚡ **Fast Loading**: Optimized for performance
+
+### Files
+
+- `index.html` - Main interface with modern design
+- `styles.css` - Beautiful styling with dark mode support
+- `script.js` - Navigation and markdown rendering logic (GitHub Pages compatible)
+
+### GitHub Pages Compatibility
+
+✅ **Fully compatible with GitHub Pages!**
+
+The interface automatically:
+- Detects if running on GitHub Pages
+- Adjusts file paths for subdirectory hosting
+- Handles URL routing correctly
+- Works with both root and subdirectory deployments
+
+---
+
 ## 📧 Contributing
 
 Feel free to add more questions, improve explanations, or suggest new topics!

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Preparation Repository</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <h1>Interview Prep</h1>
+                </div>
+                <button class="toggle-sidebar" id="toggleSidebar" aria-label="Toggle sidebar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search files..." autocomplete="off">
+                    <button class="clear-search" id="clearSearch" style="display: none;">×</button>
+                </div>
+            </div>
+            
+            <nav class="file-tree" id="fileTree">
+                <!-- File tree will be populated by JavaScript -->
+            </nav>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12h18M3 6h18M3 18h18"/>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb" id="breadcrumb">
+                        <span class="breadcrumb-item active">Home</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="backBtn" style="display: none;" aria-label="Go back" title="Back">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" id="toggleDarkMode" aria-label="Toggle dark mode" title="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-body" id="contentBody">
+                <div class="welcome-screen">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">🚀</div>
+                        <h1>Welcome to Interview Prep</h1>
+                        <p class="welcome-subtitle">Your comprehensive guide to technical interview preparation</p>
+                        
+                        <div class="quick-stats">
+                            <div class="stat-card">
+                                <div class="stat-number">100+</div>
+                                <div class="stat-label">Topics Covered</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Interview Questions</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Design Patterns</div>
+                            </div>
+                        </div>
+
+                        <div class="quick-links">
+                            <h3>Quick Start</h3>
+                            <div class="link-grid">
+                                <a href="#" data-file="README.md" class="quick-link-card">
+                                    <span class="link-icon">📖</span>
+                                    <span class="link-text">README</span>
+                                </a>
+                                <a href="#" data-file="Frameworks/Frontend/basics/js.md" class="quick-link-card">
+                                    <span class="link-icon">📘</span>
+                                    <span class="link-text">JavaScript</span>
+                                </a>
+                                <a href="#" data-file="Frameworks/Frontend/basics/TypeScript.md" class="quick-link-card">
+                                    <span class="link-icon">📗</span>
+                                    <span class="link-text">TypeScript</span>
+                                </a>
+                                <a href="#" data-file="System Design/System Design.md" class="quick-link-card">
+                                    <span class="link-icon">🏗️</span>
+                                    <span class="link-text">System Design</span>
+                                </a>
+                                <a href="#" data-file="Design Patterns/intro.md" class="quick-link-card">
+                                    <span class="link-icon">🎨</span>
+                                    <span class="link-text">Design Patterns</span>
+                                </a>
+                                <a href="#" data-file="Solid Princables/SOLID Principles Complete Guide.md" class="quick-link-card">
+                                    <span class="link-icon">🔧</span>
+                                    <span class="link-text">SOLID Principles</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
