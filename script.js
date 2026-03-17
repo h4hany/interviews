@@ -271,6 +271,22 @@ function bindEvents() {
         }
     });
 
+    const sidebarLogo = document.getElementById('sidebarLogo');
+    if (sidebarLogo) {
+        sidebarLogo.addEventListener('click', () => showWelcome());
+        sidebarLogo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showWelcome(); } });
+    }
+
+    document.getElementById('breadcrumb').addEventListener('click', (e) => {
+        if (e.target.closest('.breadcrumb-home')) showWelcome();
+    });
+    document.getElementById('breadcrumb').addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.breadcrumb-home')) {
+            e.preventDefault();
+            showWelcome();
+        }
+    });
+
     const searchInput = document.getElementById('searchInput');
     const searchClear = document.getElementById('searchClear');
 
@@ -427,16 +443,16 @@ function setActiveFile(path) {
 function setBreadcrumb(filePath) {
     const bc = document.getElementById('breadcrumb');
     if (!filePath) {
-        bc.innerHTML = '<span class="breadcrumb-item active">Home</span>';
+        bc.innerHTML = '<span class="breadcrumb-item breadcrumb-home active" role="button" tabindex="0">Home</span>';
         return;
     }
     const parts = filePath.split('/').filter(p => p && p !== 'README.md');
-    let html = '<span class="breadcrumb-item">Home</span>';
+    let html = '<span class="breadcrumb-item breadcrumb-home" role="button" tabindex="0">Home</span>';
     parts.forEach((p, i) => {
         const label = p.replace(/\.md$/i, '').replace(/\.html$/i, '');
         const isLast = i === parts.length - 1;
         html += `<span class="breadcrumb-sep">/</span>`;
-        html += `<span class="breadcrumb-item${isLast ? ' active' : ''}">${label}</span>`;
+        html += `<span class="breadcrumb-item${isLast ? ' active' : ''}">${escapeHtml(label)}</span>`;
     });
     bc.innerHTML = html;
 }
@@ -618,10 +634,13 @@ async function loadFile(filePath, addToHistory = true) {
 
     try {
         let fullPath = BASE_PATH ? `${BASE_PATH}/${filePath.replace(/^\//, '')}` : filePath;
-        let resp = await fetch(fullPath);
+        // Encode path segments (e.g. spaces in "Quick Reference Guide.md") so fetch() works
+        const encodedPath = fullPath.split('/').map(seg => encodeURIComponent(seg)).join('/');
+        let resp = await fetch(encodedPath);
 
         if (!resp.ok && BASE_PATH) {
-            resp = await fetch(filePath);
+            const encodedPathOnly = filePath.split('/').map(seg => encodeURIComponent(seg)).join('/');
+            resp = await fetch(encodedPathOnly);
         }
 
         if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
