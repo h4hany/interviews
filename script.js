@@ -42,14 +42,14 @@ const fileStructure = {
         "HTML Playground": "Frameworks/Frontend/basics/html-interview-prep.html"
     },
     "Backend": {
-        "Ruby": "Programming/Ruby.md",
-        "Go": "Programming/Go.md",
+        "Ruby": "Frameworks/Backend/Rails/Ruby.md",
+        "Go": "Frameworks/Backend/go/Go.md",
         ".NET/C#": "Frameworks/Backend/dotNet/00_INDEX.md",
         "Ruby on Rails": "Frameworks/Backend/Rails/Ruby on Rails.md",
         "Node.js": "Frameworks/Backend/node/Node.md",
         "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html",
-        "Java & Spring Boot (50+ Q&A)": "Frameworks/Backend/Java-Spring-Boot-Interview-QA.md",
-        "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/Python-Django-FastAPI-Interview-QA.md"
+        "Java & Spring Boot (50+ Q&A)": "Frameworks/Backend/java/Java-Spring-Boot-Interview-QA.md",
+        "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/pyhton/Python-Django-FastAPI-Interview-QA.md"
     },
     "Databases": {
         "MySQL": "Databases/mysql.md",
@@ -110,7 +110,9 @@ const fileStructure = {
     },
     "Infrastructure": {
         "Docker": "Infrastructure/Docker.md",
-        "Kubernetes": "Infrastructure/Kubernetes.md"
+        "Kubernetes": "Infrastructure/k8s/Kubernetes.md",
+        "KCNA Study Plan": "Infrastructure/k8s/Kubernetes and Cloud Native Associate (KCNA) Study Plan.md",
+        "KCNA Final Mock Exam": "Infrastructure/k8s/KCNA Final Mock Exam.md"
     },
     "DevOps": {
         "DevOps Fundamentals": "DevOps/DevOps.md",
@@ -525,7 +527,7 @@ function showWelcome() {
                     <a href="#" data-file="design/SOLID-Principles/SOLID Principles Complete Guide.md" class="card">
                         <span class="card-icon">🔧</span>SOLID
                     </a>
-                    <a href="#" data-file="Infrastructure/Kubernetes.md" class="card">
+                    <a href="#" data-file="Infrastructure/k8s/Kubernetes.md" class="card">
                         <span class="card-icon">☸️</span>Kubernetes
                     </a>
                 </div>

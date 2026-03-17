@@ -1,331 +1,1071 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ruby & Rails — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
-    --accent: #ff6b6b; --accent2: #ff6b35; --accent3: #7c5cfc; --accent4: #00d4ff;
-    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
-    --card-radius: 12px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(255,107,107,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,107,0.03) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
-  }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
-  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,107,107,0.05); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
-  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); cursor: pointer; }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(255,107,107,0.1); color: var(--accent); border: 1px solid rgba(255,107,107,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruby & Rails — Interview Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0d0a0f;--surface:#141018;--surface2:#1a1520;--border:#241e2e;--accent:#e84393;--accent2:#f7931e;--accent3:#9b59b6;--accent4:#e74c3c;--text:#f0e8f8;--text-dim:#9080a8;--text-dimmer:#4a3a5a;--yellow:#f9ca24;--green:#6ab04c;--card-radius:12px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(232,67,147,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(232,67,147,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+        header{position:sticky;top:0;z-index:100;background:rgba(13,10,15,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+        .logo{font-family:'Space Mono',monospace;font-size:14px;color:var(--accent);letter-spacing:2px}
+        .logo span{color:var(--text-dim)}
+        .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+        .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width 0.5s ease;width:0%}
+        .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(249,202,36,0.1);border:1px solid rgba(249,202,36,0.2);padding:4px 12px;border-radius:20px}
+        .app{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+        nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+        .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+        .nav-item:hover{color:var(--text);background:var(--surface)}
+        .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(232,67,147,0.05)}
+        .nav-item .icon{font-size:16px;width:20px;text-align:center}
+        .nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--accent);display:none}
+        .nav-item.completed .done-dot{display:block}
+        main{overflow-y:auto}
+        .hero{padding:60px 48px;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at 20% 50%,rgba(232,67,147,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(155,89,182,0.06) 0%,transparent 60%)}
+        .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px}
+        .hero h1{font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;margin-bottom:16px;background:linear-gradient(135deg,var(--text) 0%,var(--text-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero h1 .highlight{background:linear-gradient(135deg,var(--accent) 0%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{color:var(--text-dim);font-size:16px;max-width:520px;line-height:1.7;margin-bottom:32px;font-weight:400}
+        .stat-row{display:flex;gap:32px;flex-wrap:wrap}
+        .stat{display:flex;flex-direction:column;gap:4px}
+        .stat-num{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--accent)}
+        .stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+        .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border)}
+        .topic-card{background:var(--bg);padding:28px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+        .topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+        .topic-card:hover{background:var(--surface)}
+        .topic-card:hover::before{opacity:1}
+        .card-color-0::before{background:radial-gradient(circle at 0% 0%,rgba(232,67,147,0.08),transparent 60%)}
+        .card-color-1::before{background:radial-gradient(circle at 0% 0%,rgba(155,89,182,0.08),transparent 60%)}
+        .card-color-2::before{background:radial-gradient(circle at 0% 0%,rgba(247,147,30,0.08),transparent 60%)}
+        .card-color-3::before{background:radial-gradient(circle at 0% 0%,rgba(231,76,60,0.08),transparent 60%)}
+        .card-emoji{font-size:32px;margin-bottom:12px;display:block}
+        .card-title{font-size:16px;font-weight:700;margin-bottom:6px}
+        .card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:16px;font-weight:400}
+        .card-tag-row{display:flex;flex-wrap:wrap;gap:6px}
+        .tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+        .tag.hot{background:rgba(232,67,147,0.1);color:var(--accent);border-color:rgba(232,67,147,0.2)}
+        .tag.key{background:rgba(155,89,182,0.1);color:var(--accent3);border-color:rgba(155,89,182,0.2)}
+        .lesson-page{display:none;padding:40px 48px;max-width:900px}
+        .lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+        .lesson-breadcrumb:hover{color:var(--accent)}
+        .lesson-breadcrumb::before{content:'← '}
+        .lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+        .lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin-bottom:10px}
+        .lesson-title{font-size:36px;font-weight:800;margin-bottom:12px}
+        .lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:600px;font-weight:400}
+        .content-section{margin-bottom:40px}
+        .section-title{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+        .section-title::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px}
+        .prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+        .prose strong{color:var(--text);font-weight:700}
+        .prose .hl{color:var(--accent)}
+        .prose .hl2{color:var(--accent2)}
+        .prose .hl3{color:var(--accent3)}
+        .code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0;font-family:'JetBrains Mono',monospace}
+        .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+        .code-lang{font-size:10px;letter-spacing:2px;color:var(--accent);font-family:'Space Mono',monospace}
+        .copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+        .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+        pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.7;color:#c9b8e8}
+        .kw{color:#e84393}.fn{color:#9b59b6}.st{color:#6ab04c}.nm{color:#f7931e}.cm{color:#5a4a6a;font-style:italic}.op{color:#3498db}.id{color:#e74c3c}
+        .analogy-box{background:rgba(249,202,36,0.05);border:1px solid rgba(249,202,36,0.15);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:20px 24px;margin:20px 0}
+        .analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+        .analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+        .interview-box{background:rgba(155,89,182,0.05);border:1px solid rgba(155,89,182,0.15);border-radius:var(--card-radius);padding:20px 24px;margin:20px 0}
+        .interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent3);margin-bottom:12px}
+        .interview-q{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+        .interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent3);font-size:16px;transition:transform 0.2s}
+        .interview-q.open::after{transform:rotate(45deg)}
+        .interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400;padding-top:12px;border-top:1px solid var(--border);margin-top:8px}
+        .interview-a.open{display:block}
+        .info-box{background:rgba(52,152,219,0.05);border:1px solid rgba(52,152,219,0.15);border-left:3px solid #3498db;border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7}
+        .warn-box{background:rgba(247,147,30,0.05);border:1px solid rgba(247,147,30,0.15);border-left:3px solid var(--accent2);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7}
+        .warn-box strong{color:var(--accent2)}
+        .cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+        .cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+        .cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.6}
+        .cheat-table tr:last-child td{border-bottom:none}
+        .cheat-table td:first-child{color:#9b59b6;font-family:'JetBrains Mono',monospace;font-size:12px}
+        .quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+        .quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px}
+        .quiz-q{font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.5}
+        .quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+        .quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:10px;font-weight:600}
+        .quiz-opt:hover{border-color:var(--accent3);background:var(--surface2)}
+        .quiz-opt.correct{border-color:var(--green);background:rgba(106,176,76,0.05);color:var(--green)}
+        .quiz-opt.wrong{border-color:#e74c3c;background:rgba(231,76,60,0.05);color:#e74c3c}
+        .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+        .quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+        .quiz-feedback.show{display:block}
+        .quiz-feedback.right{background:rgba(106,176,76,0.1);color:var(--green);border:1px solid rgba(106,176,76,0.2)}
+        .quiz-feedback.wrong{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+        .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px}
+        .btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+        .btn-primary{background:var(--accent);color:var(--bg)}
+        .btn-primary:hover{box-shadow:0 0 20px rgba(232,67,147,0.4);transform:translateY(-1px)}
+        .btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+        .btn-secondary:hover{border-color:var(--accent3);color:var(--text)}
+        .mark-done-btn{background:rgba(232,67,147,0.1);color:var(--accent);border:1px solid rgba(232,67,147,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+        .mark-done-btn:hover{background:rgba(232,67,147,0.2)}
+        ::-webkit-scrollbar{width:6px;height:6px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        #home-page{display:block}
+    </style>
 </head>
 <body>
 <header>
-  <div class="logo">RUBY<span>·</span>RAILS <span>// PREP</span></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
-  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+    <div class="logo">RUBY <span>// RAILS PREP</span></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+    <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 <div class="app">
-  <nav class="sidebar">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">Ruby</div>
-    <div class="nav-item" onclick="showLesson('ruby-basics')" id="nav-ruby-basics"><span>💎</span> Ruby Basics <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('blocks-procs')" id="nav-blocks-procs"><span>🔒</span> Blocks & Procs <span class="done-dot"></span></div>
-    <div class="nav-section-title">Rails</div>
-    <div class="nav-item" onclick="showLesson('mvc-active-record')" id="nav-mvc-active-record"><span>🏗️</span> MVC & ActiveRecord <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('associations')" id="nav-associations"><span>🔗</span> Associations <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('routing')" id="nav-routing"><span>🛤️</span> Routing & Controllers <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
-  </nav>
-  <main>
-    <div id="home-page">
-      <div class="hero">
-        <h1>Master <span class="highlight">Ruby & Rails</span></h1>
-        <p class="hero-sub">Interview prep for Ruby and Ruby on Rails: language basics, blocks, MVC, ActiveRecord, associations, and routing.</p>
-      </div>
-      <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('ruby-basics')"><span class="card-emoji">💎</span><div class="card-title">Ruby Basics</div><div class="card-desc">Objects, symbols, hashes, modules, metaprogramming</div></div>
-        <div class="topic-card" onclick="showLesson('blocks-procs')"><span class="card-emoji">🔒</span><div class="card-title">Blocks & Procs</div><div class="card-desc">Blocks, procs, lambdas, yield</div></div>
-        <div class="topic-card" onclick="showLesson('mvc-active-record')"><span class="card-emoji">🏗️</span><div class="card-title">MVC & ActiveRecord</div><div class="card-desc">Models, validations, callbacks, queries</div></div>
-        <div class="topic-card" onclick="showLesson('associations')"><span class="card-emoji">🔗</span><div class="card-title">Associations</div><div class="card-desc">has_many, belongs_to, through, N+1</div></div>
-        <div class="topic-card" onclick="showLesson('routing')"><span class="card-emoji">🛤️</span><div class="card-title">Routing</div><div class="card-desc">REST, resources, nested routes, constraints</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference for interviews</div></div>
-      </div>
-    </div>
-    <div id="lesson-ruby-basics" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">💎 Ruby Basics</div>
-      <div class="lesson-subtitle">Symbols, hashes, modules, and common interview points.</div>
-      <div class="content-section">
-        <div class="section-title">Symbols vs Strings</div>
-        <div class="prose">Symbols are <strong>immutable, interned</strong> identifiers: the same symbol literal always refers to the same object in memory. Use them for hash keys, method names, and when identity matters. Strings are mutable and better for user-facing text. Symbols save memory when reused across the app.</div>
-        <div class="code-block"><pre>:user.object_id == :user.object_id   # true (same object)
-"user".object_id != "user".object_id # false (new string each time)
+    <nav class="sidebar">
+        <div class="nav-section-title">Start Here</div>
+        <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span> Home</div>
+        <div class="nav-section-title">Ruby Core</div>
+        <div class="nav-item" onclick="showLesson('ruby-basics')" id="nav-ruby-basics"><span class="icon">💎</span> Ruby Basics<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('oop')" id="nav-oop"><span class="icon">🧬</span> OOP & Classes<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('modules-mixins')" id="nav-modules-mixins"><span class="icon">🧩</span> Modules & Mixins<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('blocks-procs')" id="nav-blocks-procs"><span class="icon">🔷</span> Blocks, Procs & Lambdas<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('collections')" id="nav-collections"><span class="icon">📚</span> Enumerable & Collections<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('metaprogramming')" id="nav-metaprogramming"><span class="icon">🔮</span> Metaprogramming<span class="done-dot"></span></div>
+        <div class="nav-section-title">Rails Deep Dive</div>
+        <div class="nav-item" onclick="showLesson('rails-mvc')" id="nav-rails-mvc"><span class="icon">🏗️</span> MVC Architecture<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('activerecord')" id="nav-activerecord"><span class="icon">🗄️</span> ActiveRecord<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('routing')" id="nav-routing"><span class="icon">🛣️</span> Routing<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('concerns')" id="nav-concerns"><span class="icon">📋</span> Concerns & Service Objects<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('caching')" id="nav-caching"><span class="icon">⚡</span> Caching Strategies<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('background-jobs')" id="nav-background-jobs"><span class="icon">⚙️</span> Background Jobs<span class="done-dot"></span></div>
+        <div class="nav-section-title">Interview Blitz</div>
+        <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span> Full Cheatsheet<span class="done-dot"></span></div>
+    </nav>
+    <main id="mainContent">
+        <div id="home-page">
+            <div class="hero">
+                <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+                <h1>Master <span class="highlight">Ruby</span> &<br>Ruby on Rails</h1>
+                <p class="hero-sub">From blocks and metaprogramming to ActiveRecord, REST, and production Rails patterns — everything for your interview in one place.</p>
+                <div class="stat-row">
+                    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Core Topics</div></div>
+                    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Interview Questions</div></div>
+                    <div class="stat"><div class="stat-num">35+</div><div class="stat-label">Code Examples</div></div>
+                    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Quizzes</div></div>
+                </div>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card card-color-0" onclick="showLesson('ruby-basics')"><span class="card-emoji">💎</span><div class="card-title">Ruby Basics</div><div class="card-desc">Symbols vs strings, nil, truthiness, frozen objects, string interpolation, ranges.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('oop')"><span class="card-emoji">🧬</span><div class="card-title">OOP & Classes</div><div class="card-desc">Inheritance, attr_accessor, initialize, instance vs class methods, visibility.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('modules-mixins')"><span class="card-emoji">🧩</span><div class="card-title">Modules & Mixins</div><div class="card-desc">include vs extend vs prepend, Comparable, Enumerable. Ruby's answer to multiple inheritance.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('blocks-procs')"><span class="card-emoji">🔷</span><div class="card-title">Blocks, Procs & Lambdas</div><div class="card-desc">yield, block_given?, Proc vs Lambda differences, closures. The heart of Ruby's elegance.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-0" onclick="showLesson('collections')"><span class="card-emoji">📚</span><div class="card-title">Enumerable & Collections</div><div class="card-desc">map, select, reduce, each_with_object, flat_map, group_by. Ruby's collection power.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('metaprogramming')"><span class="card-emoji">🔮</span><div class="card-title">Metaprogramming</div><div class="card-desc">method_missing, define_method, send, respond_to?, open classes, DSLs.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('rails-mvc')"><span class="card-emoji">🏗️</span><div class="card-title">Rails MVC</div><div class="card-desc">How Rails MVC works, request-response cycle, convention over configuration, middleware.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('activerecord')"><span class="card-emoji">🗄️</span><div class="card-title">ActiveRecord</div><div class="card-desc">Associations, validations, scopes, callbacks, N+1 problem, eager loading.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-0" onclick="showLesson('routing')"><span class="card-emoji">🛣️</span><div class="card-title">Routing</div><div class="card-desc">resources, nested routes, concerns, custom routes, route helpers.</div><div class="card-tag-row"><span class="tag key">RAILS CORE</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('concerns')"><span class="card-emoji">📋</span><div class="card-title">Service Objects & Concerns</div><div class="card-desc">Keeping controllers thin, service objects, concerns, form objects, query objects.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('caching')"><span class="card-emoji">⚡</span><div class="card-title">Caching</div><div class="card-desc">Fragment caching, Russian doll, low-level caching, cache_key, Rails.cache.</div><div class="card-tag-row"><span class="tag key">PERFORMANCE</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('background-jobs')"><span class="card-emoji">⚙️</span><div class="card-title">Background Jobs</div><div class="card-desc">Sidekiq, ActiveJob, retries, idempotency, job design best practices.</div><div class="card-tag-row"><span class="tag key">PRODUCTION</span></div></div>
+            </div>
+        </div>
 
-h = { name: "Alice", age: 30 }  # symbol keys</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Modules: include vs extend</div>
-        <div class="prose"><strong>include</strong> adds the module as instance methods (mixed into the class). <strong>extend</strong> adds the module as class methods. <code>extend</code> on an instance gives that instance the module's methods as singleton methods. Use modules for namespacing and shared behavior (mixins).</div>
-        <div class="code-block"><pre>module Helper
-  def greet; "Hi"; end
-end
-class Foo
-  include Helper   # instance methods
-end
-class Bar
-  extend Helper    # class methods: Bar.greet
-end</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Metaprogramming</div>
-        <div class="prose">Ruby lets you define and invoke methods dynamically. <code>define_method</code> creates methods at runtime. <code>send</code> or <code>public_send</code> invokes a method by name. <code>attr_accessor</code>, <code>has_many</code> in Rails are built with metaprogramming. Be aware of performance and readability when using it.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When would you use a symbol instead of a string?</div>
-        <div class="interview-a">Use symbols for hash keys, identifiers, and when you need identity comparison or memory efficiency (e.g. many repeated keys). Use strings for user input, output, and when you need to modify the value.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is the difference between proc and lambda?</div>
-        <div class="interview-a">Lambda checks argument count (arity); proc does not. <code>return</code> in a lambda exits only the lambda; in a proc it returns from the enclosing method. Use lambdas when you want strict, method-like behavior.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('ruby-basics')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-blocks-procs" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔒 Blocks & Procs</div>
-      <div class="lesson-subtitle">Blocks, procs, lambdas, and yield.</div>
-      <div class="content-section">
-        <div class="section-title">Blocks and yield</div>
-        <div class="prose">A <strong>block</strong> is a chunk of code passed to a method (in curly braces or <code>do...end</code>). The method invokes it with <code>yield</code>. Blocks are not objects by default; they are part of the method call. You can pass arguments to <code>yield</code> and use <code>block_given?</code> to check if a block was passed.</div>
-        <div class="code-block"><pre>def twice
-  yield 1
-  yield 2
-end
-twice { |n| puts n }  # 1, 2</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Procs and lambdas</div>
-        <div class="prose"><strong>Proc</strong> is an object that holds a block; create with <code>Proc.new { }</code> or <code>proc { }</code>, call with <code>.call</code>. <strong>Lambda</strong> is a proc with strict arity (wrong number of args = error) and <code>return</code> only exits the lambda. Create with <code>lambda { }</code> or <code>-&gt;() { }</code>. Storing a block as a proc lets you pass it around or call it later.</div>
-        <div class="code-block"><pre>p = proc { |a, b| [a, b] }
-p.call(1)      # [1, nil] — proc does not care about arity
-l = lambda { |a, b| [a, b] }
-l.call(1)      # ArgumentError — lambda enforces arity</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How do you pass a block to a method and call it?</div>
-        <div class="interview-a">Either use <code>yield</code> inside the method (and call the method with <code>method { }</code>), or capture the block with <code>&amp;block</code> in the method signature and call <code>block.call</code>. The <code>&amp;</code> converts a block to a Proc and vice versa.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Proc vs lambda — return behavior?</div>
-        <div class="interview-a">In a lambda, <code>return</code> returns from the lambda only. In a proc, <code>return</code> returns from the enclosing method (can cause LocalJumpError if the proc was called from a context that does not allow return). So lambdas behave more like methods.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('blocks-procs')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-mvc-active-record" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🏗️ MVC & ActiveRecord</div>
-      <div class="lesson-subtitle">Models, validations, callbacks, and query interface.</div>
-      <div class="content-section">
-        <div class="section-title">MVC in Rails</div>
-        <div class="prose"><strong>Model</strong> (ActiveRecord): business logic, validations, DB access. <strong>View</strong>: templates (ERB, etc.) that render HTML or JSON. <strong>Controller</strong>: receives requests, talks to the model, and renders a view or redirects. Keep controllers thin; put logic in models or service objects.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Validations and callbacks</div>
-        <div class="prose">Validations run before save (e.g. <code>validates :name, presence: true</code>). Failed validations prevent save and add errors to <code>model.errors</code>. Callbacks run at lifecycle points: <code>before_save</code>, <code>after_commit</code>, etc. Use <code>after_commit</code> for side effects (e.g. sending email) so they run only after the transaction commits.</div>
-        <div class="code-block"><pre>class User < ApplicationRecord
-  validates :email, presence: true, uniqueness: true
-  before_save :normalize_email
-  after_commit :send_welcome_email, on: :create
-end</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Query interface</div>
-        <div class="prose"><code>where</code>, <code>joins</code>, <code>includes</code> (eager load to avoid N+1), <code>pluck</code> (returns array of values without loading AR objects), <code>select</code>, <code>order</code>, <code>limit</code>. Scopes are reusable query fragments. Chain them for readable queries.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When do you use after_commit instead of after_save?</div>
-        <div class="interview-a">Use <code>after_commit</code> when the side effect (e.g. sending email, enqueueing a job) should happen only after the transaction successfully commits. <code>after_save</code> runs inside the transaction; if the transaction rolls back, the side effect already ran.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is the difference between pluck and select?</div>
-        <div class="interview-a"><code>pluck(:col)</code> runs a SQL query that returns only that column as an array of values; no ActiveRecord objects are built. <code>select(:col)</code> still returns AR objects but only with that attribute loaded. Use pluck when you only need raw values for performance.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('mvc-active-record')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-associations" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔗 Associations</div>
-      <div class="lesson-subtitle">has_many, belongs_to, through, N+1.</div>
-      <div class="content-section">
-        <div class="section-title">Association types</div>
-        <div class="prose"><strong>belongs_to</strong>: the model has a foreign key (e.g. Post belongs_to :user). <strong>has_many</strong>: one-to-many (User has_many :posts). <strong>has_many :through</strong>: many-to-many via a join model (User has_many :roles, through: :assignments). <strong>has_and_belongs_to_many</strong>: many-to-many with a join table that has no extra columns. Add <code>dependent: :destroy</code> or <code>:nullify</code> to control what happens when the parent is deleted.</div>
-        <div class="code-block"><pre>class User < ApplicationRecord
-  has_many :posts, dependent: :destroy
-  has_many :comments, through: :posts
-end
-class Post < ApplicationRecord
-  belongs_to :user
-  has_many :comments
-end</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">N+1 and eager loading</div>
-        <div class="prose">N+1: loading a list of records and then accessing an association on each causes one query per record. Fix with <strong>includes</strong> (eager load), <strong>eager_load</strong> (always LEFT OUTER JOIN), or <strong>preload</strong> (separate queries). <code>includes</code> is usually enough; Rails picks the strategy. Use <code>references</code> when you need to filter by an included association.</div>
-        <div class="code-block"><pre># Bad: N+1
-Post.all.each { |p| p.user.name }
+        <!-- RUBY BASICS -->
+        <div id="lesson-ruby-basics" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY CORE</div>
+                <div class="lesson-title">💎 Ruby Basics</div>
+                <div class="lesson-subtitle">The foundational Ruby concepts that separate developers who use Ruby from those who understand it.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Everything is an Object</div>
+                <div class="prose">In Ruby, <strong>everything is an object</strong> — including integers, nil, true, and false. Every object has methods. This is the foundation of Ruby's design.</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># Everything is an object — even primitives</span>
+<span class="nm">42</span>.class          <span class="cm"># => Integer</span>
+<span class="nm">3.14</span>.class        <span class="cm"># => Float</span>
+<span class="st">"hello"</span>.class    <span class="cm"># => String</span>
+<span class="kw">nil</span>.class         <span class="cm"># => NilClass</span>
+<span class="kw">true</span>.class        <span class="cm"># => TrueClass</span>
+<span class="nm">42</span>.respond_to?(<span class="op">:+</span>) <span class="cm"># => true</span>
 
-# Good
-Post.includes(:user).each { |p| p.user.name }</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: has_many :through vs has_and_belongs_to_many?</div>
-        <div class="interview-a">Use <code>has_many :through</code> when the join model has its own attributes or you need to work with it (e.g. Assignment with a <code>role_name</code> or <code>assigned_at</code>). Use <code>has_and_belongs_to_many</code> when the join table is only two foreign keys with no extra columns.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How do you find and fix N+1 queries?</div>
-        <div class="interview-a">Use the Bullet gem in development, or watch logs for many similar queries. Fix by eager loading: <code>Model.includes(:association)</code> (or <code>eager_load</code> / <code>preload</code>). For filtering by association use <code>includes(...).where(associations: { ... })</code> and <code>references(:association)</code> if needed.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('associations')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-routing" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🛤️ Routing & Controllers</div>
-      <div class="lesson-subtitle">REST, resources, nested routes, strong params.</div>
-      <div class="content-section">
-        <div class="section-title">Resources and REST</div>
-        <div class="prose"><code>resources :posts</code> generates the seven RESTful routes: index, show, new, create, edit, update, destroy. Use <code>only:</code> or <code>except:</code> to limit. <code>resource</code> (singular) for a single resource (e.g. profile). <code>member</code> adds a route on a specific id (e.g. <code>post/1/publish</code>); <code>collection</code> adds a route on the collection (e.g. <code>posts/search</code>).</div>
-        <div class="code-block"><pre>resources :posts do
-  member   { get :publish }
-  collection { get :search }
-end
-# Nested: resources :comments (under posts)</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Strong parameters</div>
-        <div class="prose">Never pass <code>params</code> directly into <code>Model.new</code> or <code>update</code> (mass assignment vulnerability). Use <strong>strong parameters</strong>: <code>params.require(:post).permit(:title, :body, :user_id)</code>. This whitelists which keys can be set from the request. Define in a private method in the controller.</div>
-        <div class="code-block"><pre>def create
-  @post = Post.new(post_params)
-  # ...
-end
-private
-def post_params
-  params.require(:post).permit(:title, :body, :published)
-end</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When do you use nested routes?</div>
-        <div class="interview-a">When a resource logically belongs to another (e.g. comments under a post). Nested routes give URLs like <code>/posts/5/comments</code>. Do not nest more than one level deep; keep resources shallow where possible. Use <code>shallow: true</code> so show/edit/update/destroy use the resource id only.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What are strong parameters and why use them?</div>
-        <div class="interview-a">Strong parameters whitelist which request parameters can be used for mass assignment. Without them, an attacker could pass <code>user[admin]=true</code> and escalate privileges. Always use <code>require</code> and <code>permit</code> in the controller for create/update.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('routing')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 Ruby & Rails cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for interviews.</div>
-      <div class="content-section">
-        <div class="section-title">Ruby</div>
-        <div class="prose">Symbol vs String (immutable, interned). Proc vs lambda (arity, return). Modules: include (instance methods) vs extend (class methods). Metaprogramming: define_method, send, attr_accessor.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Rails MVC & ActiveRecord</div>
-        <div class="prose">Model (validations, callbacks, scopes), View (templates), Controller (thin). Query: where, joins, includes, pluck. after_commit for side effects. pluck vs select.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Associations & N+1</div>
-        <div class="prose">belongs_to, has_many, has_many :through, has_and_belongs_to_many. Fix N+1 with includes / eager_load / preload. dependent: :destroy or :nullify.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Routing & params</div>
-        <div class="prose">resources, member, collection, nested (shallow). Strong parameters: params.require(:model).permit(:attr1, :attr2).</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
-    </div>
-  </main>
+<span class="cm"># Symbols — immutable, unique identifiers (more efficient than strings)</span>
+<span class="op">:name</span>.class       <span class="cm"># => Symbol</span>
+<span class="op">:name</span>.object_id == <span class="op">:name</span>.object_id <span class="cm"># => true (always same object!)</span>
+<span class="st">"name"</span>.object_id == <span class="st">"name"</span>.object_id <span class="cm"># => false (new string each time)</span>
+
+<span class="cm"># Truthiness: ONLY nil and false are falsy!</span>
+<span class="cm"># 0 is TRUTHY in Ruby (unlike JS/C)</span>
+<span class="kw">if</span> <span class="nm">0</span>; puts <span class="st">"0 is truthy!"</span>; <span class="kw">end</span> <span class="cm"># => "0 is truthy!"</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">String vs Symbol — Key Difference</div>
+                <div class="cheat-table-wrap"><table class="cheat-table">
+                    <tr><th>String</th><th>Symbol</th></tr>
+                    <tr><td>Mutable by default</td><td>Always immutable</td></tr>
+                    <tr><td>New object each time</td><td>Same object (unique per name)</td></tr>
+                    <tr><td>Use for content/data</td><td>Use for identifiers, keys</td></tr>
+                    <tr><td>"name".frozen? => false</td><td>:name.frozen? => true</td></tr>
+                </table></div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># Frozen strings — immutable (like symbols for strings)</span>
+str = <span class="st">"hello"</span>.freeze
+str << <span class="st">" world"</span> <span class="cm"># => FrozenError!</span>
+
+<span class="cm"># frozen_string_literal magic comment (Rails default in newer versions)</span>
+<span class="cm"># frozen_string_literal: true</span>
+
+<span class="cm"># nil safety</span>
+user = <span class="kw">nil</span>
+user&.name   <span class="cm"># => nil (safe navigation operator &. — like ?. in JS)</span>
+user.name    <span class="cm"># => NoMethodError!</span>
+
+<span class="cm"># Multiple assignment</span>
+a, b, *rest = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>]
+<span class="cm"># a=1, b=2, rest=[3,4]</span>
+
+<span class="cm"># String interpolation (only double quotes!)</span>
+name = <span class="st">"Hany"</span>
+puts <span class="st">"Hello, #{name}!"</span>  <span class="cm"># => "Hello, Hany!"</span>
+puts <span class="st">'Hello, #{name}!'</span>  <span class="cm"># => "Hello, #{name}!" — no interpolation</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between nil and false in Ruby?</div>
+                <div class="interview-a">Both are falsy, but they're different objects. nil is NilClass and represents "nothing/absence of value." false is FalseClass and is a boolean. All other values — including 0, empty string "", and empty array [] — are truthy. nil.nil? returns true; false.nil? returns false.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use symbols over strings as hash keys?</div>
+                <div class="interview-a">Symbols are immutable and unique — :name always refers to the same object in memory. Strings create a new object each time they're used. Hash lookup with symbol keys is faster because there's no need to hash the string each time. In practice: use symbols for identifiers/keys ({name: "Hany"}), strings for actual text content.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the safe navigation operator &. ?</div>
+                <div class="interview-a">The &. operator (introduced Ruby 2.3) calls a method only if the receiver is not nil, otherwise returns nil. It's equivalent to `obj && obj.method`. Example: `user&.address&.city` returns nil if user or address is nil, without raising NoMethodError. Equivalent to Rails' .try() method but faster and native.</div>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">Which of these is FALSY in Ruby?</div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'rb','wrong')"><span class="opt-letter">A</span>0</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'rb','wrong')"><span class="opt-letter">B</span>""  (empty string)</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'rb','correct')"><span class="opt-letter">C</span>nil ✓</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'rb','wrong')"><span class="opt-letter">D</span>[]  (empty array)</div>
+                </div>
+                <div class="quiz-feedback" id="quiz-rb-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="mark-done-btn" onclick="markDone('ruby-basics')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('oop')">Next: OOP →</button>
+            </div>
+        </div>
+
+        <!-- OOP -->
+        <div id="lesson-oop" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY CORE</div>
+                <div class="lesson-title">🧬 OOP & Classes</div>
+                <div class="lesson-subtitle">Ruby is a pure OOP language. Understanding Ruby's class system is essential for any Rails work.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Class Fundamentals</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">class</span> <span class="fn">Animal</span>
+  <span class="cm"># Class variable (shared across all instances)</span>
+  @@count = <span class="nm">0</span>
+
+  <span class="cm"># attr_accessor = getter + setter</span>
+  <span class="cm"># attr_reader  = getter only</span>
+  <span class="cm"># attr_writer  = setter only</span>
+  attr_accessor <span class="op">:name</span>, <span class="op">:age</span>
+  attr_reader <span class="op">:species</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(name, age)
+    @name = name      <span class="cm"># instance variable</span>
+    @age = age
+    @@count += <span class="nm">1</span>
+  <span class="kw">end</span>
+
+  <span class="cm"># Class method (called on class itself)</span>
+  <span class="kw">def self</span>.count
+    @@count
+  <span class="kw">end</span>
+
+  <span class="cm"># Instance method</span>
+  <span class="kw">def</span> <span class="fn">speak</span>
+    <span class="st">"..."</span>
+  <span class="kw">end</span>
+
+  <span class="cm"># Method visibility</span>
+  <span class="kw">protected</span>
+  <span class="kw">def</span> <span class="fn">internal_id</span>; @id; <span class="kw">end</span>  <span class="cm"># accessible to subclasses</span>
+
+  <span class="kw">private</span>
+  <span class="kw">def</span> <span class="fn">secret</span>; <span class="st">"hidden"</span>; <span class="kw">end</span>  <span class="cm"># only within the class</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> <span class="fn">Dog</span> < <span class="fn">Animal</span>  <span class="cm"># single inheritance</span>
+  <span class="kw">def</span> <span class="fn">speak</span>
+    <span class="st">"Woof! I'm #{@name}"</span>   <span class="cm"># override + super access</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Comparable — Elegant Sorting</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">class</span> <span class="fn">Box</span>
+  include <span class="fn">Comparable</span>  <span class="cm"># gives you >, <, >=, <=, between?, clamp</span>
+  attr_accessor <span class="op">:volume</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(v); @volume = v; <span class="kw">end</span>
+
+  <span class="cm"># Only need to define <=> and Comparable gives you the rest!</span>
+  <span class="kw">def</span> <=>(other)
+    @volume <=> other.volume  <span class="cm"># spaceship operator</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+boxes = [<span class="fn">Box</span>.new(<span class="nm">3</span>), <span class="fn">Box</span>.new(<span class="nm">1</span>), <span class="fn">Box</span>.new(<span class="nm">2</span>)]
+boxes.sort.map(&<span class="op">:volume</span>)  <span class="cm"># => [1, 2, 3]</span>
+boxes.max.volume           <span class="cm"># => 3</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between class methods and instance methods?</div>
+                <div class="interview-a">Instance methods operate on a specific object instance (accessed via instance variables @var). They're called on an object: dog.speak. Class methods operate on the class itself, defined with def self.method_name. They're called on the class: Animal.count. Class methods are often used for factory methods, statistics, or operations that don't need an instance.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the spaceship operator <=> ?</div>
+                <div class="interview-a">The spaceship operator returns -1, 0, or 1 comparing two objects. -1 if left < right, 0 if equal, 1 if left > right. It's used by sort, min, max, and the Comparable module. By defining <=> in your class and including Comparable, you get all comparison operators for free.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Difference between protected and private in Ruby?</div>
+                <div class="interview-a">private methods can only be called within the class itself, without an explicit receiver (you can't call self.private_method). protected methods can be called by instances of the same class or subclasses — useful for comparisons between instances. Neither is accessible from outside the class.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('ruby-basics')">← Ruby Basics</button>
+                <button class="mark-done-btn" onclick="markDone('oop')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('modules-mixins')">Next: Modules →</button>
+            </div>
+        </div>
+
+        <!-- MODULES & MIXINS -->
+        <div id="lesson-modules-mixins" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY CORE</div>
+                <div class="lesson-title">🧩 Modules & Mixins</div>
+                <div class="lesson-subtitle">Ruby's answer to multiple inheritance. The most powerful code reuse mechanism in the language.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">include vs extend vs prepend</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">module</span> <span class="fn">Greetable</span>
+  <span class="kw">def</span> <span class="fn">greet</span>; <span class="st">"Hello, I'm #{name}"</span>; <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># include — adds module methods as INSTANCE methods</span>
+<span class="kw">class</span> <span class="fn">Person</span>
+  include <span class="fn">Greetable</span>
+  attr_reader <span class="op">:name</span>
+  <span class="kw">def</span> <span class="fn">initialize</span>(n); @name = n; <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="fn">Person</span>.new(<span class="st">"Hany"</span>).greet   <span class="cm"># => "Hello, I'm Hany"</span>
+
+<span class="cm"># extend — adds module methods as CLASS methods</span>
+<span class="kw">class</span> <span class="fn">Config</span>
+  extend <span class="fn">Greetable</span>
+<span class="kw">end</span>
+<span class="cm"># Config.greet  (class-level method)</span>
+
+<span class="cm"># prepend — inserts BEFORE the class in the method lookup chain</span>
+<span class="cm"># Used for wrapping/decorating methods (like before_action)</span>
+<span class="kw">module</span> <span class="fn">Logging</span>
+  <span class="kw">def</span> <span class="fn">save</span>
+    puts <span class="st">"Saving..."</span>
+    result = <span class="kw">super</span>   <span class="cm"># calls the original save</span>
+    puts <span class="st">"Saved!"</span>
+    result
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> <span class="fn">Post</span>
+  prepend <span class="fn">Logging</span>
+  <span class="kw">def</span> <span class="fn">save</span>; puts <span class="st">"DB write"</span>; <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="cm"># Post.new.save prints: "Saving..." → "DB write" → "Saved!"</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Method Lookup Chain</div>
+                <div class="analogy-box">
+                    <div class="analogy-label">💡 METHOD LOOKUP ORDER</div>
+                    <div class="analogy-text">When you call a method, Ruby searches: <strong>prepended modules → class itself → included modules (in reverse order) → superclass → superclass's modules → Object → BasicObject</strong>. First match wins. This is why prepend can wrap methods and include adds methods that the class can override.</div>
+                </div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY — ANCESTORS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">module</span> <span class="fn">M1</span>; <span class="kw">end</span>
+<span class="kw">module</span> <span class="fn">M2</span>; <span class="kw">end</span>
+<span class="kw">class</span> <span class="fn">A</span>; include <span class="fn">M1</span>; <span class="kw">end</span>
+<span class="kw">class</span> <span class="fn">B</span> < <span class="fn">A</span>; include <span class="fn">M2</span>; <span class="kw">end</span>
+
+<span class="fn">B</span>.ancestors
+<span class="cm"># => [B, M2, A, M1, Object, Kernel, BasicObject]</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between include and extend?</div>
+                <div class="interview-a">include adds module methods as instance methods — instances of the class can call them. extend adds module methods as class methods — the class itself can call them. A common pattern is to use both via a self.included hook: when a module is included, it also extends the class with class-level methods.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use prepend?</div>
+                <div class="interview-a">prepend is used when you want to wrap or decorate existing methods. Unlike include, prepended modules sit BEFORE the class in the lookup chain, so their methods execute first and can call super to invoke the original. Rails' ActiveSupport::Concern uses this pattern. Real use cases: logging, authentication checks, instrumentation around existing methods.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('oop')">← OOP</button>
+                <button class="mark-done-btn" onclick="markDone('modules-mixins')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('blocks-procs')">Next: Blocks & Procs →</button>
+            </div>
+        </div>
+
+        <!-- BLOCKS PROCS LAMBDAS -->
+        <div id="lesson-blocks-procs" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY CORE</div>
+                <div class="lesson-title">🔷 Blocks, Procs & Lambdas</div>
+                <div class="lesson-subtitle">The most uniquely Ruby concept. Powers iterators, DSLs, and Rails' expressiveness.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Blocks</div>
+                <div class="prose">A block is a chunk of code passed to a method. It's not an object — it's syntax. Methods receive blocks via <strong>yield</strong> or by accepting a &block parameter.</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># yield calls the block</span>
+<span class="kw">def</span> <span class="fn">repeat</span>(n)
+  n.times { yield } <span class="kw">if</span> block_given?
+<span class="kw">end</span>
+
+repeat(<span class="nm">3</span>) { puts <span class="st">"Hello!"</span> }  <span class="cm"># prints "Hello!" 3 times</span>
+
+<span class="cm"># yield with arguments</span>
+<span class="kw">def</span> <span class="fn">transform</span>(x)
+  yield(x) * <span class="nm">2</span>
+<span class="kw">end</span>
+transform(<span class="nm">5</span>) { |n| n + <span class="nm">1</span> }  <span class="cm"># => 12  (5+1=6, 6*2=12)</span>
+
+<span class="cm"># Explicit block capture with &</span>
+<span class="kw">def</span> <span class="fn">run_later</span>(&block)
+  block.call    <span class="cm"># store and call later</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Proc vs Lambda</div>
+                <table class="cheat-table">
+                    <tr><th>Feature</th><th>Proc</th><th>Lambda</th></tr>
+                    <tr><td>Return behavior</td><td>return exits ENCLOSING method</td><td>return exits lambda only</td></tr>
+                    <tr><td>Argument checking</td><td>Lenient (ignores extras)</td><td>Strict (raises ArgumentError)</td></tr>
+                    <tr><td>Is a lambda?</td><td>proc.lambda? => false</td><td>lam.lambda? => true</td></tr>
+                    <tr><td>Created with</td><td>Proc.new { } or proc { }</td><td>lambda { } or ->( ) { }</td></tr>
+                </table>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># Lambda — strict, predictable</span>
+square = ->(x) { x * x }
+square.(<span class="nm">5</span>)   <span class="cm"># => 25</span>
+square.call(<span class="nm">5</span>) <span class="cm"># => 25</span>
+
+<span class="cm"># Proc — lenient</span>
+greet = <span class="fn">proc</span> { |name| <span class="st">"Hello, #{name || 'stranger'}"</span> }
+greet.call        <span class="cm"># => "Hello, stranger" (nil arg ok)</span>
+
+<span class="cm"># Symbol to proc — powerful shorthand</span>
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>].map(&<span class="op">:to_s</span>)      <span class="cm"># => ["1", "2", "3"]</span>
+[<span class="st">"a"</span>,<span class="st">"b"</span>].map(&<span class="op">:upcase</span>)  <span class="cm"># => ["A", "B"]</span>
+<span class="cm"># &:method converts symbol to proc via Symbol#to_proc</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the main difference between a Proc and a Lambda?</div>
+                <div class="interview-a">Two key differences: (1) Return behavior — a return inside a Proc returns from the enclosing method, not just the Proc. A return inside a Lambda only exits the Lambda. This can cause LocalJumpError if the Proc outlives its enclosing method. (2) Argument checking — Lambdas strictly check argument count and raise ArgumentError; Procs ignore extra arguments and set missing ones to nil.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What does & do when used with a method argument?</div>
+                <div class="interview-a">When & is used in a method definition (&block), it captures the block as a Proc object. When used in a method call ([1,2,3].map(&:to_s)), it converts the following object to a Proc via the to_proc method. Symbol#to_proc creates a proc that calls that method on its argument — :to_s.to_proc == proc { |obj| obj.to_s }.</div>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">What will [1,2,3].map(&:to_s) return?</div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'bp','wrong')"><span class="opt-letter">A</span>[1, 2, 3]</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'bp','correct')"><span class="opt-letter">B</span>["1", "2", "3"] ✓</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'bp','wrong')"><span class="opt-letter">C</span>"123"</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'bp','wrong')"><span class="opt-letter">D</span>Error</div>
+                </div>
+                <div class="quiz-feedback" id="quiz-bp-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('modules-mixins')">← Modules</button>
+                <button class="mark-done-btn" onclick="markDone('blocks-procs')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('collections')">Next: Collections →</button>
+            </div>
+        </div>
+
+        <!-- COLLECTIONS -->
+        <div id="lesson-collections" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY CORE</div>
+                <div class="lesson-title">📚 Enumerable & Collections</div>
+                <div class="lesson-subtitle">Ruby's Enumerable module is one of the most powerful in the language. Master these and coding interviews become easy.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Essential Enumerable Methods</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre>users = [{name: <span class="st">"Hany"</span>, age: <span class="nm">30</span>}, {name: <span class="st">"Sara"</span>, age: <span class="nm">25</span>}, {name: <span class="st">"Ali"</span>, age: <span class="nm">30</span>}]
+
+<span class="cm"># map — transform each element (returns new array)</span>
+users.map { |u| u[:name] }          <span class="cm"># => ["Hany", "Sara", "Ali"]</span>
+users.map(&<span class="op">:name</span>)                   <span class="cm"># same (if using struct/model)</span>
+
+<span class="cm"># select / filter — keep matching elements</span>
+users.select { |u| u[:age] >= <span class="nm">30</span> }  <span class="cm"># => [{Hany,30}, {Ali,30}]</span>
+
+<span class="cm"># reject — opposite of select</span>
+users.reject { |u| u[:age] >= <span class="nm">30</span> }  <span class="cm"># => [{Sara,25}]</span>
+
+<span class="cm"># reduce / inject — fold into single value</span>
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>].reduce(<span class="nm">0</span>) { |sum, n| sum + n }  <span class="cm"># => 10</span>
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>].reduce(<span class="op">:+</span>)                      <span class="cm"># => 10 (shorthand!)</span>
+
+<span class="cm"># group_by — very common in Rails</span>
+users.group_by { |u| u[:age] }
+<span class="cm"># => {30=>[{Hany}, {Ali}], 25=>[{Sara}]}</span>
+
+<span class="cm"># each_with_object — build a new collection</span>
+users.each_with_object({}) { |u, h| h[u[:name]] = u[:age] }
+<span class="cm"># => {"Hany"=>30, "Sara"=>25, "Ali"=>30}</span>
+
+<span class="cm"># flat_map — map + flatten</span>
+[[<span class="nm">1</span>,<span class="nm">2</span>],[<span class="nm">3</span>,<span class="nm">4</span>]].flat_map { |a| a.map { |x| x * <span class="nm">2</span> } }
+<span class="cm"># => [2, 4, 6, 8]</span>
+
+<span class="cm"># any? / all? / none? / count</span>
+users.any? { |u| u[:age] > <span class="nm">28</span> }   <span class="cm"># => true</span>
+users.all? { |u| u[:age] > <span class="nm">20</span> }   <span class="cm"># => true</span>
+users.count { |u| u[:age] == <span class="nm">30</span> }  <span class="cm"># => 2</span>
+
+<span class="cm"># min_by / max_by / sort_by</span>
+users.min_by { |u| u[:age] }   <span class="cm"># => {Sara, 25}</span>
+users.sort_by { |u| u[:age] }  <span class="cm"># sorted array</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between map and each?</div>
+                <div class="interview-a">each iterates and returns the ORIGINAL array unchanged — it's for side effects. map iterates and returns a NEW array with transformed values. Rule: if you need the return values of the block, use map. If you're just doing side effects (printing, saving), use each.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use reduce/inject?</div>
+                <div class="interview-a">reduce accumulates a single value from a collection by applying a block that takes an accumulator and each element. Use it for: summing/multiplying values, building a hash from an array, flattening nested structures. It's the most powerful and general Enumerable method — technically you could implement all others with reduce.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('blocks-procs')">← Blocks</button>
+                <button class="mark-done-btn" onclick="markDone('collections')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('metaprogramming')">Next: Metaprogramming →</button>
+            </div>
+        </div>
+
+        <!-- METAPROGRAMMING -->
+        <div id="lesson-metaprogramming" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RUBY ADVANCED</div>
+                <div class="lesson-title">🔮 Metaprogramming</div>
+                <div class="lesson-subtitle">Code that writes code. The magic behind Rails' attr_accessor, has_many, and validates.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">method_missing & respond_to_missing?</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">class</span> <span class="fn">DynamicFinder</span>
+  <span class="cm"># Called when a method isn't found</span>
+  <span class="kw">def</span> method_missing(name, *args)
+    <span class="kw">if</span> name.to_s.start_with?(<span class="st">"find_by_"</span>)
+      field = name.to_s.sub(<span class="st">"find_by_"</span>, <span class="st">""</span>)
+      puts <span class="st">"SELECT * WHERE #{field} = #{args.first}"</span>
+    <span class="kw">else</span>
+      <span class="kw">super</span>  <span class="cm"># IMPORTANT: delegate to parent if unhandled</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="cm"># ALWAYS implement respond_to_missing? alongside method_missing!</span>
+  <span class="kw">def</span> respond_to_missing?(name, include_private = <span class="kw">false</span>)
+    name.to_s.start_with?(<span class="st">"find_by_"</span>) || <span class="kw">super</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+finder = <span class="fn">DynamicFinder</span>.new
+finder.find_by_email(<span class="st">"hany@test.com"</span>)
+<span class="cm"># => "SELECT * WHERE email = hany@test.com"</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">define_method & Open Classes</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># define_method — create methods programmatically</span>
+<span class="kw">class</span> <span class="fn">Status</span>
+  STATES = [<span class="op">:pending</span>, <span class="op">:active</span>, <span class="op">:cancelled</span>]
+
+  STATES.each <span class="kw">do</span> |state|
+    define_method(<span class="st">"#{state}?"</span>) { @status == state }
+    define_method(<span class="st">"#{state}!"</span>) { @status = state }
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="cm"># Creates: pending?, active?, cancelled?, pending!, active!, cancelled!</span>
+
+<span class="cm"># Open classes — add methods to existing classes</span>
+<span class="kw">class</span> <span class="fn">String</span>
+  <span class="kw">def</span> <span class="fn">palindrome?</span>
+    self == self.reverse
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="st">"racecar"</span>.palindrome?  <span class="cm"># => true</span>
+
+<span class="cm"># send — call any method by name (even private!)</span>
+obj.send(<span class="op">:private_method</span>)
+obj.public_send(<span class="op">:method</span>)  <span class="cm"># safer — respects visibility</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is method_missing and when should you use it?</div>
+                <div class="interview-a">method_missing is called by Ruby when a method can't be found in the normal lookup chain. Override it to implement dynamic dispatch — like Rails' find_by_name magic. Always: (1) call super for unhandled methods to avoid swallowing errors, (2) implement respond_to_missing? so respond_to? works correctly. Avoid overusing it — it's slow and makes code hard to debug.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What are open classes and what's the danger?</div>
+                <div class="interview-a">Open classes (monkey patching) let you add/modify methods on any existing class, including Ruby's own classes. Useful for adding convenience methods (e.g., 5.minutes in Rails). The danger: name collisions can silently break behavior, gems can conflict with each other, and debugging becomes hard. Best practice: use refinements (using/refine) for safer, scoped monkey patching.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('collections')">← Collections</button>
+                <button class="mark-done-btn" onclick="markDone('metaprogramming')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('rails-mvc')">Next: Rails MVC →</button>
+            </div>
+        </div>
+
+        <!-- RAILS MVC -->
+        <div id="lesson-rails-mvc" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS</div>
+                <div class="lesson-title">🏗️ Rails MVC Architecture</div>
+                <div class="lesson-subtitle">Convention over Configuration. The request-response lifecycle and how Rails organizes everything.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Request-Response Lifecycle</div>
+                <div class="analogy-box">
+                    <div class="analogy-label">📋 RAILS REQUEST FLOW</div>
+                    <div class="analogy-text">
+                        <strong>1. Browser</strong> sends HTTP request<br>
+                        <strong>2. Router</strong> (routes.rb) matches URL → controller#action<br>
+                        <strong>3. Middleware stack</strong> processes request (auth, sessions, logging)<br>
+                        <strong>4. Controller</strong> receives params, calls models, assigns @variables<br>
+                        <strong>5. Model</strong> queries/updates database via ActiveRecord<br>
+                        <strong>6. View</strong> renders ERB template with @variables<br>
+                        <strong>7. Response</strong> sent back to browser
+                    </div>
+                </div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY — CONTROLLER</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">class</span> <span class="fn">PostsController</span> < <span class="fn">ApplicationController</span>
+  before_action <span class="op">:authenticate_user!</span>
+  before_action <span class="op">:set_post</span>, only: [<span class="op">:show</span>, <span class="op">:edit</span>, <span class="op">:update</span>, <span class="op">:destroy</span>]
+
+  <span class="kw">def</span> <span class="fn">index</span>
+    @posts = <span class="fn">Post</span>.published.page(params[<span class="op">:page</span>])
+    respond_to <span class="kw">do</span> |format|
+      format.html
+      format.json { render json: @posts }
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">create</span>
+    @post = current_user.posts.build(post_params)
+    <span class="kw">if</span> @post.save
+      redirect_to @post, notice: <span class="st">"Created!"</span>
+    <span class="kw">else</span>
+      render <span class="op">:new</span>, status: <span class="op">:unprocessable_entity</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">private</span>
+
+  <span class="kw">def</span> <span class="fn">set_post</span>
+    @post = <span class="fn">Post</span>.find(params[<span class="op">:id</span>])
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">post_params</span>   <span class="cm"># Strong parameters — security!</span>
+    params.require(<span class="op">:post</span>).permit(<span class="op">:title</span>, <span class="op">:body</span>, <span class="op">:published</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is "Convention over Configuration"?</div>
+                <div class="interview-a">Rails makes decisions based on naming conventions so you don't have to write configuration. A class named Post maps to a posts table. A controller named PostsController maps to app/controllers/posts_controller.rb. Views are in app/views/posts/. Follow the conventions and Rails wires everything up automatically. Deviate and you need explicit configuration.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What are strong parameters and why are they needed?</div>
+                <div class="interview-a">Strong parameters (params.require().permit()) protect against mass assignment attacks. Without them, a malicious user could pass is_admin: true in a POST request and your model would save it if you use User.new(params[:user]). Strong parameters whitelist exactly which fields are allowed, preventing attackers from modifying fields they shouldn't access.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Rails middleware stack?</div>
+                <div class="interview-a">Rails middleware is a stack of Rack components that each request passes through before reaching your controllers. Each middleware can process the request, modify it, short-circuit it, or pass it along. Common middleware: session management, CSRF protection, static file serving, logging, exception handling. You can see the stack with `rails middleware` and add custom middleware in config/application.rb.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('metaprogramming')">← Metaprogramming</button>
+                <button class="mark-done-btn" onclick="markDone('rails-mvc')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('activerecord')">Next: ActiveRecord →</button>
+            </div>
+        </div>
+
+        <!-- ACTIVERECORD -->
+        <div id="lesson-activerecord" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS</div>
+                <div class="lesson-title">🗄️ ActiveRecord</div>
+                <div class="lesson-subtitle">Rails' ORM. The most interview-tested Rails topic — N+1, associations, and query optimization.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Associations</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">class</span> <span class="fn">User</span> < <span class="fn">ApplicationRecord</span>
+  has_many <span class="op">:posts</span>, dependent: <span class="op">:destroy</span>
+  has_many <span class="op">:comments</span>, through: <span class="op">:posts</span>
+  has_one <span class="op">:profile</span>
+  belongs_to <span class="op">:company</span>, optional: <span class="kw">true</span>
+
+  <span class="cm"># Polymorphic association</span>
+  has_many <span class="op">:notifications</span>, as: <span class="op">:notifiable</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> <span class="fn">Post</span> < <span class="fn">ApplicationRecord</span>
+  belongs_to <span class="op">:user</span>
+  has_many <span class="op">:comments</span>
+  has_many_attached <span class="op">:images</span>  <span class="cm"># ActiveStorage</span>
+
+  <span class="cm"># Validations</span>
+  validates <span class="op">:title</span>, presence: <span class="kw">true</span>, length: { minimum: <span class="nm">3</span>, maximum: <span class="nm">100</span> }
+  validates <span class="op">:slug</span>, uniqueness: <span class="kw">true</span>
+  validate <span class="op">:published_at_in_future</span>
+
+  <span class="cm"># Scopes</span>
+  scope <span class="op">:published</span>, -> { where(published: <span class="kw">true</span>) }
+  scope <span class="op">:recent</span>, -> { order(created_at: <span class="op">:desc</span>).limit(<span class="nm">10</span>) }
+  scope <span class="op">:by_author</span>, ->(user) { where(user: user) }
+
+  <span class="cm"># Callbacks</span>
+  before_save <span class="op">:generate_slug</span>
+  after_create <span class="op">:notify_subscribers</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">The N+1 Problem — Most Asked Interview Topic</div>
+                <div class="warn-box"><strong>⚠️ N+1 Problem:</strong> Loading a list then querying for each item individually. 100 users → 1 query for users + 100 queries for their posts = 101 queries. This is the #1 Rails performance issue.</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY — N+1 FIX</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># ❌ N+1 — 1 + N queries</span>
+<span class="fn">Post</span>.all.each { |post| puts post.user.name }
+
+<span class="cm"># ✅ includes — eager loading (2 queries total)</span>
+<span class="fn">Post</span>.includes(<span class="op">:user</span>).each { |post| puts post.user.name }
+
+<span class="cm"># ✅ joins — for filtering only (1 query, no extra model loading)</span>
+<span class="fn">Post</span>.joins(<span class="op">:user</span>).where(users: { active: <span class="kw">true</span> })
+
+<span class="cm"># ✅ preload — always separate queries (forces 2-query approach)</span>
+<span class="fn">Post</span>.preload(<span class="op">:user</span>, <span class="op">:comments</span>)
+
+<span class="cm"># ✅ eager_load — single LEFT JOIN (good for complex filtering)</span>
+<span class="fn">Post</span>.eager_load(<span class="op">:user</span>).where(users: { role: <span class="st">"admin"</span> })
+
+<span class="cm"># Detect N+1 in development</span>
+<span class="cm"># gem 'bullet' — alerts you to N+1 problems</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the N+1 problem and how do you fix it?</div>
+                <div class="interview-a">N+1 is when you load a collection (1 query) then access an association on each record in a loop (N more queries). Fix with eager loading: includes(:association) tells Rails to load the association for all records in 2 queries (or a JOIN). Use the Bullet gem in development to detect N+1 automatically. Also consider select and pluck to fetch only needed columns.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use joins vs includes?</div>
+                <div class="interview-a">Use joins when you need to FILTER by association attributes — it does a SQL JOIN but doesn't load the associated records into memory. Use includes when you need to ACCESS the associated records — it loads them into memory to prevent N+1. If you filter AND access, use eager_load which does a single LEFT OUTER JOIN and loads both.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What are callbacks and when should you avoid them?</div>
+                <div class="interview-a">Callbacks (before_save, after_create, etc.) run automatically during model lifecycle. Avoid them for: business logic that should be explicit (use service objects instead), sending emails/notifications (side effects are surprising), complex cross-model operations. Good uses: data normalization (before_save: downcase_email), generating derived fields (slug generation).</div>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">You have Post.all.each { |p| puts p.user.name }. This is an N+1 problem. How do you fix it?</div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ar','wrong')"><span class="opt-letter">A</span>Post.joins(:user).each...</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ar','correct')"><span class="opt-letter">B</span>Post.includes(:user).each... ✓</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ar','wrong')"><span class="opt-letter">C</span>Post.where(user: User.all).each...</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ar','wrong')"><span class="opt-letter">D</span>Post.select(:user_id).each...</div>
+                </div>
+                <div class="quiz-feedback" id="quiz-ar-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('rails-mvc')">← MVC</button>
+                <button class="mark-done-btn" onclick="markDone('activerecord')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('routing')">Next: Routing →</button>
+            </div>
+        </div>
+
+        <!-- ROUTING -->
+        <div id="lesson-routing" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS</div>
+                <div class="lesson-title">🛣️ Rails Routing</div>
+                <div class="lesson-subtitle">How URLs map to controller actions. RESTful routes, nested resources, and custom routes.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">RESTful Routes</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY — routes.rb</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="fn">Rails</span>.application.routes.draw <span class="kw">do</span>
+  <span class="cm"># resources generates 7 RESTful routes:</span>
+  <span class="cm"># GET    /posts        → index</span>
+  <span class="cm"># GET    /posts/new    → new</span>
+  <span class="cm"># POST   /posts        → create</span>
+  <span class="cm"># GET    /posts/:id    → show</span>
+  <span class="cm"># GET    /posts/:id/edit → edit</span>
+  <span class="cm"># PATCH  /posts/:id    → update</span>
+  <span class="cm"># DELETE /posts/:id    → destroy</span>
+  resources <span class="op">:posts</span> <span class="kw">do</span>
+    resources <span class="op">:comments</span>       <span class="cm"># nested: /posts/:post_id/comments</span>
+    member <span class="kw">do</span>
+      post <span class="op">:publish</span>           <span class="cm"># POST /posts/:id/publish</span>
+    <span class="kw">end</span>
+    collection <span class="kw">do</span>
+      get <span class="op">:search</span>             <span class="cm"># GET /posts/search</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  namespace <span class="op">:api</span> <span class="kw">do</span>
+    namespace <span class="op">:v1</span> <span class="kw">do</span>
+      resources <span class="op">:users</span>, only: [<span class="op">:index</span>, <span class="op">:show</span>, <span class="op">:create</span>]
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  root <span class="st">"home#index"</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between member and collection routes?</div>
+                <div class="interview-a">member routes operate on a SPECIFIC resource and include :id in the URL (e.g., POST /posts/:id/publish — publish a specific post). collection routes operate on the ENTIRE collection and don't include :id (e.g., GET /posts/search — search across all posts). Use member when the action is about one record, collection when it's about the set.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between namespace and scope?</div>
+                <div class="interview-a">namespace adds both URL prefix AND module prefix: `namespace :api` gives URL /api/users and controller Api::UsersController. scope only adds URL prefix without module: `scope :api` gives URL /api/users but still UsersController. Use namespace for versioned APIs where controllers are organized in subdirectories.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('activerecord')">← ActiveRecord</button>
+                <button class="mark-done-btn" onclick="markDone('routing')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('concerns')">Next: Service Objects →</button>
+            </div>
+        </div>
+
+        <!-- CONCERNS & SERVICE OBJECTS -->
+        <div id="lesson-concerns" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS PATTERNS</div>
+                <div class="lesson-title">📋 Service Objects & Concerns</div>
+                <div class="lesson-subtitle">Keeping Rails apps maintainable. Fat models, skinny controllers, service objects — the right patterns for the right problems.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Service Objects Pattern</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY — SERVICE OBJECT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># app/services/user_registration.rb</span>
+<span class="kw">class</span> <span class="fn">UserRegistration</span>
+  <span class="kw">def</span> <span class="fn">initialize</span>(params)
+    @params = params
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">call</span>
+    user = <span class="fn">User</span>.new(@params)
+    <span class="kw">if</span> user.save
+      <span class="fn">WelcomeMailer</span>.with(user: user).welcome_email.deliver_later
+      <span class="fn">Analytics</span>.track(<span class="st">"user_registered"</span>, user_id: user.id)
+      <span class="fn">Result</span>.success(user)
+    <span class="kw">else</span>
+      <span class="fn">Result</span>.failure(user.errors)
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># In controller — thin and clean</span>
+<span class="kw">def</span> <span class="fn">create</span>
+  result = <span class="fn">UserRegistration</span>.new(user_params).call
+  <span class="kw">if</span> result.success?
+    redirect_to dashboard_path
+  <span class="kw">else</span>
+    @errors = result.errors
+    render <span class="op">:new</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When should you use a service object?</div>
+                <div class="interview-a">Service objects when: (1) action involves multiple models, (2) action has side effects (email, analytics, external APIs), (3) action has complex business logic, (4) action needs to be testable in isolation. Don't use for simple CRUD — a fat model or thin controller is fine. Rule: if your controller action is more than 10 lines or touches 3+ models, extract to a service.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Concerns vs Service Objects — when to use each?</div>
+                <div class="interview-a">Concerns (ActiveSupport::Concern) are for sharing MODEL behavior across models — like Publishable concern with publish!/draft! methods. They're mixed into models. Service Objects are for BUSINESS LOGIC that doesn't belong in a model or controller — orchestrating multiple steps, external calls, complex workflows. Concerns = shared model capabilities; Services = complex operations.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('routing')">← Routing</button>
+                <button class="mark-done-btn" onclick="markDone('concerns')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('caching')">Next: Caching →</button>
+            </div>
+        </div>
+
+        <!-- CACHING -->
+        <div id="lesson-caching" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS PERFORMANCE</div>
+                <div class="lesson-title">⚡ Rails Caching</div>
+                <div class="lesson-subtitle">Speed up your Rails app dramatically. Fragment caching, Russian doll, low-level caching.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Caching Strategies</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># Low-level caching</span>
+<span class="fn">Rails</span>.cache.fetch(<span class="st">"user_#{id}_stats"</span>, expires_in: <span class="nm">1</span>.hour) <span class="kw">do</span>
+  <span class="fn">User</span>.find(id).calculate_expensive_stats  <span class="cm"># only runs on cache miss</span>
+<span class="kw">end</span>
+
+<span class="cm"># Fragment caching in views</span>
+<span class="cm"># cache @post do ... end</span>
+<span class="cm"># cache_key uses updated_at — auto-invalidates on update!</span>
+
+<span class="cm"># Russian Doll Caching — nested cache keys</span>
+<span class="cm"># cache ["v1", @post] do</span>
+<span class="cm">#   cache @post.user do ... end  ← inner cache</span>
+<span class="cm"># end</span>
+
+<span class="cm"># Counter cache — avoid COUNT queries</span>
+<span class="cm"># belongs_to :post, counter_cache: true</span>
+<span class="cm"># Adds posts.comments_count column, auto-updated</span>
+post.comments_count  <span class="cm"># => reads column, no COUNT query!</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Russian Doll caching?</div>
+                <div class="interview-a">Russian Doll caching nests cache blocks inside each other. Outer cache wraps a post, inner cache wraps the post's author. When only the author changes, only the inner cache is invalidated — the outer cache hits. This is efficient because Rails generates cache keys from cache_key (includes updated_at), so changing an association's updated_at automatically busts the relevant fragment while leaving unrelated fragments intact.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('concerns')">← Service Objects</button>
+                <button class="mark-done-btn" onclick="markDone('caching')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('background-jobs')">Next: Background Jobs →</button>
+            </div>
+        </div>
+
+        <!-- BACKGROUND JOBS -->
+        <div id="lesson-background-jobs" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// RAILS PRODUCTION</div>
+                <div class="lesson-title">⚙️ Background Jobs</div>
+                <div class="lesson-subtitle">Sidekiq, ActiveJob, and the patterns for reliable async processing in Rails.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Sidekiq + ActiveJob</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">RUBY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm"># app/jobs/send_welcome_email_job.rb</span>
+<span class="kw">class</span> <span class="fn">SendWelcomeEmailJob</span> < <span class="fn">ApplicationJob</span>
+  queue_as <span class="op">:mailers</span>
+  sidekiq_options retry: <span class="nm">5</span>, backtrace: <span class="kw">true</span>
+
+  <span class="kw">def</span> <span class="fn">perform</span>(user_id)
+    user = <span class="fn">User</span>.find_by(id: user_id)
+    <span class="kw">return unless</span> user  <span class="cm"># idempotent — handle deleted records</span>
+
+    <span class="fn">WelcomeMailer</span>.with(user: user).welcome_email.deliver_now
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Enqueue jobs</span>
+<span class="fn">SendWelcomeEmailJob</span>.perform_later(user.id)    <span class="cm"># async</span>
+<span class="fn">SendWelcomeEmailJob</span>.perform_now(user.id)      <span class="cm"># sync</span>
+<span class="fn">SendWelcomeEmailJob</span>.set(wait: <span class="nm">5</span>.minutes).perform_later(user.id)</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is idempotency and why is it important for background jobs?</div>
+                <div class="interview-a">Idempotency means running a job multiple times has the same effect as running it once. Jobs can be retried on failure, so you must design them to be safe if run again. Best practices: pass IDs not objects (objects may change), check if work is already done before doing it, use database unique constraints, use upsert/find_or_create instead of create. Example: always do User.find_by(id:) instead of User.find to handle deleted records.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Sidekiq work?</div>
+                <div class="interview-a">Sidekiq uses Redis as a queue. When you call perform_later, the job is serialized to JSON and pushed to a Redis list. Sidekiq workers (multiple threads per process) poll Redis, pop jobs, and execute them. Sidekiq has a retry mechanism with exponential backoff for failed jobs and a dead queue for jobs that exceeded retries. It's thread-safe and much more efficient than Delayed::Job (DB-backed).</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('caching')">← Caching</button>
+                <button class="mark-done-btn" onclick="markDone('background-jobs')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+            </div>
+        </div>
+
+        <!-- CHEATSHEET -->
+        <div id="lesson-cheatsheet" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// STUDY AID</div>
+                <div class="lesson-title">📋 Ruby & Rails Cheatsheet</div>
+                <div class="lesson-subtitle">All key concepts for your interview on one page.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Core Definitions</div>
+                <table class="cheat-table">
+                    <tr><th>Term</th><th>Definition</th></tr>
+                    <tr><td>Symbol</td><td>Immutable, unique identifier — same object_id every time. Use for hash keys.</td></tr>
+                    <tr><td>Proc vs Lambda</td><td>Proc: lenient args, return exits method. Lambda: strict args, return exits lambda.</td></tr>
+                    <tr><td>yield</td><td>Calls the block passed to a method. block_given? checks if a block was passed.</td></tr>
+                    <tr><td>include</td><td>Adds module methods as instance methods</td></tr>
+                    <tr><td>extend</td><td>Adds module methods as class methods</td></tr>
+                    <tr><td>prepend</td><td>Inserts before class in lookup chain — wrap/decorate methods</td></tr>
+                    <tr><td>N+1 Problem</td><td>Querying DB inside a loop. Fix: includes(:association)</td></tr>
+                    <tr><td>Scope</td><td>Named query chains on a model (scope :published, -> { where(published: true) })</td></tr>
+                    <tr><td>before_action</td><td>Controller callback — runs before specified actions</td></tr>
+                    <tr><td>Strong params</td><td>Whitelist allowed POST params to prevent mass assignment attacks</td></tr>
+                    <tr><td>Sidekiq</td><td>Redis-backed job queue for background processing in Rails</td></tr>
+                    <tr><td>method_missing</td><td>Hook called when method not found — enables dynamic dispatch</td></tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title">includes vs joins vs eager_load</div>
+                <table class="cheat-table">
+                    <tr><th>Method</th><th>When to use</th><th>Queries</th></tr>
+                    <tr><td>includes</td><td>Access association data (prevent N+1)</td><td>2 queries</td></tr>
+                    <tr><td>joins</td><td>Filter by association, don't need data</td><td>1 JOIN query</td></tr>
+                    <tr><td>eager_load</td><td>Filter AND access association data</td><td>1 LEFT JOIN</td></tr>
+                    <tr><td>preload</td><td>Force separate queries (includes alternative)</td><td>Always 2 queries</td></tr>
+                </table>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('background-jobs')">← Background Jobs</button>
+                <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showPage('home')">🏠 Home</button>
+            </div>
+        </div>
+
+    </main>
 </div>
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done') || '[]')), xp: parseInt(localStorage.getItem('xp') || '0'), totalTopics: 6 };
-function showPage(page) {
-  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (page === 'home') document.getElementById('nav-home').classList.add('active');
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-}
-function showLesson(id) {
-  document.getElementById('home-page').style.display = 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const lesson = document.getElementById('lesson-' + id);
-  if (lesson) lesson.classList.add('active');
-  const navItem = document.getElementById('nav-' + id);
-  if (navItem) navItem.classList.add('active');
-  window.scrollTo(0, 0);
-}
-function markDone(id) {
-  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done', JSON.stringify([...state.completed])); localStorage.setItem('xp', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-}
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+    const state={completed:new Set(JSON.parse(localStorage.getItem('ruby-done')||'[]')),xp:parseInt(localStorage.getItem('ruby-xp')||'0'),totalTopics:12};
+    function showPage(p){document.getElementById('home-page').style.display=(p==='home')?'block':'none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(p==='home')document.getElementById('nav-home').classList.add('active');updateXP()}
+    function showLesson(id){document.getElementById('home-page').style.display='none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));const l=document.getElementById('lesson-'+id);if(l)l.classList.add('active');const n=document.getElementById('nav-'+id);if(n)n.classList.add('active');window.scrollTo(0,0)}
+    function checkQuiz(btn,id,result){const opts=btn.closest('.quiz-options').querySelectorAll('.quiz-opt');opts.forEach(o=>o.style.pointerEvents='none');const fb=document.getElementById('quiz-'+id+'-fb');if(result==='correct'){btn.classList.add('correct');fb.className='quiz-feedback show right';fb.textContent='✅ Correct!';addXP(20)}else{btn.classList.add('wrong');fb.className='quiz-feedback show wrong';fb.textContent='❌ Not quite — review the explanation above.'}}
+    function toggleAnswer(el){el.classList.toggle('open');const next=el.nextElementSibling;if(next&&next.classList.contains('interview-a'))next.classList.toggle('open')}
+    function markDone(id){if(!state.completed.has(id)){state.completed.add(id);addXP(50);localStorage.setItem('ruby-done',JSON.stringify([...state.completed]));const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');const btn=event.target;btn.classList.add('done');btn.textContent='✓ Done!'}updateProgress()}
+    function addXP(a){state.xp+=a;localStorage.setItem('ruby-xp',state.xp.toString());updateXP()}
+    function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress()}
+    function updateProgress(){const pct=(state.completed.size/state.totalTopics)*100;document.getElementById('globalProgress').style.width=pct+'%'}
+    function copyCode(btn){const pre=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000)})}
+    function init(){state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed')});updateProgress();updateXP()}
+    init();
 </script>
 </body>
 </html>
