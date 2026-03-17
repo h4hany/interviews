@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruby & Rails — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
+    --accent: #ff6b6b; --accent2: #ff6b35; --accent3: #7c5cfc; --accent4: #00d4ff;
+    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
+    --card-radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(255,107,107,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,107,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
+  }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,107,107,0.05); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .content-section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
+  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); cursor: pointer; }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(255,107,107,0.1); color: var(--accent); border: 1px solid rgba(255,107,107,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">RUBY<span>·</span>RAILS <span>// PREP</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">Ruby</div>
+    <div class="nav-item" onclick="showLesson('ruby-basics')" id="nav-ruby-basics"><span>💎</span> Ruby Basics <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('blocks-procs')" id="nav-blocks-procs"><span>🔒</span> Blocks & Procs <span class="done-dot"></span></div>
+    <div class="nav-section-title">Rails</div>
+    <div class="nav-item" onclick="showLesson('mvc-active-record')" id="nav-mvc-active-record"><span>🏗️</span> MVC & ActiveRecord <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('associations')" id="nav-associations"><span>🔗</span> Associations <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('routing')" id="nav-routing"><span>🛤️</span> Routing & Controllers <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">Ruby & Rails</span></h1>
+        <p class="hero-sub">Interview prep for Ruby and Ruby on Rails: language basics, blocks, MVC, ActiveRecord, associations, and routing.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('ruby-basics')"><span class="card-emoji">💎</span><div class="card-title">Ruby Basics</div><div class="card-desc">Objects, symbols, hashes, modules, metaprogramming</div></div>
+        <div class="topic-card" onclick="showLesson('blocks-procs')"><span class="card-emoji">🔒</span><div class="card-title">Blocks & Procs</div><div class="card-desc">Blocks, procs, lambdas, yield</div></div>
+        <div class="topic-card" onclick="showLesson('mvc-active-record')"><span class="card-emoji">🏗️</span><div class="card-title">MVC & ActiveRecord</div><div class="card-desc">Models, validations, callbacks, queries</div></div>
+        <div class="topic-card" onclick="showLesson('associations')"><span class="card-emoji">🔗</span><div class="card-title">Associations</div><div class="card-desc">has_many, belongs_to, through, N+1</div></div>
+        <div class="topic-card" onclick="showLesson('routing')"><span class="card-emoji">🛤️</span><div class="card-title">Routing</div><div class="card-desc">REST, resources, nested routes, constraints</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference for interviews</div></div>
+      </div>
+    </div>
+    <div id="lesson-ruby-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">💎 Ruby Basics</div>
+      <div class="lesson-subtitle">Symbols, hashes, modules, and common interview points.</div>
+      <div class="content-section">
+        <div class="section-title">Symbols vs Strings</div>
+        <div class="prose">Symbols are <strong>immutable, interned</strong> identifiers: the same symbol literal always refers to the same object in memory. Use them for hash keys, method names, and when identity matters. Strings are mutable and better for user-facing text. Symbols save memory when reused across the app.</div>
+        <div class="code-block"><pre>:user.object_id == :user.object_id   # true (same object)
+"user".object_id != "user".object_id # false (new string each time)
+
+h = { name: "Alice", age: 30 }  # symbol keys</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Modules: include vs extend</div>
+        <div class="prose"><strong>include</strong> adds the module as instance methods (mixed into the class). <strong>extend</strong> adds the module as class methods. <code>extend</code> on an instance gives that instance the module's methods as singleton methods. Use modules for namespacing and shared behavior (mixins).</div>
+        <div class="code-block"><pre>module Helper
+  def greet; "Hi"; end
+end
+class Foo
+  include Helper   # instance methods
+end
+class Bar
+  extend Helper    # class methods: Bar.greet
+end</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Metaprogramming</div>
+        <div class="prose">Ruby lets you define and invoke methods dynamically. <code>define_method</code> creates methods at runtime. <code>send</code> or <code>public_send</code> invokes a method by name. <code>attr_accessor</code>, <code>has_many</code> in Rails are built with metaprogramming. Be aware of performance and readability when using it.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you use a symbol instead of a string?</div>
+        <div class="interview-a">Use symbols for hash keys, identifiers, and when you need identity comparison or memory efficiency (e.g. many repeated keys). Use strings for user input, output, and when you need to modify the value.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is the difference between proc and lambda?</div>
+        <div class="interview-a">Lambda checks argument count (arity); proc does not. <code>return</code> in a lambda exits only the lambda; in a proc it returns from the enclosing method. Use lambdas when you want strict, method-like behavior.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('ruby-basics')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-blocks-procs" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔒 Blocks & Procs</div>
+      <div class="lesson-subtitle">Blocks, procs, lambdas, and yield.</div>
+      <div class="content-section">
+        <div class="section-title">Blocks and yield</div>
+        <div class="prose">A <strong>block</strong> is a chunk of code passed to a method (in curly braces or <code>do...end</code>). The method invokes it with <code>yield</code>. Blocks are not objects by default; they are part of the method call. You can pass arguments to <code>yield</code> and use <code>block_given?</code> to check if a block was passed.</div>
+        <div class="code-block"><pre>def twice
+  yield 1
+  yield 2
+end
+twice { |n| puts n }  # 1, 2</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Procs and lambdas</div>
+        <div class="prose"><strong>Proc</strong> is an object that holds a block; create with <code>Proc.new { }</code> or <code>proc { }</code>, call with <code>.call</code>. <strong>Lambda</strong> is a proc with strict arity (wrong number of args = error) and <code>return</code> only exits the lambda. Create with <code>lambda { }</code> or <code>-&gt;() { }</code>. Storing a block as a proc lets you pass it around or call it later.</div>
+        <div class="code-block"><pre>p = proc { |a, b| [a, b] }
+p.call(1)      # [1, nil] — proc does not care about arity
+l = lambda { |a, b| [a, b] }
+l.call(1)      # ArgumentError — lambda enforces arity</pre></div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: How do you pass a block to a method and call it?</div>
+        <div class="interview-a">Either use <code>yield</code> inside the method (and call the method with <code>method { }</code>), or capture the block with <code>&amp;block</code> in the method signature and call <code>block.call</code>. The <code>&amp;</code> converts a block to a Proc and vice versa.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Proc vs lambda — return behavior?</div>
+        <div class="interview-a">In a lambda, <code>return</code> returns from the lambda only. In a proc, <code>return</code> returns from the enclosing method (can cause LocalJumpError if the proc was called from a context that does not allow return). So lambdas behave more like methods.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('blocks-procs')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-mvc-active-record" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🏗️ MVC & ActiveRecord</div>
+      <div class="lesson-subtitle">Models, validations, callbacks, and query interface.</div>
+      <div class="content-section">
+        <div class="section-title">MVC in Rails</div>
+        <div class="prose"><strong>Model</strong> (ActiveRecord): business logic, validations, DB access. <strong>View</strong>: templates (ERB, etc.) that render HTML or JSON. <strong>Controller</strong>: receives requests, talks to the model, and renders a view or redirects. Keep controllers thin; put logic in models or service objects.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Validations and callbacks</div>
+        <div class="prose">Validations run before save (e.g. <code>validates :name, presence: true</code>). Failed validations prevent save and add errors to <code>model.errors</code>. Callbacks run at lifecycle points: <code>before_save</code>, <code>after_commit</code>, etc. Use <code>after_commit</code> for side effects (e.g. sending email) so they run only after the transaction commits.</div>
+        <div class="code-block"><pre>class User < ApplicationRecord
+  validates :email, presence: true, uniqueness: true
+  before_save :normalize_email
+  after_commit :send_welcome_email, on: :create
+end</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Query interface</div>
+        <div class="prose"><code>where</code>, <code>joins</code>, <code>includes</code> (eager load to avoid N+1), <code>pluck</code> (returns array of values without loading AR objects), <code>select</code>, <code>order</code>, <code>limit</code>. Scopes are reusable query fragments. Chain them for readable queries.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When do you use after_commit instead of after_save?</div>
+        <div class="interview-a">Use <code>after_commit</code> when the side effect (e.g. sending email, enqueueing a job) should happen only after the transaction successfully commits. <code>after_save</code> runs inside the transaction; if the transaction rolls back, the side effect already ran.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is the difference between pluck and select?</div>
+        <div class="interview-a"><code>pluck(:col)</code> runs a SQL query that returns only that column as an array of values; no ActiveRecord objects are built. <code>select(:col)</code> still returns AR objects but only with that attribute loaded. Use pluck when you only need raw values for performance.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('mvc-active-record')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-associations" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔗 Associations</div>
+      <div class="lesson-subtitle">has_many, belongs_to, through, N+1.</div>
+      <div class="content-section">
+        <div class="section-title">Association types</div>
+        <div class="prose"><strong>belongs_to</strong>: the model has a foreign key (e.g. Post belongs_to :user). <strong>has_many</strong>: one-to-many (User has_many :posts). <strong>has_many :through</strong>: many-to-many via a join model (User has_many :roles, through: :assignments). <strong>has_and_belongs_to_many</strong>: many-to-many with a join table that has no extra columns. Add <code>dependent: :destroy</code> or <code>:nullify</code> to control what happens when the parent is deleted.</div>
+        <div class="code-block"><pre>class User < ApplicationRecord
+  has_many :posts, dependent: :destroy
+  has_many :comments, through: :posts
+end
+class Post < ApplicationRecord
+  belongs_to :user
+  has_many :comments
+end</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">N+1 and eager loading</div>
+        <div class="prose">N+1: loading a list of records and then accessing an association on each causes one query per record. Fix with <strong>includes</strong> (eager load), <strong>eager_load</strong> (always LEFT OUTER JOIN), or <strong>preload</strong> (separate queries). <code>includes</code> is usually enough; Rails picks the strategy. Use <code>references</code> when you need to filter by an included association.</div>
+        <div class="code-block"><pre># Bad: N+1
+Post.all.each { |p| p.user.name }
+
+# Good
+Post.includes(:user).each { |p| p.user.name }</pre></div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: has_many :through vs has_and_belongs_to_many?</div>
+        <div class="interview-a">Use <code>has_many :through</code> when the join model has its own attributes or you need to work with it (e.g. Assignment with a <code>role_name</code> or <code>assigned_at</code>). Use <code>has_and_belongs_to_many</code> when the join table is only two foreign keys with no extra columns.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: How do you find and fix N+1 queries?</div>
+        <div class="interview-a">Use the Bullet gem in development, or watch logs for many similar queries. Fix by eager loading: <code>Model.includes(:association)</code> (or <code>eager_load</code> / <code>preload</code>). For filtering by association use <code>includes(...).where(associations: { ... })</code> and <code>references(:association)</code> if needed.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('associations')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-routing" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🛤️ Routing & Controllers</div>
+      <div class="lesson-subtitle">REST, resources, nested routes, strong params.</div>
+      <div class="content-section">
+        <div class="section-title">Resources and REST</div>
+        <div class="prose"><code>resources :posts</code> generates the seven RESTful routes: index, show, new, create, edit, update, destroy. Use <code>only:</code> or <code>except:</code> to limit. <code>resource</code> (singular) for a single resource (e.g. profile). <code>member</code> adds a route on a specific id (e.g. <code>post/1/publish</code>); <code>collection</code> adds a route on the collection (e.g. <code>posts/search</code>).</div>
+        <div class="code-block"><pre>resources :posts do
+  member   { get :publish }
+  collection { get :search }
+end
+# Nested: resources :comments (under posts)</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Strong parameters</div>
+        <div class="prose">Never pass <code>params</code> directly into <code>Model.new</code> or <code>update</code> (mass assignment vulnerability). Use <strong>strong parameters</strong>: <code>params.require(:post).permit(:title, :body, :user_id)</code>. This whitelists which keys can be set from the request. Define in a private method in the controller.</div>
+        <div class="code-block"><pre>def create
+  @post = Post.new(post_params)
+  # ...
+end
+private
+def post_params
+  params.require(:post).permit(:title, :body, :published)
+end</pre></div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When do you use nested routes?</div>
+        <div class="interview-a">When a resource logically belongs to another (e.g. comments under a post). Nested routes give URLs like <code>/posts/5/comments</code>. Do not nest more than one level deep; keep resources shallow where possible. Use <code>shallow: true</code> so show/edit/update/destroy use the resource id only.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What are strong parameters and why use them?</div>
+        <div class="interview-a">Strong parameters whitelist which request parameters can be used for mass assignment. Without them, an attacker could pass <code>user[admin]=true</code> and escalate privileges. Always use <code>require</code> and <code>permit</code> in the controller for create/update.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('routing')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 Ruby & Rails cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">Ruby</div>
+        <div class="prose">Symbol vs String (immutable, interned). Proc vs lambda (arity, return). Modules: include (instance methods) vs extend (class methods). Metaprogramming: define_method, send, attr_accessor.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Rails MVC & ActiveRecord</div>
+        <div class="prose">Model (validations, callbacks, scopes), View (templates), Controller (thin). Query: where, joins, includes, pluck. after_commit for side effects. pluck vs select.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Associations & N+1</div>
+        <div class="prose">belongs_to, has_many, has_many :through, has_and_belongs_to_many. Fix N+1 with includes / eager_load / preload. dependent: :destroy or :nullify.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Routing & params</div>
+        <div class="prose">resources, member, collection, nested (shallow). Strong parameters: params.require(:model).permit(:attr1, :attr2).</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done') || '[]')), xp: parseInt(localStorage.getItem('xp') || '0'), totalTopics: 6 };
+function showPage(page) {
+  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (page === 'home') document.getElementById('nav-home').classList.add('active');
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+}
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const lesson = document.getElementById('lesson-' + id);
+  if (lesson) lesson.classList.add('active');
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function markDone(id) {
+  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done', JSON.stringify([...state.completed])); localStorage.setItem('xp', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+}
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>

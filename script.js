@@ -37,60 +37,64 @@ const fileStructure = {
         "HTML": "Frameworks/Frontend/basics/html.md",
         "CSS": "Frameworks/Frontend/basics/css.md",
         "React": "Frameworks/Frontend/React/React.md",
-        "Angular": "Frameworks/Frontend/Angular/Angular.md"
+        "React Native": "Frameworks/Frontend/React/React-Native-Interview-QA.md",
+        "Angular": "Frameworks/Frontend/Angular/Angular.md",
+        "HTML Playground": "Frameworks/Frontend/basics/html-interview-prep.html"
     },
     "Backend": {
         "Ruby": "Programming/Ruby.md",
         "Go": "Programming/Go.md",
-        ".NET/C#": "Programming/dotNet.md",
+        ".NET/C#": "Frameworks/Backend/dotNet/00_INDEX.md",
         "Ruby on Rails": "Frameworks/Backend/Rails/Ruby on Rails.md",
         "Node.js": "Frameworks/Backend/node/Node.md",
-        "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html"
+        "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html",
+        "Java & Spring Boot (50+ Q&A)": "Frameworks/Backend/Java-Spring-Boot-Interview-QA.md",
+        "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/Python-Django-FastAPI-Interview-QA.md"
     },
     "Databases": {
         "MySQL": "Databases/mysql.md",
         "PostgreSQL": "Databases/postgresql.md",
         "MongoDB": "Databases/mongodb.md"
     },
-    "Design Principles": {
-        "SOLID Principles": "Solid Princables/SOLID Principles Complete Guide.md",
+    "Design": {
+        "SOLID Principles": "design/SOLID-Principles/SOLID Principles Complete Guide.md",
         "Design Patterns": {
-            "Introduction": "Design Patterns/intro.md",
-            "Quick Reference": "Design Patterns/Quick Reference Guide.md",
+            "Introduction": "design/Design-Patterns/intro.md",
+            "Quick Reference": "design/Design-Patterns/Quick Reference Guide.md",
             "Creational": {
-                "Singleton": "Design Patterns/Creational/Singleton.md",
-                "Factory": "Design Patterns/Creational/Factory.md",
-                "Abstract Factory": "Design Patterns/Creational/Abstract Factory.md",
-                "Builder": "Design Patterns/Creational/Builder.md",
-                "Prototype": "Design Patterns/Creational/Prototype.md"
+                "Singleton": "design/Design-Patterns/Creational/Singleton.md",
+                "Factory": "design/Design-Patterns/Creational/Factory.md",
+                "Abstract Factory": "design/Design-Patterns/Creational/Abstract Factory.md",
+                "Builder": "design/Design-Patterns/Creational/Builder.md",
+                "Prototype": "design/Design-Patterns/Creational/Prototype.md"
             },
             "Structural": {
-                "Adapter": "Design Patterns/Structural/Adapter.md",
-                "Bridge": "Design Patterns/Structural/Bridge.md",
-                "Composite": "Design Patterns/Structural/Composite.md",
-                "Decorator": "Design Patterns/Structural/Decorator.md",
-                "Facade": "Design Patterns/Structural/Facade.md",
-                "Flyweight": "Design Patterns/Structural/Flyweight.md",
-                "Proxy": "Design Patterns/Structural/Proxy.md"
+                "Adapter": "design/Design-Patterns/Structural/Adapter.md",
+                "Bridge": "design/Design-Patterns/Structural/Bridge.md",
+                "Composite": "design/Design-Patterns/Structural/Composite.md",
+                "Decorator": "design/Design-Patterns/Structural/Decorator.md",
+                "Facade": "design/Design-Patterns/Structural/Facade.md",
+                "Flyweight": "design/Design-Patterns/Structural/Flyweight.md",
+                "Proxy": "design/Design-Patterns/Structural/Proxy.md"
             },
             "Behavioral": {
-                "Chain of Responsibility": "Design Patterns/Behavioral/Chain of Responsibility.md",
-                "Command": "Design Patterns/Behavioral/Command.md",
-                "Interpreter": "Design Patterns/Behavioral/Interpreter.md",
-                "Iterator": "Design Patterns/Behavioral/Iterator.md",
-                "Mediator": "Design Patterns/Behavioral/Mediator.md",
-                "Memento": "Design Patterns/Behavioral/Memento.md",
-                "Observer": "Design Patterns/Behavioral/Observer.md",
-                "State": "Design Patterns/Behavioral/State.md",
-                "Strategy": "Design Patterns/Behavioral/Strategy.md",
-                "Template Method": "Design Patterns/Behavioral/Template Method.md",
-                "Visitor": "Design Patterns/Behavioral/Visitor.md"
+                "Chain of Responsibility": "design/Design-Patterns/Behavioral/Chain of Responsibility.md",
+                "Command": "design/Design-Patterns/Behavioral/Command.md",
+                "Interpreter": "design/Design-Patterns/Behavioral/Interpreter.md",
+                "Iterator": "design/Design-Patterns/Behavioral/Iterator.md",
+                "Mediator": "design/Design-Patterns/Behavioral/Mediator.md",
+                "Memento": "design/Design-Patterns/Behavioral/Memento.md",
+                "Observer": "design/Design-Patterns/Behavioral/Observer.md",
+                "State": "design/Design-Patterns/Behavioral/State.md",
+                "Strategy": "design/Design-Patterns/Behavioral/Strategy.md",
+                "Template Method": "design/Design-Patterns/Behavioral/Template Method.md",
+                "Visitor": "design/Design-Patterns/Behavioral/Visitor.md"
             }
+        },
+        "Object-Oriented Design": {
+            "OOD Concepts": "design/Object-Oriented-Design/OOD.md",
+            "Delivery System OOD": "design/Object-Oriented-Design/Delivery System OOD.md"
         }
-    },
-    "Object-Oriented Design": {
-        "OOD Concepts": "Object Orianted Design/OOD.md",
-        "Delivery System OOD": "Object Orianted Design/Delivery System OOD.md"
     },
     "System Design": {
         "System Design Fundamentals": "System Design/System Design.md",
@@ -114,13 +118,32 @@ const fileStructure = {
         "Observability": "DevOps/Observability.md"
     },
     "Caching & Messaging": {
-        "Redis": "Caching/Redis.md",
-        "RabbitMQ": "Messaging/RabbitMQ.md",
-        "Kafka": "Messaging/Kafka.md"
+        "Redis": "caching-messaging/Redis.md",
+        "RabbitMQ": "caching-messaging/RabbitMQ.md",
+        "Kafka": "caching-messaging/Kafka.md"
     },
     "Problem Solving": {
-        "75 LeetCode": "Problem Solving/75leetcode.html",
-        "Patterns": "Problem Solving/patterns.html"
+        "Overview": "Problem Solving/Readme.md",
+        "DeepSeek Notes": "Problem Solving/deepseek.md",
+        "75 LeetCode (HTML)": "Problem Solving/75leetcode.html",
+        "Patterns (HTML)": "Problem Solving/patterns.html",
+        "LeetCode": {
+            "Sliding Window (MD)": "Problem Solving/leetcode/study_plan75/sliding_window.md",
+            "Merge Two Sorted Lists": "Problem Solving/leetcode/21. Merge Two Sorted Lists.rb",
+            "Two Sum (Combinations)": "Problem Solving/leetcode/77. Combinations.rb",
+            "Climbing Stairs": "Problem Solving/leetcode/70. Climbing Stairs.rb",
+            "House Robber": "Problem Solving/leetcode/198. House Robber.rb"
+        },
+        "Data Structures": {
+            "Linked List": "Problem Solving/data-structure/linkedlist/linked_list.rb",
+            "Binary Search Tree": "Problem Solving/data-structure/tree/binary_search_tree.rb",
+            "Trie": "Problem Solving/data-structure/trie/trie.rb"
+        },
+        "HackerRank": {
+            "Two Strings": "Problem Solving/hacker-rank/two_string.rb",
+            "Counting Valleys": "Problem Solving/hacker-rank/counting_vally.rb"
+        },
+        "DSA (Data Structures & Algorithms)": "Problem Solving/Data-Structures-Algorithms/AI mock interview.md"
     },
     "Companies": {
         "Toters": {
@@ -139,14 +162,45 @@ const fileStructure = {
             "OCI Principal Interview": "Companies/oracle/OCI_Principal_Interview_Prep_50_QA.md",
             "Glassdoor": "Companies/oracle/Glassdoor.md"
         },
+        "Yassir": {
+            "Staff Backend Engineer": "Companies/yassir/Comprehensive Interview Study Guide_ Backend Staff Engineer (Node.js) at Yassir.md",
+            "ChatGPT Q&A": "Companies/yassir/chatgpt_QA.md"
+        },
         "Other": {
             "Lucidya": "Companies/Lucidya Backend Team Lead Interview Preparation Guide.md",
-            "Sanofi": "Companies/Sanofi/interview_questions.md"
+            "Sanofi": "Companies/Sanofi/interview_questions.md",
+            "GoBrands": "Companies/Gobrand/GoBrands.md"
         }
     },
+    "Resume & Career": {
+        "Interview Preparation Cheatsheet": "Resume-Career/Interview-Preparation-Cheatsheet.md",
+        "ATS Optimized CV": "Resume-Career/Hany Sayed Ahmed - ATS Optimized CV.md",
+        "FAANG Interview Q&A": "Resume-Career/FAANG Interview Preparation - Extended Q&A.md",
+        "Staff Engineer Q&A": "Resume-Career/staff Q&A.md",
+        "Study Guide": "Resume-Career/study_guide.md",
+        "Behavioral Interview Q&A": "Resume-Career/Behavioral-Interview-QA.md",
+        "Behavioral Questions & Answers (50+)": "Resume-Career/Behavioral-Questions-Answers.md",
+        "Staff & Leadership Q&A": "Resume-Career/Staff-Leadership-QA.md",
+        "Vector Search & AI/ML Q&A": "Resume-Career/Vector-Search-AI-ML-QA.md",
+        "Communication": "Resume-Career/Communication/index.md"
+    },
     "Specialized Topics": {
-        "Senior AI Engineer": "LLM/Senior AI Engineer Interview.md",
-        "Free LLM Resources": "LLM/FreeLLM.md"
+        "Senior AI Engineer": "specialized/LLM/Senior AI Engineer Interview.md",
+        "Free LLM Resources": "specialized/LLM/FreeLLM.md",
+        "AI Engineering Playground": "specialized/LLM/ai-engineering-interview-prep.html",
+        "Designing Data-Intensive Apps": "specialized/Books/Design Data Insentive/designing_data_intensive_applications_summary.md"
+    },
+    "Playgrounds": {
+        "Node.js": "Frameworks/Backend/node/nodejs-interview-prep.html",
+        "Ruby & Rails": "Frameworks/Backend/Rails/ruby-rails-interview-prep.html",
+        "C# & .NET": "Frameworks/Backend/dotNet/dotnet-interview-prep.html",
+        "Database": "Databases/database-interview-prep.html",
+        "HTML": "Frameworks/Frontend/basics/html-interview-prep.html",
+        "System Design": "System Design/system-design-interview-prep.html",
+        "DevOps & Infrastructure": "DevOps/devops-infrastructure-interview-prep.html",
+        "Design (SOLID, Patterns, OOD)": "design/design-interview-prep.html",
+        "Behavioral & Leadership": "Resume-Career/behavioral-leadership-interview-prep.html",
+        "AI Engineering": "specialized/LLM/ai-engineering-interview-prep.html"
     }
 };
 
@@ -271,13 +325,17 @@ function buildNode(struct, level) {
     return wrap;
 }
 
+const CODE_EXTENSIONS = /\.(rb|js|ts|py|java|cpp|c|go|rs|kt|scala)$/i;
+
 function makeFileItem(name, path, level) {
     const el = document.createElement('div');
     el.className = 'tree-file';
     el.setAttribute('data-path', path);
     el.style.paddingLeft = `${1 + level * 1.1}rem`;
     const isHtml = path.endsWith('.html');
-    el.innerHTML = `<span class="tree-file-icon">${isHtml ? '🔗' : '📄'}</span><span>${name}</span>`;
+    const isCode = CODE_EXTENSIONS.test(path);
+    const icon = isHtml ? '🔗' : (isCode ? '💻' : '📄');
+    el.innerHTML = `<span class="tree-file-icon">${icon}</span><span>${name}</span>`;
     el.addEventListener('click', () => {
         if (isHtml) {
             const full = BASE_PATH ? `${BASE_PATH}/${path}` : path;
@@ -433,6 +491,9 @@ function showWelcome() {
                     <a href="#" data-file="README.md" class="card">
                         <span class="card-icon">📖</span>README
                     </a>
+                    <a href="#" data-file="Resume-Career/Interview-Preparation-Cheatsheet.md" class="card">
+                        <span class="card-icon">📋</span>Interview Prep Cheatsheet
+                    </a>
                     <a href="#" data-file="Frameworks/Frontend/basics/js.md" class="card">
                         <span class="card-icon">📘</span>JavaScript
                     </a>
@@ -442,10 +503,10 @@ function showWelcome() {
                     <a href="#" data-file="System Design/System Design.md" class="card">
                         <span class="card-icon">🏗️</span>System Design
                     </a>
-                    <a href="#" data-file="Design Patterns/intro.md" class="card">
+                    <a href="#" data-file="design/Design-Patterns/intro.md" class="card">
                         <span class="card-icon">🎨</span>Design Patterns
                     </a>
-                    <a href="#" data-file="Solid Princables/SOLID Principles Complete Guide.md" class="card">
+                    <a href="#" data-file="design/SOLID-Principles/SOLID Principles Complete Guide.md" class="card">
                         <span class="card-icon">🔧</span>SOLID
                     </a>
                     <a href="#" data-file="Infrastructure/Kubernetes.md" class="card">
@@ -455,16 +516,54 @@ function showWelcome() {
             </div>
 
             <div class="section">
-                <h2 class="section-title">Playground</h2>
+                <h2 class="section-title">Problem Solving & Code</h2>
+                <p class="welcome-sub" style="margin-bottom:1rem;font-size:.875rem">Open from the sidebar: <strong>Problem Solving</strong> → Overview, LeetCode solutions (.rb), Data Structures, HackerRank. Click any file to view code in-app.</p>
                 <div class="cards">
+                    <a href="#" data-file="Problem Solving/Readme.md" class="card">
+                        <span class="card-icon">📋</span>Problem Solving Overview
+                    </a>
                     <a href="${p('Problem Solving/75leetcode.html')}" target="_blank" rel="noopener" class="card">
-                        <span class="card-icon">📋</span>75 LeetCode
+                        <span class="card-icon">📋</span>75 LeetCode (HTML)
                     </a>
                     <a href="${p('Problem Solving/patterns.html')}" target="_blank" rel="noopener" class="card">
-                        <span class="card-icon">🧩</span>Patterns
+                        <span class="card-icon">🧩</span>Patterns (HTML)
                     </a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Playgrounds</h2>
+                <p class="welcome-sub" style="margin-bottom:1rem;font-size:.875rem">Interactive prep (same design as Node.js). Open in new tab.</p>
+                <div class="cards">
                     <a href="${p('Frameworks/Backend/node/nodejs-interview-prep.html')}" target="_blank" rel="noopener" class="card">
-                        <span class="card-icon">🟢</span>Node.js Prep
+                        <span class="card-icon">🟢</span>Node.js
+                    </a>
+                    <a href="${p('Frameworks/Backend/Rails/ruby-rails-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">💎</span>Ruby & Rails
+                    </a>
+                    <a href="${p('Frameworks/Backend/dotNet/dotnet-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🟣</span>C# & .NET
+                    </a>
+                    <a href="${p('specialized/LLM/ai-engineering-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🤖</span>AI Engineering
+                    </a>
+                    <a href="${p('Databases/database-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🗄️</span>Database
+                    </a>
+                    <a href="${p('Frameworks/Frontend/basics/html-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">📄</span>HTML
+                    </a>
+                    <a href="${p('System Design/system-design-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🏗️</span>System Design
+                    </a>
+                    <a href="${p('DevOps/devops-infrastructure-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🔄</span>DevOps
+                    </a>
+                    <a href="${p('design/design-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🔧</span>Design & OOD
+                    </a>
+                    <a href="${p('Resume-Career/behavioral-leadership-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">⭐</span>Behavioral
                     </a>
                 </div>
             </div>
@@ -527,8 +626,13 @@ async function loadFile(filePath, addToHistory = true) {
 
         if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
 
-        const md = await resp.text();
-        renderMarkdown(md, filePath, addToHistory);
+        const text = await resp.text();
+
+        if (CODE_EXTENSIONS.test(filePath)) {
+            renderCodeFile(text, filePath, addToHistory);
+        } else {
+            renderMarkdown(text, filePath, addToHistory);
+        }
 
     } catch (err) {
         document.getElementById('content').innerHTML = `
@@ -563,6 +667,33 @@ function renderMarkdown(markdown, filePath, addToHistory) {
 
     // Fix internal markdown links
     fixInternalLinks(filePath);
+}
+
+function renderCodeFile(code, filePath, addToHistory) {
+    const ext = filePath.split('.').pop().toLowerCase();
+    const langMap = { rb: 'ruby', js: 'javascript', ts: 'typescript', py: 'python', java: 'java', cpp: 'cpp', c: 'c', go: 'go', rs: 'rust', kt: 'kotlin', scala: 'scala' };
+    const lang = langMap[ext] || ext;
+    const label = filePath.split('/').pop();
+    const escaped = escapeHtml(code);
+
+    document.getElementById('content').innerHTML = `
+        <div class="md-wrap">
+            <div class="code-file-header">
+                <span class="code-file-label">${escapeHtml(label)}</span>
+                <span class="code-file-lang">${lang}</span>
+            </div>
+            <pre class="code-file-pre"><code class="language-${lang}">${escaped}</code></pre>
+        </div>
+    `;
+
+    document.getElementById('content').scrollTop = 0;
+    setActiveFile(filePath);
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
 function fixInternalLinks(currentPath) {

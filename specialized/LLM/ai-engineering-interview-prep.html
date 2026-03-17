@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Engineering — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
+    --accent: #00d4ff; --accent2: #7c5cfc; --accent3: #00ff88; --accent4: #ff6b9d;
+    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
+    --card-radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
+  }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,212,255,0.05); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .content-section { margin-bottom: 28px; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">AI<span>·</span>ENG <span>// PREP</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">ML / LLM</div>
+    <div class="nav-item" onclick="showLesson('ml-basics')" id="nav-ml-basics"><span>📊</span> ML Basics <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('llm-rag')" id="nav-llm-rag"><span>🤖</span> LLMs & RAG <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mlops')" id="nav-mlops"><span>🔄</span> MLOps <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">AI Engineering</span></h1>
+        <p class="hero-sub">Interview prep for ML fundamentals, LLMs, RAG, and MLOps.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('ml-basics')"><span class="card-emoji">📊</span><div class="card-title">ML Basics</div><div class="card-desc">Supervised/unsupervised, metrics, overfitting</div></div>
+        <div class="topic-card" onclick="showLesson('llm-rag')"><span class="card-emoji">🤖</span><div class="card-title">LLMs & RAG</div><div class="card-desc">Transformers, prompting, retrieval-augmented generation</div></div>
+        <div class="topic-card" onclick="showLesson('mlops')"><span class="card-emoji">🔄</span><div class="card-title">MLOps</div><div class="card-desc">Pipelines, deployment, monitoring</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+      </div>
+    </div>
+    <div id="lesson-ml-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📊 ML Basics</div>
+      <div class="lesson-subtitle">Supervised vs unsupervised, key metrics, overfitting.</div>
+      <div class="content-section">
+        <div class="section-title">Supervised vs unsupervised</div>
+        <div class="prose"><strong>Supervised:</strong> Labeled data; model learns input → output. Classification (discrete labels) and regression (continuous). <strong>Unsupervised:</strong> No labels; find structure: clustering (e.g. K-means), dimensionality reduction (e.g. PCA), anomaly detection. Semi-supervised uses a mix of labeled and unlabeled data.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Metrics and overfitting</div>
+        <div class="prose"><strong>Classification:</strong> Accuracy, precision, recall, F1, ROC-AUC (especially for imbalanced data). <strong>Regression:</strong> MSE, MAE, RMSE. <strong>Overfitting:</strong> Model memorizes training data and does not generalize. Combat with more data, regularization (L1/L2), dropout, early stopping, and cross-validation.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is bias–variance tradeoff?</div>
+        <div class="interview-a">Bias: error from wrong assumptions (underfitting). Variance: error from sensitivity to training data (overfitting). Increasing model complexity usually increases variance and decreases bias. You want a balance (e.g. cross-validation, regularization).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When do you use precision vs recall?</div>
+        <div class="interview-a">Precision: when false positives are costly (e.g. spam filter marking good mail as spam). Recall: when false negatives are costly (e.g. missing a disease). Use F1 when you need a single balance; use precision–recall curves when classes are imbalanced.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('ml-basics')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-llm-rag" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🤖 LLMs & RAG</div>
+      <div class="lesson-subtitle">Transformers, prompting, retrieval-augmented generation.</div>
+      <div class="content-section">
+        <div class="section-title">Transformers and LLMs</div>
+        <div class="prose"><strong>Transformers</strong> use self-attention to model relationships between tokens (no recurrence like RNNs); they scale well and can be parallelized. LLMs are typically decoder-only (e.g. GPT) or encoder-decoder (e.g. T5). Pretraining on large text, then fine-tuning or prompting for tasks.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Prompting and RAG</div>
+        <div class="prose"><strong>Prompting:</strong> Zero-shot (task in prompt), few-shot (examples in prompt), chain-of-thought (reasoning steps). <strong>RAG (Retrieval-Augmented Generation):</strong> Query → retrieve relevant documents (embedding + vector store, e.g. similarity search) → pass docs as context to the LLM → generate answer. Reduces hallucination and grounds answers in your data; good for knowledge-heavy or private data.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why use RAG instead of fine-tuning for knowledge?</div>
+        <div class="interview-a">RAG lets you update knowledge by changing the document store (no retraining). Fine-tuning is better for changing style or task format but is slower to update and can cause forgetting. RAG is often cheaper and easier to maintain for domain or up-to-date knowledge.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is chain-of-thought prompting?</div>
+        <div class="interview-a">Asking the model to output its reasoning step by step before the final answer (e.g. "Let's think step by step"). Often improves accuracy on reasoning tasks because the model explicitly decomposes the problem. Can be combined with few-shot examples that show CoT.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('llm-rag')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-mlops" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔄 MLOps</div>
+      <div class="lesson-subtitle">Pipelines, deployment, monitoring.</div>
+      <div class="content-section">
+        <div class="section-title">Pipelines and registry</div>
+        <div class="prose">MLOps brings CI/CD practices to ML: <strong>data versioning</strong> (e.g. DVC, Delta Lake) so you can reproduce runs; <strong>training pipelines</strong> (e.g. Kubeflow, Airflow, SageMaker Pipelines) for feature prep, training, and evaluation; <strong>model registry</strong> (e.g. MLflow) to version and promote models. A/B test new models before full rollout.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Deployment and monitoring</div>
+        <div class="prose"><strong>Deployment:</strong> Batch (scheduled jobs) vs real-time (API serving). Use model servers (TensorFlow Serving, Triton, TorchServe) or managed platforms (SageMaker, Vertex). Consider latency, throughput, and GPU needs. <strong>Monitoring:</strong> Data drift (input distribution change), model performance (accuracy, business metrics), latency and errors. Set alerts on SLOs and drift.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is data drift and why monitor it?</div>
+        <div class="interview-a">Data drift is when the distribution of input data in production shifts from what the model was trained on. Performance can degrade without any code change. Monitor with statistical tests or embedding distance; retrain or collect new data when drift is detected.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('mlops')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 AI Engineering cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">ML</div>
+        <div class="prose">Supervised (classification, regression) vs unsupervised (clustering, PCA). Metrics: precision, recall, F1, ROC-AUC; MSE/MAE. Bias–variance, overfitting (regularization, dropout, early stopping).</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">LLMs and RAG</div>
+        <div class="prose">Transformers (self-attention). Prompting: zero-shot, few-shot, chain-of-thought. RAG: retrieve (embedding + vector store) → context → LLM; reduces hallucination, good for knowledge and private data.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">MLOps</div>
+        <div class="prose">Data versioning, training pipelines, model registry. Deployment: batch vs real-time, model serving. Monitoring: data drift, performance, latency; alerts on SLOs.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done-ai') || '[]')), xp: parseInt(localStorage.getItem('xp-ai') || '0'), totalTopics: 4 };
+function showPage(page) {
+  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (page === 'home') document.getElementById('nav-home').classList.add('active');
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+}
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const lesson = document.getElementById('lesson-' + id);
+  if (lesson) lesson.classList.add('active');
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function markDone(id) {
+  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-ai', JSON.stringify([...state.completed])); localStorage.setItem('xp-ai', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+}
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>

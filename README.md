@@ -2,6 +2,31 @@
 
 A comprehensive collection of interview questions, answers, and study materials for software engineering interviews. This repository serves as a single source of truth for technical interview preparation.
 
+## 📁 Repository Structure (by topic)
+
+| Folder | Contents |
+|--------|----------|
+| **Frameworks/Frontend** | JavaScript, TypeScript, HTML, CSS, React, React Native, Angular |
+| **Frameworks/Backend** | Node.js, Ruby on Rails, .NET (C#), **Java & Spring Boot (50+ Q&A)**, **Python, Django & FastAPI (50+ Q&A)** |
+| **Programming** | Ruby, Go (language fundamentals) |
+| **Databases** | MySQL, PostgreSQL, MongoDB |
+| **design** | SOLID Principles, Design Patterns (Creational/Structural/Behavioral), Object-Oriented Design |
+| **System Design** | Fundamentals, Cheatsheet, HR/Delivery examples |
+| **Architecture** | Microservices, Event-Driven, APIs, Distributed Systems |
+| **Infrastructure** | Docker, Kubernetes |
+| **DevOps** | DevOps, CI/CD, Observability |
+| **caching-messaging** | Redis, RabbitMQ, Kafka |
+| **Problem Solving** | Overview, LeetCode, Data Structures, HackerRank, DSA (Data-Structures-Algorithms) |
+| **Companies** | Toters, Amazon, Oracle, Yassir, Lucidya, Sanofi, GoBrands |
+| **Resume-Career** | **Interview Preparation Cheatsheet** (study plan, timeline, AI tooling), CV, FAANG/Staff Q&A, Study Guide, Behavioral (50+ Q&A), Staff-Leadership, Vector Search & AI/ML Q&A, Communication |
+| **specialized** | LLM (AI/ML), Books (Designing Data-Intensive Applications) |
+
+### 🎯 Start here: Interview Preparation Cheatsheet
+
+**→ `Resume-Career/Interview-Preparation-Cheatsheet.md`**
+
+Single place for: **how many days/weeks to prepare** before scheduling, **what to do** (action checklist), **study plan** (phases and weekly schedule), **AI tooling** (including **NotebookLM** step-by-step for study), and where to find everything in this repo. Use it to plan your prep for any company.
+
 ## 📚 Study Order - Recommended Path
 
 Follow this logical order for systematic interview preparation:
@@ -14,35 +39,33 @@ Follow this logical order for systematic interview preparation:
 
 ### Phase 2: Frontend Frameworks
 5. **React** → `Frameworks/Frontend/React/React.md`
-6. **Angular** → `Frameworks/Frontend/Angular/Angular.md`
+6. **React Native** → `Frameworks/Frontend/React/React-Native-Interview-QA.md`
+7. **Angular** → `Frameworks/Frontend/Angular/Angular.md`
 
 ### Phase 3: Backend Fundamentals
-7. **Programming Languages:**
+8. **Programming Languages:**
    - **Ruby** → `Programming/Ruby.md`
    - **Go** → `Programming/Go.md`
-   - **.NET/C#** → `Programming/dotNet.md`
+   - **.NET/C#** → `Frameworks/Backend/dotNet/00_INDEX.md`
 
 ### Phase 4: Backend Frameworks
-8. **Ruby on Rails** → `Frameworks/Backend/Rails/Ruby on Rails.md`
-9. **Node.js** → `Frameworks/Backend/Node.md`
-10. **.NET Backend** → `Frameworks/Backend/dotNet/` (multiple files)
+9. **Ruby on Rails** → `Frameworks/Backend/Rails/Ruby on Rails.md`
+10. **Node.js** → `Frameworks/Backend/node/Node.md`
+11. **.NET Backend** → `Frameworks/Backend/dotNet/` (multiple files)
+12. **Java & Spring Boot** → `Frameworks/Backend/Java-Spring-Boot-Interview-QA.md` (50+ Q&A)
+13. **Python, Django & FastAPI** → `Frameworks/Backend/Python-Django-FastAPI-Interview-QA.md` (50+ Q&A)
 
 ### Phase 5: Databases
-11. **MySQL** → `Databases/mysql.md`
-12. **PostgreSQL** → `Databases/postgresql.md`
-13. **MongoDB** → `Databases/mongodb.md`
+14. **MySQL** → `Databases/mysql.md`
+15. **PostgreSQL** → `Databases/postgresql.md`
+16. **MongoDB** → `Databases/mongodb.md`
 
-### Phase 6: Design Principles & Patterns
-14. **SOLID Principles** → `Solid Princables/SOLID Principles Complete Guide.md`
-15. **Design Patterns Introduction** → `Design Patterns/intro.md`
-16. **Creational Patterns** → `Design Patterns/Creational/`
-17. **Structural Patterns** → `Design Patterns/Structural/`
-18. **Behavioral Patterns** → `Design Patterns/Behavioral/`
-19. **Quick Reference** → `Design Patterns/Quick Reference Guide.md`
-
-### Phase 7: Object-Oriented Design
-20. **OOD Concepts** → `Object Orianted Design/OOD.md`
-21. **OOD Examples** → `Object Orianted Design/Delivery System OOD.md`
+### Phase 6: Design (SOLID, Patterns, OOD)
+17. **SOLID Principles** → `design/SOLID-Principles/SOLID Principles Complete Guide.md`
+18. **Design Patterns** → `design/Design-Patterns/intro.md`, Creational/Structural/Behavioral under `design/Design-Patterns/`
+19. **Quick Reference** → `design/Design-Patterns/Quick Reference Guide.md`
+20. **OOD Concepts** → `design/Object-Oriented-Design/OOD.md`
+21. **OOD Examples** → `design/Object-Oriented-Design/Delivery System OOD.md`
 
 ### Phase 8: System Design
 22. **System Design Fundamentals** → `System Design/System Design.md`
@@ -65,14 +88,13 @@ Follow this logical order for systematic interview preparation:
 33. **Observability** → `DevOps/Observability.md`
 
 ### Phase 11: Caching & Messaging
-34. **Redis** → `Caching/Redis.md`
-35. **RabbitMQ** → `Messaging/RabbitMQ.md`
-36. **Kafka** → `Messaging/Kafka.md`
+34. **Redis** → `caching-messaging/Redis.md`
+35. **RabbitMQ** → `caching-messaging/RabbitMQ.md`
+36. **Kafka** → `caching-messaging/Kafka.md`
 
 ### Phase 12: Problem Solving
-37. **Data Structures & Algorithms** → `Problem Solving/`
-38. **LeetCode Problems** → `Problem Solving/leetcode/`
-39. **HackerRank Problems** → `Problem Solving/hacker-rank/`
+37. **Overview** → `Problem Solving/Readme.md`
+38. **LeetCode / Data Structures / HackerRank** → Use the web UI sidebar: **Problem Solving** → open any `.md` or `.rb` file to view content/code in-app.
 
 ### Phase 13: Company-Specific Preparation
 40. **Toters** → `Companies/toters/`
@@ -80,9 +102,10 @@ Follow this logical order for systematic interview preparation:
 42. **Oracle** → `Companies/oracle/`
 43. **Other Companies** → `Companies/`
 
-### Phase 14: Specialized Topics
-44. **AI/ML Engineering** → `LLM/Senior AI Engineer Interview.md`
-45. **Free LLM Resources** → `LLM/FreeLLM.md`
+### Phase 14: Specialized Topics & Playgrounds
+44. **AI/ML Engineering** → `specialized/LLM/Senior AI Engineer Interview.md`
+45. **Free LLM Resources** → `specialized/LLM/FreeLLM.md`
+46. **Playgrounds** (interactive prep): Node.js, Ruby & Rails, C# & .NET, Database, HTML — see **Playgrounds** in sidebar or index below.
 
 ---
 
@@ -101,7 +124,10 @@ Follow this logical order for systematic interview preparation:
 #### Frameworks
 - **React** → `Frameworks/Frontend/React/React.md`
   - Hooks, components, Virtual DOM, performance optimization, and more
+- **React Native** → `Frameworks/Frontend/React/React-Native-Interview-QA.md`
+  - Bridge, components, styling, FlatList, navigation, native modules, Hermes, and more
 - **Angular** → `Frameworks/Frontend/Angular/Angular.md`
+- **HTML Playground** → `Frameworks/Frontend/basics/html-interview-prep.html` (interactive prep, same design as Node.js)
 - **React AI Mock Interview** → `Frameworks/Frontend/React/AI mock interview.md`
 
 ---
@@ -113,14 +139,15 @@ Follow this logical order for systematic interview preparation:
   - proc vs lambda, modules, garbage collection, metaprogramming, and more
 - **Go** → `Programming/Go.md`
   - Goroutines, channels, interfaces, error handling, and more
-- **.NET/C#** → `Programming/dotNet.md`
+- **.NET/C#** → `Frameworks/Backend/dotNet/00_INDEX.md` (and full deep dive in `Frameworks/Backend/dotNet/`)
   - C# features, .NET ecosystem, LINQ, async/await, and more
 
 #### Backend Frameworks
 - **Ruby on Rails** → `Frameworks/Backend/Rails/Ruby on Rails.md`
   - MVC, ActiveRecord, associations, callbacks, validations, and more
-- **Node.js** → `Frameworks/Backend/Node.md`
+- **Node.js** → `Frameworks/Backend/node/Node.md`
   - Event loop, streams, Express.js, middleware, and more
+- **Node.js Interview Prep (HTML)** → `Frameworks/Backend/node/nodejs-interview-prep.html` (interactive playground)
 - **.NET Backend Deep Dive** → `Frameworks/Backend/dotNet/`
   - `00_INDEX.md` - Complete index
   - `01_principal_playbook.md` - Principal engineer playbook
@@ -135,6 +162,10 @@ Follow this logical order for systematic interview preparation:
   - `10_behavioral_principal.md` - Behavioral questions
   - `11_backend_problem_solving.md` - Problem solving
 - **Rails AI Mock Interview** → `Frameworks/Backend/Rails/AI mock interview.md`
+- **Java & Spring Boot (50+ Q&A)** → `Frameworks/Backend/Java-Spring-Boot-Interview-QA.md`
+  - Java fundamentals, collections, concurrency, Spring Boot, Spring MVC, Spring Data, Spring Security
+- **Python, Django & FastAPI (50+ Q&A)** → `Frameworks/Backend/Python-Django-FastAPI-Interview-QA.md`
+  - Python basics, GIL, Django ORM/MVT, DRF, FastAPI, async, testing, deployment
 
 ---
 
@@ -149,55 +180,24 @@ Follow this logical order for systematic interview preparation:
 
 ---
 
-### Design Principles & Patterns
+### Design (SOLID, Patterns, OOD)
+
+All design-related content is under the **design/** folder.
 
 #### SOLID Principles
-- **SOLID Principles Complete Guide** → `Solid Princables/SOLID Principles Complete Guide.md`
-  - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion with real-world examples
-- **SOLID Basics** → `Solid Princables/solid.md`
+- **SOLID Principles Complete Guide** → `design/SOLID-Principles/SOLID Principles Complete Guide.md`
+- **SOLID Basics** → `design/SOLID-Principles/solid.md`
 
 #### Design Patterns
-- **Introduction** → `Design Patterns/intro.md`
-- **Quick Reference Guide** → `Design Patterns/Quick Reference Guide.md`
-- **Readme** → `Design Patterns/Readme.md`
+- **Introduction** → `design/Design-Patterns/intro.md`
+- **Quick Reference** → `design/Design-Patterns/Quick Reference Guide.md`
+- **Creational** → `design/Design-Patterns/Creational/` (Singleton, Factory, Abstract Factory, Builder, Prototype)
+- **Structural** → `design/Design-Patterns/Structural/` (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy)
+- **Behavioral** → `design/Design-Patterns/Behavioral/` (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor)
 
-**Creational Patterns:**
-- **Singleton** → `Design Patterns/Creational/Singleton.md`
-- **Factory** → `Design Patterns/Creational/Factory.md`
-- **Abstract Factory** → `Design Patterns/Creational/Abstract Factory.md`
-- **Builder** → `Design Patterns/Creational/Builder.md`
-- **Prototype** → `Design Patterns/Creational/Prototype.md`
-
-**Structural Patterns:**
-- **Adapter** → `Design Patterns/Structural/Adapter.md`
-- **Bridge** → `Design Patterns/Structural/Bridge.md`
-- **Composite** → `Design Patterns/Structural/Composite.md`
-- **Decorator** → `Design Patterns/Structural/Decorator.md`
-- **Facade** → `Design Patterns/Structural/Facade.md`
-- **Flyweight** → `Design Patterns/Structural/Flyweight.md`
-- **Proxy** → `Design Patterns/Structural/Proxy.md`
-
-**Behavioral Patterns:**
-- **Chain of Responsibility** → `Design Patterns/Behavioral/Chain of Responsibility.md`
-- **Command** → `Design Patterns/Behavioral/Command.md`
-- **Interpreter** → `Design Patterns/Behavioral/Interpreter.md`
-- **Iterator** → `Design Patterns/Behavioral/Iterator.md`
-- **Mediator** → `Design Patterns/Behavioral/Mediator.md`
-- **Memento** → `Design Patterns/Behavioral/Memento.md`
-- **Observer** → `Design Patterns/Behavioral/Observer.md`
-- **State** → `Design Patterns/Behavioral/State.md`
-- **Strategy** → `Design Patterns/Behavioral/Strategy.md`
-- **Template Method** → `Design Patterns/Behavioral/Template Method.md`
-- **Visitor** → `Design Patterns/Behavioral/Visitor.md`
-
----
-
-### Object-Oriented Design
-
-- **OOD Concepts** → `Object Orianted Design/OOD.md`
-  - Inheritance, composition, polymorphism, abstraction, encapsulation
-- **Delivery System OOD** → `Object Orianted Design/Delivery System OOD.md`
-  - Complete OOD example for a delivery application
+#### Object-Oriented Design
+- **OOD Concepts** → `design/Object-Oriented-Design/OOD.md`
+- **Delivery System OOD** → `design/Object-Oriented-Design/Delivery System OOD.md`
 
 ---
 
@@ -246,29 +246,25 @@ Follow this logical order for systematic interview preparation:
 
 ### Caching & Messaging
 
-- **Redis** → `Caching/Redis.md`
-  - Data structures, persistence, replication, clustering, pub/sub
-- **RabbitMQ** → `Messaging/RabbitMQ.md`
-  - Message queues, exchanges, bindings, routing keys, acknowledgments
-- **Kafka** → `Messaging/Kafka.md`
-  - Topics, partitions, producers, consumers, brokers, consumer groups
+- **Redis** → `caching-messaging/Redis.md`
+- **RabbitMQ** → `caching-messaging/RabbitMQ.md`
+- **Kafka** → `caching-messaging/Kafka.md`
 
 ---
 
 ### Problem Solving
 
-- **Data Structures** → `Problem Solving/data-structure/`
-  - Linked lists, trees, binary search trees, tries
-- **LeetCode** → `Problem Solving/leetcode/`
-  - 75 LeetCode problems with solutions
-- **HackerRank** → `Problem Solving/hacker-rank/`
-  - Various HackerRank problems
-- **Interview Problems** → `Problem Solving/interview/`
-  - Amazon interview problems, LeetCode 75, and more
-- **Study Plan** → `Problem Solving/leetcode/study_plan75/sliding_window.md`
-- **Readme** → `Problem Solving/Readme.md`
+**View code in-app:** Open the repo in the web UI (e.g. `npx serve` or GitHub Pages). In the sidebar under **Problem Solving** you can open Overview, LeetCode solutions (.rb), Data Structures, and HackerRank — code files display in the main content area.
+
+- **Overview** → `Problem Solving/Readme.md`
 - **DeepSeek Notes** → `Problem Solving/deepseek.md`
-- **Data Structures & Algorithms** → `Datastructure & Algorithm/AI mock interview.md`
+- **75 LeetCode (HTML)** → `Problem Solving/75leetcode.html` (opens in new tab)
+- **Patterns (HTML)** → `Problem Solving/patterns.html` (opens in new tab)
+- **LeetCode** → `Problem Solving/leetcode/` (e.g. `study_plan75/sliding_window.md`, solutions as `.rb` — click to view code)
+- **Data Structures** → `Problem Solving/data-structure/` (linked list, BST, trie — view `.rb` in-app)
+- **HackerRank** → `Problem Solving/hacker-rank/`
+- **Interview Problems** → `Problem Solving/interview/`
+- **Data Structures & Algorithms** → `Problem Solving/Data-Structures-Algorithms/AI mock interview.md`
 
 ---
 
@@ -292,35 +288,61 @@ Follow this logical order for systematic interview preparation:
 - **OCI Principal Interview Prep** → `Companies/oracle/OCI_Principal_Interview_Prep_50_QA.md`
 - **Glassdoor Insights** → `Companies/oracle/Glassdoor.md`
 
+#### Yassir
+- **Staff Backend Engineer** → `Companies/yassir/Comprehensive Interview Study Guide_ Backend Staff Engineer (Node.js) at Yassir.md`
+- **ChatGPT Q&A** → `Companies/yassir/chatgpt_QA.md`
+
 #### Other Companies
 - **Lucidya Backend Team Lead** → `Companies/Lucidya Backend Team Lead Interview Preparation Guide.md`
 - **Sanofi** → `Companies/Sanofi/interview_questions.md`
-- **GoBrands** → `Intro Quetions/GoBrands.md`
+- **GoBrands** → `Companies/Gobrand/GoBrands.md`
+
+---
+
+### Resume & Career
+
+All under **Resume-Career/**.
+
+- **Interview Preparation Cheatsheet** → `Resume-Career/Interview-Preparation-Cheatsheet.md`
+  - How many days to prepare, action checklist, study plan (phases + weekly schedule), AI tooling (NotebookLM step-by-step), where to find everything in this repo
+- **ATS Optimized CV** → `Resume-Career/Hany Sayed Ahmed - ATS Optimized CV.md`
+- **FAANG Interview Q&A** → `Resume-Career/FAANG Interview Preparation - Extended Q&A.md`
+- **Staff Engineer Q&A** → `Resume-Career/staff Q&A.md`
+- **Study Guide** → `Resume-Career/study_guide.md`
+- **Behavioral Interview Q&A** → `Resume-Career/Behavioral-Interview-QA.md`
+- **Behavioral Questions & Answers (50+)** → `Resume-Career/Behavioral-Questions-Answers.md`
+- **Staff & Leadership Q&A** → `Resume-Career/Staff-Leadership-QA.md`
+- **Vector Search & AI/ML Q&A** → `Resume-Career/Vector-Search-AI-ML-QA.md`
+- **Communication** → `Resume-Career/Communication/index.md`
 
 ---
 
 ### Specialized Topics
 
 #### AI/ML Engineering
-- **Senior AI Engineer Interview** → `LLM/Senior AI Engineer Interview.md`
-  - Machine Learning Fundamentals, Deep Learning, NLP, Computer Vision, MLOps
-- **Free LLM Resources** → `LLM/FreeLLM.md`
+- **Senior AI Engineer Interview** → `specialized/LLM/Senior AI Engineer Interview.md`
+- **Free LLM Resources** → `specialized/LLM/FreeLLM.md`
+- **AI Engineering Playground** → `specialized/LLM/ai-engineering-interview-prep.html` (interactive prep)
 
 #### Books & Resources
-- **Designing Data-Intensive Applications** → `Books/Design Data Insentive/designing_data_intensive_applications_summary.md`
+- **Designing Data-Intensive Applications** → `specialized/Books/Design Data Insentive/designing_data_intensive_applications_summary.md`
 
 #### Communication
-- **Communication Guide** → `Commenication/index.md`
+- **Communication Guide** → `Resume-Career/Communication/index.md`
 
----
+#### Playgrounds (interactive prep — same design as Node.js)
+- **Node.js** → `Frameworks/Backend/node/nodejs-interview-prep.html`
+- **Ruby & Rails** → `Frameworks/Backend/Rails/ruby-rails-interview-prep.html`
+- **C# & .NET** → `Frameworks/Backend/dotNet/dotnet-interview-prep.html`
+- **Database** → `Databases/database-interview-prep.html`
+- **HTML** → `Frameworks/Frontend/basics/html-interview-prep.html`
+- **System Design** → `System Design/system-design-interview-prep.html`
+- **DevOps & Infrastructure** → `DevOps/devops-infrastructure-interview-prep.html`
+- **Design (SOLID, Patterns, OOD)** → `design/design-interview-prep.html`
+- **Behavioral & Leadership** → `Resume-Career/behavioral-leadership-interview-prep.html`
+- **AI Engineering** → `specialized/LLM/ai-engineering-interview-prep.html`
 
-### Resume & Career
-
-- **ATS Optimized CV** → `Resume Analysis/Hany Sayed Ahmed - ATS Optimized CV.md`
-- **FAANG Interview Preparation** → `Resume Analysis/FAANG Interview Preparation - Extended Q&A.md`
-- **Staff Engineer Q&A** → `Resume Analysis/staff Q&A.md`
-- **Study Guide** → `Resume Analysis/study_guide.md`
-- **Resume PDF** → `Resume Analysis/Hany Sayed.pdf`
+- **Resume PDF** → `Resume-Career/Hany Sayed.pdf`
 
 ---
 
@@ -424,7 +446,7 @@ For local testing, you need to run a local server (browsers block file:// due to
 - 📱 **Fully Responsive**: Works perfectly on desktop, tablet, and mobile devices
 - 🔗 **Deep Linking**: Share direct links to specific files (works with GitHub Pages)
 - ⬅️ **Back Button**: Navigate through your reading history
-- 📊 **Welcome Dashboard**: Quick stats and quick links to popular topics
+- 📊 **Welcome Dashboard**: Quick stats and quick links to popular topics, including the **Interview Preparation Cheatsheet** (study plan, timeline, AI tooling)
 - 🎯 **Breadcrumb Navigation**: See where you are in the file structure
 - ⚡ **Fast Loading**: Optimized for performance
 

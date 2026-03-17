@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# & .NET — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
+    --accent: #6b4bb3; --accent2: #9b6bdd; --accent3: #7c5cfc; --accent4: #00d4ff;
+    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
+    --card-radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(107,75,179,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(107,75,179,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
+  }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(107,75,179,0.08); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .content-section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
+  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(107,75,179,0.15); color: var(--accent); border: 1px solid rgba(107,75,179,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">C#<span>·</span>DOTNET <span>// PREP</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">C#</div>
+    <div class="nav-item" onclick="showLesson('async-await')" id="nav-async-await"><span>⏳</span> Async/Await <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('linq')" id="nav-linq"><span>🔍</span> LINQ <span class="done-dot"></span></div>
+    <div class="nav-section-title">.NET</div>
+    <div class="nav-item" onclick="showLesson('di-middleware')" id="nav-di-middleware"><span>🪣</span> DI & Middleware <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ef-core')" id="nav-ef-core"><span>🗄️</span> EF Core <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">C# & .NET</span></h1>
+        <p class="hero-sub">Interview prep for C# and .NET: async/await, LINQ, dependency injection, middleware, and EF Core.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('async-await')"><span class="card-emoji">⏳</span><div class="card-title">Async/Await</div><div class="card-desc">Task, async/await, ConfigureAwait, cancellation</div></div>
+        <div class="topic-card" onclick="showLesson('linq')"><span class="card-emoji">🔍</span><div class="card-title">LINQ</div><div class="card-desc">Deferred execution, IEnumerable, query syntax</div></div>
+        <div class="topic-card" onclick="showLesson('di-middleware')"><span class="card-emoji">🪣</span><div class="card-title">DI & Middleware</div><div class="card-desc">Service lifetime, pipeline, minimal APIs</div></div>
+        <div class="topic-card" onclick="showLesson('ef-core')"><span class="card-emoji">🗄️</span><div class="card-title">EF Core</div><div class="card-desc">DbContext, migrations, queries, tracking</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+      </div>
+    </div>
+    <div id="lesson-async-await" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">⏳ Async/Await</div>
+      <div class="lesson-subtitle">Task, async/await, ConfigureAwait, and cancellation.</div>
+      <div class="content-section">
+        <div class="section-title">Key concepts</div>
+        <div class="prose">Async methods return <strong>Task</strong> or <strong>Task&lt;T&gt;</strong>. <code>await</code> unwraps the result and frees the thread. Use <code>ConfigureAwait(false)</code> in library code to avoid capturing the sync context. Use <code>CancellationToken</code> for cancellation.</div>
+        <div class="code-block"><pre>public async Task&lt;User&gt; GetUserAsync(int id, CancellationToken ct = default)
+{
+  await _httpClient.GetAsync(url, ct);
+  return await _db.Users.FindAsync(id, ct);
+}</pre></div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is the difference between Task.Run and async/await?</div>
+        <div class="interview-a">Task.Run offloads CPU-bound work to the thread pool. async/await is for I/O-bound work (no new thread; the method yields until I/O completes). Use Task.Run only when you have blocking or CPU-heavy code.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('async-await')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-linq" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔍 LINQ</div>
+      <div class="lesson-subtitle">Deferred execution, IEnumerable, IQueryable, and query syntax.</div>
+      <div class="content-section">
+        <div class="section-title">Deferred vs immediate execution</div>
+        <div class="prose"><strong>Deferred:</strong> The query is not executed until you iterate (foreach, ToList(), ToArray(), etc.). So you can build a query step by step and run it once. <strong>Immediate:</strong> Methods like Count(), First(), Single(), ToList() execute the query right away. Use deferred when you want to compose or delay; be aware that iterating twice runs the query twice unless you materialize with ToList().</div>
+        <div class="code-block"><pre>var q = items.Where(x => x.Active);  // no query yet
+var list = q.ToList();               // query runs here</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">IEnumerable vs IQueryable</div>
+        <div class="prose"><strong>IEnumerable</strong>: in-memory; operations are executed in .NET. <strong>IQueryable</strong>: expression tree; the provider (e.g. EF Core) translates to SQL and runs on the server. So filtering on IQueryable pushes the filter to the DB; filtering on IEnumerable runs in memory. Use IQueryable for DB-backed data to avoid loading everything.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When does a LINQ query actually execute?</div>
+        <div class="interview-a">When you enumerate the result: foreach, ToList(), ToArray(), Count(), First(), etc. Until then it is deferred. With IQueryable, execution happens when the query is translated and sent to the provider (e.g. database).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why use IQueryable instead of IEnumerable for database queries?</div>
+        <div class="interview-a">IQueryable builds an expression tree that the provider (EF Core, etc.) converts to SQL. Filtering and projection happen in the database, so you only load what you need. With IEnumerable you would load full entities and filter in memory, which is inefficient for large data.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('linq')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-di-middleware" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🪣 DI & Middleware</div>
+      <div class="lesson-subtitle">Service lifetime (Singleton, Scoped, Transient) and request pipeline.</div>
+      <div class="content-section">
+        <div class="section-title">Service lifetimes</div>
+        <div class="prose"><strong>Singleton:</strong> One instance for the entire application lifetime. Use for stateless services, caches, config. Do not hold request-specific or scoped data. <strong>Scoped:</strong> One instance per request (or per scope). Use for DbContext, request-scoped state. <strong>Transient:</strong> New instance every time it is resolved. Use for lightweight, stateless services. Avoid injecting Scoped into Singleton (captured dependency).</div>
+        <div class="code-block"><pre>services.AddSingleton<ICache, Cache>();
+services.AddScoped<AppDbContext>();
+services.AddTransient<IEmailSender, EmailSender>();</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Middleware pipeline</div>
+        <div class="prose">Middleware runs in the order it is registered. Each middleware can call <code>next()</code> to pass to the next, or short-circuit (e.g. return 401). Order matters: e.g. authentication before authorization, exception handling first, CORS before endpoints. In minimal APIs and MVC, middleware wraps the entire request.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why not inject Scoped into Singleton?</div>
+        <div class="interview-a">Singleton lives for the app lifetime; Scoped is created per request. If a Singleton held a Scoped dependency, it would capture one scope (e.g. first request) and reuse it for all later requests, leading to wrong or stale data. Resolve Scoped from within a scope (e.g. in the controller or middleware).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is the difference between Use and Run in middleware?</div>
+        <div class="interview-a"><code>Use</code> can call <code>next</code> to pass to the next middleware. <code>Run</code> is terminal: it does not have a next delegate and typically ends the pipeline. Use <code>Use</code> when you want to add logic before and optionally after the rest of the pipeline.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('di-middleware')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-ef-core" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🗄️ EF Core</div>
+      <div class="lesson-subtitle">DbContext, migrations, tracking, and eager loading.</div>
+      <div class="content-section">
+        <div class="section-title">DbContext and unit of work</div>
+        <div class="prose"><strong>DbContext</strong> represents a session with the database and a unit of work: track entities, cache them, and flush changes with <code>SaveChanges</code>. Register as Scoped so each request gets its own context. Use one DbContext per request; do not share across requests or use long-lived contexts for web apps.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Tracking and read-only queries</div>
+        <div class="prose">By default EF tracks entities so it can detect changes and persist them. For read-only queries use <code>AsNoTracking()</code> to avoid tracking overhead and prevent accidental updates. Use <code>AsNoTrackingWithIdentityResolution()</code> when you still want identity resolution but no change tracking.</div>
+        <div class="code-block"><pre>var users = await _db.Users.AsNoTracking().Where(u => u.Active).ToListAsync();</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Eager loading and N+1</div>
+        <div class="prose">Use <code>Include</code> and <code>ThenInclude</code> to load related data in one query and avoid N+1. For read-only projections, prefer <code>Select</code> to load only the columns you need. Avoid loading large graphs if you only need a few fields; project to DTOs or anonymous types.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When do you use AsNoTracking?</div>
+        <div class="interview-a">For read-only queries: when you only read data and do not need to update or delete those entities. It improves performance and prevents the context from tracking entities you do not intend to change. Use it in APIs that return DTOs or in reporting queries.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: How do you avoid N+1 in EF Core?</div>
+        <div class="interview-a">Eager load with <code>Include</code>/<code>ThenInclude</code> when you need related entities. For simple data, use <code>Select</code> to project only the columns you need, possibly with a join, so EF generates a single efficient query instead of many.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('ef-core')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 C# & .NET cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">C#</div>
+        <div class="prose">async/await, Task vs Task&lt;T&gt;, ConfigureAwait(false) in libraries, CancellationToken. LINQ: deferred vs immediate; IEnumerable (in-memory) vs IQueryable (expression tree, DB). Value vs reference types. IDisposable and using.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">.NET</div>
+        <div class="prose">DI: Singleton, Scoped, Transient; do not inject Scoped into Singleton. Middleware: order matters, Use vs Run. EF Core: DbContext (Scoped), migrations, AsNoTracking, Include/ThenInclude for N+1. Minimal APIs vs MVC controllers.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done-dotnet') || '[]')), xp: parseInt(localStorage.getItem('xp-dotnet') || '0'), totalTopics: 5 };
+function showPage(page) {
+  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (page === 'home') document.getElementById('nav-home').classList.add('active');
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+}
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const lesson = document.getElementById('lesson-' + id);
+  if (lesson) lesson.classList.add('active');
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function markDone(id) {
+  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-dotnet', JSON.stringify([...state.completed])); localStorage.setItem('xp-dotnet', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+}
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
+    --accent: #00ff88; --accent2: #00d4ff; --accent3: #7c5cfc; --accent4: #ff6b35;
+    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
+    --card-radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
+  }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,255,136,0.05); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .content-section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
+  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(0,255,136,0.1); color: var(--accent); border: 1px solid rgba(0,255,136,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">DB<span>·</span>PREP <span>// DATABASE</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">Concepts</div>
+    <div class="nav-item" onclick="showLesson('acid-indexes')" id="nav-acid-indexes"><span>🔒</span> ACID & Indexes <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('sql-joins')" id="nav-sql-joins"><span>🔗</span> SQL & Joins <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('scaling')" id="nav-scaling"><span>📈</span> Scaling & Replication <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('nosql')" id="nav-nosql"><span>📄</span> NoSQL <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">Database</span> Interviews</h1>
+        <p class="hero-sub">ACID, indexes, SQL, joins, scaling, replication, and NoSQL.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('acid-indexes')"><span class="card-emoji">🔒</span><div class="card-title">ACID & Indexes</div><div class="card-desc">Transactions, isolation, B-tree, composite indexes</div></div>
+        <div class="topic-card" onclick="showLesson('sql-joins')"><span class="card-emoji">🔗</span><div class="card-title">SQL & Joins</div><div class="card-desc">INNER, LEFT, subqueries, window functions</div></div>
+        <div class="topic-card" onclick="showLesson('scaling')"><span class="card-emoji">📈</span><div class="card-title">Scaling & Replication</div><div class="card-desc">Read replicas, sharding, CAP</div></div>
+        <div class="topic-card" onclick="showLesson('nosql')"><span class="card-emoji">📄</span><div class="card-title">NoSQL</div><div class="card-desc">Document, key-value, when to use</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+      </div>
+    </div>
+    <div id="lesson-acid-indexes" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔒 ACID & Indexes</div>
+      <div class="lesson-subtitle">Transactions, isolation levels, and index types.</div>
+      <div class="prose">ACID: Atomicity (all or nothing), Consistency (constraints hold), Isolation (concurrent transactions don’t interfere), Durability (committed data persists). Isolation levels: Read uncommitted, Read committed, Repeatable read, Serializable. Indexes: B-tree (default), hash, composite (order matters), covering index.</div>
+      <div class="code-block"><pre>-- Composite index: (a, b) helps WHERE a = ? AND b = ?
+CREATE INDEX idx_ab ON t(a, b);</pre></div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you use a composite index?</div>
+        <div class="interview-a">When queries filter or sort by multiple columns. The column order matters: put equality filters first, then range/sort. (a, b) can be used for “WHERE a = ?” or “WHERE a = ? AND b = ?”, but not for “WHERE b = ?” alone.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is a covering index?</div>
+        <div class="interview-a">An index that contains all columns required by a query (including in the SELECT list). The database can satisfy the query from the index alone without reading the table (index-only scan), which is faster and reduces I/O.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('acid-indexes')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-sql-joins" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔗 SQL & Joins</div>
+      <div class="lesson-subtitle">INNER, LEFT, subqueries, window functions.</div>
+      <div class="content-section">
+        <div class="section-title">Join types</div>
+        <div class="prose"><strong>INNER JOIN:</strong> Only rows that match in both tables. <strong>LEFT (OUTER) JOIN:</strong> All rows from the left table; matching rows from the right, or NULL where there is no match. Use when you want to keep all left rows (e.g. all users and their orders, or NULL if no orders). RIGHT JOIN is the same but from the right. FULL OUTER: all from both, NULL where no match.</div>
+        <div class="code-block"><pre>SELECT u.name, o.id
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;</pre></div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Subqueries and window functions</div>
+        <div class="prose"><strong>Subqueries:</strong> Use for EXISTS, IN, or a scalar (single value) in SELECT/WHERE. Correlated subquery references outer query. <strong>Window functions:</strong> ROW_NUMBER(), RANK(), DENSE_RANK(), SUM() OVER (PARTITION BY ... ORDER BY ...) compute over a partition without collapsing rows. Useful for top-N per group, running totals, and rankings.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: INNER JOIN vs LEFT JOIN — when to use which?</div>
+        <div class="interview-a">Use INNER when you only want rows that have a match in both tables. Use LEFT when you want all rows from the left table and optional data from the right (e.g. list all users and their last order, or NULL if they have none).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is the difference between ROW_NUMBER, RANK, and DENSE_RANK?</div>
+        <div class="interview-a">ROW_NUMBER assigns a unique number per row (no ties). RANK leaves gaps after ties (1,2,2,4). DENSE_RANK does not leave gaps (1,2,2,3). Use ROW_NUMBER for a unique ordering; RANK/DENSE_RANK when you care about ranking with ties.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('sql-joins')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-scaling" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📈 Scaling & Replication</div>
+      <div class="lesson-subtitle">Read replicas, sharding, CAP.</div>
+      <div class="prose">Primary accepts writes and replicates to replicas (eventual consistency for reads). Sharding: partition data by shard key (e.g. user_id) across nodes; choose key to avoid hot spots. CAP: in a partition you cannot have all three of Consistency, Availability, Partition tolerance; choose CP or AP. CAP: you can’t have Consistency, Availability, and Partition tolerance all at once; choose CP or AP.</div>
+      <button class="mark-done-btn" onclick="markDone('scaling')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-nosql" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📄 NoSQL</div>
+      <div class="lesson-subtitle">Document, key-value, when to use.</div>
+      <div class="content-section">
+        <div class="section-title">Document stores (e.g. MongoDB)</div>
+        <div class="prose">Documents (e.g. JSON/BSON) with flexible schema. Good for nested data, catalogs, content, and when schema evolves often. Query by fields and use indexes. Avoid deep nesting if you need to query inside it. Replication and sharding are common. Weaker consistency and no joins; model data so related info is in one document or accept application-level joins.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Key-value (e.g. Redis)</div>
+        <div class="prose">Simple get/set by key. Use for cache, sessions, rate limiting, pub/sub, and simple lookups. Very fast, in-memory option. Persistence (RDB, AOF) available. Not for complex queries or relationships. Good as a cache layer in front of SQL or as a session store.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you choose NoSQL over SQL?</div>
+        <div class="interview-a">When schema is fluid or you need horizontal scale and can accept eventual consistency. Document DBs suit nested, variable-shaped data. Key-value suits cache and simple lookups. Choose SQL when you need ACID, complex queries, joins, and strong consistency.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What are the downsides of document stores?</div>
+        <div class="interview-a">No joins (denormalize or join in app). Weaker consistency guarantees. Duplication if same data lives in many documents. Schema flexibility can lead to inconsistency. Complex queries and transactions are harder than in SQL. Good fit for read-heavy, flexible-schema workloads.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('nosql')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 Database cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">ACID & isolation</div>
+        <div class="prose">Atomicity, Consistency, Isolation, Durability. Isolation levels: Read uncommitted → Read committed → Repeatable read → Serializable. Know dirty read, non-repeatable read, phantom read.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Indexes</div>
+        <div class="prose">B-tree (default), hash, composite (left-prefix rule), covering index. Indexes speed reads, slow writes, use storage.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">SQL & joins</div>
+        <div class="prose">INNER vs LEFT. Subqueries: EXISTS, IN, scalar. Window functions: ROW_NUMBER, RANK, DENSE_RANK, SUM OVER.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Scaling & CAP</div>
+        <div class="prose">Read replicas (eventual consistency). Sharding (partition by key). CAP: in a partition, choose CP or AP.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">NoSQL</div>
+        <div class="prose">Document: flexible schema, nested data. Key-value: cache, sessions. Use when schema is fluid or you need horizontal scale and can relax strong consistency.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done-db') || '[]')), xp: parseInt(localStorage.getItem('xp-db') || '0'), totalTopics: 5 };
+function showPage(page) {
+  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (page === 'home') document.getElementById('nav-home').classList.add('active');
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+}
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const lesson = document.getElementById('lesson-' + id);
+  if (lesson) lesson.classList.add('active');
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function markDone(id) {
+  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-db', JSON.stringify([...state.completed])); localStorage.setItem('xp-db', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+}
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>

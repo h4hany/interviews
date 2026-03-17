@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design (SOLID, Patterns, OOD) — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e; --accent: #f6c90e; --accent3: #7c5cfc; --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d; --card-radius: 12px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(246,201,14,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(246,201,14,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(246,201,14,0.05); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .content-section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
+  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(246,201,14,0.1); color: var(--accent); border: 1px solid rgba(246,201,14,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">DESIGN<span>·</span>OOD <span>// PREP</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">SOLID</div>
+    <div class="nav-item" onclick="showLesson('solid')" id="nav-solid"><span>🔧</span> SOLID Principles <span class="done-dot"></span></div>
+    <div class="nav-section-title">Patterns</div>
+    <div class="nav-item" onclick="showLesson('creational')" id="nav-creational"><span>🏭</span> Creational <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('structural')" id="nav-structural"><span>🧱</span> Structural <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('behavioral')" id="nav-behavioral"><span>🔄</span> Behavioral <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ood')" id="nav-ood"><span>📐</span> Object-Oriented Design <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">Design & OOD</span></h1>
+        <p class="hero-sub">SOLID principles, Creational/Structural/Behavioral patterns, and Object-Oriented Design for interviews.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('solid')"><span class="card-emoji">🔧</span><div class="card-title">SOLID</div><div class="card-desc">SRP, OCP, LSP, ISP, DIP</div></div>
+        <div class="topic-card" onclick="showLesson('creational')"><span class="card-emoji">🏭</span><div class="card-title">Creational</div><div class="card-desc">Singleton, Factory, Builder</div></div>
+        <div class="topic-card" onclick="showLesson('structural')"><span class="card-emoji">🧱</span><div class="card-title">Structural</div><div class="card-desc">Adapter, Decorator, Proxy</div></div>
+        <div class="topic-card" onclick="showLesson('behavioral')"><span class="card-emoji">🔄</span><div class="card-title">Behavioral</div><div class="card-desc">Observer, Strategy, Command</div></div>
+        <div class="topic-card" onclick="showLesson('ood')"><span class="card-emoji">📐</span><div class="card-title">OOD</div><div class="card-desc">Classes, relationships, design</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+      </div>
+    </div>
+    <div id="lesson-solid" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔧 SOLID Principles</div>
+      <div class="lesson-subtitle">SRP, OCP, LSP, ISP, DIP.</div>
+      <div class="content-section">
+        <div class="section-title">The five principles</div>
+        <div class="prose"><strong>SRP (Single Responsibility):</strong> A class should have one reason to change; one responsibility. <strong>OCP (Open/Closed):</strong> Open for extension (new behavior via new code), closed for modification (avoid changing existing code). Use abstractions and composition. <strong>LSP (Liskov Substitution):</strong> Subtypes must be substitutable for their base type without breaking callers. <strong>ISP (Interface Segregation):</strong> Prefer many specific interfaces over one fat interface so clients do not depend on methods they do not use. <strong>DIP (Dependency Inversion):</strong> Depend on abstractions (interfaces) not concretions; high-level modules should not depend on low-level details.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What does Open for extension, closed for modification mean?</div>
+        <div class="interview-a">You add new behavior by adding new code (e.g. new class, new implementation of an interface), not by editing existing classes. Achieve it with polymorphism, strategy-style injection, and stable interfaces so existing callers keep working.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('solid')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-creational" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🏭 Creational Patterns</div>
+      <div class="lesson-subtitle">Singleton, Factory, Abstract Factory, Builder, Prototype.</div>
+      <div class="content-section">
+        <div class="section-title">Patterns</div>
+        <div class="prose"><strong>Singleton:</strong> Ensure one instance globally (or per scope); control creation and access. <strong>Factory Method:</strong> Delegate object creation to a method (or subclass); encapsulate which concrete type is created. <strong>Abstract Factory:</strong> Create families of related objects (e.g. UI widgets for one theme) without coupling to concrete classes. <strong>Builder:</strong> Step-by-step construction; same build process can produce different representations; fluent API. <strong>Prototype:</strong> Copy an existing instance instead of creating from scratch; useful when creation is expensive or when you need a clone.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you use Builder instead of a constructor with many params?</div>
+        <div class="interview-a">When you have many optional parameters or when construction is complex and you want a clear, readable API. Builder avoids telescoping constructors and makes the intent of each step explicit. Good for config objects, DTOs, and immutable objects with many fields.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('creational')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-structural" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🧱 Structural Patterns</div>
+      <div class="lesson-subtitle">Adapter, Decorator, Proxy, Facade, Composite.</div>
+      <div class="content-section">
+        <div class="section-title">Key structural patterns</div>
+        <div class="prose"><strong>Adapter:</strong> Wrap an existing class so it matches another interface the client expects; integrate legacy or third-party code. <strong>Decorator:</strong> Wrap an object to add behavior dynamically; same interface, additional responsibility (e.g. logging, caching). <strong>Proxy:</strong> Stand-in that controls access: lazy init, access control, logging, remote proxy. <strong>Facade:</strong> Single interface to a set of interfaces in a subsystem; simplify usage. <strong>Composite:</strong> Build tree structures; treat leaf and composite nodes uniformly so clients can work with the tree without branching.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Adapter vs Decorator — what is the difference?</div>
+        <div class="interview-a">Adapter changes the interface of an object so it can be used where a different interface is expected; the goal is compatibility. Decorator keeps the same interface and adds behavior (e.g. logging, caching); the goal is to extend functionality transparently.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('structural')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-behavioral" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔄 Behavioral Patterns</div>
+      <div class="lesson-subtitle">Observer, Strategy, Command, State.</div>
+      <div class="content-section">
+        <div class="section-title">Key behavioral patterns</div>
+        <div class="prose"><strong>Observer:</strong> One-to-many dependency; when the subject changes, observers are notified. Used in event systems, reactive UIs. <strong>Strategy:</strong> Encapsulate algorithms; make them interchangeable so the client can switch behavior (e.g. sort strategy, payment method). <strong>Command:</strong> Encapsulate a request as an object; supports undo, queueing, logging. <strong>State:</strong> Object behavior changes with internal state; avoid large switch/if on state. Iterator, Template Method (skeleton in base class, steps overridden), and Chain of Responsibility are also common.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When do you use Strategy pattern?</div>
+        <div class="interview-a">When you have multiple algorithms or behaviors that are interchangeable and you want to avoid conditionals (e.g. different sort strategies, payment methods, compression algorithms). The client depends on an abstraction and receives the concrete strategy via injection or config.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('behavioral')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-ood" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📐 Object-Oriented Design</div>
+      <div class="lesson-subtitle">Classes, relationships, design process.</div>
+      <div class="content-section">
+        <div class="section-title">Design process</div>
+        <div class="prose">(1) <strong>Clarify requirements:</strong> Scope, constraints, who uses the system. (2) <strong>Identify main entities:</strong> Nouns often become classes (e.g. Vehicle, ParkingSpot, Elevator). (3) <strong>Relationships:</strong> Has-a (composition, aggregation), is-a (inheritance). (4) <strong>Key methods:</strong> What each entity does; public API. (5) <strong>Design for change:</strong> Apply SOLID; use patterns where they fit (e.g. State for elevator, Strategy for pricing). Consider edge cases and concurrency (e.g. two cars for one spot).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: How do you approach designing a parking lot?</div>
+        <div class="interview-a">Clarify: types of vehicles, spot types, pricing, entry/exit flow. Entities: ParkingLot, Level, ParkingSpot, Vehicle (or Car, Bike), Ticket. Relationships: Lot has Levels, Level has Spots, Spot can hold Vehicle, Ticket links Vehicle to Spot and time. Methods: findAvailableSpot(), park(), unpark(), calculateFee(). Consider thread safety if multiple entries at once.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('ood')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 Design & OOD cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">SOLID</div>
+        <div class="prose">SRP (one reason to change), OCP (extend not modify), LSP (substitutable subtypes), ISP (small interfaces), DIP (depend on abstractions).</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Patterns</div>
+        <div class="prose">Creational: Singleton, Factory, Builder. Structural: Adapter, Decorator, Proxy, Facade, Composite. Behavioral: Observer, Strategy, Command, State.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">OOD process</div>
+        <div class="prose">Requirements → entities → relationships (has-a, is-a) → key methods → SOLID and patterns. Use cases: parking lot, elevator, deck of cards, etc.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done-design') || '[]')), xp: parseInt(localStorage.getItem('xp-design') || '0'), totalTopics: 6 };
+function showPage(p) { document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); if (p === 'home') document.getElementById('nav-home').classList.add('active'); document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; }
+function showLesson(id) { document.getElementById('home-page').style.display = 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); const L = document.getElementById('lesson-' + id); const N = document.getElementById('nav-' + id); if (L) L.classList.add('active'); if (N) N.classList.add('active'); window.scrollTo(0, 0); }
+function markDone(id) { if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-design', JSON.stringify([...state.completed])); localStorage.setItem('xp-design', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; } document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; }
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>

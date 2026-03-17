@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e; --accent: #00d4ff; --accent3: #7c5cfc; --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d; --card-radius: 12px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
+  .logo span { color: var(--text-dim); }
+  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
+  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,212,255,0.05); }
+  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
+  .nav-item.completed .done-dot { display: block; }
+  main { padding: 0; overflow-y: auto; }
+  #home-page { display: block; padding: 60px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
+  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
+  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+  .content-section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
+  .prose strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
+  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
+  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
+  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mark-done-btn { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">SYS<span>·</span>DESIGN <span>// PREP</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+    <div class="nav-section-title">Fundamentals</div>
+    <div class="nav-item" onclick="showLesson('requirements')" id="nav-requirements"><span>📋</span> Requirements & Scope <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('capacity')" id="nav-capacity"><span>📐</span> Capacity Estimation <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('load-balancing')" id="nav-load-balancing"><span>⚖️</span> Load Balancing <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('caching')" id="nav-caching"><span>💾</span> Caching Strategies <span class="done-dot"></span></div>
+    <div class="nav-section-title">Scale & Data</div>
+    <div class="nav-item" onclick="showLesson('sharding')" id="nav-sharding"><span>🔀</span> Sharding & Partitioning <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('replication')" id="nav-replication"><span>📑</span> Replication <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('search-ranking')" id="nav-search-ranking"><span>🔍</span> Search & Ranking <span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+  </nav>
+  <main>
+    <div id="home-page">
+      <div class="hero">
+        <h1>Master <span class="highlight">System Design</span></h1>
+        <p class="hero-sub">Requirements, capacity, load balancing, caching, sharding, replication, and search/ranking. Everything you need for system design interviews.</p>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card" onclick="showLesson('requirements')"><span class="card-emoji">📋</span><div class="card-title">Requirements & Scope</div><div class="card-desc">Functional, non-functional, back-of-envelope</div></div>
+        <div class="topic-card" onclick="showLesson('capacity')"><span class="card-emoji">📐</span><div class="card-title">Capacity Estimation</div><div class="card-desc">QPS, storage, bandwidth</div></div>
+        <div class="topic-card" onclick="showLesson('load-balancing')"><span class="card-emoji">⚖️</span><div class="card-title">Load Balancing</div><div class="card-desc">Algorithms, health checks, sticky sessions</div></div>
+        <div class="topic-card" onclick="showLesson('caching')"><span class="card-emoji">💾</span><div class="card-title">Caching</div><div class="card-desc">Cache-aside, write-through, TTL, invalidation</div></div>
+        <div class="topic-card" onclick="showLesson('sharding')"><span class="card-emoji">🔀</span><div class="card-title">Sharding</div><div class="card-desc">Horizontal partitioning, consistent hashing</div></div>
+        <div class="topic-card" onclick="showLesson('replication')"><span class="card-emoji">📑</span><div class="card-title">Replication</div><div class="card-desc">Leader-follower, eventual consistency</div></div>
+        <div class="topic-card" onclick="showLesson('search-ranking')"><span class="card-emoji">🔍</span><div class="card-title">Search & Ranking</div><div class="card-desc">Inverted index, multi-stage ranking</div></div>
+        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+      </div>
+    </div>
+    <div id="lesson-requirements" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 Requirements & Scope</div>
+      <div class="lesson-subtitle">Clarify functional and non-functional requirements before designing.</div>
+      <div class="content-section">
+        <div class="section-title">Functional requirements</div>
+        <div class="prose">Core features the system must support: e.g. user can post, follow others, view a timeline, like/comment. Be specific enough to drive design (read/write ratio, who can do what). Ask: single user or multi-tenant? Real-time or batch?</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Non-functional requirements</div>
+        <div class="prose"><strong>Scale:</strong> DAU, QPS (reads vs writes). <strong>Latency:</strong> p99 or average (e.g. &lt; 200ms). <strong>Availability:</strong> 99.9% (three nines) or 99.99%. <strong>Consistency:</strong> strong (read-after-write) vs eventual. State assumptions explicitly (e.g. single region first, 10M DAU).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why clarify requirements before drawing the system?</div>
+        <div class="interview-a">Requirements drive scale (QPS, storage), consistency choices, and which components you need (cache, queue, DB). Without them you might over- or under-design. Stating scope (e.g. read-heavy, write path simple) keeps the interview focused.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('requirements')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-capacity" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📐 Capacity Estimation</div>
+      <div class="lesson-subtitle">QPS, storage, and bandwidth back-of-envelope.</div>
+      <div class="content-section">
+        <div class="section-title">QPS (queries per second)</div>
+        <div class="prose">Start from DAU. Assume reads per user per day (e.g. 10) and writes (e.g. 2). Total read QPS ≈ DAU × reads_per_user / 86400; peak is 2–3× average. Use round numbers: 1M DAU, 10 reads/user/day → ~100–120 read QPS; 2 writes → ~25 write QPS.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Storage and bandwidth</div>
+        <div class="prose"><strong>Storage:</strong> records × size per record × retention (e.g. 5 years). Add for indexes and replication. <strong>Bandwidth:</strong> QPS × request/response size. E.g. 100K QPS × 10 KB ≈ 1 GB/s. State assumptions (e.g. 1 KB per request).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: How do you estimate write QPS from DAU?</div>
+        <div class="interview-a">DAU × (writes per user per day) / 86400. Example: 10M DAU, 5 writes/user/day → 10M × 5 / 86400 ≈ 580 write QPS. Use peak multiplier (e.g. 2–3×) if asked for peak capacity.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('capacity')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-load-balancing" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">⚖️ Load Balancing</div>
+      <div class="lesson-subtitle">Algorithms, health checks, L4 vs L7.</div>
+      <div class="content-section">
+        <div class="section-title">Algorithms</div>
+        <div class="prose"><strong>Round-robin:</strong> Rotate across backends; simple, even if some are slower. <strong>Least connections:</strong> Send to the server with fewest active connections; good for long-lived or variable-length requests. <strong>Weighted:</strong> Assign more traffic to more capable nodes. <strong>IP hash:</strong> Same client often to same server (sticky by IP).</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Health checks and layers</div>
+        <div class="prose">Health checks (HTTP or TCP) remove unhealthy backends from the pool. Sticky sessions (cookies or server-assigned) when state is local to a server. <strong>L4</strong> (TCP/UDP): no awareness of HTTP. <strong>L7</strong> (HTTP): can route by path, header, cookie; TLS termination; more flexible.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you use L7 load balancing instead of L4?</div>
+        <div class="interview-a">When you need HTTP-aware routing: by URL path, host header, or cookie (e.g. canary, A/B, sticky session). L7 also allows TLS termination at the LB. Use L4 when you only need to distribute TCP/UDP and want lower latency and simpler config.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('load-balancing')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-caching" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">💾 Caching Strategies</div>
+      <div class="lesson-subtitle">Cache-aside, write-through, TTL, invalidation.</div>
+      <div class="content-section">
+        <div class="section-title">Cache-aside (lazy loading)</div>
+        <div class="prose">App reads from cache first. On miss: read from DB, then write to cache. Writes go to DB; cache can be updated or invalidated on write. Simple and robust; cache can hold a subset of data. Risk: thundering herd if many requests miss the same key — use locking or single-flight.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Write-through and TTL</div>
+        <div class="prose"><strong>Write-through:</strong> Every write goes to cache and DB so cache stays in sync; read miss is rare but writes are slower. <strong>TTL:</strong> Expire entries after a time to avoid stale data; balance freshness vs load. <strong>Invalidation:</strong> On write, delete or update the cached entry so next read gets fresh data from DB.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: What is cache stampede and how do you mitigate it?</div>
+        <div class="interview-a">When a popular key expires, many requests hit the DB at once (stampede). Mitigate: (1) probabilistic early expiry (e.g. refresh a bit before TTL), (2) single-flight (one request fills cache, others wait), (3) lock per key so only one recomputes.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('caching')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-sharding" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔀 Sharding & Partitioning</div>
+      <div class="lesson-subtitle">Horizontal partitioning and consistent hashing.</div>
+      <div class="content-section">
+        <div class="section-title">Shard key and partitioning</div>
+        <div class="prose">Partition data by a <strong>shard key</strong> (e.g. user_id, tenant_id) so each shard holds a subset. Key choice matters: avoid hot shards (one key with most traffic). Range partitioning: by key range; can create hotspots. Hash partitioning: key → hash → shard; even distribution but range queries need to hit all shards.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Consistent hashing</div>
+        <div class="prose">Hash keys and nodes onto a ring. Key goes to the next node clockwise. Adding or removing a node only moves keys that now map to a different node; minimal rebalancing. Use virtual nodes (replicas of each node on the ring) for more even distribution. Hot shards: monitor, split the shard, or use a different key.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why use consistent hashing for sharding?</div>
+        <div class="interview-a">When nodes are added or removed, only a fraction of keys need to move (those adjacent to the change on the ring). With simple modulo hashing, adding a node would reassign almost all keys. Consistent hashing reduces rebalancing cost and failure blast radius.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('sharding')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-replication" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📑 Replication</div>
+      <div class="lesson-subtitle">Leader-follower, sync vs async, consistency.</div>
+      <div class="content-section">
+        <div class="section-title">Leader-follower (primary-replica)</div>
+        <div class="prose">One leader accepts writes; followers replicate the write log (WAL or binlog). <strong>Sync replication:</strong> Leader waits for N replicas to ack before confirming write; strong consistency, higher latency. <strong>Async replication:</strong> Leader confirms immediately; replicas lag; eventual consistency. Reads can go to followers to scale read throughput.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Trade-offs</div>
+        <div class="prose">Strong consistency: read from leader or sync replicas; higher latency, fewer read replicas. Eventual consistency: read from any replica; lower latency, scale reads, but may see stale data. Use leader for read-after-write; use replicas for bulk or timeline reads that tolerate lag.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: When would you read from a replica instead of the leader?</div>
+        <div class="interview-a">When the use case tolerates staleness: e.g. timeline, feed, analytics. Reading from replicas spreads load and scales read QPS. Always read from leader (or sync replica) when the user must see their own just-written data (read-after-write consistency).</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('replication')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-search-ranking" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">🔍 Search & Ranking</div>
+      <div class="lesson-subtitle">Inverted index, retrieval, re-ranking.</div>
+      <div class="content-section">
+        <div class="section-title">Inverted index</div>
+        <div class="prose">Maps each <strong>term</strong> to a list of document IDs (posting list) that contain the term. Enables fast lookup: for a query, intersect or merge posting lists. Store doc frequency, positions for phrase queries. Index is built at ingest; search is over the index, not raw docs. Shard index by doc_id; query all shards and merge top-K.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Retrieval and re-ranking</div>
+        <div class="prose"><strong>Retrieval:</strong> Get candidates (e.g. BM25 for keyword, vector search for semantic). Retrieve more than K (e.g. 1000). <strong>Re-ranking:</strong> Apply a heavier model or signals (ML ranker, diversity, recency) to the candidates and return top-K. Two-stage keeps latency low while improving relevance.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-q">Q: Why use a two-stage retrieve-then-rerank pipeline?</div>
+        <div class="interview-a">First stage (e.g. BM25, vector search) is fast and reduces millions of docs to hundreds of candidates. Second stage (ML model, complex features) runs on a small set and improves relevance. Running the heavy ranker on the full corpus would be too slow for low latency.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('search-ranking')">✓ Mark as done</button>
+    </div>
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+      <div class="lesson-title">📋 System design cheatsheet</div>
+      <div class="lesson-subtitle">Full quick reference for interviews.</div>
+      <div class="content-section">
+        <div class="section-title">Flow</div>
+        <div class="prose">Requirements (functional, non-functional) → Capacity (QPS, storage, bandwidth) → High-level diagram → Load balancer → App servers → Cache → DB (sharding, replication) → Special (search, queue, CDN).</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Key concepts</div>
+        <div class="prose">Load balancing: round-robin, least connections, L4 vs L7. Caching: cache-aside, write-through, TTL, stampede mitigation. Sharding: shard key, consistent hashing. Replication: leader-follower, sync vs async, read from replica. Search: inverted index, retrieve then re-rank.</div>
+      </div>
+      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+    </div>
+  </main>
+</div>
+<script>
+const state = { completed: new Set(JSON.parse(localStorage.getItem('done-sys') || '[]')), xp: parseInt(localStorage.getItem('xp-sys') || '0'), totalTopics: 8 };
+function showPage(p) { document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); if (p === 'home') document.getElementById('nav-home').classList.add('active'); document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; }
+function showLesson(id) { document.getElementById('home-page').style.display = 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); const L = document.getElementById('lesson-' + id); const N = document.getElementById('nav-' + id); if (L) L.classList.add('active'); if (N) N.classList.add('active'); window.scrollTo(0, 0); }
+function markDone(id) { if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-sys', JSON.stringify([...state.completed])); localStorage.setItem('xp-sys', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; } document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; }
+document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+</script>
+</body>
+</html>
