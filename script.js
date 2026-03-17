@@ -751,12 +751,12 @@ function attachQuickLinkListeners() {
         link.parentNode.replaceChild(newLink, link);
         
         newLink.addEventListener('click', (e) => {
-            e.preventDefault();
             const file = newLink.getAttribute('data-file');
             if (file) {
-                console.log('Quick link clicked:', file);
+                e.preventDefault();
                 loadFile(file);
             }
+            // No data-file: let the link work (e.g. 75 LeetCode, Patterns open in new tab)
         });
     });
 }
