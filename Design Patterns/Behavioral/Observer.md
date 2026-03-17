@@ -216,3 +216,4 @@ order.update_status("shipped")  # All listeners notified!
 - Use for event-driven systems
 - Like a newsletter subscription system
 
+

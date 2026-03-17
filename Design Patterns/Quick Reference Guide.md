@@ -310,3 +310,4 @@ Use this guide to quickly identify which pattern to use based on the problem you
 
 For detailed explanations with real-world examples, see the individual pattern files in their respective directories.
 
+

@@ -243,3 +243,4 @@ results = db.execute_query("SELECT * FROM users")  # Simple!
 - Use when subsystem is too complex for clients
 - Like a receptionist directing you to the right department
 
+

@@ -1052,3 +1052,4 @@ processor.process_order(order, CreditCardPayment.new) # OCP: Easy to add new pay
 
 **Practice recognizing problems, and you'll naturally know which principle to apply!**
 
+

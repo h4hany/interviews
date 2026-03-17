@@ -233,3 +233,4 @@ Synthetic Monitoring uses automated scripts to simulate user interactions, testi
 - **RUM**: Monitors real user interactions.
 - **Synthetic Monitoring**: Simulates user interactions with automated scripts.
 
+

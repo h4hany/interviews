@@ -232,3 +232,4 @@ Strangler Pattern gradually migrates from monolith to microservices by replacing
 - Use asynchronous communication where appropriate
 - Monitor and observe services
 
+

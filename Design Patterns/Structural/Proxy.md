@@ -209,3 +209,4 @@ proxy.fetch_data("user123")  # Returns from cache!
 - Use for lazy loading, access control, caching
 - Like a security guard controlling access to a building
 
+

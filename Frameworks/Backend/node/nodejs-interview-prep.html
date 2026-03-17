@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS & Node.js — Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #ff6b35;
+    --accent3: #7c5cfc;
+    --accent4: #00d4ff;
+    --text: #e8e8f0;
+    --text-dim: #7070a0;
+    --text-dimmer: #404060;
+    --yellow: #ffd93d;
+    --pink: #ff6b9d;
+    --red: #ff4757;
+    --green: #00ff88;
+    --card-radius: 12px;
+    --glow-green: 0 0 20px rgba(0,255,136,0.3);
+    --glow-purple: 0 0 20px rgba(124,92,252,0.3);
+    --glow-orange: 0 0 20px rgba(255,107,53,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .logo span { color: var(--text-dim); }
+
+  .progress-bar-wrap {
+    flex: 1; max-width: 300px; margin: 0 24px;
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .xp-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    background: rgba(255,217,61,0.1);
+    border: 1px solid rgba(255,217,61,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* LAYOUT */
+  .app {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 60px);
+    position: relative; z-index: 1;
+  }
+
+  /* SIDEBAR */
+  nav.sidebar {
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky; top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .nav-section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dimmer);
+    padding: 16px 20px 8px;
+    text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(0,255,136,0.05);
+  }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-item .done-dot {
+    margin-left: auto; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent);
+    display: none;
+  }
+  .nav-item.completed .done-dot { display: block; }
+
+  /* MAIN CONTENT */
+  main {
+    padding: 0;
+    overflow-y: auto;
+  }
+
+  /* HERO HOME */
+  .hero {
+    padding: 60px 48px;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse at 20% 50%, rgba(0,255,136,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(124,92,252,0.05) 0%, transparent 60%);
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+  }
+
+  .stat-row {
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* TOPIC CARDS GRID */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .topic-card {
+    background: var(--bg);
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .topic-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .topic-card:hover { background: var(--surface); }
+  .topic-card:hover::before { opacity: 1; }
+
+  .card-color-0::before { background: radial-gradient(circle at 0% 0%, rgba(0,255,136,0.08), transparent 60%); }
+  .card-color-1::before { background: radial-gradient(circle at 0% 0%, rgba(124,92,252,0.08), transparent 60%); }
+  .card-color-2::before { background: radial-gradient(circle at 0% 0%, rgba(0,212,255,0.08), transparent 60%); }
+  .card-color-3::before { background: radial-gradient(circle at 0% 0%, rgba(255,107,53,0.08), transparent 60%); }
+  .card-color-4::before { background: radial-gradient(circle at 0% 0%, rgba(255,105,157,0.08), transparent 60%); }
+  .card-color-5::before { background: radial-gradient(circle at 0% 0%, rgba(255,217,61,0.08), transparent 60%); }
+
+  .card-emoji { font-size: 32px; margin-bottom: 12px; display: block; }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+  }
+
+  .card-tag-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .tag.hot { background: rgba(255,107,53,0.1); color: var(--accent2); border-color: rgba(255,107,53,0.2); }
+  .tag.key { background: rgba(0,255,136,0.1); color: var(--accent); border-color: rgba(0,255,136,0.2); }
+
+  /* LESSON CONTENT PAGE */
+  .lesson-page {
+    display: none;
+    padding: 40px 48px;
+    max-width: 900px;
+  }
+  .lesson-page.active { display: block; }
+
+  .lesson-breadcrumb {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    margin-bottom: 24px;
+    cursor: pointer;
+  }
+  .lesson-breadcrumb:hover { color: var(--accent); }
+  .lesson-breadcrumb::before { content: '← '; }
+
+  .lesson-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .lesson-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent3);
+    margin-bottom: 10px;
+  }
+
+  .lesson-title {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .lesson-subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 600px;
+    font-weight: 400;
+  }
+
+  /* CONTENT BLOCKS */
+  .content-section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 3px; height: 20px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .prose {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.9;
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+  }
+
+  .prose strong { color: var(--text); font-weight: 700; }
+  .prose .hl-green { color: var(--accent); }
+  .prose .hl-orange { color: var(--accent2); }
+  .prose .hl-purple { color: var(--accent3); }
+  .prose .hl-blue { color: var(--accent4); }
+  .prose .hl-yellow { color: var(--yellow); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .copy-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dimmer);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #abb2bf;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #c678dd; } /* keyword */
+  .fn { color: #61afef; } /* function */
+  .st { color: #98c379; } /* string */
+  .nm { color: #d19a66; } /* number */
+  .cm { color: #5c6370; font-style: italic; } /* comment */
+  .op { color: #56b6c2; } /* operator/builtin */
+  .id { color: #e06c75; } /* important identifier */
+
+  /* ANALOGY BOX */
+  .analogy-box {
+    background: rgba(255,217,61,0.05);
+    border: 1px solid rgba(255,217,61,0.15);
+    border-left: 3px solid var(--yellow);
+    border-radius: 0 var(--card-radius) var(--card-radius) 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .analogy-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 8px;
+  }
+
+  .analogy-text {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.8;
+    font-weight: 400;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* INTERVIEW Q BOX */
+  .interview-box {
+    background: rgba(124,92,252,0.05);
+    border: 1px solid rgba(124,92,252,0.15);
+    border-radius: var(--card-radius);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .interview-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent3);
+    margin-bottom: 12px;
+  }
+
+  .interview-q {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .interview-q::after {
+    content: '+';
+    font-family: 'Space Mono', monospace;
+    color: var(--accent3);
+    font-size: 16px;
+    transition: transform 0.2s;
+  }
+
+  .interview-q.open::after { transform: rotate(45deg); }
+
+  .interview-a {
+    display: none;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.8;
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .interview-a.open { display: block; }
+
+  /* VISUAL DIAGRAM */
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    margin: 20px 0;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+
+  /* QUIZ */
+  .quiz-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .quiz-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+
+  .quiz-q {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-opt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+  }
+
+  .quiz-opt:hover { border-color: var(--accent3); background: var(--surface2); }
+  .quiz-opt.correct { border-color: var(--accent); background: rgba(0,255,136,0.05); color: var(--accent); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(255,71,87,0.05); color: var(--red); }
+  .quiz-opt .opt-letter {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    display: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.right { background: rgba(0,255,136,0.1); color: var(--accent); border: 1px solid rgba(0,255,136,0.2); }
+  .quiz-feedback.wrong { background: rgba(255,71,87,0.1); color: var(--red); border: 1px solid rgba(255,71,87,0.2); }
+
+  /* NEXT BTN */
+  .lesson-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .btn-primary:hover { box-shadow: var(--glow-green); transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent3); color: var(--text); }
+
+  .mark-done-btn {
+    background: rgba(0,255,136,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,255,136,0.3);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mark-done-btn:hover { background: rgba(0,255,136,0.2); }
+  .mark-done-btn.done { background: rgba(0,255,136,0.15); }
+
+  /* CHEATSHEET TABLE */
+  .cheat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 20px 0;
+  }
+  .cheat-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface2);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .cheat-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Syne', sans-serif;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .cheat-table tr:last-child td { border-bottom: none; }
+  .cheat-table td:first-child { color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* INFO BOX */
+  .info-box {
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-left: 3px solid var(--accent4);
+    border-radius: 0 var(--card-radius) var(--card-radius) 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .warn-box {
+    background: rgba(255,107,53,0.05);
+    border: 1px solid rgba(255,107,53,0.15);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 var(--card-radius) var(--card-radius) 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .warn-box strong { color: var(--accent2); }
+
+  /* HOME PAGE GRID */
+  #home-page { display: block; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dimmer); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    nav.sidebar { display: none; }
+    .hero { padding: 32px 20px; }
+    .lesson-page { padding: 24px 20px; }
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lesson-page.active, #home-page {
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* EVENT LOOP VISUALIZER */
+  .event-loop-viz {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  .viz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .viz-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 100px;
+  }
+
+  .viz-box-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dimmer);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .viz-item {
+    background: var(--surface2);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+    margin-bottom: 4px;
+    border-left: 2px solid var(--accent4);
+  }
+
+  .viz-item.macro { border-left-color: var(--accent2); color: var(--accent2); }
+  .viz-item.micro { border-left-color: var(--accent); color: var(--accent); }
+
+  .viz-controls {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+
+  .viz-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-dim);
+    transition: all 0.2s;
+  }
+  .viz-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .viz-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">JS<span>·</span>NODE <span>// INTERVIEW PREP</span></div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="globalProgress"></div>
+  </div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home">
+      <span class="icon">🏠</span> Home
+    </div>
+
+    <div class="nav-section-title">JavaScript Core</div>
+    <div class="nav-item" onclick="showLesson('event-loop')" id="nav-event-loop">
+      <span class="icon">🔄</span> Event Loop
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('sync-async')" id="nav-sync-async">
+      <span class="icon">⚡</span> Sync vs Async
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('callbacks')" id="nav-callbacks">
+      <span class="icon">📞</span> Callbacks
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('promises')" id="nav-promises">
+      <span class="icon">🤝</span> Promises
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('async-await')" id="nav-async-await">
+      <span class="icon">⏳</span> Async / Await
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('closures')" id="nav-closures">
+      <span class="icon">🔒</span> Closures
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('scope-hoisting')" id="nav-scope-hoisting">
+      <span class="icon">📦</span> Scope & Hoisting
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('prototypes')" id="nav-prototypes">
+      <span class="icon">🧬</span> Prototypes & OOP
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('this-keyword')" id="nav-this-keyword">
+      <span class="icon">👆</span> <code>this</code> Keyword
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('es6-features')" id="nav-es6-features">
+      <span class="icon">✨</span> ES6+ Features
+      <span class="done-dot"></span>
+    </div>
+
+    <div class="nav-section-title">Node.js Deep Dive</div>
+    <div class="nav-item" onclick="showLesson('nodejs-architecture')" id="nav-nodejs-architecture">
+      <span class="icon">🏗️</span> Node Architecture
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('libuv')" id="nav-libuv">
+      <span class="icon">⚙️</span> libuv & Thread Pool
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('streams')" id="nav-streams">
+      <span class="icon">🌊</span> Streams & Buffers
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('modules')" id="nav-modules">
+      <span class="icon">📦</span> CommonJS & ESM
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('concurrency')" id="nav-concurrency">
+      <span class="icon">🚀</span> Concurrency Model
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('error-handling')" id="nav-error-handling">
+      <span class="icon">🛡️</span> Error Handling
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('memory')" id="nav-memory">
+      <span class="icon">🧠</span> Memory & GC
+      <span class="done-dot"></span>
+    </div>
+    <div class="nav-item" onclick="showLesson('cluster')" id="nav-cluster">
+      <span class="icon">🌐</span> Cluster & Workers
+      <span class="done-dot"></span>
+    </div>
+
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('interview-cheatsheet')" id="nav-interview-cheatsheet">
+      <span class="icon">📋</span> Full Cheatsheet
+      <span class="done-dot"></span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="mainContent">
+
+    <!-- HOME PAGE -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="highlight">Node.js</span> &<br>JavaScript</h1>
+        <p class="hero-sub">Everything you need to ace your Node.js & JavaScript interview — from the event loop to concurrency, promises, closures, and beyond. Built for developers who want to understand, not just memorize.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Quizzes</div></div>
+        </div>
+      </div>
+
+      <div class="topics-grid">
+        <div class="topic-card card-color-0" onclick="showLesson('event-loop')">
+          <span class="card-emoji">🔄</span>
+          <div class="card-title">Event Loop</div>
+          <div class="card-desc">The heart of Node.js. Call stack, task queues, microtasks, macrotasks — explained visually.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div>
+        </div>
+        <div class="topic-card card-color-1" onclick="showLesson('sync-async')">
+          <span class="card-emoji">⚡</span>
+          <div class="card-title">Sync vs Async</div>
+          <div class="card-desc">Blocking vs non-blocking code. Why async matters in Node.js and how it works under the hood.</div>
+          <div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span></div>
+        </div>
+        <div class="topic-card card-color-2" onclick="showLesson('promises')">
+          <span class="card-emoji">🤝</span>
+          <div class="card-title">Promises</div>
+          <div class="card-desc">States, chaining, Promise.all, race, allSettled. Everything about the Promise API.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div>
+        </div>
+        <div class="topic-card card-color-3" onclick="showLesson('async-await')">
+          <span class="card-emoji">⏳</span>
+          <div class="card-title">Async / Await</div>
+          <div class="card-desc">Syntactic sugar on Promises. Error handling, parallel vs sequential, common pitfalls.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div>
+        </div>
+        <div class="topic-card card-color-4" onclick="showLesson('closures')">
+          <span class="card-emoji">🔒</span>
+          <div class="card-title">Closures</div>
+          <div class="card-desc">One of the most asked JS interview topics. Lexical scope, factory functions, memory implications.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div>
+        </div>
+        <div class="topic-card card-color-5" onclick="showLesson('concurrency')">
+          <span class="card-emoji">🚀</span>
+          <div class="card-title">Concurrency Model</div>
+          <div class="card-desc">Single-threaded? Not quite. How Node handles I/O, CPU work, and true parallelism.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div>
+        </div>
+        <div class="topic-card card-color-0" onclick="showLesson('nodejs-architecture')">
+          <span class="card-emoji">🏗️</span>
+          <div class="card-title">Node Architecture</div>
+          <div class="card-desc">V8 + libuv + Node core. How all the pieces fit together to make Node work.</div>
+          <div class="card-tag-row"><span class="tag key">MUST KNOW</span></div>
+        </div>
+        <div class="topic-card card-color-1" onclick="showLesson('this-keyword')">
+          <span class="card-emoji">👆</span>
+          <div class="card-title">`this` Keyword</div>
+          <div class="card-desc">The most confusing JS concept. 4 binding rules, arrow functions, strict mode.</div>
+          <div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div>
+        </div>
+        <div class="topic-card card-color-2" onclick="showLesson('scope-hoisting')">
+          <span class="card-emoji">📦</span>
+          <div class="card-title">Scope & Hoisting</div>
+          <div class="card-desc">var/let/const, temporal dead zone, function hoisting vs variable hoisting.</div>
+          <div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span></div>
+        </div>
+        <div class="topic-card card-color-3" onclick="showLesson('prototypes')">
+          <span class="card-emoji">🧬</span>
+          <div class="card-title">Prototypes & OOP</div>
+          <div class="card-desc">Prototype chain, class syntax, inheritance, Object.create vs new.</div>
+          <div class="card-tag-row"><span class="tag key">MUST KNOW</span></div>
+        </div>
+        <div class="topic-card card-color-4" onclick="showLesson('streams')">
+          <span class="card-emoji">🌊</span>
+          <div class="card-title">Streams & Buffers</div>
+          <div class="card-desc">Readable, Writable, Transform, Duplex streams. Backpressure, piping, and memory efficiency.</div>
+          <div class="card-tag-row"><span class="tag key">NODE.JS</span></div>
+        </div>
+        <div class="topic-card card-color-5" onclick="showLesson('error-handling')">
+          <span class="card-emoji">🛡️</span>
+          <div class="card-title">Error Handling</div>
+          <div class="card-desc">try/catch, uncaughtException, unhandledRejection, async error patterns.</div>
+          <div class="card-tag-row"><span class="tag key">MUST KNOW</span></div>
+        </div>
+        <div class="topic-card card-color-0" onclick="showLesson('es6-features')">
+          <span class="card-emoji">✨</span>
+          <div class="card-title">ES6+ Features</div>
+          <div class="card-desc">Destructuring, spread, generators, iterators, WeakMap, Symbol, Proxy, and more.</div>
+          <div class="card-tag-row"><span class="tag key">MODERN JS</span></div>
+        </div>
+        <div class="topic-card card-color-1" onclick="showLesson('cluster')">
+          <span class="card-emoji">🌐</span>
+          <div class="card-title">Cluster & Workers</div>
+          <div class="card-desc">Scaling Node.js across CPU cores. cluster module, worker_threads, when to use each.</div>
+          <div class="card-tag-row"><span class="tag key">ADVANCED</span></div>
+        </div>
+        <div class="topic-card card-color-2" onclick="showLesson('interview-cheatsheet')">
+          <span class="card-emoji">📋</span>
+          <div class="card-title">Full Cheatsheet</div>
+          <div class="card-desc">All key concepts, differences, and definitions on a single page. Print-ready quick reference.</div>
+          <div class="card-tag-row"><span class="tag hot">STUDY AID</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: EVENT LOOP ===== -->
+    <div id="lesson-event-loop" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">🔄 The Event Loop</div>
+        <div class="lesson-subtitle">The single most important concept in Node.js. Understanding this will help you answer 30% of all Node.js interview questions.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">What is the Event Loop?</div>
+        <div class="prose">
+          JavaScript is <strong>single-threaded</strong> — it can only do one thing at a time. But Node.js can handle <span class="hl-green">thousands of concurrent connections</span> without freezing. How? The <strong>Event Loop</strong>.
+          <br><br>
+          The Event Loop is a mechanism that continuously checks: <em>"Is the call stack empty? If yes, grab the next task from the queue and push it to the stack."</em>
+          <br><br>
+          Think of it as a <span class="hl-yellow">traffic controller</span> that decides which code runs when.
+        </div>
+
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">
+            Imagine a <strong>restaurant</strong>. The waiter (call stack) can only serve one table at a time. When an order is placed (async task), instead of waiting at the kitchen, the waiter goes to serve other tables. When the food is ready (I/O complete), it goes to the pickup queue. The event loop is the manager who tells the waiter: "Hey, food is ready at table 3, go pick it up."
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The Components</div>
+
+        <div class="event-loop-viz">
+          <div class="viz-grid">
+            <div class="viz-box">
+              <div class="viz-box-title">📚 Call Stack</div>
+              <div class="viz-item">main()</div>
+              <div class="viz-item">console.log("a")</div>
+            </div>
+            <div class="viz-box">
+              <div class="viz-box-title">🔬 Microtask Queue</div>
+              <div class="viz-item micro">Promise.then()</div>
+              <div class="viz-item micro">queueMicrotask()</div>
+            </div>
+            <div class="viz-box">
+              <div class="viz-box-title">📋 Macrotask Queue</div>
+              <div class="viz-item macro">setTimeout()</div>
+              <div class="viz-item macro">setInterval()</div>
+              <div class="viz-item macro">I/O callbacks</div>
+            </div>
+          </div>
+          <div style="text-align:center; font-family:'Space Mono',monospace; font-size:11px; color:var(--text-dim)">
+            🔄 Event Loop: Stack empty? → drain Microtasks → pick 1 Macrotask → repeat
+          </div>
+        </div>
+
+        <div class="prose">
+          <strong>1. Call Stack</strong> — Where your synchronous code runs. LIFO (Last In, First Out). Functions are pushed when called, popped when they return.<br><br>
+          <strong>2. Microtask Queue</strong> — <span class="hl-green">Higher priority</span> than macrotasks. Processed <em>completely</em> after each task before the next macrotask runs. Includes: <code>Promise.then()</code>, <code>queueMicrotask()</code>, <code>MutationObserver</code>.<br><br>
+          <strong>3. Macrotask Queue (Task Queue)</strong> — <span class="hl-orange">Lower priority</span>. One macrotask is processed, then microtasks are drained again. Includes: <code>setTimeout</code>, <code>setInterval</code>, <code>setImmediate</code>, I/O callbacks.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Critical Order of Execution</div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">JAVASCRIPT</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <pre><span class="cm">// What order does this print?</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'1 - synchronous'</span>);
+
+<span class="fn">setTimeout</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'2 - setTimeout'</span>), <span class="nm">0</span>);
+
+<span class="kw">new</span> <span class="op">Promise</span>(resolve => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'3 - Promise executor (sync!)'</span>);
+  <span class="fn">resolve</span>();
+}).<span class="fn">then</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'4 - Promise.then (microtask)'</span>));
+
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'5 - synchronous'</span>);
+
+<span class="cm">// OUTPUT ORDER: 1, 3, 5, 4, 2</span>
+<span class="cm">// Why? Sync first → Promise executor is sync</span>
+<span class="cm">// → microtasks (then) → macrotasks (setTimeout)</span></pre>
+        </div>
+
+        <div class="warn-box">
+          <strong>⚠️ Common Trap:</strong> <code>setTimeout(fn, 0)</code> does NOT mean "run immediately." It means "put this in the macrotask queue." A <code>Promise.then()</code> will <em>always</em> run before it, even if the setTimeout has 0ms delay.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Node.js Event Loop Phases</div>
+        <div class="prose">Node.js has <strong>6 specific phases</strong> in its event loop (libuv). Each phase has its own FIFO queue:</div>
+
+        <table class="cheat-table" style="margin-top:16px">
+          <tr><th>Phase</th><th>What runs here</th><th>Key API</th></tr>
+          <tr><td>timers</td><td>Expired setTimeout/setInterval callbacks</td><td>setTimeout, setInterval</td></tr>
+          <tr><td>pending callbacks</td><td>I/O callbacks deferred to next loop</td><td>TCP errors</td></tr>
+          <tr><td>idle/prepare</td><td>Internal Node.js use</td><td>—</td></tr>
+          <tr><td>poll</td><td>Retrieve new I/O events, execute their callbacks</td><td>fs.read, net</td></tr>
+          <tr><td>check</td><td>setImmediate callbacks</td><td>setImmediate</td></tr>
+          <tr><td>close callbacks</td><td>Close events (socket.on('close'))</td><td>socket.close</td></tr>
+        </table>
+
+        <div class="info-box">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--accent4); margin-bottom:6px">📌 setImmediate vs setTimeout(0)</div>
+          <div style="font-size:13px; color:var(--text-dim); font-family:'Syne',sans-serif; line-height:1.7">
+            <code>setImmediate(fn)</code> runs in the <strong>check phase</strong> — always after the poll phase. <code>setTimeout(fn, 0)</code> runs in the <strong>timers phase</strong>. When called from the main module (outside I/O), the order is <em>non-deterministic</em>. When called inside an I/O callback, <code>setImmediate</code> <em>always runs first</em>.
+          </div>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the event loop and how does it work?</div>
+        <div class="interview-a">The event loop is a mechanism that allows Node.js to perform non-blocking I/O despite JavaScript being single-threaded. It continuously monitors the call stack and task queues. When the stack is empty, it first drains all microtasks (Promise callbacks), then picks one macrotask (setTimeout, I/O) and executes it, then repeats.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between microtasks and macrotasks?</div>
+        <div class="interview-a">Microtasks (Promise.then, queueMicrotask, MutationObserver) have higher priority and are completely drained after each task before any macrotask runs. Macrotasks (setTimeout, setInterval, setImmediate, I/O callbacks) run one at a time, with all microtasks processed between each macrotask.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What happens if you have an infinite loop in a Promise?</div>
+        <div class="interview-a">It will starve macrotasks. Microtasks are drained completely before any macrotask can run. An infinite microtask loop (like a Promise that keeps resolving and queuing .then()) will block the entire event loop, preventing any setTimeout, I/O, or other operations from ever running — essentially freezing Node.js.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What does `setTimeout(fn, 0)` actually mean?</div>
+        <div class="interview-a">It means "schedule fn to run after a minimum of 0ms AND after the current synchronous code and all microtasks have completed." It does NOT run immediately. It goes into the macrotask queue and will run after all pending synchronous code and Promise callbacks have finished.</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ — EVENT LOOP</div>
+        <div class="quiz-q">What is the correct output order of this code?<br><small style="font-family:'JetBrains Mono',monospace; color:var(--text-dim); font-size:12px">setTimeout(() => console.log('A'), 0); Promise.resolve().then(() => console.log('B')); console.log('C');</small></div>
+        <div class="quiz-options" id="quiz-el-opts">
+          <div class="quiz-opt" onclick="checkQuiz(this,'el','wrong')"><span class="opt-letter">A</span>A, B, C</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'el','wrong')"><span class="opt-letter">B</span>C, A, B</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'el','correct')"><span class="opt-letter">C</span>C, B, A ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'el','wrong')"><span class="opt-letter">D</span>B, C, A</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-el-fb"></div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('event-loop')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('sync-async')">Next: Sync vs Async →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: SYNC vs ASYNC ===== -->
+    <div id="lesson-sync-async" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">⚡ Synchronous vs Asynchronous</div>
+        <div class="lesson-subtitle">Blocking vs non-blocking — the foundation of why Node.js can handle massive I/O efficiently.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Synchronous (Blocking)</div>
+        <div class="prose">Synchronous code executes <strong>line by line</strong>. Each line must finish before the next one starts. If a line takes 5 seconds, everything stops for 5 seconds.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — SYNC</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">const</span> data = fs.<span class="fn">readFileSync</span>(<span class="st">'file.txt'</span>); <span class="cm">// BLOCKS here</span>
+<span class="fn">console</span>.<span class="fn">log</span>(data); <span class="cm">// only runs AFTER file is fully read</span>
+<span class="fn">processOtherRequests</span>(); <span class="cm">// stuck waiting...</span></pre>
+        </div>
+        <div class="warn-box"><strong>Problem:</strong> In a web server, if one request does a sync file read, ALL other requests are frozen until that file is read. With 1000 users, this is catastrophic.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Asynchronous (Non-Blocking)</div>
+        <div class="prose">Async code <strong>starts an operation</strong> and immediately moves on. When the operation completes, a callback/promise handles the result — without blocking anything else.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — ASYNC</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Node.js hands the file read to the OS via libuv</span>
+<span class="cm">// and continues executing immediately</span>
+fs.<span class="fn">readFile</span>(<span class="st">'file.txt'</span>, (err, data) => {
+  <span class="fn">console</span>.<span class="fn">log</span>(data); <span class="cm">// runs LATER when file is ready</span>
+});
+
+<span class="fn">processOtherRequests</span>(); <span class="cm">// runs IMMEDIATELY, not waiting</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'This prints BEFORE the file is read!'</span>);</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">How Node.js Does Async I/O</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">
+            Think of a <strong>McDonald's</strong> (Node.js) vs a <strong>sit-down restaurant</strong> (blocking server). At McDonald's, you order and step aside. The cashier (Node.js) immediately takes the next order. When your food is ready, they call your number (callback/event). At the blocking sit-down restaurant, you order, the waiter stands at your table waiting until the kitchen finishes your food — no other tables get served meanwhile.
+          </div>
+        </div>
+        <div class="prose">
+          Node.js achieves this through <span class="hl-green">libuv</span>, a C library that manages a thread pool for I/O operations. When you call <code>fs.readFile()</code>:
+          <br><br>
+          1️⃣ Node passes the work to <strong>libuv's thread pool</strong> (4 threads by default)<br>
+          2️⃣ The main JS thread is <strong>free immediately</strong><br>
+          3️⃣ When the OS finishes reading, libuv pushes the callback to the <strong>event queue</strong><br>
+          4️⃣ The event loop picks it up when the stack is empty
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Blocking vs Non-Blocking — Key Differences</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Synchronous</th><th>Asynchronous</th></tr>
+          <tr><td>Execution</td><td>Waits for operation to complete</td><td>Continues while operation runs</td></tr>
+          <tr><td>Thread usage</td><td>Blocks the thread</td><td>Frees the thread</td></tr>
+          <tr><td>Performance</td><td>Poor under load</td><td>Excellent scalability</td></tr>
+          <tr><td>Code complexity</td><td>Simple, linear</td><td>More complex (callbacks/promises)</td></tr>
+          <tr><td>Use case</td><td>Scripts, startup config</td><td>Web servers, APIs</td></tr>
+          <tr><td>Example</td><td>fs.readFileSync()</td><td>fs.readFile()</td></tr>
+        </table>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Is Node.js truly single-threaded?</div>
+        <div class="interview-a">Your JavaScript code runs on a single thread. But Node.js itself is NOT single-threaded — libuv uses a thread pool (default 4 threads) for heavy I/O operations. Network I/O (TCP/HTTP) uses OS async primitives (epoll/kqueue) and doesn't use the thread pool at all. So: JS = single thread, I/O = multi-threaded via libuv.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is blocking I/O and why is it bad in Node.js?</div>
+        <div class="interview-a">Blocking I/O means the execution thread waits until the operation completes. In Node.js, this freezes the event loop — no other code can execute, no other requests can be handled. This is why you should never use readFileSync, execSync, or any other synchronous operations in a production Node.js server handling multiple requests.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When is it okay to use synchronous operations in Node.js?</div>
+        <div class="interview-a">It's acceptable to use synchronous operations: (1) During application startup/initialization before the server starts accepting requests, (2) In command-line scripts that don't need concurrency, (3) In build tools or one-off scripts. Never use sync operations inside request handlers or any code that serves concurrent users.</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ — SYNC vs ASYNC</div>
+        <div class="quiz-q">In Node.js, what is the default size of libuv's thread pool?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'sa','wrong')"><span class="opt-letter">A</span>1 thread</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'sa','correct')"><span class="opt-letter">B</span>4 threads ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'sa','wrong')"><span class="opt-letter">C</span>8 threads</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'sa','wrong')"><span class="opt-letter">D</span>Unlimited</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-sa-fb"></div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('event-loop')">← Event Loop</button>
+        <button class="mark-done-btn" onclick="markDone('sync-async')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('promises')">Next: Promises →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: PROMISES ===== -->
+    <div id="lesson-promises" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">🤝 Promises</div>
+        <div class="lesson-subtitle">The modern way to handle async operations. Replaces callback hell with composable, readable code.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">What is a Promise?</div>
+        <div class="prose">A Promise is an <strong>object representing the eventual completion or failure</strong> of an async operation. It's a placeholder for a value that's not yet available.</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">When you order food at a restaurant, the waiter gives you a <strong>receipt</strong>. That receipt is a "promise" — it represents the food that <em>will come</em>. You can do other things (talk, drink water) while waiting. When the food is ready (resolved), you eat. If the kitchen burns down (rejected), you get your money back.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Promise States</div>
+        <div class="diagram">
+          <div style="display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap; font-size:12px">
+            <div style="background:rgba(255,217,61,0.1); border:1px solid rgba(255,217,61,0.3); padding:12px 20px; border-radius:8px; color:var(--yellow)">⏳ PENDING<br><small style="color:var(--text-dimmer)">initial state</small></div>
+            <div style="font-size:20px; color:var(--text-dimmer)">→</div>
+            <div style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); padding:12px 20px; border-radius:8px; color:var(--accent)">✅ FULFILLED<br><small style="color:var(--text-dimmer)">resolve() called</small></div>
+            <div style="font-size:12px; color:var(--text-dimmer); align-self:flex-start; margin-top:8px">or</div>
+            <div style="background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); padding:12px 20px; border-radius:8px; color:var(--red)">❌ REJECTED<br><small style="color:var(--text-dimmer)">reject() called</small></div>
+          </div>
+          <div style="margin-top:12px; font-size:11px; color:var(--text-dimmer)">Once settled (fulfilled or rejected), a Promise is IMMUTABLE — it cannot change state</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Creating & Using Promises</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Creating a Promise</span>
+<span class="kw">const</span> myPromise = <span class="kw">new</span> <span class="op">Promise</span>((resolve, reject) => {
+  <span class="cm">// async work here</span>
+  <span class="kw">const</span> success = <span class="kw">true</span>;
+  <span class="kw">if</span> (success) {
+    <span class="fn">resolve</span>(<span class="st">'Data loaded!'</span>);  <span class="cm">// fulfills with value</span>
+  } <span class="kw">else</span> {
+    <span class="fn">reject</span>(<span class="kw">new</span> <span class="op">Error</span>(<span class="st">'Failed!'</span>)); <span class="cm">// rejects with error</span>
+  }
+});
+
+<span class="cm">// Consuming a Promise</span>
+myPromise
+  .<span class="fn">then</span>(value => <span class="fn">console</span>.<span class="fn">log</span>(value))   <span class="cm">// 'Data loaded!'</span>
+  .<span class="fn">catch</span>(err => <span class="fn">console</span>.<span class="fn">error</span>(err))  <span class="cm">// handles rejection</span>
+  .<span class="fn">finally</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'Done'</span>)); <span class="cm">// always runs</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Promise Combinators — The Big 4</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — COMBINATORS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">const</span> p1 = <span class="op">Promise</span>.<span class="fn">resolve</span>(<span class="nm">1</span>);
+<span class="kw">const</span> p2 = <span class="op">Promise</span>.<span class="fn">resolve</span>(<span class="nm">2</span>);
+<span class="kw">const</span> p3 = <span class="op">Promise</span>.<span class="fn">reject</span>(<span class="kw">new</span> <span class="op">Error</span>(<span class="st">'fail'</span>));
+
+<span class="cm">// ALL — waits for all, fails fast on any rejection</span>
+<span class="op">Promise</span>.<span class="fn">all</span>([p1, p2]).<span class="fn">then</span>(([a, b]) => <span class="fn">console</span>.<span class="fn">log</span>(a, b)); <span class="cm">// 1, 2</span>
+<span class="op">Promise</span>.<span class="fn">all</span>([p1, p3]).<span class="fn">catch</span>(e => <span class="fn">console</span>.<span class="fn">log</span>(e)); <span class="cm">// 'fail' — stops at p3</span>
+
+<span class="cm">// ALL SETTLED — waits for all, never fails fast</span>
+<span class="op">Promise</span>.<span class="fn">allSettled</span>([p1, p3]).<span class="fn">then</span>(results => {
+  <span class="cm">// [{status:'fulfilled',value:1}, {status:'rejected',reason:Error}]</span>
+  results.<span class="fn">forEach</span>(r => <span class="fn">console</span>.<span class="fn">log</span>(r.status));
+});
+
+<span class="cm">// RACE — resolves/rejects with the FIRST settled promise</span>
+<span class="op">Promise</span>.<span class="fn">race</span>([p1, p2]).<span class="fn">then</span>(v => <span class="fn">console</span>.<span class="fn">log</span>(v)); <span class="cm">// 1 (whichever is first)</span>
+
+<span class="cm">// ANY — resolves with the FIRST fulfilled, rejects if ALL reject</span>
+<span class="op">Promise</span>.<span class="fn">any</span>([p3, p1]).<span class="fn">then</span>(v => <span class="fn">console</span>.<span class="fn">log</span>(v)); <span class="cm">// 1 (ignores rejection)</span></pre>
+        </div>
+
+        <table class="cheat-table">
+          <tr><th>Method</th><th>Resolves when</th><th>Rejects when</th></tr>
+          <tr><td>Promise.all</td><td>ALL fulfilled</td><td>ANY rejects (fast-fail)</td></tr>
+          <tr><td>Promise.allSettled</td><td>ALL settled (any state)</td><td>Never rejects</td></tr>
+          <tr><td>Promise.race</td><td>FIRST settles (any state)</td><td>FIRST rejects</td></tr>
+          <tr><td>Promise.any</td><td>FIRST fulfills</td><td>ALL reject</td></tr>
+        </table>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Promise.all and Promise.allSettled?</div>
+        <div class="interview-a">Promise.all fails fast — if any single promise rejects, it immediately rejects with that error and you lose all other results. Promise.allSettled always waits for every promise to settle (fulfilled or rejected) and returns an array of result objects with a status field. Use allSettled when you need to know the outcome of ALL operations regardless of failures.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Can a Promise be cancelled?</div>
+        <div class="interview-a">Natively, no. Once created, a Promise cannot be cancelled. Common workarounds: (1) AbortController for fetch requests, (2) A wrapper that ignores the resolve/reject if a "cancelled" flag is set, (3) External libraries like RxJS Observables which support cancellation. This is a known limitation of the Promises spec.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Promise chaining and how does it work?</div>
+        <div class="interview-a">Each .then() returns a NEW promise. If you return a value from .then(), the next .then() receives it. If you return a promise, the chain waits for it to resolve. This allows sequential async operations to be written as a flat chain instead of nested callbacks. Errors propagate down the chain to the nearest .catch().</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ — PROMISES</div>
+        <div class="quiz-q">You have 3 API calls. You want to run them in parallel and wait for ALL of them, but you DON'T want one failure to stop you from seeing the others' results. Which method do you use?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'pr','wrong')"><span class="opt-letter">A</span>Promise.all()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pr','correct')"><span class="opt-letter">B</span>Promise.allSettled() ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pr','wrong')"><span class="opt-letter">C</span>Promise.race()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pr','wrong')"><span class="opt-letter">D</span>Promise.any()</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-pr-fb"></div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('sync-async')">← Sync/Async</button>
+        <button class="mark-done-btn" onclick="markDone('promises')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('async-await')">Next: Async/Await →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: ASYNC/AWAIT ===== -->
+    <div id="lesson-async-await" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">⏳ Async / Await</div>
+        <div class="lesson-subtitle">Syntactic sugar over Promises. Write async code that looks synchronous. The modern standard for async JS.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The Basics</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// async function ALWAYS returns a Promise</span>
+<span class="kw">async function</span> <span class="fn">fetchData</span>() {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'https://api.example.com/data'</span>);
+  <span class="cm">// await PAUSES execution here (but doesn't block the thread!)</span>
+  <span class="cm">// other code in the event loop continues running</span>
+  <span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();
+  <span class="kw">return</span> data; <span class="cm">// wraps in Promise.resolve(data)</span>
+}
+
+<span class="cm">// Error handling with try/catch</span>
+<span class="kw">async function</span> <span class="fn">safeLoad</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchData</span>();
+    <span class="fn">console</span>.<span class="fn">log</span>(data);
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">console</span>.<span class="fn">error</span>(<span class="st">'Failed:'</span>, err.message);
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Sequential vs Parallel — Critical Performance Difference</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — PERFORMANCE TRAP</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ SEQUENTIAL — takes 3 seconds total (1+1+1)</span>
+<span class="kw">async function</span> <span class="fn">slow</span>() {
+  <span class="kw">const</span> a = <span class="kw">await</span> <span class="fn">apiCall1</span>(); <span class="cm">// waits 1s</span>
+  <span class="kw">const</span> b = <span class="kw">await</span> <span class="fn">apiCall2</span>(); <span class="cm">// then waits 1s more</span>
+  <span class="kw">const</span> c = <span class="kw">await</span> <span class="fn">apiCall3</span>(); <span class="cm">// then waits 1s more</span>
+}
+
+<span class="cm">// ✅ PARALLEL — takes ~1 second total</span>
+<span class="kw">async function</span> <span class="fn">fast</span>() {
+  <span class="kw">const</span> [a, b, c] = <span class="kw">await</span> <span class="op">Promise</span>.<span class="fn">all</span>([
+    <span class="fn">apiCall1</span>(), <span class="cm">// all 3 start at the same time!</span>
+    <span class="fn">apiCall2</span>(),
+    <span class="fn">apiCall3</span>()
+  ]);
+}
+
+<span class="cm">// ✅ PARALLEL with error resilience</span>
+<span class="kw">async function</span> <span class="fn">resilient</span>() {
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="op">Promise</span>.<span class="fn">allSettled</span>([
+    <span class="fn">apiCall1</span>(), <span class="fn">apiCall2</span>(), <span class="fn">apiCall3</span>()
+  ]);
+}</pre>
+        </div>
+        <div class="warn-box"><strong>⚠️ Most Common Interview Trap:</strong> Putting <code>await</code> inside a <code>forEach</code> loop does NOT work as expected — forEach doesn't wait for async callbacks. Use <code>for...of</code> for sequential async iteration, or <code>Promise.all(arr.map(fn))</code> for parallel.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The await in forEach Problem</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — GOTCHA</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">const</span> ids = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>];
+
+<span class="cm">// ❌ WRONG — forEach ignores the returned Promise</span>
+ids.<span class="fn">forEach</span>(<span class="kw">async</span> (id) => {
+  <span class="kw">await</span> <span class="fn">processItem</span>(id); <span class="cm">// doesn't actually await!</span>
+});
+
+<span class="cm">// ✅ CORRECT — sequential</span>
+<span class="kw">for</span> (<span class="kw">const</span> id <span class="kw">of</span> ids) {
+  <span class="kw">await</span> <span class="fn">processItem</span>(id); <span class="cm">// processes 1, then 2, then 3</span>
+}
+
+<span class="cm">// ✅ CORRECT — parallel</span>
+<span class="kw">await</span> <span class="op">Promise</span>.<span class="fn">all</span>(ids.<span class="fn">map</span>(id => <span class="fn">processItem</span>(id)));</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Does await block the event loop?</div>
+        <div class="interview-a">No! This is a very common misconception. await "pauses" the current async function, but it does NOT block the JavaScript thread. While waiting, the event loop is free to process other callbacks, handle other requests, run timers, etc. It's essentially syntactic sugar for .then() chaining — the engine suspends the function and returns control to the caller.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What does an async function return?</div>
+        <div class="interview-a">An async function ALWAYS returns a Promise. If you return a plain value, it's wrapped in Promise.resolve(value). If you throw an error, it returns Promise.reject(error). This means you can always .then() or await an async function's result, even if it returns a non-Promise value.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Async/Await vs Promises — when to use which?</div>
+        <div class="interview-a">Use async/await for most sequential async code — it's more readable. Use Promise combinators (Promise.all, race, etc.) when you need to run operations in parallel or need combinator logic. They're not mutually exclusive — you often use both: async/await for structure and Promise.all inside for parallel execution.</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ — ASYNC/AWAIT</div>
+        <div class="quiz-q">You need to fetch user data and their posts simultaneously (not sequentially). What's the best approach?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'aw','wrong')"><span class="opt-letter">A</span>const user = await getUser(); const posts = await getPosts();</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'aw','correct')"><span class="opt-letter">B</span>const [user, posts] = await Promise.all([getUser(), getPosts()]); ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'aw','wrong')"><span class="opt-letter">C</span>Use forEach with async callbacks</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'aw','wrong')"><span class="opt-letter">D</span>Promise.race([getUser(), getPosts()])</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-aw-fb"></div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('promises')">← Promises</button>
+        <button class="mark-done-btn" onclick="markDone('async-await')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('closures')">Next: Closures →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: CLOSURES ===== -->
+    <div id="lesson-closures" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">🔒 Closures</div>
+        <div class="lesson-subtitle">One of the most-asked JS interview topics. Every JS developer must understand closures deeply.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">What is a Closure?</div>
+        <div class="prose">A closure is a function that <strong>remembers the variables from its outer scope</strong> even after the outer function has returned. The inner function "closes over" the variables.</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">Think of a <strong>backpack</strong>. When a function is created inside another function, it gets a backpack full of all the variables from its surrounding scope. Even when the outer function is done and gone, the inner function still carries that backpack and can access those variables anytime.</div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="nm">0</span>; <span class="cm">// this is in the closure's "backpack"</span>
+
+  <span class="kw">return function</span> () {
+    count++; <span class="cm">// still accesses count even after makeCounter() returns</span>
+    <span class="kw">return</span> count;
+  };
+}
+
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>(); <span class="cm">// makeCounter is DONE, but...</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cm">// 1 — count is still alive!</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cm">// 2</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cm">// 3</span>
+
+<span class="kw">const</span> counter2 = <span class="fn">makeCounter</span>(); <span class="cm">// fresh closure, independent count</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">counter2</span>()); <span class="cm">// 1 — separate from counter</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Classic Interview Trap — var in a Loop</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — FAMOUS GOTCHA</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ BROKEN — all callbacks share the SAME i (var is function-scoped)</span>
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="nm">0</span>; i &lt; <span class="nm">3</span>; i++) {
+  <span class="fn">setTimeout</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(i), <span class="nm">100</span>);
+}
+<span class="cm">// Prints: 3, 3, 3  (NOT 0, 1, 2)</span>
+
+<span class="cm">// ✅ FIX 1 — use let (block-scoped, new i per iteration)</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="nm">0</span>; i &lt; <span class="nm">3</span>; i++) {
+  <span class="fn">setTimeout</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(i), <span class="nm">100</span>);
+}
+<span class="cm">// Prints: 0, 1, 2 ✓</span>
+
+<span class="cm">// ✅ FIX 2 — IIFE to capture i (old school pre-let)</span>
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="nm">0</span>; i &lt; <span class="nm">3</span>; i++) {
+  ((<span class="id">j</span>) => <span class="fn">setTimeout</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="id">j</span>), <span class="nm">100</span>))(i);
+}
+<span class="cm">// Prints: 0, 1, 2 ✓</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Practical Use Cases</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — REAL USES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// 1. Data privacy / encapsulation</span>
+<span class="kw">function</span> <span class="fn">createBankAccount</span>(initialBalance) {
+  <span class="kw">let</span> balance = initialBalance; <span class="cm">// PRIVATE — can't access directly</span>
+  <span class="kw">return</span> {
+    <span class="fn">deposit</span>(n) { balance += n; },
+    <span class="fn">withdraw</span>(n) { balance -= n; },
+    <span class="fn">getBalance</span>() { <span class="kw">return</span> balance; }
+  };
+}
+
+<span class="cm">// 2. Memoization</span>
+<span class="kw">function</span> <span class="fn">memoize</span>(fn) {
+  <span class="kw">const</span> cache = {}; <span class="cm">// captured in closure</span>
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">const</span> key = <span class="op">JSON</span>.<span class="fn">stringify</span>(args);
+    <span class="kw">if</span> (cache[key]) <span class="kw">return</span> cache[key];
+    <span class="kw">return</span> (cache[key] = <span class="fn">fn</span>(...args));
+  };
+}
+
+<span class="cm">// 3. Partial application</span>
+<span class="kw">function</span> <span class="fn">multiply</span>(x) {
+  <span class="kw">return</span> (y) => x * y; <span class="cm">// x is closed over</span>
+}
+<span class="kw">const</span> double = <span class="fn">multiply</span>(<span class="nm">2</span>);
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">double</span>(<span class="nm">5</span>)); <span class="cm">// 10</span></pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a closure? Give a real-world example.</div>
+        <div class="interview-a">A closure is a function that retains access to its lexical scope (outer variables) even when executed outside that scope. Real example: a counter factory function returns an inner function that keeps incrementing a private `count` variable. The count is inaccessible from outside but persists across calls — this is encapsulation via closures.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Can closures cause memory leaks?</div>
+        <div class="interview-a">Yes. If a closure holds a reference to a large object (like a DOM node or big array), and the closure itself is held in memory (e.g., stored in a variable or event listener), the garbage collector cannot free that object. Common fix: set the reference to null when done, or use WeakRef/WeakMap for large objects that can be garbage collected.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between a closure and a regular function?</div>
+        <div class="interview-a">Every function in JavaScript is technically a closure — all functions close over their defining scope. The practical distinction is when a function accesses variables from an outer function's scope that has already returned. At that point, the closure keeps those variables alive in memory even after the outer function's stack frame is gone.</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ — CLOSURES</div>
+        <div class="quiz-q">What will this print? <br><small style="font-family:'JetBrains Mono',monospace; color:var(--text-dim); font-size:12px">for(var i=0; i&lt;3; i++) { setTimeout(()=>console.log(i), 0) }</small></div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'cl','wrong')"><span class="opt-letter">A</span>0, 1, 2</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'cl','correct')"><span class="opt-letter">B</span>3, 3, 3 ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'cl','wrong')"><span class="opt-letter">C</span>0, 0, 0</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'cl','wrong')"><span class="opt-letter">D</span>undefined</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-cl-fb"></div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('async-await')">← Async/Await</button>
+        <button class="mark-done-btn" onclick="markDone('closures')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('concurrency')">Next: Concurrency →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: CONCURRENCY ===== -->
+    <div id="lesson-concurrency" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">🚀 Concurrency in Node.js</div>
+        <div class="lesson-subtitle">Node.js is single-threaded but highly concurrent. Here's exactly how it achieves that — and where the limits are.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Concurrency vs Parallelism</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Meaning</th><th>Node.js?</th></tr>
+          <tr><td>Concurrency</td><td>Handling multiple tasks by switching between them (interleaving)</td><td>✅ Yes — via event loop</td></tr>
+          <tr><td>Parallelism</td><td>Executing multiple tasks truly simultaneously on multiple cores</td><td>⚠️ Limited — via cluster/workers</td></tr>
+        </table>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">
+            <strong>Concurrency:</strong> A chef preparing 5 dishes by working on each a bit at a time — chopping one, then stirring another, then checking the oven. <br><br>
+            <strong>Parallelism:</strong> 5 chefs each making one dish at exactly the same time on their own stoves.
+            <br><br>
+            Node.js is the one chef who's extremely good at switching between tasks without wasting time waiting.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Why Node Scales for I/O</div>
+        <div class="prose">
+          Traditional servers (like Apache) create a <span class="hl-orange">new thread per request</span>. Each thread blocks while waiting for database queries or file reads. With 10,000 requests, you need 10,000 threads — massive memory overhead.
+          <br><br>
+          Node.js uses a <span class="hl-green">single thread + event loop</span>. While waiting for I/O, the thread is free to handle other requests. 10,000 concurrent connections require just one thread.
+        </div>
+
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — SIMULATING CONCURRENCY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// These 3 requests run "concurrently" — all start immediately</span>
+<span class="cm">// The event loop handles responses as they arrive</span>
+
+<span class="kw">const</span> server = http.<span class="fn">createServer</span>(<span class="kw">async</span> (req, res) => {
+  <span class="cm">// Each request handler runs independently</span>
+  <span class="kw">const</span> user = <span class="kw">await</span> db.<span class="fn">getUser</span>(req.params.id); <span class="cm">// non-blocking</span>
+  res.<span class="fn">json</span>(user);
+});
+
+<span class="cm">// Request 1 is waiting for DB → event loop handles Request 2</span>
+<span class="cm">// Request 2 is waiting for DB → event loop handles Request 3</span>
+<span class="cm">// DB responds to Request 1 → event loop resumes it</span>
+<span class="cm">// All this happens on ONE thread!</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">CPU-Bound vs I/O-Bound</div>
+        <div class="warn-box">
+          <strong>Node.js Weakness — CPU-Bound work:</strong> If you do heavy computation (image processing, crypto, JSON parsing a 50MB file), it <em>blocks the event loop</em> and all other requests freeze. Node is great for I/O-bound work (database queries, file reads, HTTP calls) but not for CPU-bound work.
+          <br><br>
+          <strong>Solution:</strong> Worker Threads, child_process, or offloading to a dedicated service.
+        </div>
+
+        <table class="cheat-table">
+          <tr><th>Work Type</th><th>Examples</th><th>Node handles?</th><th>Solution</th></tr>
+          <tr><td>I/O-bound</td><td>DB queries, HTTP, file I/O</td><td>✅ Excellent</td><td>Use async/await</td></tr>
+          <tr><td>CPU-bound</td><td>Image resize, encryption, sorting 10M items</td><td>⚠️ Blocks loop</td><td>Worker threads</td></tr>
+          <tr><td>Mixed</td><td>Real-time apps, APIs</td><td>✅ Good with care</td><td>Don't block main thread</td></tr>
+        </table>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Node.js handle 10,000 concurrent connections?</div>
+        <div class="interview-a">Through the event loop + non-blocking I/O. When a request comes in and needs to wait for something (DB, file, network), Node delegates that work to the OS (via libuv) and immediately moves on to handle the next request. When the OS signals the I/O is complete, the callback is queued and processed when the event loop picks it up. No threads are created per connection — all sharing one event loop thread.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is "callback hell" and how do you solve it?</div>
+        <div class="interview-a">Callback hell (also called "pyramid of doom") is deeply nested callbacks that become unreadable and hard to maintain. Solutions: (1) Named functions instead of anonymous callbacks, (2) Promises with .then() chaining, (3) async/await for synchronous-looking code, (4) Libraries like async.js for complex flows.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use Node.js and when wouldn't you?</div>
+        <div class="interview-a">USE Node.js for: REST APIs, real-time apps (chat, gaming), microservices, streaming data, proxy servers, SSR. AVOID Node.js for: CPU-intensive tasks like video encoding, scientific computing, ML inference (use Python/Go/Rust instead), or applications requiring heavy parallelism. The key rule: if it's I/O-heavy, Node.js shines; if it's CPU-heavy, it struggles.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('closures')">← Closures</button>
+        <button class="mark-done-btn" onclick="markDone('concurrency')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('nodejs-architecture')">Next: Node Architecture →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: NODE ARCHITECTURE ===== -->
+    <div id="lesson-nodejs-architecture" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">🏗️ Node.js Architecture</div>
+        <div class="lesson-subtitle">V8 + libuv + Node.js core. Understanding the internals makes you a far better Node.js developer.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The Architecture Stack</div>
+        <div class="diagram">
+          <div style="display:flex; flex-direction:column; gap:6px; max-width:400px; margin:0 auto; text-align:left">
+            <div style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--accent)">
+              <strong>Your JavaScript Code</strong>
+              <div style="color:var(--text-dimmer); font-size:11px">express, koa, your app</div>
+            </div>
+            <div style="background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.3); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--accent4)">
+              <strong>Node.js Core (JavaScript)</strong>
+              <div style="color:var(--text-dimmer); font-size:11px">fs, http, path, events, streams</div>
+            </div>
+            <div style="background:rgba(124,92,252,0.1); border:1px solid rgba(124,92,252,0.3); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--accent3)">
+              <strong>Node.js Bindings (C++)</strong>
+              <div style="color:var(--text-dimmer); font-size:11px">bridges JS to C++ world</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px">
+              <div style="background:rgba(255,107,53,0.1); border:1px solid rgba(255,107,53,0.3); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--accent2)">
+                <strong>V8 Engine</strong>
+                <div style="color:var(--text-dimmer); font-size:11px">Executes JS, JIT compiles</div>
+              </div>
+              <div style="background:rgba(255,107,53,0.1); border:1px solid rgba(255,107,53,0.3); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--accent2)">
+                <strong>libuv</strong>
+                <div style="color:var(--text-dimmer); font-size:11px">Event loop + thread pool</div>
+              </div>
+            </div>
+            <div style="background:var(--surface2); border:1px solid var(--border); padding:12px 16px; border-radius:6px; font-size:12px; color:var(--text-dim)">
+              <strong>Operating System</strong>
+              <div style="color:var(--text-dimmer); font-size:11px">Linux/macOS/Windows — kernel, sockets, files</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">V8 — The JS Engine</div>
+        <div class="prose">
+          V8 is Google's <span class="hl-green">open-source JavaScript engine</span>, written in C++. It's what Chrome uses — Node.js just runs it without a browser.
+          <br><br>
+          V8 does: <strong>parsing</strong> JS → <strong>AST</strong> → <strong>bytecode</strong> (Ignition interpreter) → <strong>optimized machine code</strong> (TurboFan JIT compiler). It also manages the <strong>heap</strong> and runs the <strong>garbage collector</strong>.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">libuv — The Async Powerhouse</div>
+        <div class="prose">
+          libuv is a C library that provides Node.js with:
+          <br><br>
+          🔁 <strong>The Event Loop</strong> — the main loop mechanism<br>
+          🧵 <strong>Thread Pool</strong> (4 threads default, max 1024) — for blocking I/O: file system, DNS, crypto, zlib<br>
+          📡 <strong>Async I/O</strong> — network I/O using OS primitives (epoll on Linux, kqueue on macOS, IOCP on Windows) — NOT the thread pool<br>
+          ⏰ <strong>Timers</strong> — setTimeout, setInterval management
+        </div>
+
+        <div class="info-box">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--accent4); margin-bottom:6px">📌 KEY INSIGHT</div>
+          <div style="font-size:13px; color:var(--text-dim); font-family:'Syne',sans-serif; line-height:1.7">
+            Network I/O (HTTP requests, TCP sockets) does <strong>NOT</strong> use libuv's thread pool — it uses the OS's async I/O directly. The thread pool is only for things the OS doesn't have native async support for (like file system and DNS on some systems).
+          </div>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is V8 and what does it do in Node.js?</div>
+        <div class="interview-a">V8 is Google's high-performance JavaScript engine written in C++. In Node.js, V8: (1) parses and executes JavaScript, (2) JIT-compiles frequently-executed code to machine code for performance, (3) manages the memory heap for JS objects, (4) runs the garbage collector to free unused memory. It's essentially what allows JavaScript to run outside the browser.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is libuv and why does Node.js need it?</div>
+        <div class="interview-a">libuv is a multi-platform C library that provides Node.js with: the event loop implementation, a thread pool for blocking I/O operations, async file system and DNS operations, and network I/O using OS-native async mechanisms. Without libuv, Node.js would either be blocking (waiting for each I/O operation) or would need to implement its own platform-specific async I/O for Linux/macOS/Windows.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How can you increase libuv's thread pool size?</div>
+        <div class="interview-a">Set the UV_THREADPOOL_SIZE environment variable: `UV_THREADPOOL_SIZE=8 node app.js` or in code: `process.env.UV_THREADPOOL_SIZE = '8'` (must be set before any I/O). Default is 4, max is 1024. Increase it when you have many concurrent CPU/disk-intensive operations like heavy crypto or file processing.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('concurrency')">← Concurrency</button>
+        <button class="mark-done-btn" onclick="markDone('nodejs-architecture')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('scope-hoisting')">Next: Scope & Hoisting →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: SCOPE & HOISTING ===== -->
+    <div id="lesson-scope-hoisting" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">📦 Scope & Hoisting</div>
+        <div class="lesson-subtitle">var, let, const, temporal dead zone, function hoisting — all the quirks that trip up developers in interviews.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Types of Scope</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Global scope</span>
+<span class="kw">var</span> globalVar = <span class="st">'everywhere'</span>;
+
+<span class="kw">function</span> <span class="fn">outer</span>() {
+  <span class="cm">// Function scope</span>
+  <span class="kw">var</span> funcVar = <span class="st">'in function'</span>;
+  <span class="kw">let</span> funcLet = <span class="st">'also in function'</span>;
+
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="cm">// Block scope</span>
+    <span class="kw">var</span> blockVar = <span class="st">'leaked to function!'</span>; <span class="cm">// var ignores blocks!</span>
+    <span class="kw">let</span> blockLet = <span class="st">'stays in block'</span>;    <span class="cm">// let is block-scoped</span>
+    <span class="kw">const</span> blockConst = <span class="st">'also block-scoped'</span>;
+  }
+
+  <span class="fn">console</span>.<span class="fn">log</span>(blockVar); <span class="cm">// ✅ 'leaked to function!'</span>
+  <span class="cm">// console.log(blockLet);  ❌ ReferenceError!</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">var vs let vs const</div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>var</th><th>let</th><th>const</th></tr>
+          <tr><td>Scope</td><td>Function</td><td>Block</td><td>Block</td></tr>
+          <tr><td>Hoisted</td><td>✅ (as undefined)</td><td>✅ (TDZ)</td><td>✅ (TDZ)</td></tr>
+          <tr><td>Re-declarable</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Re-assignable</td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td>On window</td><td>✅ global.x</td><td>❌</td><td>❌</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Hoisting</div>
+        <div class="prose">Hoisting is JS moving declarations to the top of their scope <em>during compilation</em> (before execution). Only the <strong>declaration</strong> is hoisted — not the initialization.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — HOISTING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// What you write:</span>
+<span class="fn">console</span>.<span class="fn">log</span>(x); <span class="cm">// undefined (not ReferenceError!)</span>
+<span class="kw">var</span> x = <span class="nm">5</span>;
+<span class="fn">console</span>.<span class="fn">log</span>(x); <span class="cm">// 5</span>
+
+<span class="cm">// What JS actually sees (after hoisting):</span>
+<span class="kw">var</span> x; <span class="cm">// declaration hoisted to top, initialized to undefined</span>
+<span class="fn">console</span>.<span class="fn">log</span>(x); <span class="cm">// undefined</span>
+x = <span class="nm">5</span>; <span class="cm">// assignment stays in place</span>
+<span class="fn">console</span>.<span class="fn">log</span>(x); <span class="cm">// 5</span>
+
+<span class="cm">// Function declarations are FULLY hoisted (body too!)</span>
+<span class="fn">greet</span>(); <span class="cm">// ✅ Works! "Hello"</span>
+<span class="kw">function</span> <span class="fn">greet</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'Hello'</span>); }
+
+<span class="cm">// Function EXPRESSIONS are NOT</span>
+<span class="cm">// greet2();  ❌ TypeError: greet2 is not a function</span>
+<span class="kw">var</span> greet2 = <span class="kw">function</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'Hi'</span>); };</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Temporal Dead Zone (TDZ)</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — TDZ</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// let and const ARE hoisted, but in TDZ until declaration</span>
+<span class="cm">// Accessing them before declaration = ReferenceError</span>
+
+<span class="fn">console</span>.<span class="fn">log</span>(y); <span class="cm">// ❌ ReferenceError: Cannot access 'y' before initialization</span>
+<span class="kw">let</span> y = <span class="nm">10</span>;    <span class="cm">// TDZ ends here</span>
+
+<span class="cm">// The TDZ exists from the start of the block until the let/const line</span>
+{
+  <span class="cm">// TDZ for 'z' starts here</span>
+  <span class="cm">// console.log(z); would throw</span>
+  <span class="kw">let</span> z = <span class="nm">5</span>; <span class="cm">// TDZ ends, z is accessible</span>
+  <span class="fn">console</span>.<span class="fn">log</span>(z); <span class="cm">// ✅ 5</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is hoisting?</div>
+        <div class="interview-a">Hoisting is JavaScript's behavior of moving variable and function declarations to the top of their scope during the compilation phase, before code execution. var declarations are hoisted and initialized to undefined. Function declarations are fully hoisted (both declaration and body). let and const are hoisted but remain in the Temporal Dead Zone until their declaration line.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Temporal Dead Zone?</div>
+        <div class="interview-a">The TDZ is the period between the start of a block and the point where a let or const variable is declared. During this zone, the variable exists in memory but cannot be accessed — any attempt throws a ReferenceError. This prevents using variables before they're properly initialized, unlike var which silently returns undefined.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why should you prefer const and let over var?</div>
+        <div class="interview-a">var has two major problems: (1) function-scoped not block-scoped, so it "leaks" out of if/for blocks unexpectedly, (2) can be re-declared without error, causing silent bugs. const and let are block-scoped (predictable), cannot be re-declared, and const prevents reassignment. The TDZ with let/const also catches use-before-declaration bugs instead of silently returning undefined.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('nodejs-architecture')">← Node Architecture</button>
+        <button class="mark-done-btn" onclick="markDone('scope-hoisting')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('this-keyword')">Next: `this` Keyword →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: THIS KEYWORD ===== -->
+    <div id="lesson-this-keyword" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">👆 The `this` Keyword</div>
+        <div class="lesson-subtitle">The most confusing concept in JavaScript. Mastering `this` requires understanding 4 binding rules.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The 4 Rules of `this`</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — 4 BINDING RULES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// RULE 1: Default binding — standalone call → global (or undefined in strict)</span>
+<span class="kw">function</span> <span class="fn">alone</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>); } <span class="cm">// window / global / undefined(strict)</span>
+<span class="fn">alone</span>();
+
+<span class="cm">// RULE 2: Implicit binding — method call → the object before the dot</span>
+<span class="kw">const</span> obj = {
+  name: <span class="st">'Hany'</span>,
+  <span class="fn">greet</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.name); }
+};
+obj.<span class="fn">greet</span>(); <span class="cm">// 'Hany' — this = obj</span>
+
+<span class="cm">// RULE 3: Explicit binding — call/apply/bind</span>
+<span class="kw">function</span> <span class="fn">say</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.name); }
+<span class="fn">say</span>.<span class="fn">call</span>({ name: <span class="st">'Ahmed'</span> });   <span class="cm">// 'Ahmed'</span>
+<span class="fn">say</span>.<span class="fn">apply</span>({ name: <span class="st">'Sara'</span> });  <span class="cm">// 'Sara'</span>
+<span class="kw">const</span> sayHany = <span class="fn">say</span>.<span class="fn">bind</span>({ name: <span class="st">'Hany'</span> });
+<span class="fn">sayHany</span>(); <span class="cm">// 'Hany' — permanently bound</span>
+
+<span class="cm">// RULE 4: new binding — constructor call → the new object</span>
+<span class="kw">function</span> <span class="fn">Person</span>(name) {
+  <span class="kw">this</span>.name = name; <span class="cm">// this = newly created object</span>
+}
+<span class="kw">const</span> p = <span class="kw">new</span> <span class="fn">Person</span>(<span class="st">'Hany'</span>);
+<span class="fn">console</span>.<span class="fn">log</span>(p.name); <span class="cm">// 'Hany'</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Arrow Functions — Lexical `this`</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — ARROW FUNCTIONS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Arrow functions DON'T have their own `this`</span>
+<span class="cm">// They inherit `this` from the SURROUNDING scope (lexical)</span>
+
+<span class="kw">const</span> timer = {
+  name: <span class="st">'Timer'</span>,
+  <span class="fn">start</span>() {
+    <span class="cm">// Regular function loses `this` inside callback</span>
+    <span class="fn">setTimeout</span>(<span class="kw">function</span>() {
+      <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.name); <span class="cm">// ❌ undefined — `this` lost!</span>
+    }, <span class="nm">100</span>);
+
+    <span class="cm">// Arrow function inherits `this` from start()'s context</span>
+    <span class="fn">setTimeout</span>(() => {
+      <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.name); <span class="cm">// ✅ 'Timer'</span>
+    }, <span class="nm">100</span>);
+  }
+};
+
+<span class="cm">// Arrow functions cannot be used as constructors</span>
+<span class="cm">// const a = new ArrowFn(); ❌ TypeError</span>
+<span class="cm">// Arrow functions also cannot use call/apply/bind to change `this`</span></pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is `this` in JavaScript?</div>
+        <div class="interview-a">`this` is a runtime binding that refers to the context in which a function is called — not where it's defined. Its value depends on HOW the function is called: (1) standalone call → global/undefined, (2) method call → the object, (3) call/apply/bind → explicit object, (4) new → the new object. Arrow functions are the exception — they don't have their own `this` and use lexical (outer) `this`.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between call, apply, and bind?</div>
+        <div class="interview-a">All three explicitly set `this`. call(thisArg, arg1, arg2) — invokes immediately, passes args individually. apply(thisArg, [arg1, arg2]) — invokes immediately, passes args as an array. bind(thisArg) — returns a NEW function permanently bound to thisArg, does not invoke immediately. Use bind when you want to create a reusable function with a fixed context.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('scope-hoisting')">← Scope & Hoisting</button>
+        <button class="mark-done-btn" onclick="markDone('this-keyword')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('prototypes')">Next: Prototypes →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: PROTOTYPES ===== -->
+    <div id="lesson-prototypes" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">🧬 Prototypes & OOP</div>
+        <div class="lesson-subtitle">JavaScript's inheritance model. Classes are syntactic sugar — under the hood, it's all prototype chains.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The Prototype Chain</div>
+        <div class="prose">Every JS object has an internal <code>[[Prototype]]</code> link. When you access a property, JS looks it up on the object, then its prototype, then prototype's prototype... until it reaches <code>null</code>.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">const</span> animal = {
+  <span class="fn">eat</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'eating'</span>); }
+};
+
+<span class="kw">const</span> dog = <span class="op">Object</span>.<span class="fn">create</span>(animal); <span class="cm">// dog's prototype = animal</span>
+dog.name = <span class="st">'Rex'</span>;
+dog.<span class="fn">eat</span>(); <span class="cm">// ✅ found on prototype (animal)</span>
+
+<span class="cm">// Prototype chain: dog → animal → Object.prototype → null</span>
+<span class="fn">console</span>.<span class="fn">log</span>(dog.<span class="fn">hasOwnProperty</span>(<span class="st">'name'</span>)); <span class="cm">// true (own property)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(dog.<span class="fn">hasOwnProperty</span>(<span class="st">'eat'</span>));  <span class="cm">// false (inherited)</span>
+
+<span class="cm">// Modern class syntax — same thing under the hood</span>
+<span class="kw">class</span> <span class="op">Animal</span> {
+  <span class="fn">eat</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'eating'</span>); }
+}
+<span class="kw">class</span> <span class="op">Dog</span> <span class="kw">extends</span> <span class="op">Animal</span> {
+  <span class="fn">constructor</span>(name) {
+    <span class="kw">super</span>(); <span class="cm">// calls Animal constructor</span>
+    <span class="kw">this</span>.name = name;
+  }
+  <span class="fn">bark</span>() { <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'woof'</span>); }
+}</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does prototypal inheritance work in JavaScript?</div>
+        <div class="interview-a">Every object has a hidden [[Prototype]] link to another object. When you access a property that doesn't exist on the object itself, JavaScript walks up the prototype chain until it finds it or reaches null. This creates inheritance without classes — child objects delegate property lookups to parent objects through this chain.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between `__proto__` and `prototype`?</div>
+        <div class="interview-a">`__proto__` is an accessor property on ALL objects that points to the object's prototype (its [[Prototype]]). `prototype` is a property on FUNCTION objects — it becomes the [[Prototype]] of objects created with `new ThatFunction()`. So: `new Foo().__proto__ === Foo.prototype` — they're two sides of the same coin.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What does `Object.create(null)` do?</div>
+        <div class="interview-a">It creates an object with NO prototype chain — pure key-value store with no inherited methods like toString, hasOwnProperty, etc. Useful for creating clean dictionaries/maps that won't be accidentally polluted by prototype methods. It's slightly faster for lookups since there's no prototype chain to walk, and safer against prototype pollution attacks.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('this-keyword')">← `this` Keyword</button>
+        <button class="mark-done-btn" onclick="markDone('prototypes')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('error-handling')">Next: Error Handling →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: CALLBACKS ===== -->
+    <div id="lesson-callbacks" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// JAVASCRIPT CORE</div>
+        <div class="lesson-title">📞 Callbacks</div>
+        <div class="lesson-subtitle">The original async pattern in Node.js. Understanding callbacks makes Promises and async/await click.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">What is a Callback?</div>
+        <div class="prose">A callback is a <strong>function passed as an argument to another function</strong>, to be called later when an operation completes. The Node.js convention is <span class="hl-green">error-first callbacks</span>: the first argument is always an error (null if none), the second is the result.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — NODE ERROR-FIRST PATTERN</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Node.js error-first callback convention</span>
+fs.<span class="fn">readFile</span>(<span class="st">'data.txt'</span>, <span class="st">'utf8'</span>, (err, data) => {
+  <span class="kw">if</span> (err) {
+    <span class="fn">console</span>.<span class="fn">error</span>(<span class="st">'Error:'</span>, err.message);
+    <span class="kw">return</span>; <span class="cm">// ← always return after handling error!</span>
+  }
+  <span class="fn">console</span>.<span class="fn">log</span>(data); <span class="cm">// only runs if no error</span>
+});
+
+<span class="cm">// Callback hell (pyramid of doom)</span>
+<span class="fn">getUser</span>(id, (err, user) => {
+  <span class="fn">getPosts</span>(user.id, (err, posts) => {
+    <span class="fn">getComments</span>(posts[<span class="nm">0</span>].id, (err, comments) => {
+      <span class="cm">// deeply nested, hard to read, error handling nightmare</span>
+    });
+  });
+});</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Node.js callback convention and why?</div>
+        <div class="interview-a">Node.js uses "error-first" callbacks: the first parameter is always an error object (null if success), followed by result parameters. This is a convention (not enforced by the language) that ensures errors are always handled explicitly. It prevents the common mistake of forgetting to check for errors in async operations.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is callback hell and how do you escape it?</div>
+        <div class="interview-a">Callback hell is when multiple nested async operations create deeply indented, hard-to-read code (the "pyramid of doom"). Escape routes: (1) Named functions to flatten the nesting, (2) Promises to chain operations linearly, (3) async/await for synchronous-looking code, (4) Modularization — break into smaller functions. Promises and async/await are the modern standard.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('sync-async')">← Sync/Async</button>
+        <button class="mark-done-btn" onclick="markDone('callbacks')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('promises')">Next: Promises →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: ERROR HANDLING ===== -->
+    <div id="lesson-error-handling" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">🛡️ Error Handling</div>
+        <div class="lesson-subtitle">Robust error handling is what separates production-grade Node.js from hobby projects.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Error Types in Node.js</div>
+        <table class="cheat-table">
+          <tr><th>Type</th><th>When</th><th>Example</th></tr>
+          <tr><td>Synchronous Error</td><td>During sync execution</td><td>JSON.parse(bad data), TypeError</td></tr>
+          <tr><td>Async Error (callback)</td><td>In callback first param</td><td>fs.readFile error</td></tr>
+          <tr><td>Promise Rejection</td><td>Unhandled .catch()</td><td>fetch() fails</td></tr>
+          <tr><td>System Error</td><td>OS-level failures</td><td>ENOENT, EACCES, EADDRINUSE</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Async Error Handling Patterns</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Pattern 1: try/catch with async/await (modern best practice)</span>
+<span class="kw">async function</span> <span class="fn">loadData</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchFromDB</span>();
+    <span class="kw">return</span> data;
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">console</span>.<span class="fn">error</span>(<span class="st">'DB error:'</span>, err.message);
+    <span class="kw">throw</span> err; <span class="cm">// re-throw or handle gracefully</span>
+  }
+}
+
+<span class="cm">// Pattern 2: Global safety nets (DO NOT use as primary handling!)</span>
+process.<span class="fn">on</span>(<span class="st">'uncaughtException'</span>, (err) => {
+  <span class="fn">console</span>.<span class="fn">error</span>(<span class="st">'UNCAUGHT:'</span>, err);
+  process.<span class="fn">exit</span>(<span class="nm">1</span>); <span class="cm">// Always exit after uncaughtException!</span>
+});
+
+process.<span class="fn">on</span>(<span class="st">'unhandledRejection'</span>, (reason, promise) => {
+  <span class="fn">console</span>.<span class="fn">error</span>(<span class="st">'Unhandled Promise Rejection:'</span>, reason);
+  process.<span class="fn">exit</span>(<span class="nm">1</span>);
+});
+
+<span class="cm">// Custom Error classes</span>
+<span class="kw">class</span> <span class="op">ValidationError</span> <span class="kw">extends</span> <span class="op">Error</span> {
+  <span class="fn">constructor</span>(message, field) {
+    <span class="kw">super</span>(message);
+    <span class="kw">this</span>.name = <span class="st">'ValidationError'</span>;
+    <span class="kw">this</span>.field = field;
+    <span class="kw">this</span>.statusCode = <span class="nm">400</span>;
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is uncaughtException and should you use it?</div>
+        <div class="interview-a">process.on('uncaughtException') catches synchronous errors that were never caught. You should use it ONLY as a last resort to log the error and exit gracefully — NOT to recover and continue. Node.js docs explicitly warn that after an uncaught exception, the process may be in an unstable state. Always log, optionally notify (send to error tracking service), then call process.exit(1).</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between operational and programmer errors?</div>
+        <div class="interview-a">Operational errors are expected runtime failures: file not found, network timeout, database connection refused, invalid user input. These should be handled gracefully (return error response). Programmer errors are bugs: null reference, wrong argument type, logic errors. These should crash the process so the bug is noticed and fixed, not silently swallowed.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('prototypes')">← Prototypes</button>
+        <button class="mark-done-btn" onclick="markDone('error-handling')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('streams')">Next: Streams →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: STREAMS ===== -->
+    <div id="lesson-streams" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">🌊 Streams & Buffers</div>
+        <div class="lesson-subtitle">Process data piece by piece instead of loading it all into memory. Essential for large files, real-time data, and HTTP.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Why Streams?</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">Without streams: to watch a movie online, you'd have to download the entire 4GB file before watching it. <strong>With streams</strong>: you watch it as it downloads — a little chunk at a time. Node.js streams work the same way: process data chunks as they arrive, never holding the whole thing in memory.</div>
+        </div>
+        <div class="warn-box"><strong>Problem without streams:</strong> Reading a 10GB file with <code>fs.readFile()</code> loads the ENTIRE file into RAM. With a stream, you process it chunk by chunk using only ~64KB of memory at a time.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Stream Types</div>
+        <table class="cheat-table">
+          <tr><th>Type</th><th>Direction</th><th>Example</th></tr>
+          <tr><td>Readable</td><td>Source of data</td><td>fs.createReadStream(), HTTP request</td></tr>
+          <tr><td>Writable</td><td>Destination</td><td>fs.createWriteStream(), HTTP response</td></tr>
+          <tr><td>Duplex</td><td>Both</td><td>TCP socket, WebSocket</td></tr>
+          <tr><td>Transform</td><td>Modify data</td><td>zlib.createGzip(), crypto.createCipher</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Using Streams</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Pipe — the power of streams (most common pattern)</span>
+<span class="cm">// Reads file, compresses it, writes to new file</span>
+<span class="cm">// Memory used: ~64KB regardless of file size!</span>
+<span class="kw">const</span> readStream = fs.<span class="fn">createReadStream</span>(<span class="st">'huge-file.txt'</span>);
+<span class="kw">const</span> gzip = zlib.<span class="fn">createGzip</span>();
+<span class="kw">const</span> writeStream = fs.<span class="fn">createWriteStream</span>(<span class="st">'huge-file.txt.gz'</span>);
+
+readStream.<span class="fn">pipe</span>(gzip).<span class="fn">pipe</span>(writeStream);
+
+<span class="cm">// Stream events</span>
+readStream.<span class="fn">on</span>(<span class="st">'data'</span>, (chunk) => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'Chunk size:'</span>, chunk.length);
+});
+readStream.<span class="fn">on</span>(<span class="st">'end'</span>, () => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'Done reading'</span>));
+readStream.<span class="fn">on</span>(<span class="st">'error'</span>, (err) => <span class="fn">console</span>.<span class="fn">error</span>(err));</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is backpressure in streams?</div>
+        <div class="interview-a">Backpressure occurs when data is produced faster than it can be consumed. For example, reading from a fast SSD and writing to a slow network connection — the readable stream floods the writable stream's internal buffer. Node.js pipe() handles this automatically: when the writable buffer is full, it pauses the readable stream until the buffer drains. Without handling backpressure, you can run out of memory.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a Buffer in Node.js?</div>
+        <div class="interview-a">A Buffer is a fixed-size chunk of memory outside the V8 heap, used to hold binary data. Since JavaScript historically had no byte manipulation, Node.js created Buffer to work with raw binary data from files, networks, and streams. Buffers are instances of Uint8Array. Common use: Buffer.from('hello', 'utf8'), buffer.toString(), reading binary file data.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('error-handling')">← Error Handling</button>
+        <button class="mark-done-btn" onclick="markDone('streams')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('modules')">Next: Modules →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: MODULES ===== -->
+    <div id="lesson-modules" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">📦 CommonJS & ES Modules</div>
+        <div class="lesson-subtitle">Two module systems in Node.js. Know the differences, the gotchas, and when to use each.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">CommonJS (CJS) — The Original</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — COMMONJS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Exporting (math.js)</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+<span class="kw">const</span> PI = <span class="nm">3.14159</span>;
+module.exports = { add, PI };
+<span class="cm">// OR: module.exports.add = add;</span>
+
+<span class="cm">// Importing</span>
+<span class="kw">const</span> { add, PI } = <span class="fn">require</span>(<span class="st">'./math'</span>);
+<span class="kw">const</span> fs = <span class="fn">require</span>(<span class="st">'fs'</span>); <span class="cm">// built-in module</span>
+<span class="kw">const</span> express = <span class="fn">require</span>(<span class="st">'express'</span>); <span class="cm">// npm module</span>
+
+<span class="cm">// Key: require() is SYNCHRONOUS — reads file, parses, caches</span>
+<span class="cm">// Cached after first load — subsequent requires get same object</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">ES Modules (ESM) — The Modern Standard</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — ES MODULES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Exporting (math.mjs or "type":"module" in package.json)</span>
+<span class="kw">export function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+<span class="kw">export const</span> PI = <span class="nm">3.14159</span>;
+<span class="kw">export default class</span> <span class="op">Calculator</span> { ... }
+
+<span class="cm">// Importing</span>
+<span class="kw">import</span> { add, PI } <span class="kw">from</span> <span class="st">'./math.js'</span>; <span class="cm">// named imports</span>
+<span class="kw">import</span> Calculator <span class="kw">from</span> <span class="st">'./math.js'</span>;  <span class="cm">// default import</span>
+<span class="kw">import</span> * <span class="kw">as</span> Math <span class="kw">from</span> <span class="st">'./math.js'</span>;   <span class="cm">// namespace import</span>
+
+<span class="cm">// Dynamic import (works in both CJS and ESM)</span>
+<span class="kw">const</span> { add } = <span class="kw">await</span> <span class="kw">import</span>(<span class="st">'./math.js'</span>); <span class="cm">// async!</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">CJS vs ESM — Key Differences</div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>CommonJS</th><th>ES Modules</th></tr>
+          <tr><td>Loading</td><td>Synchronous</td><td>Asynchronous</td></tr>
+          <tr><td>Syntax</td><td>require/module.exports</td><td>import/export</td></tr>
+          <tr><td>Analysis</td><td>Runtime</td><td>Static (compile time)</td></tr>
+          <tr><td>Tree shaking</td><td>❌ Not possible</td><td>✅ Supported</td></tr>
+          <tr><td>Top-level await</td><td>❌</td><td>✅</td></tr>
+          <tr><td>__dirname</td><td>✅ Available</td><td>❌ Use import.meta.url</td></tr>
+          <tr><td>Default in Node</td><td>✅ Yes</td><td>Needs .mjs or "type":"module"</td></tr>
+        </table>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Node.js module caching work?</div>
+        <div class="interview-a">After the first require() call, Node.js caches the module in require.cache (an object keyed by filename). Subsequent require() calls for the same file return the cached exports object — the module is NOT re-executed. This means module-level code runs once, and if the exported object is mutated, other files requiring it will see the mutation (singleton behavior).</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Can you use require() in ES modules?</div>
+        <div class="interview-a">No — ESM files (.mjs or "type":"module") cannot use require() or module.exports. You can, however, use dynamic import() in CommonJS files (it returns a Promise). To use a CJS package from ESM: `import pkg from 'cjs-pkg'` (default import) or `const {fn} = await import('cjs-pkg')`. Going the other way (CJS importing ESM) requires dynamic import.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('streams')">← Streams</button>
+        <button class="mark-done-btn" onclick="markDone('modules')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('memory')">Next: Memory & GC →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: MEMORY ===== -->
+    <div id="lesson-memory" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS DEEP DIVE</div>
+        <div class="lesson-title">🧠 Memory & Garbage Collection</div>
+        <div class="lesson-subtitle">V8's memory model, garbage collection, common leaks, and how to find and fix them.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">V8 Memory Structure</div>
+        <table class="cheat-table">
+          <tr><th>Area</th><th>What's stored</th><th>Size limit</th></tr>
+          <tr><td>Heap — New Space</td><td>Short-lived objects (most allocations)</td><td>~1-8MB</td></tr>
+          <tr><td>Heap — Old Space</td><td>Survived 2+ GC cycles</td><td>~1.5GB (64-bit)</td></tr>
+          <tr><td>Stack</td><td>Call stack, primitives, references</td><td>Small, fixed</td></tr>
+          <tr><td>External</td><td>Buffers (outside V8 heap)</td><td>OS-limited</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Common Memory Leaks</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — LEAK PATTERNS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// LEAK 1: Forgotten event listeners</span>
+<span class="kw">const</span> emitter = <span class="kw">new</span> <span class="op">EventEmitter</span>();
+<span class="kw">function</span> <span class="fn">handleData</span>(data) { <span class="cm">/* ... */</span> }
+emitter.<span class="fn">on</span>(<span class="st">'data'</span>, handleData); <span class="cm">// ← forgotten, never removed</span>
+<span class="cm">// Fix: emitter.off('data', handleData) or .once()</span>
+
+<span class="cm">// LEAK 2: Global variable accumulation</span>
+<span class="kw">const</span> cache = {}; <span class="cm">// global, grows forever</span>
+<span class="kw">function</span> <span class="fn">process</span>(req) {
+  cache[req.id] = req.data; <span class="cm">// never cleaned up</span>
+}
+<span class="cm">// Fix: Use Map + size limit, or LRU cache library</span>
+
+<span class="cm">// LEAK 3: Closure holding large objects</span>
+<span class="kw">function</span> <span class="fn">createHandler</span>() {
+  <span class="kw">const</span> hugeData = <span class="kw">new</span> <span class="op">Array</span>(<span class="nm">1000000</span>).<span class="fn">fill</span>(<span class="st">'data'</span>);
+  <span class="kw">return function</span>() {
+    <span class="cm">// hugeData is captured but only name is needed</span>
+    <span class="kw">return</span> hugeData[<span class="nm">0</span>];
+  };
+}
+<span class="cm">// Fix: only capture what you need, or set hugeData = null when done</span></pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does garbage collection work in V8?</div>
+        <div class="interview-a">V8 uses a generational GC. New Space (short-lived objects) is collected frequently with a fast Scavenge (copy collector). Objects that survive 2+ collections are promoted to Old Space, collected less frequently with Mark-Sweep (marks live objects, sweeps dead ones) and Mark-Compact (also compacts memory to reduce fragmentation). GC pauses are minimized with incremental and parallel collection.</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you detect memory leaks in Node.js?</div>
+        <div class="interview-a">Tools and methods: (1) process.memoryUsage() to monitor heap growth over time, (2) Node.js --inspect flag + Chrome DevTools heap snapshots to compare before/after, (3) clinic.js or 0x for production profiling, (4) heapdump package to take heap snapshots programmatically, (5) Watch for monotonically increasing heap in your monitoring (Datadog, New Relic).</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('modules')">← Modules</button>
+        <button class="mark-done-btn" onclick="markDone('memory')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cluster')">Next: Cluster & Workers →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: CLUSTER ===== -->
+    <div id="lesson-cluster" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS ADVANCED</div>
+        <div class="lesson-title">🌐 Cluster & Worker Threads</div>
+        <div class="lesson-subtitle">How to scale Node.js across multiple CPU cores — the two approaches and when to use each.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">The Problem</div>
+        <div class="prose">Node.js is single-threaded. A machine with 8 CPU cores runs Node.js on only 1 core, wasting 7 cores. How do we use all cores?</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Cluster Module — Multiple Processes</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — CLUSTER</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">const</span> cluster = <span class="fn">require</span>(<span class="st">'cluster'</span>);
+<span class="kw">const</span> os = <span class="fn">require</span>(<span class="st">'os'</span>);
+
+<span class="kw">if</span> (cluster.<span class="id">isPrimary</span>) {
+  <span class="cm">// Master process — forks workers</span>
+  <span class="kw">const</span> numCPUs = os.<span class="fn">cpus</span>().length;
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">`Master PID: ${process.pid}, forking ${numCPUs} workers`</span>);
+
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="nm">0</span>; i &lt; numCPUs; i++) {
+    cluster.<span class="fn">fork</span>(); <span class="cm">// creates worker process</span>
+  }
+
+  cluster.<span class="fn">on</span>(<span class="st">'exit'</span>, (worker) => {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">`Worker ${worker.process.pid} died. Restarting...`</span>);
+    cluster.<span class="fn">fork</span>(); <span class="cm">// auto-restart dead workers</span>
+  });
+} <span class="kw">else</span> {
+  <span class="cm">// Worker process — runs your actual server</span>
+  <span class="kw">const</span> app = <span class="fn">require</span>(<span class="st">'./app'</span>);
+  app.<span class="fn">listen</span>(<span class="nm">3000</span>);
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">`Worker ${process.pid} started`</span>);
+}</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Worker Threads — True Parallelism for CPU Work</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — WORKER THREADS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// main.js — run CPU-intensive work without blocking</span>
+<span class="kw">const</span> { Worker } = <span class="fn">require</span>(<span class="st">'worker_threads'</span>);
+
+<span class="kw">function</span> <span class="fn">runWorker</span>(data) {
+  <span class="kw">return new</span> <span class="op">Promise</span>((resolve, reject) => {
+    <span class="kw">const</span> worker = <span class="kw">new</span> <span class="fn">Worker</span>(<span class="st">'./cpu-task.js'</span>, { workerData: data });
+    worker.<span class="fn">on</span>(<span class="st">'message'</span>, resolve);
+    worker.<span class="fn">on</span>(<span class="st">'error'</span>, reject);
+  });
+}
+
+<span class="cm">// Main thread free while worker crunches numbers</span>
+<span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">runWorker</span>({ n: <span class="nm">1000000</span> });</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Cluster vs Worker Threads</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Cluster</th><th>Worker Threads</th></tr>
+          <tr><td>Use case</td><td>Scale HTTP servers across cores</td><td>CPU-intensive background tasks</td></tr>
+          <tr><td>Memory</td><td>Separate process (no sharing)</td><td>Shared memory (SharedArrayBuffer)</td></tr>
+          <tr><td>Communication</td><td>IPC (slow)</td><td>MessagePort (fast)</td></tr>
+          <tr><td>Isolation</td><td>Full crash isolation</td><td>Shared memory, less isolation</td></tr>
+          <tr><td>Overhead</td><td>Higher (full process)</td><td>Lower (thread)</td></tr>
+        </table>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does cluster load balancing work?</div>
+        <div class="interview-a">The master process listens on a port. When a connection comes in, the OS (on most platforms) or Node.js uses round-robin to distribute incoming connections to worker processes. Workers are fully independent Node.js processes — they each have their own event loop, V8 instance, and memory. Workers can communicate with the master via IPC (process.send/on('message')).</div>
+
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use worker_threads instead of cluster?</div>
+        <div class="interview-a">Use worker_threads for CPU-intensive work that needs to run in the background without blocking the main thread: image/video processing, cryptographic operations, large JSON parsing, ML inference, complex calculations. Use cluster for scaling an HTTP server across all CPU cores to handle more concurrent requests. Key difference: cluster = multiple server instances, worker_threads = background computation.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('memory')">← Memory</button>
+        <button class="mark-done-btn" onclick="markDone('cluster')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('es6-features')">Next: ES6+ Features →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: ES6 ===== -->
+    <div id="lesson-es6-features" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// MODERN JAVASCRIPT</div>
+        <div class="lesson-title">✨ ES6+ Features</div>
+        <div class="lesson-subtitle">Modern JavaScript features every developer must know for interviews.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Destructuring & Spread</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Array destructuring</span>
+<span class="kw">const</span> [first, second, ...rest] = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>];
+
+<span class="cm">// Object destructuring with rename + default</span>
+<span class="kw">const</span> { name: userName = <span class="st">'Anonymous'</span>, age } = user;
+
+<span class="cm">// Spread — copies, merges, converts</span>
+<span class="kw">const</span> newArr = [...arr1, ...arr2];
+<span class="kw">const</span> newObj = { ...defaults, ...overrides };
+
+<span class="cm">// Optional chaining — no more "cannot read property of undefined"</span>
+<span class="kw">const</span> city = user?.address?.city ?? <span class="st">'Unknown'</span>;
+
+<span class="cm">// Nullish coalescing — only null/undefined (not 0, '')</span>
+<span class="kw">const</span> port = config.port ?? <span class="nm">3000</span>; <span class="cm">// 0 would stay as 0 (vs ||)</span>
+
+<span class="cm">// Tagged template literals</span>
+<span class="kw">const</span> query = sql<span class="st">`SELECT * FROM users WHERE id = </span><span class="id">${userId}</span><span class="st">`</span>;</pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Generators & Iterators</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — GENERATORS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Generator — a function that can pause and resume</span>
+<span class="kw">function</span>* <span class="fn">counter</span>() {
+  <span class="kw">let</span> i = <span class="nm">0</span>;
+  <span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="kw">yield</span> i++; <span class="cm">// pauses here, returns i, resumes on next()</span>
+  }
+}
+
+<span class="kw">const</span> gen = <span class="fn">counter</span>();
+<span class="fn">console</span>.<span class="fn">log</span>(gen.<span class="fn">next</span>().value); <span class="cm">// 0</span>
+<span class="fn">console</span>.<span class="fn">log</span>(gen.<span class="fn">next</span>().value); <span class="cm">// 1</span>
+
+<span class="cm">// Practical: lazy infinite sequences, custom iterators</span>
+<span class="kw">function</span>* <span class="fn">range</span>(start, end) {
+  <span class="kw">for</span> (<span class="kw">let</span> i = start; i &lt;= end; i++) <span class="kw">yield</span> i;
+}
+<span class="fn">console</span>.<span class="fn">log</span>([...<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>)]); <span class="cm">// [1, 2, 3, 4, 5]</span></pre>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">WeakMap, Symbol, Proxy</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — ADVANCED ES6+</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Symbol — unique, non-enumerable, no collisions</span>
+<span class="kw">const</span> id = <span class="op">Symbol</span>(<span class="st">'id'</span>);
+obj[id] = <span class="nm">123</span>; <span class="cm">// won't show in for...in or Object.keys</span>
+
+<span class="cm">// WeakMap — keys must be objects, GC-friendly (no memory leak)</span>
+<span class="kw">const</span> cache = <span class="kw">new</span> <span class="op">WeakMap</span>();
+cache.<span class="fn">set</span>(domNode, <span class="st">'metadata'</span>); <span class="cm">// auto-cleaned when domNode is GC'd</span>
+
+<span class="cm">// Proxy — intercept object operations</span>
+<span class="kw">const</span> handler = {
+  <span class="fn">get</span>(target, key) {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">`Getting ${key}`</span>);
+    <span class="kw">return</span> target[key];
+  },
+  <span class="fn">set</span>(target, key, value) {
+    <span class="kw">if</span> (<span class="kw">typeof</span> value !== <span class="st">'number'</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="op">Error</span>(<span class="st">'Must be number'</span>);
+    target[key] = value;
+    <span class="kw">return</span> <span class="kw">true</span>;
+  }
+};
+<span class="kw">const</span> validated = <span class="kw">new</span> <span class="op">Proxy</span>({}, handler);</pre>
+        </div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('cluster')">← Cluster</button>
+        <button class="mark-done-btn" onclick="markDone('es6-features')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('libuv')">Next: libuv →</button>
+      </div>
+    </div>
+
+    <!-- ===== LESSON: LIBUV ===== -->
+    <div id="lesson-libuv" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// NODE.JS INTERNALS</div>
+        <div class="lesson-title">⚙️ libuv & Thread Pool</div>
+        <div class="lesson-subtitle">The C library that makes Node.js async I/O possible across all platforms.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">What libuv Does</div>
+        <div class="prose">libuv implements the event loop and provides an abstraction layer over OS-specific async I/O mechanisms. It unifies epoll (Linux), kqueue (macOS/BSD), and IOCP (Windows) behind a single API that Node.js uses.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Thread Pool Deep Dive</div>
+        <table class="cheat-table">
+          <tr><th>Operation</th><th>Uses Thread Pool?</th><th>Why</th></tr>
+          <tr><td>File system (fs.*)</td><td>✅ Yes</td><td>OS doesn't have universal async fs</td></tr>
+          <tr><td>DNS lookup (dns.lookup)</td><td>✅ Yes</td><td>getaddrinfo() is blocking</td></tr>
+          <tr><td>crypto (pbkdf2, scrypt)</td><td>✅ Yes</td><td>CPU-intensive</td></tr>
+          <tr><td>zlib (compression)</td><td>✅ Yes</td><td>CPU-intensive</td></tr>
+          <tr><td>TCP/HTTP networking</td><td>❌ No</td><td>Uses OS event loop (epoll/kqueue)</td></tr>
+          <tr><td>setTimeout/setInterval</td><td>❌ No</td><td>Handled by libuv timers</td></tr>
+        </table>
+
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">BASH — TUNE THREAD POOL</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm"># Default: 4 threads</span>
+node app.js
+
+<span class="cm"># Increase for heavy crypto/fs workload</span>
+UV_THREADPOOL_SIZE=16 node app.js
+
+<span class="cm"># Or in code (MUST be set before any I/O)</span>
+process.env.UV_THREADPOOL_SIZE = <span class="st">'16'</span>;</pre>
+        </div>
+      </div>
+
+      <div class="interview-box">
+        <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why does Node.js use a thread pool for file I/O but not for network I/O?</div>
+        <div class="interview-a">Modern operating systems have mature, highly-efficient async networking APIs: epoll on Linux, kqueue on macOS, IOCP on Windows. These allow thousands of network connections to be monitored with a single system call, with no threads needed. File system operations don't have equivalent universal async APIs across all OSes, so libuv uses a thread pool to simulate async behavior by running blocking fs calls in background threads.</div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('es6-features')">← ES6+ Features</button>
+        <button class="mark-done-btn" onclick="markDone('libuv')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('interview-cheatsheet')">Next: Full Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- ===== CHEATSHEET ===== -->
+    <div id="lesson-interview-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow">// STUDY AID</div>
+        <div class="lesson-title">📋 Full Interview Cheatsheet</div>
+        <div class="lesson-subtitle">All the key concepts, definitions, and differences on one page.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Core Definitions</div>
+        <table class="cheat-table">
+          <tr><th>Term</th><th>One-line definition</th></tr>
+          <tr><td>Event Loop</td><td>Mechanism that handles async callbacks by monitoring call stack + task queues</td></tr>
+          <tr><td>Microtask</td><td>Promise.then, queueMicrotask — runs BEFORE next macrotask, higher priority</td></tr>
+          <tr><td>Macrotask</td><td>setTimeout, setInterval, I/O callbacks — run one at a time after microtasks drained</td></tr>
+          <tr><td>Closure</td><td>Function that retains access to outer scope variables after outer function returns</td></tr>
+          <tr><td>Hoisting</td><td>Declarations moved to top of scope before execution; var→undefined, let/const→TDZ</td></tr>
+          <tr><td>TDZ</td><td>Temporal Dead Zone — let/const hoisted but inaccessible until declaration line</td></tr>
+          <tr><td>Prototype Chain</td><td>Chain of [[Prototype]] links JS walks when looking up a property</td></tr>
+          <tr><td>libuv</td><td>C library providing event loop + thread pool for Node.js async I/O</td></tr>
+          <tr><td>V8</td><td>Google's JS engine — parses, JIT-compiles, executes JS, manages heap</td></tr>
+          <tr><td>Backpressure</td><td>When data is produced faster than consumed — pipe() handles it in streams</td></tr>
+          <tr><td>Thread Pool</td><td>libuv's 4-thread pool for blocking I/O (fs, dns, crypto) — NOT for network I/O</td></tr>
+          <tr><td>Cluster</td><td>Node module that forks multiple processes to use all CPU cores</td></tr>
+          <tr><td>Worker Threads</td><td>True OS threads in Node.js for CPU-intensive background tasks</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Key Comparisons</div>
+        <table class="cheat-table">
+          <tr><th>vs.</th><th>Left</th><th>Right</th></tr>
+          <tr><td>Promise.all vs allSettled</td><td>Fails fast on any rejection</td><td>Always waits, never fails</td></tr>
+          <tr><td>call vs bind</td><td>Invokes immediately with this</td><td>Returns new bound function</td></tr>
+          <tr><td>var vs let</td><td>Function-scoped, hoisted→undefined</td><td>Block-scoped, TDZ</td></tr>
+          <tr><td>Sync vs Async</td><td>Blocks thread, simple</td><td>Non-blocking, scalable</td></tr>
+          <tr><td>Cluster vs Workers</td><td>Multiple processes, server scaling</td><td>Threads, CPU computation</td></tr>
+          <tr><td>Microtask vs Macrotask</td><td>Higher priority, fully drained first</td><td>One per loop iteration</td></tr>
+          <tr><td>CJS vs ESM</td><td>require(), sync, runtime analysis</td><td>import, async, static analysis</td></tr>
+          <tr><td>== vs ===</td><td>Type coercion (loose)</td><td>Strict equality, no coercion</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Most Common Gotchas / Traps</div>
+        <table class="cheat-table">
+          <tr><th>Gotcha</th><th>The Trap</th><th>The Fix</th></tr>
+          <tr><td>setTimeout(fn,0)</td><td>Doesn't run "immediately" — runs after all sync + microtasks</td><td>Use Promise if you need microtask timing</td></tr>
+          <tr><td>await in forEach</td><td>forEach ignores async callbacks — doesn't await them</td><td>Use for...of or Promise.all(arr.map())</td></tr>
+          <tr><td>var in loop + closure</td><td>All iterations share same var — prints 3,3,3 not 0,1,2</td><td>Use let (block-scoped per iteration)</td></tr>
+          <tr><td>Sequential awaits</td><td>await a; await b; runs them serially (slow)</td><td>Promise.all([a(), b()]) for parallel</td></tr>
+          <tr><td>uncaughtException</td><td>Using it to recover and continue is dangerous</td><td>Log, notify, then process.exit(1)</td></tr>
+          <tr><td>readFileSync in server</td><td>Blocks entire event loop for all users</td><td>Always use async fs.readFile()</td></tr>
+          <tr><td>Promise not awaited</td><td>Silent failure — error never caught</td><td>Always await or .catch() promises</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Execution Order Cheatsheet</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT — ALWAYS MEMORIZE THIS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'1 sync'</span>);
+
+<span class="fn">setTimeout</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'5 setTimeout'</span>), <span class="nm">0</span>);
+
+<span class="op">Promise</span>.<span class="fn">resolve</span>().<span class="fn">then</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'3 promise.then'</span>));
+
+<span class="fn">queueMicrotask</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'4 queueMicrotask'</span>));
+
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="st">'2 sync'</span>);
+
+<span class="cm">// OUTPUT: 1, 2, 3, 4, 5</span>
+<span class="cm">// Rule: Sync → Microtasks (in order) → Macrotasks</span></pre>
+        </div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('libuv')">← libuv</button>
+        <button class="mark-done-btn" onclick="markDone('interview-cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ====== STATE ======
+const state = {
+  completed: new Set(JSON.parse(localStorage.getItem('done') || '[]')),
+  xp: parseInt(localStorage.getItem('xp') || '0'),
+  totalTopics: 15
+};
+
+// ====== NAVIGATION ======
+function showPage(page) {
+  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  if (page === 'home') {
+    document.getElementById('nav-home').classList.add('active');
+  }
+  updateXP();
+}
+
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const lesson = document.getElementById('lesson-' + id);
+  if (lesson) lesson.classList.add('active');
+
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+
+  window.scrollTo(0, 0);
+  main.scrollTo(0, 0);
+}
+
+// ====== QUIZ ======
+function checkQuiz(btn, id, result) {
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById('quiz-' + id + '-fb');
+
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback show right';
+    fb.textContent = '✅ Correct! Great job — you understand this concept.';
+    addXP(20);
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong';
+    fb.textContent = '❌ Not quite. Read the explanation above and try to understand why.';
+    // highlight correct
+    opts.forEach(o => {
+      if (o.onclick.toString().includes("'correct'")) o.classList.add('correct');
+    });
+  }
+}
+
+// ====== INTERVIEW Q TOGGLE ======
+function toggleAnswer(el) {
+  el.classList.toggle('open');
+  const next = el.nextElementSibling;
+  if (next && next.classList.contains('interview-a')) {
+    next.classList.toggle('open');
+  }
+}
+
+// ====== MARK DONE ======
+function markDone(id) {
+  if (!state.completed.has(id)) {
+    state.completed.add(id);
+    addXP(50);
+    localStorage.setItem('done', JSON.stringify([...state.completed]));
+
+    const navItem = document.getElementById('nav-' + id);
+    if (navItem) navItem.classList.add('completed');
+
+    const btn = event.target;
+    btn.classList.add('done');
+    btn.textContent = '✓ Done!';
+  }
+  updateProgress();
+}
+
+// ====== XP SYSTEM ======
+function addXP(amount) {
+  state.xp += amount;
+  localStorage.setItem('xp', state.xp.toString());
+  updateXP();
+}
+
+function updateXP() {
+  document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`;
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = (state.completed.size / state.totalTopics) * 100;
+  document.getElementById('globalProgress').style.width = pct + '%';
+}
+
+// ====== COPY CODE ======
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 2000);
+  });
+}
+
+// ====== INIT ======
+function init() {
+  state.completed.forEach(id => {
+    const navItem = document.getElementById('nav-' + id);
+    if (navItem) navItem.classList.add('completed');
+  });
+  updateProgress();
+  updateXP();
+}
+
+// Fix: get main element
+const main = document.querySelector('main');
+
+init();
+</script>
+</body>
+</html>

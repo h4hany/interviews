@@ -1781,3 +1781,4 @@ PostgreSQL is a powerful, feature-rich database with:
 - Window functions and CTEs
 - Replication and high availability
 
+

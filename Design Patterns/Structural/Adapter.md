@@ -284,3 +284,4 @@ end
 - Use when integrating third-party code or legacy systems
 - Wraps incompatible object to match expected interface
 
+

@@ -232,3 +232,4 @@ Request-reply pattern uses correlation ID and reply-to queue to implement RPC-st
 **Answer:**
 Message deduplication prevents processing duplicate messages, typically implemented using message IDs and idempotent consumers.
 
+

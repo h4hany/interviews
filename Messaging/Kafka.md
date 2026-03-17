@@ -306,3 +306,4 @@ Kafka monitoring includes:
 - **`__consumer_offsets`**: Internal topic storing consumer group offsets.
 - **Regular Topics**: User-created topics for application data.
 
+

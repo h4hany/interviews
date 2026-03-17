@@ -777,6 +777,40 @@ body {
     color: #ef4444;
 }
 
+.file-protocol-notice {
+    background: var(--accent-light);
+    color: var(--text-primary);
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--accent-color);
+}
+
+.file-protocol-notice code {
+    background: var(--bg-tertiary);
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85em;
+}
+
+.file-protocol-error {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.file-protocol-error ol {
+    padding-left: 1.25rem;
+}
+
+.file-protocol-error code {
+    background: var(--bg-tertiary);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9em;
+}
+
 /* Sidebar Overlay (Mobile) */
 .sidebar-overlay {
     display: none;

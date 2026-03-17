@@ -255,3 +255,4 @@ Webhook is a callback mechanism where an API sends HTTP POST requests to a URL w
 - **Webhook**: Server pushes events to client (real-time, efficient).
 - **Polling**: Client repeatedly requests updates (delayed, inefficient).
 
+

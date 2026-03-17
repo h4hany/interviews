@@ -1170,3 +1170,4 @@ TypeScript adds static typing to JavaScript, providing:
 - Gradual adoption (can use JavaScript in TypeScript)
 - Compile-time checks without runtime overhead
 
+

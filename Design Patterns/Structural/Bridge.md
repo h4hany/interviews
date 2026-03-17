@@ -267,3 +267,4 @@ circle2.draw  # Raster rendering
 - Prevents combinatorial class explosion
 - Use when you have multiple dimensions of variation
 
+

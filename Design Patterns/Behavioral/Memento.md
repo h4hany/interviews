@@ -215,3 +215,4 @@ puts game.status  # Level: 2, Score: 100, Lives: 3 (restored!)
 - Use for undo/redo or checkpoints
 - Like a save game feature
 
+

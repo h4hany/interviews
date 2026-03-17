@@ -675,3 +675,4 @@ JSX factory is the function used to create elements. By default, it's `React.cre
 React.cloneElement(child, { className: 'new-class' });
 ```
 
+

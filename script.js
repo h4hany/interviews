@@ -1,34 +1,36 @@
-// GitHub Pages base path detection
+// Base path detection: file://, GitHub Pages, or localhost
 const getBasePath = () => {
-    // If running on GitHub Pages, detect the repository name from pathname
+    // When opened via file:// (e.g. double-click index.html), use the directory of this document.
+    // fetch() from file:// is still blocked by CORS; we show a message and recommend a local server.
+    if (window.location.protocol === 'file:') {
+        const href = window.location.href;
+        const lastSlash = href.lastIndexOf('/');
+        return lastSlash >= 0 ? href.substring(0, lastSlash + 1) : '';
+    }
+
+    // If running on GitHub Pages or a server, detect base from pathname
     const pathname = window.location.pathname;
-    
-    // Remove leading and trailing slashes, then split
     const parts = pathname.replace(/^\/|\/$/g, '').split('/');
-    
-    // If we have parts and the first part is not empty and not 'index.html'
+
     if (parts.length > 0 && parts[0] && parts[0] !== 'index.html') {
-        // Check if we're on GitHub Pages (has a repo name)
-        // For localhost, pathname might be just '/' or '/index.html'
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
             return `/${parts[0]}`;
         }
     }
-    
-    // For local development, try to detect from pathname
-    // If pathname has more than just '/' or '/index.html', it might be a subdirectory
+
     if (pathname !== '/' && pathname !== '/index.html' && pathname.includes('/')) {
         const match = pathname.match(/^\/([^\/]+)/);
         if (match && match[1] && match[1] !== 'index.html') {
             return `/${match[1]}`;
         }
     }
-    
+
     return '';
 };
 
 const BASE_PATH = getBasePath();
-console.log('Base path detected:', BASE_PATH || '(root)');
+const IS_FILE_PROTOCOL = window.location.protocol === 'file:';
+console.log('Base path detected:', BASE_PATH || '(root)', IS_FILE_PROTOCOL ? '(file protocol)' : '');
 
 // File structure based on README.md
 const fileStructure = {
@@ -46,7 +48,8 @@ const fileStructure = {
         "Go": "Programming/Go.md",
         ".NET/C#": "Programming/dotNet.md",
         "Ruby on Rails": "Frameworks/Backend/Rails/Ruby on Rails.md",
-        "Node.js": "Frameworks/Backend/Node.md"
+        "Node.js": "Frameworks/Backend/node/Node.md",
+        "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html"
     },
     "Databases": {
         "MySQL": "Databases/mysql.md",
@@ -118,6 +121,10 @@ const fileStructure = {
         "Redis": "Caching/Redis.md",
         "RabbitMQ": "Messaging/RabbitMQ.md",
         "Kafka": "Messaging/Kafka.md"
+    },
+    "Problem Solving": {
+        "75 LeetCode": "Problem Solving/75leetcode.html",
+        "Patterns": "Problem Solving/patterns.html"
     },
     "Companies": {
         "Toters": {
@@ -267,9 +274,15 @@ function createTreeItem(name, path, level) {
     item.className = 'file';
     item.setAttribute('data-path', path);
     item.style.paddingLeft = `${level * 1.5 + 1}rem`;
-    item.innerHTML = `<span class="file-icon">📄</span> <span>${name}</span>`;
+    const isHtml = path.endsWith('.html');
+    item.innerHTML = `<span class="file-icon">${isHtml ? '🔗' : '📄'}</span> <span>${name}</span>`;
     item.addEventListener('click', () => {
-        loadFile(path);
+        if (isHtml) {
+            const fullPath = BASE_PATH ? `${BASE_PATH}/${path}` : path;
+            window.open(fullPath, '_blank');
+        } else {
+            loadFile(path);
+        }
         // Close sidebar on mobile after selection
         if (window.innerWidth <= 768) {
             const sidebar = document.querySelector('.sidebar');
@@ -417,6 +430,14 @@ function showWelcomeScreen() {
                             <span class="link-icon">🔧</span>
                             <span class="link-text">SOLID Principles</span>
                         </a>
+                        <a href="${BASE_PATH ? BASE_PATH + '/' : ''}Problem Solving/75leetcode.html" target="_blank" class="quick-link-card" title="Opens in new tab">
+                            <span class="link-icon">📋</span>
+                            <span class="link-text">75 LeetCode</span>
+                        </a>
+                        <a href="${BASE_PATH ? BASE_PATH + '/' : ''}Problem Solving/patterns.html" target="_blank" class="quick-link-card" title="Opens in new tab">
+                            <span class="link-icon">🧩</span>
+                            <span class="link-text">Patterns</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -425,24 +446,65 @@ function showWelcomeScreen() {
     
     // Re-attach event listeners for quick links
     attachQuickLinkListeners();
+
+    // When opened via file://, show a notice to use a local server
+    if (IS_FILE_PROTOCOL) {
+        const welcome = contentBody.querySelector('.welcome-content');
+        if (welcome) {
+            const notice = document.createElement('div');
+            notice.className = 'file-protocol-notice';
+            notice.innerHTML = `
+                <strong>Opened from file system.</strong> Browsers block loading other local files here.
+                Run a local server from the project folder, then open this app in the browser:
+                <code>npx serve</code> then open <code>http://localhost:3000</code>
+                (or <code>python -m http.server 8000</code> → <code>http://localhost:8000</code>).
+            `;
+            welcome.insertBefore(notice, welcome.firstChild);
+        }
+    }
+}
+
+function showFileProtocolMessage(requestedFile) {
+    const contentBody = document.getElementById('contentBody');
+    const backBtn = document.getElementById('backBtn');
+    const breadcrumb = document.getElementById('breadcrumb');
+    if (!contentBody || !breadcrumb) return;
+    breadcrumb.innerHTML = '<span class="breadcrumb-item active">Home</span>';
+    if (backBtn) backBtn.style.display = 'none';
+    contentBody.innerHTML = `
+        <div class="error file-protocol-error">
+            <h2>Open via a local server</h2>
+            <p>This app was opened from the file system (<code>file://</code>). Browsers block loading other local files in this case (CORS).</p>
+            <p>To use the app and load <strong>${requestedFile}</strong> and other content:</p>
+            <ol style="text-align: left; max-width: 28rem; margin: 1rem auto;">
+                <li>Open a terminal in this project folder</li>
+                <li>Run: <code>npx serve</code> (or <code>python -m http.server 8000</code>)</li>
+                <li>Open <code>http://localhost:3000</code> (or <code>http://localhost:8000</code>) in your browser</li>
+            </ol>
+            <button class="btn" onclick="showWelcomeScreen()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; border: none; border-radius: var(--radius); cursor: pointer;">Back to Home</button>
+        </div>
+    `;
 }
 
 async function loadFile(filePath, addToHistory = true) {
     if (!filePath) return;
-    
+
+    // Browsers block fetch() from file:// for security (CORS). Show instructions instead.
+    if (IS_FILE_PROTOCOL) {
+        showFileProtocolMessage(filePath);
+        return;
+    }
+
     currentFile = filePath;
     const contentBody = document.getElementById('contentBody');
     const backBtn = document.getElementById('backBtn');
     const breadcrumb = document.getElementById('breadcrumb');
-    
+
     if (!contentBody || !breadcrumb) {
         console.error('Required DOM elements not found');
         return;
     }
-    
-    // Update breadcrumb
-    const fileName = filePath.split('/').pop().replace('.md', '');
-    
+
     // Update breadcrumb
     const pathParts = filePath.split('/').filter(p => p && p !== 'README.md');
     let breadcrumbHTML = '<span class="breadcrumb-item active">Home</span>';
@@ -459,15 +521,15 @@ async function loadFile(filePath, addToHistory = true) {
         });
     }
     breadcrumb.innerHTML = breadcrumbHTML;
-    
+
     // Show back button if we have history
     if (backBtn) {
         backBtn.style.display = history.length > 0 ? 'flex' : 'none';
     }
-    
+
     // Show loading
     contentBody.innerHTML = '<div class="loading">Loading</div>';
-    
+
     // Update URL
     const hash = encodeURIComponent(filePath);
     const url = BASE_PATH ? `${BASE_PATH}/#${hash}` : `/#${hash}`;
@@ -476,18 +538,17 @@ async function loadFile(filePath, addToHistory = true) {
     } catch (e) {
         console.warn('Could not update URL:', e);
     }
-    
+
     try {
         // Construct full path with base path for GitHub Pages
         let fullPath;
         if (BASE_PATH) {
-            // Remove leading slash from filePath if present, then join
             const cleanPath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
             fullPath = `${BASE_PATH}/${cleanPath}`;
         } else {
             fullPath = filePath;
         }
-        
+
         console.log('Loading file:', fullPath);
         const response = await fetch(fullPath);
         

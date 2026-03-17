@@ -222,3 +222,4 @@ document.accept(html_visitor)
 - Use when structure is stable but operations vary
 - Like having specialists visit different departments
 
+

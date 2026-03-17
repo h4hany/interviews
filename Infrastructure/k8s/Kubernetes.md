@@ -381,3 +381,4 @@ RBAC (Role-Based Access Control) controls access to Kubernetes resources through
 **Answer:**
 A Volume provides storage to Pods. Types include emptyDir, hostPath, persistentVolumeClaim, configMap, and secret.
 
+

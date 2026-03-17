@@ -223,3 +223,4 @@ CDC captures database changes as events, enabling event-driven integration with 
 - **Event Sourcing**: Events are primary source, application generates events.
 - **CDC**: Events derived from database changes, database is source of truth.
 
+
