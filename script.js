@@ -1,38 +1,34 @@
-// Base path detection: file://, GitHub Pages, or localhost
+/* ─────────────────────────────────────────
+   BASE PATH DETECTION
+───────────────────────────────────────── */
 const getBasePath = () => {
-    // When opened via file:// (e.g. double-click index.html), use the directory of this document.
-    // fetch() from file:// is still blocked by CORS; we show a message and recommend a local server.
     if (window.location.protocol === 'file:') {
         const href = window.location.href;
         const lastSlash = href.lastIndexOf('/');
         return lastSlash >= 0 ? href.substring(0, lastSlash + 1) : '';
     }
-
-    // If running on GitHub Pages or a server, detect base from pathname
     const pathname = window.location.pathname;
     const parts = pathname.replace(/^\/|\/$/g, '').split('/');
-
     if (parts.length > 0 && parts[0] && parts[0] !== 'index.html') {
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
             return `/${parts[0]}`;
         }
     }
-
     if (pathname !== '/' && pathname !== '/index.html' && pathname.includes('/')) {
         const match = pathname.match(/^\/([^\/]+)/);
         if (match && match[1] && match[1] !== 'index.html') {
             return `/${match[1]}`;
         }
     }
-
     return '';
 };
 
 const BASE_PATH = getBasePath();
-const IS_FILE_PROTOCOL = window.location.protocol === 'file:';
-console.log('Base path detected:', BASE_PATH || '(root)', IS_FILE_PROTOCOL ? '(file protocol)' : '');
+const IS_FILE = window.location.protocol === 'file:';
 
-// File structure based on README.md
+/* ─────────────────────────────────────────
+   FILE STRUCTURE
+───────────────────────────────────────── */
 const fileStructure = {
     "README.md": "README.md",
     "Frontend": {
@@ -154,470 +150,442 @@ const fileStructure = {
     }
 };
 
+/* ─────────────────────────────────────────
+   STATE
+───────────────────────────────────────── */
 let currentFile = null;
-let history = [];
+let navHistory = [];
 
-// Initialize
+/* ─────────────────────────────────────────
+   INIT
+───────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
+    loadTheme();
+    buildTree();
+    bindEvents();
+
+    if (window.location.hash) {
+        const f = decodeURIComponent(window.location.hash.slice(1));
+        loadFile(f, false);
+    } else {
+        showWelcome();
+    }
 });
 
-function initializeApp() {
-    renderFileTree();
-    setupEventListeners();
-    loadTheme();
-    
-    // Load file from hash or default to README
-    if (window.location.hash) {
-        const file = decodeURIComponent(window.location.hash.substring(1));
-        loadFile(file, false);
-    } else {
-        showWelcomeScreen();
-    }
+/* ─────────────────────────────────────────
+   THEME
+───────────────────────────────────────── */
+function loadTheme() {
+    const t = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
 }
 
-function setupEventListeners() {
-    // Toggle sidebar (desktop)
-    const toggleSidebar = document.getElementById('toggleSidebar');
-    if (toggleSidebar) {
-        toggleSidebar.addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('open');
-        });
-    }
+function toggleTheme() {
+    const curr = document.documentElement.getAttribute('data-theme');
+    const next = curr === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+}
 
-    // Mobile menu button
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', () => {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.add('open');
-            overlay.classList.add('active');
-        });
-    }
+/* ─────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────── */
+function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+}
 
-    // Sidebar overlay (mobile)
-    const overlay = document.getElementById('sidebarOverlay');
-    if (overlay) {
-        overlay.addEventListener('click', () => {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-    }
+/* ─────────────────────────────────────────
+   EVENTS
+───────────────────────────────────────── */
+function bindEvents() {
+    document.getElementById('menuBtn').addEventListener('click', openSidebar);
+    document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+    document.getElementById('overlay').addEventListener('click', closeSidebar);
 
-    // Search
+    document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+        if (navHistory.length > 1) {
+            navHistory.pop();
+            const prev = navHistory.pop();
+            loadFile(prev, false);
+        }
+    });
+
     const searchInput = document.getElementById('searchInput');
-    const clearSearch = document.getElementById('clearSearch');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const value = e.target.value;
-            filterFileTree(value);
-            clearSearch.style.display = value ? 'flex' : 'none';
-        });
-    }
+    const searchClear = document.getElementById('searchClear');
 
-    if (clearSearch) {
-        clearSearch.addEventListener('click', () => {
-            searchInput.value = '';
-            filterFileTree('');
-            clearSearch.style.display = 'none';
-            searchInput.focus();
-        });
-    }
+    searchInput.addEventListener('input', (e) => {
+        const v = e.target.value;
+        filterTree(v);
+        searchClear.style.display = v ? 'flex' : 'none';
+    });
 
-    // Back button
-    const backBtn = document.getElementById('backBtn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            if (history.length > 1) {
-                history.pop(); // Remove current
-                const previous = history.pop();
-                loadFile(previous, false);
-            }
-        });
-    }
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        filterTree('');
+        searchClear.style.display = 'none';
+        searchInput.focus();
+    });
 
-    // Dark mode toggle
-    const toggleDarkModeBtn = document.getElementById('toggleDarkMode');
-    if (toggleDarkModeBtn) {
-        toggleDarkModeBtn.addEventListener('click', () => {
-            toggleDarkMode();
-        });
-    }
-
-    // Quick links - attach event listeners after DOM is ready
-    attachQuickLinkListeners();
-
-    // Handle browser back/forward
     window.addEventListener('popstate', (e) => {
-        if (e.state && e.state.file) {
+        if (e.state?.file) {
             loadFile(e.state.file, false);
         } else if (!window.location.hash) {
-            showWelcomeScreen();
+            showWelcome();
         }
+    });
+
+    window.addEventListener('hashchange', () => {
+        const f = window.location.hash.slice(1);
+        if (f) loadFile(decodeURIComponent(f), false);
+        else showWelcome();
     });
 }
 
-function renderFileTree() {
-    const fileTree = document.getElementById('fileTree');
-    if (!fileTree) return;
-    
-    fileTree.innerHTML = '';
-    // Only render the structure, README.md is already in fileStructure
-    fileTree.appendChild(createTreeStructure(fileStructure, 0));
+/* ─────────────────────────────────────────
+   FILE TREE
+───────────────────────────────────────── */
+function buildTree() {
+    const nav = document.getElementById('fileTree');
+    nav.innerHTML = '';
+    nav.appendChild(buildNode(fileStructure, 0));
 }
 
-function createTreeItem(name, path, level) {
-    const item = document.createElement('div');
-    item.className = 'file';
-    item.setAttribute('data-path', path);
-    item.style.paddingLeft = `${level * 1.5 + 1}rem`;
+function buildNode(struct, level) {
+    const wrap = document.createElement('div');
+
+    for (const [key, val] of Object.entries(struct)) {
+        if (typeof val === 'string') {
+            wrap.appendChild(makeFileItem(key, val, level));
+        } else {
+            wrap.appendChild(makeFolderItem(key, val, level));
+        }
+    }
+
+    return wrap;
+}
+
+function makeFileItem(name, path, level) {
+    const el = document.createElement('div');
+    el.className = 'tree-file';
+    el.setAttribute('data-path', path);
+    el.style.paddingLeft = `${1 + level * 1.1}rem`;
     const isHtml = path.endsWith('.html');
-    item.innerHTML = `<span class="file-icon">${isHtml ? '🔗' : '📄'}</span> <span>${name}</span>`;
-    item.addEventListener('click', () => {
+    el.innerHTML = `<span class="tree-file-icon">${isHtml ? '🔗' : '📄'}</span><span>${name}</span>`;
+    el.addEventListener('click', () => {
         if (isHtml) {
-            const fullPath = BASE_PATH ? `${BASE_PATH}/${path}` : path;
-            window.open(fullPath, '_blank');
+            const full = BASE_PATH ? `${BASE_PATH}/${path}` : path;
+            window.open(full, '_blank');
         } else {
             loadFile(path);
         }
-        // Close sidebar on mobile after selection
-        if (window.innerWidth <= 768) {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        }
+        if (window.innerWidth <= 768) closeSidebar();
     });
-    return item;
+    return el;
 }
 
-function createTreeStructure(structure, level = 0) {
-    const container = document.createElement('div');
-    
-    Object.keys(structure).forEach(key => {
-        const value = structure[key];
-        
-        if (typeof value === 'string') {
-            // It's a file
-            container.appendChild(createTreeItem(key, value, level));
-        } else {
-            // It's a folder
-            const folder = document.createElement('div');
-            folder.className = 'folder';
-            
-            const folderHeader = document.createElement('div');
-            folderHeader.className = 'folder-header';
-            folderHeader.innerHTML = `<span class="folder-icon">▶</span> <span>${key}</span>`;
-            folderHeader.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const content = folder.querySelector('.folder-content');
-                if (content) {
-                    content.classList.toggle('expanded');
-                    folder.classList.toggle('active');
-                }
-            });
-            folder.appendChild(folderHeader);
-            
-            const folderContent = document.createElement('div');
-            folderContent.className = 'folder-content';
-            folderContent.appendChild(createTreeStructure(value, level + 1));
-            folder.appendChild(folderContent);
-            
-            container.appendChild(folder);
-        }
+function makeFolderItem(name, children, level) {
+    const folder = document.createElement('div');
+    folder.className = 'folder';
+
+    const header = document.createElement('div');
+    header.className = 'folder-header';
+    header.style.paddingLeft = `${0.75 + level * 1.1}rem`;
+    header.innerHTML = `
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        <span>${name}</span>
+    `;
+    header.addEventListener('click', (e) => {
+        e.stopPropagation();
+        folder.classList.toggle('open');
     });
-    
-    return container;
+
+    const content = document.createElement('div');
+    content.className = 'folder-content';
+    content.appendChild(buildNode(children, level + 1));
+
+    folder.appendChild(header);
+    folder.appendChild(content);
+    return folder;
 }
 
-function filterFileTree(searchTerm) {
-    const items = document.querySelectorAll('.file, .folder');
-    const term = searchTerm.toLowerCase();
-    
+function filterTree(term) {
+    const files = document.querySelectorAll('.tree-file');
+    const folders = document.querySelectorAll('.folder');
+
     if (!term) {
-        items.forEach(item => {
-            item.style.display = '';
-        });
+        files.forEach(f => f.style.display = '');
+        folders.forEach(f => { f.style.display = ''; f.classList.remove('open'); });
         return;
     }
-    
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(term)) {
-            item.style.display = '';
-            // Expand parent folders
-            let parent = item.parentElement;
-            while (parent && parent.classList.contains('folder-content')) {
-                parent.classList.add('expanded');
-                const folder = parent.previousElementSibling;
-                if (folder) {
-                    const folderElement = folder.closest('.folder');
-                    if (folderElement) {
-                        folderElement.classList.add('active');
-                    }
-                }
-                parent = parent.parentElement;
+
+    const low = term.toLowerCase();
+    files.forEach(f => {
+        const match = f.textContent.toLowerCase().includes(low);
+        f.style.display = match ? '' : 'none';
+        if (match) {
+            // expand parent folders
+            let p = f.parentElement;
+            while (p) {
+                if (p.classList.contains('folder')) p.classList.add('open');
+                if (p.classList.contains('file-tree')) break;
+                p = p.parentElement;
             }
-        } else {
-            item.style.display = 'none';
         }
+    });
+
+    folders.forEach(f => {
+        const hasVisible = f.querySelector('.tree-file:not([style*="display: none"])');
+        f.style.display = hasVisible ? '' : 'none';
     });
 }
 
-function showWelcomeScreen() {
-    const contentBody = document.getElementById('contentBody');
-    const backBtn = document.getElementById('backBtn');
-    const breadcrumb = document.getElementById('breadcrumb');
-    
-    if (!contentBody || !breadcrumb) {
-        console.error('Required DOM elements not found');
+function setActiveFile(path) {
+    document.querySelectorAll('.tree-file.active').forEach(el => el.classList.remove('active'));
+    const el = document.querySelector(`.tree-file[data-path="${CSS.escape(path)}"]`);
+    if (!el) return;
+    el.classList.add('active');
+    // expand parents
+    let p = el.parentElement;
+    while (p) {
+        if (p.classList.contains('folder')) p.classList.add('open');
+        if (p.classList.contains('file-tree')) break;
+        p = p.parentElement;
+    }
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ─────────────────────────────────────────
+   BREADCRUMB
+───────────────────────────────────────── */
+function setBreadcrumb(filePath) {
+    const bc = document.getElementById('breadcrumb');
+    if (!filePath) {
+        bc.innerHTML = '<span class="breadcrumb-item active">Home</span>';
         return;
     }
-    
-    currentFile = null;
-    if (backBtn) backBtn.style.display = 'none';
-    breadcrumb.innerHTML = '<span class="breadcrumb-item active">Home</span>';
-    
-    contentBody.innerHTML = `
-        <div class="welcome-screen">
-            <div class="welcome-content">
-                <div class="welcome-icon">🚀</div>
-                <h1>Welcome to Interview Prep</h1>
-                <p class="welcome-subtitle">Your comprehensive guide to technical interview preparation</p>
-                
-                <div class="quick-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">100+</div>
-                        <div class="stat-label">Topics Covered</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Interview Questions</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Design Patterns</div>
-                    </div>
-                </div>
+    const parts = filePath.split('/').filter(p => p && p !== 'README.md');
+    let html = '<span class="breadcrumb-item">Home</span>';
+    parts.forEach((p, i) => {
+        const label = p.replace(/\.md$/i, '').replace(/\.html$/i, '');
+        const isLast = i === parts.length - 1;
+        html += `<span class="breadcrumb-sep">/</span>`;
+        html += `<span class="breadcrumb-item${isLast ? ' active' : ''}">${label}</span>`;
+    });
+    bc.innerHTML = html;
+}
 
-                <div class="quick-links">
-                    <h3>Quick Start</h3>
-                    <div class="link-grid">
-                        <a href="#" data-file="README.md" class="quick-link-card">
-                            <span class="link-icon">📖</span>
-                            <span class="link-text">README</span>
-                        </a>
-                        <a href="#" data-file="Frameworks/Frontend/basics/js.md" class="quick-link-card">
-                            <span class="link-icon">📘</span>
-                            <span class="link-text">JavaScript</span>
-                        </a>
-                        <a href="#" data-file="Frameworks/Frontend/basics/TypeScript.md" class="quick-link-card">
-                            <span class="link-icon">📗</span>
-                            <span class="link-text">TypeScript</span>
-                        </a>
-                        <a href="#" data-file="System Design/System Design.md" class="quick-link-card">
-                            <span class="link-icon">🏗️</span>
-                            <span class="link-text">System Design</span>
-                        </a>
-                        <a href="#" data-file="Design Patterns/intro.md" class="quick-link-card">
-                            <span class="link-icon">🎨</span>
-                            <span class="link-text">Design Patterns</span>
-                        </a>
-                        <a href="#" data-file="Solid Princables/SOLID Principles Complete Guide.md" class="quick-link-card">
-                            <span class="link-icon">🔧</span>
-                            <span class="link-text">SOLID Principles</span>
-                        </a>
-                        <a href="${BASE_PATH ? BASE_PATH + '/' : ''}Problem Solving/75leetcode.html" target="_blank" class="quick-link-card" title="Opens in new tab">
-                            <span class="link-icon">📋</span>
-                            <span class="link-text">75 LeetCode</span>
-                        </a>
-                        <a href="${BASE_PATH ? BASE_PATH + '/' : ''}Problem Solving/patterns.html" target="_blank" class="quick-link-card" title="Opens in new tab">
-                            <span class="link-icon">🧩</span>
-                            <span class="link-text">Patterns</span>
-                        </a>
-                    </div>
+/* ─────────────────────────────────────────
+   WELCOME SCREEN
+───────────────────────────────────────── */
+function showWelcome() {
+    currentFile = null;
+    setBreadcrumb(null);
+    document.getElementById('backBtn').style.display = 'none';
+
+    const p = (path) => BASE_PATH ? `${BASE_PATH}/${path}` : path;
+
+    document.getElementById('content').innerHTML = `
+        <div class="welcome">
+            ${IS_FILE ? `<div class="notice">
+                <strong>Running from file system.</strong> Browsers block local file loading.
+                Start a local server: <code>npx serve</code> → <code>http://localhost:3000</code>
+                or <code>python -m http.server</code> → <code>http://localhost:8000</code>
+            </div>` : ''}
+
+            <div class="welcome-hero">
+                <div class="welcome-badge">Active & updated</div>
+                <h1 class="welcome-title">
+                    Land your next<br><span class="hl">engineering role</span>
+                </h1>
+                <p class="welcome-sub">
+                    A curated knowledge base covering system design, algorithms,
+                    architecture, and company-specific prep — all in one place.
+                </p>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num">100+</div>
+                    <div class="stat-lbl">Topics</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">500+</div>
+                    <div class="stat-lbl">Questions</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">50+</div>
+                    <div class="stat-lbl">Patterns</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Quick Start</h2>
+                <div class="cards">
+                    <a href="#" data-file="README.md" class="card">
+                        <span class="card-icon">📖</span>README
+                    </a>
+                    <a href="#" data-file="Frameworks/Frontend/basics/js.md" class="card">
+                        <span class="card-icon">📘</span>JavaScript
+                    </a>
+                    <a href="#" data-file="Frameworks/Frontend/basics/TypeScript.md" class="card">
+                        <span class="card-icon">📗</span>TypeScript
+                    </a>
+                    <a href="#" data-file="System Design/System Design.md" class="card">
+                        <span class="card-icon">🏗️</span>System Design
+                    </a>
+                    <a href="#" data-file="Design Patterns/intro.md" class="card">
+                        <span class="card-icon">🎨</span>Design Patterns
+                    </a>
+                    <a href="#" data-file="Solid Princables/SOLID Principles Complete Guide.md" class="card">
+                        <span class="card-icon">🔧</span>SOLID
+                    </a>
+                    <a href="#" data-file="Infrastructure/Kubernetes.md" class="card">
+                        <span class="card-icon">☸️</span>Kubernetes
+                    </a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Playground</h2>
+                <div class="cards">
+                    <a href="${p('Problem Solving/75leetcode.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">📋</span>75 LeetCode
+                    </a>
+                    <a href="${p('Problem Solving/patterns.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🧩</span>Patterns
+                    </a>
+                    <a href="${p('Frameworks/Backend/node/nodejs-interview-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🟢</span>Node.js Prep
+                    </a>
                 </div>
             </div>
         </div>
     `;
-    
-    // Re-attach event listeners for quick links
-    attachQuickLinkListeners();
 
-    // When opened via file://, show a notice to use a local server
-    if (IS_FILE_PROTOCOL) {
-        const welcome = contentBody.querySelector('.welcome-content');
-        if (welcome) {
-            const notice = document.createElement('div');
-            notice.className = 'file-protocol-notice';
-            notice.innerHTML = `
-                <strong>Opened from file system.</strong> Browsers block loading other local files here.
-                Run a local server from the project folder, then open this app in the browser:
-                <code>npx serve</code> then open <code>http://localhost:3000</code>
-                (or <code>python -m http.server 8000</code> → <code>http://localhost:8000</code>).
-            `;
-            welcome.insertBefore(notice, welcome.firstChild);
-        }
-    }
+    // Bind quick-link cards
+    document.querySelectorAll('.card[data-file]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadFile(el.getAttribute('data-file'));
+        });
+    });
 }
 
-function showFileProtocolMessage(requestedFile) {
-    const contentBody = document.getElementById('contentBody');
-    const backBtn = document.getElementById('backBtn');
-    const breadcrumb = document.getElementById('breadcrumb');
-    if (!contentBody || !breadcrumb) return;
-    breadcrumb.innerHTML = '<span class="breadcrumb-item active">Home</span>';
-    if (backBtn) backBtn.style.display = 'none';
-    contentBody.innerHTML = `
-        <div class="error file-protocol-error">
-            <h2>Open via a local server</h2>
-            <p>This app was opened from the file system (<code>file://</code>). Browsers block loading other local files in this case (CORS).</p>
-            <p>To use the app and load <strong>${requestedFile}</strong> and other content:</p>
-            <ol style="text-align: left; max-width: 28rem; margin: 1rem auto;">
-                <li>Open a terminal in this project folder</li>
-                <li>Run: <code>npx serve</code> (or <code>python -m http.server 8000</code>)</li>
-                <li>Open <code>http://localhost:3000</code> (or <code>http://localhost:8000</code>) in your browser</li>
-            </ol>
-            <button class="btn" onclick="showWelcomeScreen()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; border: none; border-radius: var(--radius); cursor: pointer;">Back to Home</button>
-        </div>
-    `;
-}
-
+/* ─────────────────────────────────────────
+   FILE LOADER
+───────────────────────────────────────── */
 async function loadFile(filePath, addToHistory = true) {
     if (!filePath) return;
 
-    // Browsers block fetch() from file:// for security (CORS). Show instructions instead.
-    if (IS_FILE_PROTOCOL) {
-        showFileProtocolMessage(filePath);
+    if (IS_FILE) {
+        showFileError(filePath);
         return;
     }
 
     currentFile = filePath;
-    const contentBody = document.getElementById('contentBody');
+    setBreadcrumb(filePath);
+
     const backBtn = document.getElementById('backBtn');
-    const breadcrumb = document.getElementById('breadcrumb');
-
-    if (!contentBody || !breadcrumb) {
-        console.error('Required DOM elements not found');
-        return;
+    if (addToHistory) {
+        navHistory.push(filePath);
+        backBtn.style.display = navHistory.length > 1 ? 'flex' : 'none';
+    } else {
+        backBtn.style.display = navHistory.length > 1 ? 'flex' : 'none';
     }
 
-    // Update breadcrumb
-    const pathParts = filePath.split('/').filter(p => p && p !== 'README.md');
-    let breadcrumbHTML = '<span class="breadcrumb-item active">Home</span>';
-    if (pathParts.length > 0) {
-        breadcrumbHTML += '<span class="breadcrumb-separator">/</span>';
-        pathParts.forEach((part, index) => {
-            const isLast = index === pathParts.length - 1;
-            const displayName = part.replace('.md', '').replace(/\s+/g, ' ');
-            if (isLast) {
-                breadcrumbHTML += `<span class="breadcrumb-item active">${displayName}</span>`;
-            } else {
-                breadcrumbHTML += `<span class="breadcrumb-item">${displayName}</span><span class="breadcrumb-separator">/</span>`;
-            }
-        });
-    }
-    breadcrumb.innerHTML = breadcrumbHTML;
+    // Loading state
+    document.getElementById('content').innerHTML = `
+        <div class="state">
+            <div class="spinner"></div>
+            <p>Loading file…</p>
+        </div>
+    `;
 
-    // Show back button if we have history
-    if (backBtn) {
-        backBtn.style.display = history.length > 0 ? 'flex' : 'none';
-    }
-
-    // Show loading
-    contentBody.innerHTML = '<div class="loading">Loading</div>';
-
-    // Update URL
-    const hash = encodeURIComponent(filePath);
-    const url = BASE_PATH ? `${BASE_PATH}/#${hash}` : `/#${hash}`;
+    // Update URL hash
     try {
+        const hash = encodeURIComponent(filePath);
+        const url = BASE_PATH ? `${BASE_PATH}/#${hash}` : `/#${hash}`;
         window.history.pushState({ file: filePath }, '', url);
-    } catch (e) {
-        console.warn('Could not update URL:', e);
-    }
+    } catch (e) { /* ignore */ }
 
     try {
-        // Construct full path with base path for GitHub Pages
-        let fullPath;
-        if (BASE_PATH) {
-            const cleanPath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
-            fullPath = `${BASE_PATH}/${cleanPath}`;
-        } else {
-            fullPath = filePath;
+        let fullPath = BASE_PATH ? `${BASE_PATH}/${filePath.replace(/^\//, '')}` : filePath;
+        let resp = await fetch(fullPath);
+
+        if (!resp.ok && BASE_PATH) {
+            resp = await fetch(filePath);
         }
 
-        console.log('Loading file:', fullPath);
-        const response = await fetch(fullPath);
-        
-        if (!response.ok) {
-            // Try without base path as fallback
-            if (BASE_PATH) {
-                console.log('Trying fallback path:', filePath);
-                const fallbackResponse = await fetch(filePath);
-                if (fallbackResponse.ok) {
-                    const markdown = await fallbackResponse.text();
-                    processMarkdown(markdown, filePath, addToHistory);
-                    return;
-                }
-            }
-            throw new Error(`Failed to load file: ${response.status} ${response.statusText}`);
-        }
-        
-        const markdown = await response.text();
-        processMarkdown(markdown, filePath, addToHistory);
-        
-    } catch (error) {
-        console.error('Error loading file:', error);
-        contentBody.innerHTML = `
-            <div class="error">
-                <h2>Error Loading File</h2>
-                <p>Could not load: ${filePath}</p>
-                <p style="color: var(--text-secondary); margin-top: 1rem;">${error.message}</p>
-                <button class="btn" onclick="showWelcomeScreen()" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; border: none; border-radius: var(--radius); cursor: pointer;">Go Home</button>
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+
+        const md = await resp.text();
+        renderMarkdown(md, filePath, addToHistory);
+
+    } catch (err) {
+        document.getElementById('content').innerHTML = `
+            <div class="state">
+                <div class="state-icon">⚠️</div>
+                <h2>Could not load file</h2>
+                <p>${filePath}<br><small style="color:var(--text-3)">${err.message}</small></p>
+                <button class="btn" onclick="showWelcome()">← Go Home</button>
             </div>
         `;
     }
 }
 
-function fixMarkdownLinks() {
-    // Fix all markdown links (both .md files and relative links)
-    const links = document.querySelectorAll('.markdown-content a');
-    links.forEach(link => {
+/* ─────────────────────────────────────────
+   MARKDOWN RENDERER
+───────────────────────────────────────── */
+function renderMarkdown(markdown, filePath, addToHistory) {
+    marked.setOptions({ breaks: true, gfm: true, mangle: false, headerIds: true });
+    const html = marked.parse(markdown);
+
+    document.getElementById('content').innerHTML = `
+        <div class="md-wrap">
+            <article class="md">${html}</article>
+        </div>
+    `;
+
+    // Scroll to top
+    document.getElementById('content').scrollTop = 0;
+
+    // Activate sidebar item
+    setActiveFile(filePath);
+
+    // Fix internal markdown links
+    fixInternalLinks(filePath);
+}
+
+function fixInternalLinks(currentPath) {
+    document.querySelectorAll('.md a').forEach(link => {
         const href = link.getAttribute('href');
-        if (!href) return;
-        
-        // Skip external links
-        if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:')) {
-            return;
-        }
-        
-        // Handle markdown file links
+        if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
+
         if (href.endsWith('.md') || href.includes('.md#')) {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Extract file path (remove hash if present)
-                const filePath = href.split('#')[0];
-                const resolvedPath = resolvePath(filePath, currentFile);
-                if (resolvedPath) {
-                    loadFile(resolvedPath);
-                    // If there's a hash, scroll to the section after loading
+                const filePart = href.split('#')[0];
+                const resolved = resolvePath(filePart, currentPath);
+                if (resolved) {
+                    loadFile(resolved);
                     if (href.includes('#')) {
-                        const sectionId = href.split('#')[1];
+                        const id = href.split('#')[1];
                         setTimeout(() => {
-                            const element = document.getElementById(sectionId) || 
-                                          document.querySelector(`[id="${sectionId}"]`) ||
-                                          document.querySelector(`a[name="${sectionId}"]`);
-                            if (element) {
-                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }
+                            const el = document.getElementById(id) || document.querySelector(`[id="${id}"]`);
+                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 300);
                     }
                 }
             });
-            link.style.cursor = 'pointer';
             link.classList.add('internal-link');
         }
     });
@@ -625,141 +593,45 @@ function fixMarkdownLinks() {
 
 function resolvePath(href, currentPath) {
     if (!href) return null;
-    
-    // Remove any base path from href
-    let cleanHref = href;
-    if (BASE_PATH && cleanHref.startsWith(BASE_PATH)) {
-        cleanHref = cleanHref.substring(BASE_PATH.length);
-    }
-    
-    // Remove leading slash
-    if (cleanHref.startsWith('/')) {
-        cleanHref = cleanHref.substring(1);
-    }
-    
-    // If it's already an absolute path (starts with a known directory), return it
-    if (cleanHref.includes('/') && !cleanHref.startsWith('..') && !cleanHref.startsWith('.')) {
-        return cleanHref;
-    }
-    
-    // If no current path, return the cleaned href
-    if (!currentPath) return cleanHref;
-    
-    // Resolve relative paths
-    const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
-    const parts = currentDir ? currentDir.split('/').filter(p => p) : [];
-    const hrefParts = cleanHref.split('/').filter(p => p);
-    
-    hrefParts.forEach(part => {
-        if (part === '..') {
-            parts.pop();
-        } else if (part !== '.') {
-            parts.push(part);
-        }
+    let h = href;
+    if (BASE_PATH && h.startsWith(BASE_PATH)) h = h.slice(BASE_PATH.length);
+    if (h.startsWith('/')) h = h.slice(1);
+    if (!h.startsWith('..') && !h.startsWith('.') && h.includes('/')) return h;
+    if (!currentPath) return h;
+    const currentDir = currentPath.slice(0, currentPath.lastIndexOf('/'));
+    const parts = currentDir ? currentDir.split('/').filter(Boolean) : [];
+    h.split('/').filter(Boolean).forEach(p => {
+        if (p === '..') parts.pop();
+        else if (p !== '.') parts.push(p);
     });
-    
-    return parts.length > 0 ? parts.join('/') : cleanHref;
+    return parts.join('/');
 }
 
-function updateActiveFile(filePath) {
-    // Remove all active classes
-    document.querySelectorAll('.file.active, .folder.active').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    // Find and activate the file
-    const items = document.querySelectorAll('.file');
-    items.forEach(item => {
-        const path = item.getAttribute('data-path');
-        if (path === filePath) {
-            item.classList.add('active');
-            // Expand parent folders
-            let parent = item.parentElement;
-            while (parent && parent.classList.contains('folder-content')) {
-                parent.classList.add('expanded');
-                const folder = parent.previousElementSibling;
-                if (folder) {
-                    const folderElement = folder.closest('.folder');
-                    if (folderElement) {
-                        folderElement.classList.add('active');
-                    }
-                }
-                parent = parent.parentElement;
-            }
-            // Scroll into view
-            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    });
+/* ─────────────────────────────────────────
+   FILE PROTOCOL ERROR
+───────────────────────────────────────── */
+function showFileError(file) {
+    setBreadcrumb(null);
+    document.getElementById('content').innerHTML = `
+        <div class="state">
+            <div class="state-icon">🔒</div>
+            <h2>Local server required</h2>
+            <p>
+                This app was opened via <code style="font-size:.8em;color:var(--accent)">file://</code>.
+                Browsers block local file loading for security.<br><br>
+                Run a local server in the project folder:
+            </p>
+            <div class="notice" style="text-align:left;max-width:400px">
+                <code>npx serve</code> → open <code>http://localhost:3000</code><br>
+                or<br>
+                <code>python -m http.server</code> → open <code>http://localhost:8000</code>
+            </div>
+            <button class="btn" onclick="showWelcome()">← Back</button>
+        </div>
+    `;
 }
 
-function toggleDarkMode() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-}
-
-function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-}
-
-// Handle hash changes
-window.addEventListener('hashchange', () => {
-    const file = window.location.hash.substring(1);
-    if (file) {
-        loadFile(decodeURIComponent(file), false);
-    } else {
-        showWelcomeScreen();
-    }
-});
-
-function processMarkdown(markdown, filePath, addToHistory) {
-    const contentBody = document.getElementById('contentBody');
-    
-    // Configure marked options
-    marked.setOptions({
-        breaks: true,
-        gfm: true,
-        headerIds: true,
-        mangle: false
-    });
-    
-    const html = marked.parse(markdown);
-    
-    contentBody.innerHTML = `<div class="markdown-content">${html}</div>`;
-    
-    // Add to history
-    if (addToHistory) {
-        history.push(filePath);
-    }
-    
-    // Scroll to top
-    contentBody.scrollTop = 0;
-    
-    // Update active file in sidebar
-    updateActiveFile(filePath);
-    
-    // Fix links in markdown to work with our system
-    fixMarkdownLinks();
-}
-
-function attachQuickLinkListeners() {
-    document.querySelectorAll('.quick-link-card').forEach(link => {
-        // Remove existing listeners by cloning
-        const newLink = link.cloneNode(true);
-        link.parentNode.replaceChild(newLink, link);
-        
-        newLink.addEventListener('click', (e) => {
-            const file = newLink.getAttribute('data-file');
-            if (file) {
-                e.preventDefault();
-                loadFile(file);
-            }
-            // No data-file: let the link work (e.g. 75 LeetCode, Patterns open in new tab)
-        });
-    });
-}
-
-// Make showWelcomeScreen available globally for error button
-window.showWelcomeScreen = showWelcomeScreen;
+/* ─────────────────────────────────────────
+   GLOBAL EXPORTS
+───────────────────────────────────────── */
+window.showWelcome = showWelcome;
