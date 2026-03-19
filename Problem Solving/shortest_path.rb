@@ -7,7 +7,6 @@ def dijkstra(graph, start)
     distances[node] = node == start ? 0 : Float::INFINITY
   end
 
-  # unvisited = nodes.dup
 
   until unvisited.empty?
     current = unvisited.min_by { |node| distances[node] }

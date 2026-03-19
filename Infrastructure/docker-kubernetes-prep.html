@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker & Kubernetes — Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060a0f;--surface:#0b1018;--surface2:#101820;--border:#1a2535;
+  --accent:#00d4ff;--accent2:#ff6b2b;--accent3:#7fff6b;--accent4:#c77dff;
+  --text:#e8f4ff;--text-dim:#6a8aaa;--text-dimmer:#253040;
+  --yellow:#ffd60a;--red:#ff4757;--card-radius:12px;
+  --docker:#2496ed;--k8s:#326ce5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 15% 20%,rgba(36,150,237,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 85% 80%,rgba(50,108,229,0.06) 0%,transparent 50%);
+  pointer-events:none;z-index:0}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(6,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:2px;display:flex;align-items:center;gap:10px}
+.logo-docker{color:var(--docker)}
+.logo-sep{color:var(--text-dimmer)}
+.logo-k8s{color:var(--k8s)}
+.logo span{color:var(--text-dim)}
+.progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--docker),var(--k8s));transition:width 0.5s ease;width:0%}
+.xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(255,214,10,0.1);border:1px solid rgba(255,214,10,0.2);padding:4px 12px;border-radius:20px}
+
+/* LAYOUT */
+.app{display:grid;grid-template-columns:268px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+.nav-item:hover{color:var(--text);background:var(--surface)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,212,255,0.05)}
+.nav-item.docker-item.active{color:var(--docker);border-left-color:var(--docker);background:rgba(36,150,237,0.05)}
+.nav-item.k8s-item.active{color:var(--k8s);border-left-color:var(--k8s);background:rgba(50,108,229,0.07)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--accent3);display:none}
+.nav-item.completed .done-dot{display:block}
+main{overflow-y:auto}
+
+/* HERO */
+.hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px}
+.hero h1{font-size:clamp(34px,5vw,62px);font-weight:800;line-height:1.05;margin-bottom:16px}
+.hero h1 .hl-docker{background:linear-gradient(135deg,var(--docker),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .hl-k8s{background:linear-gradient(135deg,var(--k8s),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+.stat-row{display:flex;gap:32px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat-num{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--accent)}
+.stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+
+/* TOPIC GRID */
+.section-header{padding:28px 48px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+.section-badge.docker{background:rgba(36,150,237,0.15);color:var(--docker);border:1px solid rgba(36,150,237,0.3)}
+.section-badge.k8s{background:rgba(50,108,229,0.15);color:var(--k8s);border:1px solid rgba(50,108,229,0.3)}
+.section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1px;background:var(--border)}
+.topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.topic-card:hover{background:var(--surface)}
+.topic-card:hover::before{opacity:1}
+.cd::before{background:radial-gradient(circle at 0% 0%,rgba(36,150,237,0.1),transparent 60%)}
+.ck::before{background:radial-gradient(circle at 0% 0%,rgba(50,108,229,0.1),transparent 60%)}
+.c2::before{background:radial-gradient(circle at 0% 0%,rgba(0,212,255,0.08),transparent 60%)}
+.c3::before{background:radial-gradient(circle at 0% 0%,rgba(199,125,255,0.08),transparent 60%)}
+.card-emoji{font-size:28px;margin-bottom:10px;display:block}
+.card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+.card-tag-row{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.tag.hot{background:rgba(255,107,43,0.1);color:var(--accent2);border-color:rgba(255,107,43,0.2)}
+.tag.key{background:rgba(127,255,107,0.1);color:var(--accent3);border-color:rgba(127,255,107,0.2)}
+.tag.docker{background:rgba(36,150,237,0.1);color:var(--docker);border-color:rgba(36,150,237,0.2)}
+.tag.k8s{background:rgba(50,108,229,0.1);color:var(--k8s);border-color:rgba(50,108,229,0.2)}
+
+/* LESSON */
+.lesson-page{display:none;padding:40px 48px;max-width:940px}
+.lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+.lesson-breadcrumb:hover{color:var(--accent)}
+.lesson-breadcrumb::before{content:'← '}
+.lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+.eyebrow-docker{color:var(--docker)}
+.eyebrow-k8s{color:var(--k8s)}
+.lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+.lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+.content-section{margin-bottom:44px}
+.section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.section-title.docker-title::before{background:var(--docker)}
+.section-title.k8s-title::before{background:var(--k8s)}
+.prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+.prose strong{color:var(--text);font-weight:700}
+.prose .hl{color:var(--accent)}
+.prose .hld{color:var(--docker)}
+.prose .hlk{color:var(--k8s)}
+.prose .hl3{color:var(--accent3)}
+.prose .hl4{color:var(--accent4)}
+
+/* CODE */
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace}
+.code-lang.docker{color:var(--docker)}
+.code-lang.k8s{color:var(--k8s)}
+.code-lang.shell{color:var(--accent3)}
+.code-lang.yaml{color:var(--accent4)}
+.copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#b0ccee;font-family:'JetBrains Mono',monospace}
+.kw{color:#7ec8e3}.fn{color:#79c0ff}.st{color:#a8d8a8}.nm{color:#ffa657}.cm{color:#3d5570;font-style:italic}.op{color:#e3b341}.id{color:#ff7b72}
+
+/* BOXES */
+.analogy-box{background:rgba(255,214,10,0.04);border:1px solid rgba(255,214,10,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+.analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+.analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+.info-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);border-left:3px solid var(--accent);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.info-box strong{color:var(--accent)}
+.warn-box{background:rgba(255,71,87,0.04);border:1px solid rgba(255,71,87,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.warn-box strong{color:var(--red)}
+.success-box{background:rgba(127,255,107,0.04);border:1px solid rgba(127,255,107,0.15);border-left:3px solid var(--accent3);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.success-box strong{color:var(--accent3)}
+
+/* TABLE */
+.cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+.cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+.cheat-table tr:last-child td{border-bottom:none}
+.cheat-table td:first-child{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* DIAGRAM */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:24px 20px;margin:20px 0;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+.arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center;min-width:80px}
+.arch-box.docker{border-color:rgba(36,150,237,0.5);color:var(--docker);background:rgba(36,150,237,0.06)}
+.arch-box.k8s{border-color:rgba(50,108,229,0.5);color:var(--k8s);background:rgba(50,108,229,0.06)}
+.arch-box.green{border-color:rgba(127,255,107,0.4);color:var(--accent3);background:rgba(127,255,107,0.05)}
+.arch-box.orange{border-color:rgba(255,107,43,0.4);color:var(--accent2);background:rgba(255,107,43,0.05)}
+.arch-box.purple{border-color:rgba(199,125,255,0.4);color:var(--accent4);background:rgba(199,125,255,0.05)}
+.arch-box.cyan{border-color:rgba(0,212,255,0.4);color:var(--accent);background:rgba(0,212,255,0.05)}
+.arch-arrow{color:var(--text-dimmer);font-size:18px}
+
+/* INTERVIEW */
+.interview-box{background:rgba(199,125,255,0.04);border:1px solid rgba(199,125,255,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+.interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent4);margin-bottom:14px}
+.interview-q{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid transparent}
+.interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent4);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+.interview-q.open::after{transform:rotate(45deg)}
+.interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+.interview-a.open{display:block}
+
+/* QUIZ */
+.quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+.quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px}
+.quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+.quiz-opt:hover{border-color:var(--accent4);background:var(--surface2)}
+.quiz-opt.correct{border-color:var(--accent3);background:rgba(127,255,107,0.05);color:var(--accent3)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(255,71,87,0.05);color:var(--red)}
+.opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+.quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.quiz-feedback.show{display:block}
+.quiz-feedback.right{background:rgba(127,255,107,0.1);color:var(--accent3);border:1px solid rgba(127,255,107,0.2)}
+.quiz-feedback.wrong{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2)}
+
+/* NAV */
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+.btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{box-shadow:0 0 20px rgba(0,212,255,0.35);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--text)}
+.mark-done-btn{background:rgba(127,255,107,0.1);color:var(--accent3);border:1px solid rgba(127,255,107,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.mark-done-btn:hover{background:rgba(127,255,107,0.2)}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#home-page{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-docker">DOCKER</span>
+    <span class="logo-sep">&</span>
+    <span class="logo-k8s">KUBERNETES</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+
+    <div class="nav-section-title">🐳 Docker</div>
+    <div class="nav-item docker-item" onclick="showLesson('docker-basics')" id="nav-docker-basics"><span class="icon">📦</span>Docker Basics<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('dockerfile')" id="nav-dockerfile"><span class="icon">📄</span>Dockerfile Deep Dive<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('images-layers')" id="nav-images-layers"><span class="icon">🧅</span>Images & Layers<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('networking')" id="nav-networking"><span class="icon">🌐</span>Docker Networking<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('volumes')" id="nav-volumes"><span class="icon">💾</span>Volumes & Storage<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('compose')" id="nav-compose"><span class="icon">🎼</span>Docker Compose<span class="done-dot"></span></div>
+    <div class="nav-item docker-item" onclick="showLesson('docker-security')" id="nav-docker-security"><span class="icon">🔒</span>Security Best Practices<span class="done-dot"></span></div>
+
+    <div class="nav-section-title">☸️ Kubernetes</div>
+    <div class="nav-item k8s-item" onclick="showLesson('k8s-architecture')" id="nav-k8s-architecture"><span class="icon">🏗️</span>K8s Architecture<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('pods-deployments')" id="nav-pods-deployments"><span class="icon">🚀</span>Pods & Deployments<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('services-ingress')" id="nav-services-ingress"><span class="icon">🔀</span>Services & Ingress<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('configmaps-secrets')" id="nav-configmaps-secrets"><span class="icon">🗝️</span>ConfigMaps & Secrets<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('scaling')" id="nav-scaling"><span class="icon">📈</span>Scaling & HPA<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('storage-k8s')" id="nav-storage-k8s"><span class="icon">🗄️</span>Persistent Storage<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('health-probes')" id="nav-health-probes"><span class="icon">❤️</span>Health Probes<span class="done-dot"></span></div>
+    <div class="nav-item k8s-item" onclick="showLesson('rbac')" id="nav-rbac"><span class="icon">🔐</span>RBAC & Security<span class="done-dot"></span></div>
+
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
+  </nav>
+
+  <main id="mainContent">
+    <!-- HOME -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-docker">Docker</span> &<br><span class="hl-k8s">Kubernetes</span></h1>
+        <p class="hero-sub">From container fundamentals and Dockerfile best practices to Kubernetes architecture, scaling, and production patterns. Everything you need to ace your DevOps interview.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Quizzes</div></div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-badge docker">🐳 DOCKER</span>
+        <span class="section-badge-title">Container Fundamentals</span>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card cd" onclick="showLesson('docker-basics')"><span class="card-emoji">📦</span><div class="card-title">Docker Basics</div><div class="card-desc">Containers vs VMs, images, containers, registries, the Docker daemon.</div><div class="card-tag-row"><span class="tag docker">DOCKER</span><span class="tag key">START HERE</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('dockerfile')"><span class="card-emoji">📄</span><div class="card-title">Dockerfile Deep Dive</div><div class="card-desc">Every instruction explained, multi-stage builds, build cache optimization, best practices.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag docker">DOCKER</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('images-layers')"><span class="card-emoji">🧅</span><div class="card-title">Images & Layers</div><div class="card-desc">Union filesystem, copy-on-write, layer caching, image optimization, .dockerignore.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card c2" onclick="showLesson('networking')"><span class="card-emoji">🌐</span><div class="card-title">Docker Networking</div><div class="card-desc">Bridge, host, overlay, none networks. Container DNS, port mapping, network isolation.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card c2" onclick="showLesson('volumes')"><span class="card-emoji">💾</span><div class="card-title">Volumes & Storage</div><div class="card-desc">Named volumes vs bind mounts vs tmpfs. Data persistence, sharing between containers.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('compose')"><span class="card-emoji">🎼</span><div class="card-title">Docker Compose</div><div class="card-desc">Multi-container apps, service dependencies, environment variables, health checks.</div><div class="card-tag-row"><span class="tag docker">DOCKER</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card c3" onclick="showLesson('docker-security')"><span class="card-emoji">🔒</span><div class="card-title">Security Best Practices</div><div class="card-desc">Non-root users, read-only filesystems, secrets management, image scanning.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-badge k8s">☸️ KUBERNETES</span>
+        <span class="section-badge-title">Orchestration Mastery</span>
+      </div>
+      <div class="topics-grid">
+        <div class="topic-card ck" onclick="showLesson('k8s-architecture')"><span class="card-emoji">🏗️</span><div class="card-title">K8s Architecture</div><div class="card-desc">Control plane vs worker nodes, etcd, kube-scheduler, kubelet, API server.</div><div class="card-tag-row"><span class="tag k8s">K8S</span><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card ck" onclick="showLesson('pods-deployments')"><span class="card-emoji">🚀</span><div class="card-title">Pods & Deployments</div><div class="card-desc">Pod lifecycle, ReplicaSets, rolling updates, rollbacks, resource limits.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag k8s">K8S</span></div></div>
+        <div class="topic-card ck" onclick="showLesson('services-ingress')"><span class="card-emoji">🔀</span><div class="card-title">Services & Ingress</div><div class="card-desc">ClusterIP, NodePort, LoadBalancer, Ingress controllers, TLS termination.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card c3" onclick="showLesson('configmaps-secrets')"><span class="card-emoji">🗝️</span><div class="card-title">ConfigMaps & Secrets</div><div class="card-desc">Separating config from code, secret management, environment injection, volumes.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card ck" onclick="showLesson('scaling')"><span class="card-emoji">📈</span><div class="card-title">Scaling & HPA</div><div class="card-desc">HorizontalPodAutoscaler, VPA, cluster autoscaler, resource requests vs limits.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag k8s">K8S</span></div></div>
+        <div class="topic-card c2" onclick="showLesson('storage-k8s')"><span class="card-emoji">🗄️</span><div class="card-title">Persistent Storage</div><div class="card-desc">PersistentVolumes, PVCs, StorageClasses, StatefulSets vs Deployments.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card ck" onclick="showLesson('health-probes')"><span class="card-emoji">❤️</span><div class="card-title">Health Probes</div><div class="card-desc">Liveness vs Readiness vs Startup probes. Zero-downtime deployments.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card c3" onclick="showLesson('rbac')"><span class="card-emoji">🔐</span><div class="card-title">RBAC & Security</div><div class="card-desc">Roles, ClusterRoles, ServiceAccounts, NetworkPolicies, Pod Security.</div><div class="card-tag-row"><span class="tag key">ADVANCED</span></div></div>
+      </div>
+    </div>
+
+    <!-- ===== DOCKER BASICS ===== -->
+    <div id="lesson-docker-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER FUNDAMENTALS</div>
+        <div class="lesson-title">📦 Docker Basics</div>
+        <div class="lesson-subtitle">Containers vs VMs, the Docker architecture, and why Docker changed software delivery forever.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Containers vs Virtual Machines</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Virtual Machine</th><th>Container</th></tr>
+          <tr><td>Isolation</td><td>Full OS per VM (hypervisor)</td><td>Shared kernel, isolated processes</td></tr>
+          <tr><td>Size</td><td>GBs (full OS image)</td><td>MBs (just app + dependencies)</td></tr>
+          <tr><td>Startup time</td><td>Minutes</td><td>Milliseconds</td></tr>
+          <tr><td>Performance</td><td>Overhead from hypervisor</td><td>Near-native (cgroups + namespaces)</td></tr>
+          <tr><td>Portability</td><td>Heavy, image-format specific</td><td>Run anywhere Docker runs</td></tr>
+          <tr><td>Use case</td><td>Full OS isolation, different kernels</td><td>App packaging, microservices, CI/CD</td></tr>
+        </table>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">VMs are like <strong>apartments in separate buildings</strong> — each has its own plumbing, electricity, and structure. Containers are <strong>apartments in the same building</strong> — they share the foundation (kernel) and utilities, but have their own locked doors (namespaces) and allocated resources (cgroups). Containers are cheaper, faster to set up, but share more infrastructure.</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Docker Architecture</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box cyan">Docker CLI<br><small>docker run</small></div>
+            <div class="arch-arrow">REST API</div>
+            <div class="arch-box docker">Docker Daemon<br><small>(dockerd)</small></div>
+            <div class="arch-arrow">→</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="arch-box green">containerd</div>
+              <div class="arch-box orange">runc<br><small>(OCI runtime)</small></div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="arch-box purple">Container 1</div>
+              <div class="arch-box purple">Container 2</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-dimmer);margin-top:12px">Docker CLI → Daemon (REST API) → containerd → runc → actual container processes</div>
+        </div>
+        <div class="prose"><strong>Key components:</strong><br><br>
+        🐳 <strong>Docker Daemon (dockerd)</strong> — background service that manages containers, images, networks, volumes.<br>
+        📟 <strong>Docker CLI</strong> — sends commands to daemon via REST API.<br>
+        📦 <strong>containerd</strong> — industry-standard container runtime (manages container lifecycle).<br>
+        ⚙️ <strong>runc</strong> — low-level OCI runtime that actually creates containers using Linux namespaces + cgroups.<br>
+        🗂️ <strong>Registry</strong> — stores Docker images (Docker Hub, ECR, GCR, private registries).
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Essential Docker Commands</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL — DOCKER COMMANDS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Images</span>
+docker pull nginx:1.25              <span class="cm"># pull from registry</span>
+docker build -t myapp:1.0 .         <span class="cm"># build from Dockerfile</span>
+docker images                       <span class="cm"># list local images</span>
+docker rmi myapp:1.0                <span class="cm"># remove image</span>
+docker image prune                  <span class="cm"># remove dangling images</span>
+
+<span class="cm"># Containers</span>
+docker run -d -p 8080:80 --name web nginx   <span class="cm"># run detached</span>
+docker run -it ubuntu:22.04 bash            <span class="cm"># interactive shell</span>
+docker run --rm alpine echo "hello"         <span class="cm"># auto-remove on exit</span>
+docker ps                           <span class="cm"># running containers</span>
+docker ps -a                        <span class="cm"># all containers</span>
+docker stop web && docker rm web    <span class="cm"># stop and remove</span>
+docker exec -it web bash            <span class="cm"># shell into running container</span>
+docker logs -f web                  <span class="cm"># follow logs</span>
+docker inspect web                  <span class="cm"># full container details</span>
+docker stats                        <span class="cm"># live resource usage</span>
+
+<span class="cm"># Registry</span>
+docker login
+docker tag myapp:1.0 myrepo/myapp:1.0
+docker push myrepo/myapp:1.0</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Docker and what problem does it solve?</div>
+        <div class="interview-a">Docker packages an application and all its dependencies (libraries, config, runtime) into a container that runs consistently anywhere. It solves "works on my machine" — the container includes everything the app needs, so it runs identically on dev, staging, and production. Key benefits: reproducible environments, fast deployment, efficient resource usage vs VMs, easy horizontal scaling, and immutable deployable artifacts.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are Linux namespaces and cgroups? How do containers use them?</div>
+        <div class="interview-a">Namespaces provide isolation — each container gets its own view of: PID (process IDs), NET (network stack), MNT (filesystem mounts), UTS (hostname), IPC (inter-process communication), USER (user IDs). Cgroups (control groups) limit and account for resource usage — how much CPU, memory, disk I/O a container can use. Together, namespaces provide isolation and cgroups provide resource control, which is what makes containers feel like isolated environments while sharing the host kernel.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between docker stop and docker kill?</div>
+        <div class="interview-a">docker stop sends SIGTERM (graceful shutdown signal), waits 10 seconds for the process to clean up and exit, then sends SIGKILL. This allows the app to finish in-flight requests, close connections, flush buffers. docker kill immediately sends SIGKILL — instant termination, no cleanup. Always prefer docker stop. Use docker kill only when a container is unresponsive. You can customize the signal with --signal flag.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">What Linux kernel features do containers use to achieve isolation and resource limiting?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'db','wrong')"><span class="opt-letter">A</span>Hypervisor + virtual hardware</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'db','correct')"><span class="opt-letter">B</span>Namespaces (isolation) + cgroups (resource limits) ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'db','wrong')"><span class="opt-letter">C</span>chroot + iptables only</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'db','wrong')"><span class="opt-letter">D</span>SELinux + AppArmor</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-db-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('docker-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('dockerfile')">Next: Dockerfile →</button>
+      </div>
+    </div>
+
+    <!-- ===== DOCKERFILE ===== -->
+    <div id="lesson-dockerfile" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">📄 Dockerfile Deep Dive</div>
+        <div class="lesson-subtitle">Every instruction explained, multi-stage builds that shrink images 10x, and cache optimization tricks.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">All Dockerfile Instructions</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang docker">DOCKERFILE — COMPLETE REFERENCE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># FROM — base image (always first)</span>
+<span class="kw">FROM</span> node:20-alpine AS base
+
+<span class="cm"># ARG — build-time variable (not in final image)</span>
+<span class="kw">ARG</span> NODE_ENV=production
+
+<span class="cm"># ENV — runtime environment variable (persists in image)</span>
+<span class="kw">ENV</span> PORT=3000 NODE_ENV=$NODE_ENV
+
+<span class="cm"># WORKDIR — set working directory (creates it if not exists)</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># COPY — copy files from build context</span>
+<span class="cm"># COPY src dest  (src relative to build context)</span>
+<span class="kw">COPY</span> package*.json ./          <span class="cm"># copy package files FIRST (cache trick!)</span>
+
+<span class="cm"># RUN — execute command during BUILD (creates new layer)</span>
+<span class="kw">RUN</span> npm ci --only=production && \
+    npm cache clean --force       <span class="cm"># chain && minimize layers</span>
+
+<span class="kw">COPY</span> . .                        <span class="cm"># copy rest of source AFTER npm install</span>
+
+<span class="cm"># USER — switch to non-root user (security!)</span>
+<span class="kw">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup
+<span class="kw">USER</span> appuser
+
+<span class="cm"># EXPOSE — document which port (does NOT publish!)</span>
+<span class="kw">EXPOSE</span> 3000
+
+<span class="cm"># HEALTHCHECK — Docker health monitoring</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="kw">CMD</span> wget -qO- http://localhost:3000/health || exit 1
+
+<span class="cm"># CMD — default command (can be overridden at runtime)</span>
+<span class="kw">CMD</span> [<span class="st">"node"</span>, <span class="st">"server.js"</span>]
+
+<span class="cm"># ENTRYPOINT — fixed command (CMD becomes its arguments)</span>
+<span class="cm"># ENTRYPOINT ["node"]  →  docker run myimage server.js</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Multi-Stage Builds — The Game Changer</div>
+        <div class="prose">Multi-stage builds let you use one stage to <strong>build</strong> and another to <strong>run</strong>, discarding build tools, compilers, and test dependencies from the final image. Result: images 5-10x smaller.</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang docker">DOCKERFILE — MULTI-STAGE BUILD</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># ---- Stage 1: Build ----</span>
+<span class="kw">FROM</span> node:20 AS builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci                  <span class="cm"># includes devDependencies</span>
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm run build           <span class="cm"># compile TypeScript, bundle, etc.</span>
+<span class="kw">RUN</span> npm test                <span class="cm"># run tests during build</span>
+
+<span class="cm"># ---- Stage 2: Production (tiny!) ----</span>
+<span class="kw">FROM</span> node:20-alpine AS production
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># ONLY copy what's needed from builder stage</span>
+<span class="kw">COPY</span> --from=builder /app/dist ./dist
+<span class="kw">COPY</span> --from=builder /app/package*.json ./
+<span class="kw">RUN</span> npm ci --only=production  <span class="cm"># no devDependencies!</span>
+
+<span class="kw">USER</span> node
+<span class="kw">CMD</span> [<span class="st">"node"</span>, <span class="st">"dist/server.js"</span>]
+
+<span class="cm"># Result: builder=1.2GB  production=180MB  (7x smaller!)</span>
+<span class="cm"># No TypeScript compiler, no jest, no source files in prod image</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">CMD vs ENTRYPOINT</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>CMD</th><th>ENTRYPOINT</th></tr>
+          <tr><td>Purpose</td><td>Default arguments / command</td><td>Fixed executable</td></tr>
+          <tr><td>Override at runtime</td><td>✅ Yes — docker run img new-cmd</td><td>⚠️ Needs --entrypoint flag</td></tr>
+          <tr><td>Combined</td><td>CMD becomes ENTRYPOINT args</td><td>ENTRYPOINT runs, CMD passed as args</td></tr>
+          <tr><td>Best for</td><td>Services with a single purpose</td><td>Containers as executables</td></tr>
+          <tr><td>Preferred form</td><td>Exec form: CMD ["node","app.js"]</td><td>Exec form: ENTRYPOINT ["node"]</td></tr>
+        </table>
+        <div class="info-box"><strong>Shell form vs Exec form:</strong> CMD node app.js (shell form) runs via /bin/sh -c, so PID 1 is sh, not your app — signals like SIGTERM won't reach your process! Always use exec form: CMD ["node", "app.js"] — your process becomes PID 1 and receives signals directly.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a multi-stage build and why use it?</div>
+        <div class="interview-a">Multi-stage builds use multiple FROM instructions in one Dockerfile. Each stage can use a different base image. You COPY --from=stage_name only the artifacts you need. Benefits: (1) Final image contains only runtime necessities — no compilers, build tools, test frameworks, (2) Smaller attack surface (fewer packages = fewer vulnerabilities), (3) Smaller images = faster pulls and deploys, (4) Build secrets don't leak into final image. Typical result: Java Spring app from ~800MB to ~150MB.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Docker layer caching work and how do you optimize for it?</div>
+        <div class="interview-a">Each Dockerfile instruction creates a layer. Docker caches layers and reuses them if the instruction and its inputs haven't changed. Cache is invalidated for a layer and all subsequent layers when: the instruction changes, or the files it COPYs change. Optimization: put things that change least frequently FIRST. Copy package.json first, run npm install (slow, cached as long as package.json unchanged), THEN copy source code (changes often). This way, source code changes don't invalidate the npm install layer.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between RUN, CMD, and ENTRYPOINT?</div>
+        <div class="interview-a">RUN executes during the BUILD phase, creates a new image layer, used for installing packages, compiling code. CMD defines the DEFAULT command/args when the container starts — can be overridden at runtime. ENTRYPOINT defines the main executable — makes the container act like a command. When both ENTRYPOINT and CMD are set, ENTRYPOINT is the executable and CMD provides its default arguments. CMD alone can be fully replaced by docker run args; ENTRYPOINT needs --entrypoint to override.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('docker-basics')">← Docker Basics</button>
+        <button class="mark-done-btn" onclick="markDone('dockerfile')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('images-layers')">Next: Images & Layers →</button>
+      </div>
+    </div>
+
+    <!-- ===== IMAGES & LAYERS ===== -->
+    <div id="lesson-images-layers" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">🧅 Images & Layers</div>
+        <div class="lesson-subtitle">How Docker images are built from layers, the union filesystem, copy-on-write, and how to build minimal images.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Union Filesystem & Layers</div>
+        <div class="prose">A Docker image is a stack of <strong>read-only layers</strong>. When a container starts, Docker adds a thin <strong>writable layer</strong> on top (copy-on-write). Each RUN, COPY, ADD instruction in a Dockerfile creates a new layer.</div>
+        <div class="diagram">
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:center;max-width:400px;margin:0 auto">
+            <div class="arch-box cyan" style="width:100%;padding:10px">Container Layer (writable) — your running changes</div>
+            <div class="arch-box docker" style="width:100%">Layer 4: COPY . . (app source code)</div>
+            <div class="arch-box docker" style="width:100%">Layer 3: RUN npm install (node_modules)</div>
+            <div class="arch-box docker" style="width:100%">Layer 2: COPY package.json .</div>
+            <div class="arch-box docker" style="width:100%">Layer 1: FROM node:20-alpine (base)</div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-dimmer);margin-top:12px">Layers are shared — 100 containers from same image = 100 writable layers + 1 shared read-only stack</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Minimizing Image Size</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang docker">DOCKERFILE — SIZE OPTIMIZATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># ❌ BAD — creates 3 layers, apt cache stays in image</span>
+<span class="kw">RUN</span> apt-get update
+<span class="kw">RUN</span> apt-get install -y curl
+<span class="kw">RUN</span> rm -rf /var/lib/apt/lists/*  <span class="cm"># too late! previous layer still has cache</span>
+
+<span class="cm"># ✅ GOOD — single layer, cache cleaned in same RUN</span>
+<span class="kw">RUN</span> apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*   <span class="cm"># same layer = actually removes it</span>
+
+<span class="cm"># ✅ Use specific tags (not latest)</span>
+<span class="kw">FROM</span> node:20.11.0-alpine3.19    <span class="cm"># reproducible builds</span>
+
+<span class="cm"># ✅ Use .dockerignore (like .gitignore for builds)</span>
+<span class="cm"># .dockerignore:</span>
+<span class="cm"># node_modules</span>
+<span class="cm"># .git</span>
+<span class="cm"># *.log</span>
+<span class="cm"># .env</span>
+<span class="cm"># coverage/</span>
+<span class="cm"># dist/  (if using multi-stage)</span>
+
+<span class="cm"># ✅ Distroless images — no shell, package manager, or OS tools</span>
+<span class="cm"># ~10MB for Go apps vs ~200MB with Ubuntu</span>
+<span class="kw">FROM</span> gcr.io/distroless/nodejs20-debian12</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why does chaining RUN commands with && matter?</div>
+        <div class="interview-a">Each RUN instruction creates a new layer. If you run apt-get update in one layer and rm -rf /var/lib/apt/lists/* in another layer, the cache files still exist in the first layer (layers are immutable snapshots). The final image contains ALL layers, so the cache is still there, just hidden. By chaining with &&, everything runs in one layer — the cleanup actually removes the files from that layer's snapshot, reducing final image size.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is .dockerignore and why is it important?</div>
+        <div class="interview-a">.dockerignore excludes files from the build context — the directory sent to the Docker daemon when running docker build. Without it: node_modules (hundreds of MB), .git directory, logs, .env files, test coverage all get sent unnecessarily. This slows builds (context upload) and may accidentally COPY sensitive files (.env with credentials) into the image. Always add node_modules, .git, *.log, .env, and build artifacts to .dockerignore.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('dockerfile')">← Dockerfile</button>
+        <button class="mark-done-btn" onclick="markDone('images-layers')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('networking')">Next: Networking →</button>
+      </div>
+    </div>
+
+    <!-- ===== NETWORKING ===== -->
+    <div id="lesson-networking" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">🌐 Docker Networking</div>
+        <div class="lesson-subtitle">How containers communicate with each other and the outside world. Network drivers, DNS, and port mapping.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Network Drivers</div>
+        <table class="cheat-table">
+          <tr><th>Driver</th><th>How it works</th><th>Use case</th></tr>
+          <tr><td>bridge (default)</td><td>Software bridge on host. Containers get private IPs. NAT to host.</td><td>Standalone containers on same host</td></tr>
+          <tr><td>host</td><td>Container shares host network namespace. No isolation.</td><td>Performance-critical apps (no NAT overhead)</td></tr>
+          <tr><td>overlay</td><td>Multi-host networking. Spans Docker Swarm / K8s nodes.</td><td>Distributed apps, Swarm services</td></tr>
+          <tr><td>none</td><td>No networking. Completely isolated.</td><td>Batch jobs, security-sensitive workloads</td></tr>
+          <tr><td>macvlan</td><td>Container gets its own MAC address, appears as physical device.</td><td>Legacy apps needing direct network access</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Create custom bridge network</span>
+docker network create --driver bridge myapp-net
+
+<span class="cm"># Run containers on same network — they can reach each other by NAME</span>
+docker run -d --name db --network myapp-net postgres:15
+docker run -d --name api --network myapp-net -p 3000:3000 myapi
+
+<span class="cm"># Inside 'api' container, can reach db by hostname:</span>
+<span class="cm"># psql -h db -U postgres  ← 'db' resolves via Docker DNS</span>
+
+<span class="cm"># Port mapping: host_port:container_port</span>
+docker run -p 8080:80 nginx        <span class="cm"># host:8080 → container:80</span>
+docker run -p 127.0.0.1:8080:80 nginx  <span class="cm"># bind to localhost only (safer)</span>
+
+<span class="cm"># List and inspect networks</span>
+docker network ls
+docker network inspect myapp-net</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do two containers on the same Docker network communicate?</div>
+        <div class="interview-a">Containers on a user-defined bridge network can reach each other by container name — Docker has a built-in DNS server that resolves container names to their IP addresses. So if container "api" and "db" are on the same network, "api" can connect to postgres://db:5432 without knowing the IP. The default bridge network doesn't have this DNS feature — use custom networks. This is why docker-compose automatically creates a shared network for all services.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use --network host?</div>
+        <div class="interview-a">host networking removes network isolation — the container uses the host's network directly with no NAT. Use when: (1) performance is critical and NAT overhead is measurable (networking-intensive apps), (2) the app needs to bind to specific host interfaces, (3) debugging network issues. Downsides: security risk (container can access all host network interfaces), port conflicts (can't run two containers that both bind port 80), not portable across platforms (doesn't work on Docker Desktop Mac/Windows).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('images-layers')">← Images</button>
+        <button class="mark-done-btn" onclick="markDone('networking')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('volumes')">Next: Volumes →</button>
+      </div>
+    </div>
+
+    <!-- ===== VOLUMES ===== -->
+    <div id="lesson-volumes" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">💾 Volumes & Storage</div>
+        <div class="lesson-subtitle">Persisting data beyond container lifecycle. Named volumes, bind mounts, and when to use each.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Storage Types</div>
+        <table class="cheat-table">
+          <tr><th>Type</th><th>Location</th><th>Managed by</th><th>Use case</th></tr>
+          <tr><td>Named Volume</td><td>Docker-managed path on host</td><td>Docker</td><td>Databases, persistent app data</td></tr>
+          <tr><td>Bind Mount</td><td>Any host path you specify</td><td>You</td><td>Development (live reload), config files</td></tr>
+          <tr><td>tmpfs Mount</td><td>Host RAM (never written to disk)</td><td>Docker</td><td>Sensitive temp data, non-persistent secrets</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Named volume — Docker manages location</span>
+docker volume create pgdata
+docker run -d \
+  -v pgdata:/var/lib/postgresql/data \    <span class="cm"># named_volume:container_path</span>
+  --name postgres \
+  postgres:15
+
+<span class="cm"># Bind mount — host path explicitly specified</span>
+docker run -d \
+  -v /home/hany/myapp:/app \             <span class="cm"># host_path:container_path</span>
+  -v /home/hany/myapp:/app:ro \          <span class="cm"># :ro = read-only</span>
+  node:20
+
+<span class="cm"># Modern --mount syntax (explicit, preferred)</span>
+docker run -d \
+  --mount type=volume,source=pgdata,target=/var/lib/postgresql/data \
+  postgres:15
+
+docker run -d \
+  --mount type=bind,source="$(pwd)",target=/app \
+  node:20
+
+<span class="cm"># Volume management</span>
+docker volume ls
+docker volume inspect pgdata
+docker volume prune     <span class="cm"># remove unused volumes</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What happens to data in a container when it's removed?</div>
+        <div class="interview-a">Any data written to the container's writable layer (not a volume) is lost permanently when the container is removed with docker rm. This is why stateful services (databases, file uploads) must use volumes. Volumes exist independently of containers — they persist after container removal and can be shared between multiple containers. Named volumes are the recommended way to persist data; they're managed by Docker and easier to backup and migrate.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Named volume vs bind mount — when to use each?</div>
+        <div class="interview-a">Named volumes: Docker manages the storage location (typically /var/lib/docker/volumes/). Easier to backup, migrate, use with Docker Swarm/K8s. Better performance (Docker optimizes I/O). Use for: production databases, persistent app state. Bind mounts: map a specific host directory. Good for: development (mount source code for live reload), reading config files from known host paths, when you need to access data from both host and container. In production, prefer named volumes for portability.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('networking')">← Networking</button>
+        <button class="mark-done-btn" onclick="markDone('volumes')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('compose')">Next: Compose →</button>
+      </div>
+    </div>
+
+    <!-- ===== COMPOSE ===== -->
+    <div id="lesson-compose" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">🎼 Docker Compose</div>
+        <div class="lesson-subtitle">Define and run multi-container applications. The essential tool for local development and simple deployments.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Complete docker-compose.yml Example</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — docker-compose.yml</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="op">version</span>: <span class="st">'3.9'</span>
+
+<span class="op">services</span>:
+  <span class="op">api</span>:
+    <span class="op">build</span>:
+      <span class="op">context</span>: .
+      <span class="op">target</span>: development      <span class="cm"># use dev stage of multi-stage build</span>
+    <span class="op">ports</span>:
+      - <span class="st">"3000:3000"</span>
+    <span class="op">environment</span>:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+      - REDIS_URL=redis://cache:6379
+    <span class="op">env_file</span>:
+      - .env.local               <span class="cm"># load from file</span>
+    <span class="op">volumes</span>:
+      - .:/app                   <span class="cm"># bind mount for hot reload</span>
+      - /app/node_modules        <span class="cm"># anonymous volume prevents overwrite</span>
+    <span class="op">depends_on</span>:
+      db:
+        <span class="op">condition</span>: service_healthy  <span class="cm"># wait for health check</span>
+      cache:
+        <span class="op">condition</span>: service_started
+    <span class="op">restart</span>: unless-stopped
+
+  <span class="op">db</span>:
+    <span class="op">image</span>: postgres:15-alpine
+    <span class="op">environment</span>:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    <span class="op">volumes</span>:
+      - pgdata:/var/lib/postgresql/data
+    <span class="op">healthcheck</span>:
+      <span class="op">test</span>: [<span class="st">"CMD-SHELL"</span>, <span class="st">"pg_isready -U user -d mydb"</span>]
+      <span class="op">interval</span>: 5s
+      <span class="op">timeout</span>: 5s
+      <span class="op">retries</span>: 5
+
+  <span class="op">cache</span>:
+    <span class="op">image</span>: redis:7-alpine
+    <span class="op">command</span>: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+<span class="op">volumes</span>:
+  pgdata:                        <span class="cm"># named volume declaration</span>
+
+<span class="op">networks</span>:
+  default:
+    name: myapp-network</pre>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL — COMPOSE COMMANDS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre>docker compose up -d              <span class="cm"># start all services detached</span>
+docker compose up --build         <span class="cm"># rebuild images then start</span>
+docker compose down               <span class="cm"># stop and remove containers</span>
+docker compose down -v            <span class="cm"># also remove volumes!</span>
+docker compose logs -f api        <span class="cm"># follow api logs</span>
+docker compose exec api bash      <span class="cm"># shell into api container</span>
+docker compose ps                 <span class="cm"># list service status</span>
+docker compose scale api=3        <span class="cm"># run 3 api instances</span>
+docker compose restart api        <span class="cm"># restart one service</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is depends_on and what are its limitations?</div>
+        <div class="interview-a">depends_on controls start ORDER — the dependent service starts after its dependencies. But it doesn't wait for dependencies to be READY (just started). A database container may start but take 10 seconds to be ready to accept connections. Solution: use depends_on with condition: service_healthy and add a healthcheck to the dependency. Or use a wait-for-it script in your entrypoint. This is a very common interview trap.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Docker Compose and Kubernetes?</div>
+        <div class="interview-a">Docker Compose: for defining multi-container apps on a SINGLE host. Simple YAML, great for development, no orchestration. Not designed for production at scale. Kubernetes: container ORCHESTRATOR for multiple hosts/nodes. Handles: auto-scaling, self-healing, rolling deployments, service discovery, load balancing across nodes, secrets management, multi-tenancy. Much more complex. Use Compose for local dev and simple single-server deployments; Kubernetes for production at scale.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('volumes')">← Volumes</button>
+        <button class="mark-done-btn" onclick="markDone('compose')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('docker-security')">Next: Security →</button>
+      </div>
+    </div>
+
+    <!-- ===== DOCKER SECURITY ===== -->
+    <div id="lesson-docker-security" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-docker">// DOCKER</div>
+        <div class="lesson-title">🔒 Docker Security</div>
+        <div class="lesson-subtitle">Non-root containers, minimal images, secret management, and image scanning. Security is always asked in senior interviews.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Security Best Practices</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang docker">DOCKERFILE — SECURITY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># 1. Use specific non-root user</span>
+<span class="kw">FROM</span> node:20-alpine
+<span class="kw">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --chown=appuser:appgroup . .
+<span class="kw">USER</span> appuser          <span class="cm"># NEVER run as root!</span>
+
+<span class="cm"># 2. Use specific image tags (not :latest)</span>
+<span class="kw">FROM</span> node:20.11.0-alpine3.19    <span class="cm"># pinned = reproducible + auditable</span>
+
+<span class="cm"># 3. Minimal base images</span>
+<span class="kw">FROM</span> gcr.io/distroless/nodejs20  <span class="cm"># no shell = smaller attack surface</span>
+
+<span class="cm"># 4. Don't store secrets in images!</span>
+<span class="cm"># ❌ NEVER:</span>
+<span class="kw">ENV</span> DB_PASSWORD=mysecret         <span class="cm"># visible in docker inspect, image layers!</span>
+<span class="kw">COPY</span> .env /app/.env              <span class="cm"># .env baked into image</span>
+
+<span class="cm"># ✅ Inject at runtime:</span>
+<span class="cm"># docker run -e DB_PASSWORD=$SECRET myapp</span>
+<span class="cm"># Or use Docker secrets / K8s secrets</span>
+
+<span class="cm"># 5. Read-only filesystem</span>
+<span class="cm"># docker run --read-only --tmpfs /tmp myapp</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title docker-title">Image Scanning & Runtime Security</div>
+        <div class="success-box"><strong>Tools:</strong> Trivy (free, fast vulnerability scanner), Snyk, Docker Scout, Anchore. Scan in CI/CD pipeline before pushing to registry. Set severity thresholds — fail build on CRITICAL/HIGH CVEs.</div>
+        <div class="warn-box"><strong>⚠️ Running as root:</strong> If an attacker escapes the container running as root, they have root on the host. Always set USER in Dockerfile. Use --security-opt=no-new-privileges to prevent privilege escalation. Use AppArmor/seccomp profiles to limit syscalls.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why should containers not run as root?</div>
+        <div class="interview-a">If a container runs as root and an attacker exploits a vulnerability in the app, they have root privileges inside the container. If they then exploit a container escape vulnerability (Docker daemon bug, kernel exploit), they get root on the host — game over. Running as non-root limits blast radius: attacker gets limited user privileges inside the container. Also prevents accidental overwrites of system files. Set USER in Dockerfile and ensure files are owned by that user (COPY --chown).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How should you handle secrets in Docker?</div>
+        <div class="interview-a">Never bake secrets into images — they're visible in docker inspect, image history, and any registry they're pushed to. Options: (1) Runtime environment variables via -e or env_file (simple, but visible in process list), (2) Docker secrets (Swarm feature) — secrets mounted as tmpfs files in /run/secrets/, not visible as env vars, (3) Kubernetes Secrets (base64-encoded, mountable as files or env vars), (4) External secret managers: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault — inject at container startup. For production: use external secret manager + K8s secrets.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('compose')">← Compose</button>
+        <button class="mark-done-btn" onclick="markDone('docker-security')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('k8s-architecture')">Next: K8s Architecture →</button>
+      </div>
+    </div>
+
+    <!-- ===== K8S ARCHITECTURE ===== -->
+    <div id="lesson-k8s-architecture" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🏗️ Kubernetes Architecture</div>
+        <div class="lesson-subtitle">Control plane vs worker nodes, what each component does, and how they work together. The most fundamental K8s interview topic.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">The Architecture</div>
+        <div class="diagram">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+              <div style="color:var(--k8s);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:12px">CONTROL PLANE (Master)</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div class="arch-box k8s" style="text-align:left;padding:10px 14px"><strong>API Server</strong> — front door, REST API, auth</div>
+                <div class="arch-box k8s" style="text-align:left;padding:10px 14px"><strong>etcd</strong> — key-value store, cluster state</div>
+                <div class="arch-box k8s" style="text-align:left;padding:10px 14px"><strong>Scheduler</strong> — assign pods to nodes</div>
+                <div class="arch-box k8s" style="text-align:left;padding:10px 14px"><strong>Controller Manager</strong> — watches & reconciles</div>
+                <div class="arch-box k8s" style="text-align:left;padding:10px 14px"><strong>Cloud Controller</strong> — cloud provider integration</div>
+              </div>
+            </div>
+            <div>
+              <div style="color:var(--accent3);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:12px">WORKER NODES</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div class="arch-box green" style="text-align:left;padding:10px 14px"><strong>kubelet</strong> — agent, manages pods on node</div>
+                <div class="arch-box green" style="text-align:left;padding:10px 14px"><strong>kube-proxy</strong> — network rules, Service routing</div>
+                <div class="arch-box green" style="text-align:left;padding:10px 14px"><strong>Container Runtime</strong> — containerd / CRI-O</div>
+                <div class="arch-box green" style="text-align:left;padding:10px 14px"><strong>Pods</strong> — your app containers</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">What Each Component Does</div>
+        <table class="cheat-table">
+          <tr><th>Component</th><th>Role</th><th>Key fact</th></tr>
+          <tr><td>kube-apiserver</td><td>All K8s operations go through it. Validates, authenticates, stores to etcd.</td><td>Single source of truth API. Horizontally scalable.</td></tr>
+          <tr><td>etcd</td><td>Distributed KV store. Holds ALL cluster state — pods, configs, secrets.</td><td>Most critical component. Losing etcd = losing cluster. Always backup!</td></tr>
+          <tr><td>kube-scheduler</td><td>Watches for unscheduled pods, picks best node based on resources, affinity, taints.</td><td>Doesn't start the pod — just assigns it to a node.</td></tr>
+          <tr><td>kube-controller-manager</td><td>Runs control loops: node controller, replication controller, endpoints controller.</td><td>Reconciliation loop — constantly checks desired vs actual state.</td></tr>
+          <tr><td>kubelet</td><td>Node agent. Talks to API server, manages pod lifecycle, runs health checks.</td><td>Only component that talks directly to container runtime.</td></tr>
+          <tr><td>kube-proxy</td><td>Implements Services by maintaining iptables/IPVS rules for pod-to-pod routing.</td><td>Doesn't proxy traffic — just configures routing rules.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">What Happens When You kubectl apply</div>
+        <div class="info-box">
+          <strong>1.</strong> kubectl sends YAML to <strong>API Server</strong> → validates, authenticates, stores in <strong>etcd</strong><br>
+          <strong>2.</strong> <strong>Controller Manager</strong> notices new Deployment → creates ReplicaSet → creates Pod objects<br>
+          <strong>3.</strong> <strong>Scheduler</strong> notices unscheduled Pod → evaluates nodes → assigns to best node (writes to etcd)<br>
+          <strong>4.</strong> <strong>kubelet</strong> on target node notices pod assigned to it → instructs container runtime to pull image and start container<br>
+          <strong>5.</strong> kubelet reports status back to API server → pod shows Running
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is etcd and why is it so important?</div>
+        <div class="interview-a">etcd is a distributed, consistent key-value store that serves as Kubernetes' "database" — it stores the entire cluster state: all pod specs, service definitions, secrets, configmaps, RBAC rules, node state. Every kubectl get, every scheduler decision, every controller loop reads from etcd. If etcd goes down, the control plane stops — you can't create, update, or delete anything (though existing workloads keep running). This is why etcd is always run with multiple replicas (3 or 5 for production) and backed up regularly.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the reconciliation loop in Kubernetes?</div>
+        <div class="interview-a">The reconciliation loop is the heart of Kubernetes' self-healing. Controllers continuously watch the desired state (what you defined in YAML) and compare it with the actual state (what's running). When they differ, the controller acts to reconcile them. Example: you define a Deployment with 3 replicas. A node crashes, killing 1 pod. The ReplicaSet controller notices actual=2 vs desired=3 and creates a new pod. This loop runs constantly — it's why K8s is "self-healing."</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">Which component is responsible for ASSIGNING a pod to a node in Kubernetes?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'ka','wrong')"><span class="opt-letter">A</span>kubelet</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ka','wrong')"><span class="opt-letter">B</span>Controller Manager</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ka','correct')"><span class="opt-letter">C</span>kube-scheduler ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ka','wrong')"><span class="opt-letter">D</span>API Server</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-ka-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('docker-security')">← Docker Security</button>
+        <button class="mark-done-btn" onclick="markDone('k8s-architecture')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('pods-deployments')">Next: Pods & Deployments →</button>
+      </div>
+    </div>
+
+    <!-- ===== PODS & DEPLOYMENTS ===== -->
+    <div id="lesson-pods-deployments" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🚀 Pods & Deployments</div>
+        <div class="lesson-subtitle">The fundamental workload units. Pod lifecycle, ReplicaSets, rolling updates, rollbacks, and resource management.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Pod — The Smallest Unit</div>
+        <div class="prose">A <strong>Pod</strong> is one or more containers that share network namespace and storage. Containers in a pod communicate via localhost. Pods are ephemeral — when they die, they don't come back (use Deployments for that).</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — DEPLOYMENT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="op">apiVersion</span>: apps/v1
+<span class="op">kind</span>: Deployment
+<span class="op">metadata</span>:
+  <span class="op">name</span>: api-deployment
+  <span class="op">labels</span>:
+    <span class="op">app</span>: api
+<span class="op">spec</span>:
+  <span class="op">replicas</span>: <span class="nm">3</span>
+  <span class="op">selector</span>:
+    <span class="op">matchLabels</span>:
+      <span class="op">app</span>: api           <span class="cm"># must match pod template labels</span>
+  <span class="op">strategy</span>:
+    <span class="op">type</span>: RollingUpdate
+    <span class="op">rollingUpdate</span>:
+      <span class="op">maxSurge</span>: 1          <span class="cm"># max extra pods during update</span>
+      <span class="op">maxUnavailable</span>: 0    <span class="cm"># 0 = zero-downtime deployment</span>
+  <span class="op">template</span>:
+    <span class="op">metadata</span>:
+      <span class="op">labels</span>:
+        <span class="op">app</span>: api
+    <span class="op">spec</span>:
+      <span class="op">containers</span>:
+        - <span class="op">name</span>: api
+          <span class="op">image</span>: myrepo/api:1.2.0
+          <span class="op">ports</span>:
+            - <span class="op">containerPort</span>: <span class="nm">3000</span>
+          <span class="op">resources</span>:
+            <span class="op">requests</span>:           <span class="cm"># guaranteed resources</span>
+              <span class="op">memory</span>: <span class="st">"128Mi"</span>
+              <span class="op">cpu</span>: <span class="st">"100m"</span>      <span class="cm"># 100 millicores = 0.1 CPU</span>
+            <span class="op">limits</span>:             <span class="cm"># maximum allowed</span>
+              <span class="op">memory</span>: <span class="st">"256Mi"</span>
+              <span class="op">cpu</span>: <span class="st">"500m"</span>
+          <span class="op">env</span>:
+            - <span class="op">name</span>: NODE_ENV
+              <span class="op">value</span>: production</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Requests vs Limits</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Requests</th><th>Limits</th></tr>
+          <tr><td>Purpose</td><td>Guaranteed minimum resources</td><td>Maximum resources allowed</td></tr>
+          <tr><td>Scheduling</td><td>Used by scheduler to find a node</td><td>Not used for scheduling</td></tr>
+          <tr><td>CPU over limit</td><td>—</td><td>Throttled (not killed)</td></tr>
+          <tr><td>Memory over limit</td><td>—</td><td>OOMKilled (container killed!)</td></tr>
+          <tr><td>Best practice</td><td>Set equal to typical usage</td><td>Set 2x requests as starting point</td></tr>
+        </table>
+        <div class="warn-box"><strong>⚠️ Always set resource requests and limits!</strong> Without requests, the scheduler can't place pods properly — nodes get overloaded. Without limits, one buggy container can consume all node memory and take down other pods (OOM kills).</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Rolling Updates & Rollbacks</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL — DEPLOYMENT COMMANDS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Update image (triggers rolling update)</span>
+kubectl set image deployment/api-deployment api=myrepo/api:1.3.0
+kubectl apply -f deployment.yaml    <span class="cm"># or apply updated YAML</span>
+
+<span class="cm"># Monitor rollout</span>
+kubectl rollout status deployment/api-deployment
+
+<span class="cm"># Rollback to previous version</span>
+kubectl rollout undo deployment/api-deployment
+
+<span class="cm"># Rollback to specific revision</span>
+kubectl rollout history deployment/api-deployment
+kubectl rollout undo deployment/api-deployment --to-revision=2
+
+<span class="cm"># Scale</span>
+kubectl scale deployment/api-deployment --replicas=5
+
+<span class="cm"># Pause/resume (canary-like)</span>
+kubectl rollout pause deployment/api-deployment
+kubectl rollout resume deployment/api-deployment</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between a Pod, ReplicaSet, and Deployment?</div>
+        <div class="interview-a">Pod: single instance of running containers. If it crashes, it's gone. ReplicaSet: ensures N copies of a pod are always running. If a pod dies, it creates a new one. But doesn't handle rolling updates. Deployment: manages ReplicaSets. When you update a deployment, it creates a new ReplicaSet and gradually shifts traffic by scaling one up and the other down. Stores rollout history for rollbacks. In practice, you always use Deployments — never create ReplicaSets or Pods directly.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is OOMKilled and how do you prevent it?</div>
+        <div class="interview-a">OOMKilled (Out Of Memory Killed) happens when a container exceeds its memory limit. The Linux kernel's OOM killer terminates the process. In K8s, the container is restarted according to the restartPolicy. Prevention: (1) Set appropriate memory limits based on profiling, (2) Fix memory leaks in the application, (3) If the app legitimately needs more memory, raise the limit, (4) Use Vertical Pod Autoscaler to auto-tune limits. Check: kubectl describe pod &lt;name&gt; — look for "OOMKilled" in Last State.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('k8s-architecture')">← K8s Architecture</button>
+        <button class="mark-done-btn" onclick="markDone('pods-deployments')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('services-ingress')">Next: Services →</button>
+      </div>
+    </div>
+
+    <!-- ===== SERVICES & INGRESS ===== -->
+    <div id="lesson-services-ingress" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🔀 Services & Ingress</div>
+        <div class="lesson-subtitle">How traffic reaches your pods. ClusterIP, NodePort, LoadBalancer, and Ingress controllers.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Service Types</div>
+        <table class="cheat-table">
+          <tr><th>Type</th><th>Accessible from</th><th>Use case</th></tr>
+          <tr><td>ClusterIP (default)</td><td>Inside cluster only</td><td>Internal microservice communication</td></tr>
+          <tr><td>NodePort</td><td>Outside via NodeIP:NodePort (30000-32767)</td><td>Dev/testing, non-production external access</td></tr>
+          <tr><td>LoadBalancer</td><td>External via cloud LB (AWS ELB, GCP GLB)</td><td>Exposing single service externally (costly)</td></tr>
+          <tr><td>ExternalName</td><td>Cluster → external DNS</td><td>Alias external services inside cluster</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — SERVICE + INGRESS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># ClusterIP Service — internal only</span>
+<span class="op">apiVersion</span>: v1
+<span class="op">kind</span>: Service
+<span class="op">metadata</span>:
+  <span class="op">name</span>: api-service
+<span class="op">spec</span>:
+  <span class="op">selector</span>:
+    <span class="op">app</span>: api               <span class="cm"># targets pods with this label</span>
+  <span class="op">ports</span>:
+    - <span class="op">port</span>: <span class="nm">80</span>             <span class="cm"># service port</span>
+      <span class="op">targetPort</span>: <span class="nm">3000</span>     <span class="cm"># pod's actual port</span>
+  <span class="op">type</span>: ClusterIP
+
+---
+<span class="cm"># Ingress — one LB for many services (HTTP routing)</span>
+<span class="op">apiVersion</span>: networking.k8s.io/v1
+<span class="op">kind</span>: Ingress
+<span class="op">metadata</span>:
+  <span class="op">name</span>: app-ingress
+  <span class="op">annotations</span>:
+    <span class="op">nginx.ingress.kubernetes.io/rewrite-target</span>: /
+<span class="op">spec</span>:
+  <span class="op">tls</span>:
+    - <span class="op">hosts</span>: [myapp.com]
+      <span class="op">secretName</span>: myapp-tls    <span class="cm"># TLS cert stored as Secret</span>
+  <span class="op">rules</span>:
+    - <span class="op">host</span>: myapp.com
+      <span class="op">http</span>:
+        <span class="op">paths</span>:
+          - <span class="op">path</span>: /api
+            <span class="op">pathType</span>: Prefix
+            <span class="op">backend</span>:
+              <span class="op">service</span>:
+                <span class="op">name</span>: api-service
+                <span class="op">port</span>:
+                  <span class="op">number</span>: <span class="nm">80</span>
+          - <span class="op">path</span>: /
+            <span class="op">pathType</span>: Prefix
+            <span class="op">backend</span>:
+              <span class="op">service</span>:
+                <span class="op">name</span>: frontend-service
+                <span class="op">port</span>:
+                  <span class="op">number</span>: <span class="nm">80</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is an Ingress and why use it instead of LoadBalancer services?</div>
+        <div class="interview-a">An Ingress is an L7 HTTP router. It routes traffic to different services based on URL path or hostname. Instead of creating one cloud LoadBalancer per service (expensive — each LB costs ~$15-50/month on AWS), you create ONE LoadBalancer that feeds an Ingress controller (nginx, Traefik, HAProxy) which routes internally to many services. Benefits: cost (one LB), TLS termination in one place, host-based routing (api.myapp.com vs www.myapp.com), path-based routing (/api → api-service).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does a Service discover which pods to route to?</div>
+        <div class="interview-a">Services use label selectors — they route to any pod matching the selector labels. When pods are created/deleted, the Endpoints object (automatically managed by the Endpoints controller) is updated with current pod IPs. kube-proxy watches the Endpoints API and updates iptables/IPVS rules on each node to route Service ClusterIP to actual pod IPs. This is how K8s handles rolling updates — new pods are added to Endpoints before old ones are removed, enabling zero-downtime updates.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('pods-deployments')">← Pods</button>
+        <button class="mark-done-btn" onclick="markDone('services-ingress')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('configmaps-secrets')">Next: ConfigMaps →</button>
+      </div>
+    </div>
+
+    <!-- ===== CONFIGMAPS & SECRETS ===== -->
+    <div id="lesson-configmaps-secrets" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🗝️ ConfigMaps & Secrets</div>
+        <div class="lesson-subtitle">Separating configuration from container images. The right way to inject config and credentials.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">ConfigMap vs Secret</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>ConfigMap</th><th>Secret</th></tr>
+          <tr><td>For</td><td>Non-sensitive config (URLs, feature flags)</td><td>Sensitive data (passwords, tokens, certs)</td></tr>
+          <tr><td>Encoding</td><td>Plain text</td><td>Base64-encoded (NOT encrypted by default!)</td></tr>
+          <tr><td>etcd storage</td><td>Plain text in etcd</td><td>Base64 in etcd (encrypt at rest separately!)</td></tr>
+          <tr><td>Access control</td><td>Standard RBAC</td><td>Stricter RBAC recommended</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — CONFIGMAP + SECRET</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># ConfigMap</span>
+<span class="op">apiVersion</span>: v1
+<span class="op">kind</span>: ConfigMap
+<span class="op">metadata</span>:
+  <span class="op">name</span>: app-config
+<span class="op">data</span>:
+  <span class="op">DATABASE_HOST</span>: postgres-service
+  <span class="op">LOG_LEVEL</span>: info
+  <span class="op">app.properties</span>: |    <span class="cm"># multi-line config file</span>
+    server.port=3000
+    feature.x=true
+
+---
+<span class="cm"># Secret (base64 encode: echo -n "mysecret" | base64)</span>
+<span class="op">apiVersion</span>: v1
+<span class="op">kind</span>: Secret
+<span class="op">metadata</span>:
+  <span class="op">name</span>: db-secret
+<span class="op">type</span>: Opaque
+<span class="op">stringData</span>:              <span class="cm"># K8s auto-encodes these</span>
+  <span class="op">DB_PASSWORD</span>: mysuperpassword
+  <span class="op">DB_USER</span>: admin
+
+---
+<span class="cm"># Using in Pod</span>
+<span class="op">spec</span>:
+  <span class="op">containers</span>:
+    - <span class="op">name</span>: api
+      <span class="op">envFrom</span>:                 <span class="cm"># inject ALL keys as env vars</span>
+        - <span class="op">configMapRef</span>:
+            <span class="op">name</span>: app-config
+        - <span class="op">secretRef</span>:
+            <span class="op">name</span>: db-secret
+      <span class="op">volumeMounts</span>:           <span class="cm"># OR mount as files</span>
+        - <span class="op">name</span>: config-vol
+          <span class="op">mountPath</span>: /etc/config
+  <span class="op">volumes</span>:
+    - <span class="op">name</span>: config-vol
+      <span class="op">configMap</span>:
+        <span class="op">name</span>: app-config</pre>
+        </div>
+      </div>
+      <div class="warn-box"><strong>⚠️ Secrets are NOT encrypted by default!</strong> They're base64-encoded (trivially decodable). For true security: enable Envelope Encryption (EncryptionConfig) so secrets are encrypted in etcd, use external secret managers (Vault, AWS Secrets Manager) with operators like External Secrets Operator, and restrict RBAC access to secrets.</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Are Kubernetes Secrets actually secure?</div>
+        <div class="interview-a">By default, no — they're only base64-encoded, not encrypted. Anyone with kubectl get secret access can decode them instantly. For proper security: (1) Enable EncryptionConfiguration to encrypt secrets at rest in etcd, (2) Use RBAC to restrict who can read secrets (principle of least privilege), (3) Use External Secrets Operator with AWS Secrets Manager, GCP Secret Manager, or HashiCorp Vault for enterprise-grade secrets management, (4) Never commit secrets to Git — use Sealed Secrets or SOPS for GitOps workflows.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Environment variables vs mounted volumes for config — which is better?</div>
+        <div class="interview-a">Environment variables: simpler, but the app must restart to pick up changes. Also visible in process list (ps aux), logged in some tools, inherited by child processes. Mounted config files (ConfigMap/Secret as volumes): can be updated without pod restart (K8s syncs changes to mounted files automatically), not exposed in process list, can be structured as full config files. For secrets: mounted volumes are generally preferred as they're less exposed. For non-sensitive config that changes rarely: env vars are fine. For dynamic config: mounted volumes.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('services-ingress')">← Services</button>
+        <button class="mark-done-btn" onclick="markDone('configmaps-secrets')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('scaling')">Next: Scaling →</button>
+      </div>
+    </div>
+
+    <!-- ===== SCALING ===== -->
+    <div id="lesson-scaling" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">📈 Scaling & HPA</div>
+        <div class="lesson-subtitle">HorizontalPodAutoscaler, VPA, cluster autoscaler, and resource requests — the holy trinity of K8s scaling.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Three Levels of Autoscaling</div>
+        <table class="cheat-table">
+          <tr><th>Autoscaler</th><th>What it scales</th><th>Based on</th></tr>
+          <tr><td>HPA (Horizontal Pod Autoscaler)</td><td>Number of pod replicas</td><td>CPU/memory usage, custom metrics</td></tr>
+          <tr><td>VPA (Vertical Pod Autoscaler)</td><td>CPU/memory requests per pod</td><td>Historical resource usage</td></tr>
+          <tr><td>Cluster Autoscaler</td><td>Number of nodes in cluster</td><td>Pending pods that can't be scheduled</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — HPA</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="op">apiVersion</span>: autoscaling/v2
+<span class="op">kind</span>: HorizontalPodAutoscaler
+<span class="op">metadata</span>:
+  <span class="op">name</span>: api-hpa
+<span class="op">spec</span>:
+  <span class="op">scaleTargetRef</span>:
+    <span class="op">apiVersion</span>: apps/v1
+    <span class="op">kind</span>: Deployment
+    <span class="op">name</span>: api-deployment
+  <span class="op">minReplicas</span>: <span class="nm">2</span>
+  <span class="op">maxReplicas</span>: <span class="nm">20</span>
+  <span class="op">metrics</span>:
+    - <span class="op">type</span>: Resource
+      <span class="op">resource</span>:
+        <span class="op">name</span>: cpu
+        <span class="op">target</span>:
+          <span class="op">type</span>: Utilization
+          <span class="op">averageUtilization</span>: <span class="nm">70</span>  <span class="cm"># scale when CPU > 70%</span>
+    - <span class="op">type</span>: Resource
+      <span class="op">resource</span>:
+        <span class="op">name</span>: memory
+        <span class="op">target</span>:
+          <span class="op">type</span>: AverageValue
+          <span class="op">averageValue</span>: <span class="st">200Mi</span>
+    - <span class="op">type</span>: Pods           <span class="cm"># custom metric example</span>
+      <span class="op">pods</span>:
+        <span class="op">metric</span>:
+          <span class="op">name</span>: requests_per_second
+        <span class="op">target</span>:
+          <span class="op">type</span>: AverageValue
+          <span class="op">averageValue</span>: <span class="st">"100"</span></pre>
+        </div>
+      </div>
+      <div class="info-box"><strong>HPA requires metrics-server!</strong> HPA reads CPU/memory metrics from the metrics-server. Without it, HPA can't function. Install with: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does HPA decide when to scale?</div>
+        <div class="interview-a">HPA calculates the desired replica count using: desiredReplicas = ceil(currentReplicas × (currentMetricValue / desiredMetricValue)). Example: 3 replicas, CPU at 90%, target 70% → ceil(3 × 90/70) = ceil(3.86) = 4 replicas. It checks every 15 seconds (default). Scale-up: immediate on threshold breach. Scale-down: waits 5 minutes (stabilization window) to prevent flapping. HPA requires CPU/memory requests set on the pod — without requests, HPA can't calculate utilization.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between HPA and VPA? Can you use both?</div>
+        <div class="interview-a">HPA scales OUT (more pods). VPA scales UP (bigger pods — adjusts requests/limits). They solve different problems: HPA handles traffic bursts (more instances), VPA optimizes resource allocation for each pod. Using both simultaneously on CPU/memory can cause conflicts — HPA scales out based on CPU, VPA changes requests which affects HPA's calculations. Best practice: use HPA for most apps, VPA for services with variable resource needs. VPA can run in recommendation-only mode (no auto-apply) which is useful for right-sizing.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('configmaps-secrets')">← ConfigMaps</button>
+        <button class="mark-done-btn" onclick="markDone('scaling')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('health-probes')">Next: Health Probes →</button>
+      </div>
+    </div>
+
+    <!-- ===== HEALTH PROBES ===== -->
+    <div id="lesson-health-probes" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">❤️ Health Probes</div>
+        <div class="lesson-subtitle">Liveness, Readiness, and Startup probes — the key to zero-downtime deployments and self-healing applications.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Three Probe Types</div>
+        <table class="cheat-table">
+          <tr><th>Probe</th><th>Purpose</th><th>Failure action</th></tr>
+          <tr><td>Liveness</td><td>Is the container alive? (not deadlocked)</td><td>Restart the container</td></tr>
+          <tr><td>Readiness</td><td>Is the container ready to receive traffic?</td><td>Remove from Service endpoints (no restart)</td></tr>
+          <tr><td>Startup</td><td>Has the container finished starting?</td><td>Restart (disables liveness until passed)</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — ALL THREE PROBES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="op">containers</span>:
+  - <span class="op">name</span>: api
+    <span class="op">image</span>: myapi:1.0
+
+    <span class="cm"># Startup: give slow-starting apps time (e.g., Spring Boot)</span>
+    <span class="op">startupProbe</span>:
+      <span class="op">httpGet</span>:
+        <span class="op">path</span>: /health
+        <span class="op">port</span>: <span class="nm">3000</span>
+      <span class="op">failureThreshold</span>: <span class="nm">30</span>    <span class="cm"># 30 × 10s = 5 min to start</span>
+      <span class="op">periodSeconds</span>: <span class="nm">10</span>
+      <span class="cm"># Liveness disabled until startup succeeds</span>
+
+    <span class="cm"># Liveness: detect deadlocks, restart if unhealthy</span>
+    <span class="op">livenessProbe</span>:
+      <span class="op">httpGet</span>:
+        <span class="op">path</span>: /health/live
+        <span class="op">port</span>: <span class="nm">3000</span>
+      <span class="op">initialDelaySeconds</span>: <span class="nm">10</span>
+      <span class="op">periodSeconds</span>: <span class="nm">15</span>
+      <span class="op">failureThreshold</span>: <span class="nm">3</span>     <span class="cm"># restart after 3 failures</span>
+      <span class="op">timeoutSeconds</span>: <span class="nm">5</span>
+
+    <span class="cm"># Readiness: only send traffic when app is truly ready</span>
+    <span class="op">readinessProbe</span>:
+      <span class="op">httpGet</span>:
+        <span class="op">path</span>: /health/ready     <span class="cm"># checks DB connection, cache, etc.</span>
+        <span class="op">port</span>: <span class="nm">3000</span>
+      <span class="op">initialDelaySeconds</span>: <span class="nm">5</span>
+      <span class="op">periodSeconds</span>: <span class="nm">5</span>
+      <span class="op">failureThreshold</span>: <span class="nm">2</span>     <span class="cm"># remove from LB after 2 failures</span></pre>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label">💡 ANALOGY</div>
+        <div class="analogy-text">Think of a <strong>doctor and a nurse</strong>. The <strong>Startup probe</strong> is the nurse checking if a new patient has arrived and is ready to be examined. The <strong>Liveness probe</strong> is the doctor checking if the patient is still alive (heart beating). If not → restart (defibrillator). The <strong>Readiness probe</strong> is checking if the patient is healthy enough to see visitors (receive traffic). If sick → no visitors (removed from load balancer), but not killed.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between liveness and readiness probes?</div>
+        <div class="interview-a">Liveness: "Is this container alive and not stuck?" Failure = restart container. Use for detecting deadlocks, infinite loops, corrupted state. Don't make it too strict — false positives cause restart loops. Readiness: "Is this container ready to serve requests?" Failure = remove from Service endpoints (no traffic sent, but NOT restarted). Use for: startup initialization, dependency checks (DB connected, cache warmed), graceful handling of overload. Key: a pod can be alive but not ready — it's running but momentarily unable to serve.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do probes enable zero-downtime deployments?</div>
+        <div class="interview-a">During a rolling update: (1) New pod starts, (2) Startup probe passes — liveness/readiness begin, (3) Readiness probe passes — pod added to Service endpoints, receives traffic, (4) Old pod removed from endpoints ONLY AFTER new pod is ready, (5) Old pod gracefully shuts down (SIGTERM, then drain in-flight requests). With maxUnavailable=0 and a proper readiness probe, there's always at least 3 ready pods throughout. Without readiness probes, K8s might send traffic to a pod that's starting up but not ready — causing errors.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('scaling')">← Scaling</button>
+        <button class="mark-done-btn" onclick="markDone('health-probes')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('storage-k8s')">Next: Storage →</button>
+      </div>
+    </div>
+
+    <!-- ===== STORAGE K8S ===== -->
+    <div id="lesson-storage-k8s" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🗄️ Persistent Storage</div>
+        <div class="lesson-subtitle">PersistentVolumes, PVCs, StorageClasses, and StatefulSets — how K8s handles stateful applications.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">PV → PVC → Pod Chain</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box docker" style="text-align:left;padding:14px">PersistentVolume (PV)<br><small>actual storage resource<br>AWS EBS, NFS, etc.</small></div>
+            <div class="arch-arrow">binds to</div>
+            <div class="arch-box green" style="text-align:left;padding:14px">PersistentVolumeClaim (PVC)<br><small>user's request for storage<br>"I need 10Gi RWO"</small></div>
+            <div class="arch-arrow">mounted in</div>
+            <div class="arch-box purple" style="text-align:left;padding:14px">Pod<br><small>mounts PVC<br>as a volume</small></div>
+          </div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — PVC + StorageClass</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># StorageClass — defines HOW storage is provisioned</span>
+<span class="op">apiVersion</span>: storage.k8s.io/v1
+<span class="op">kind</span>: StorageClass
+<span class="op">metadata</span>:
+  <span class="op">name</span>: fast-ssd
+<span class="op">provisioner</span>: ebs.csi.aws.com   <span class="cm"># AWS EBS CSI driver</span>
+<span class="op">parameters</span>:
+  <span class="op">type</span>: gp3
+<span class="op">reclaimPolicy</span>: Retain          <span class="cm"># keep PV when PVC deleted</span>
+
+---
+<span class="cm"># PVC — developer requests storage</span>
+<span class="op">apiVersion</span>: v1
+<span class="op">kind</span>: PersistentVolumeClaim
+<span class="op">metadata</span>:
+  <span class="op">name</span>: db-pvc
+<span class="op">spec</span>:
+  <span class="op">storageClassName</span>: fast-ssd
+  <span class="op">accessModes</span>:
+    - ReadWriteOnce             <span class="cm"># RWO: one node at a time</span>
+  <span class="op">resources</span>:
+    <span class="op">requests</span>:
+      <span class="op">storage</span>: <span class="st">20Gi</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">Access Modes</div>
+        <table class="cheat-table">
+          <tr><th>Mode</th><th>Meaning</th><th>Use case</th></tr>
+          <tr><td>RWO (ReadWriteOnce)</td><td>One node can mount read/write</td><td>Most databases (MySQL, Postgres)</td></tr>
+          <tr><td>ROX (ReadOnlyMany)</td><td>Many nodes can mount read-only</td><td>Shared config, content</td></tr>
+          <tr><td>RWX (ReadWriteMany)</td><td>Many nodes read/write</td><td>NFS, shared file storage</td></tr>
+          <tr><td>RWOP (ReadWriteOncePod)</td><td>Single pod read/write</td><td>Strict isolation (K8s 1.22+)</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Deployment and StatefulSet?</div>
+        <div class="interview-a">Deployment: pods are identical and interchangeable. Pods get random names (api-7d8b9-xk2p1). Pods can be rescheduled to any node. Good for stateless apps. StatefulSet: pods have stable, persistent identities — ordered names (mysql-0, mysql-1, mysql-2). Each pod gets its own PersistentVolumeClaim that follows it even when rescheduled. Pods start/stop in order. Stable network identity via headless Service. Use for: databases, Kafka, Zookeeper, Elasticsearch — anything needing stable storage and identity per instance.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('health-probes')">← Health Probes</button>
+        <button class="mark-done-btn" onclick="markDone('storage-k8s')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rbac')">Next: RBAC →</button>
+      </div>
+    </div>
+
+    <!-- ===== RBAC ===== -->
+    <div id="lesson-rbac" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow eyebrow-k8s">// KUBERNETES</div>
+        <div class="lesson-title">🔐 RBAC & Security</div>
+        <div class="lesson-subtitle">Role-Based Access Control, ServiceAccounts, NetworkPolicies — securing your cluster.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title k8s-title">RBAC Building Blocks</div>
+        <table class="cheat-table">
+          <tr><th>Resource</th><th>Scope</th><th>Purpose</th></tr>
+          <tr><td>Role</td><td>Namespace</td><td>Defines permissions within a namespace</td></tr>
+          <tr><td>ClusterRole</td><td>Cluster-wide</td><td>Permissions across all namespaces or cluster resources</td></tr>
+          <tr><td>RoleBinding</td><td>Namespace</td><td>Grants a Role to a user/group/ServiceAccount</td></tr>
+          <tr><td>ClusterRoleBinding</td><td>Cluster-wide</td><td>Grants ClusterRole cluster-wide</td></tr>
+          <tr><td>ServiceAccount</td><td>Namespace</td><td>Identity for pods to call the K8s API</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang yaml">YAML — RBAC EXAMPLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># ServiceAccount — identity for your app's pods</span>
+<span class="op">apiVersion</span>: v1
+<span class="op">kind</span>: ServiceAccount
+<span class="op">metadata</span>:
+  <span class="op">name</span>: api-sa
+  <span class="op">namespace</span>: production
+
+---
+<span class="cm"># Role — what can be done (in this namespace)</span>
+<span class="op">apiVersion</span>: rbac.authorization.k8s.io/v1
+<span class="op">kind</span>: Role
+<span class="op">metadata</span>:
+  <span class="op">name</span>: pod-reader
+  <span class="op">namespace</span>: production
+<span class="op">rules</span>:
+  - <span class="op">apiGroups</span>: [<span class="st">""</span>]           <span class="cm"># "" = core API group</span>
+    <span class="op">resources</span>: [<span class="st">"pods"</span>, <span class="st">"pods/log"</span>]
+    <span class="op">verbs</span>: [<span class="st">"get"</span>, <span class="st">"list"</span>, <span class="st">"watch"</span>]
+
+---
+<span class="cm"># RoleBinding — who gets the role</span>
+<span class="op">apiVersion</span>: rbac.authorization.k8s.io/v1
+<span class="op">kind</span>: RoleBinding
+<span class="op">metadata</span>:
+  <span class="op">name</span>: read-pods-binding
+  <span class="op">namespace</span>: production
+<span class="op">subjects</span>:
+  - <span class="op">kind</span>: ServiceAccount
+    <span class="op">name</span>: api-sa
+    <span class="op">namespace</span>: production
+<span class="op">roleRef</span>:
+  <span class="op">kind</span>: Role
+  <span class="op">name</span>: pod-reader
+  <span class="op">apiGroup</span>: rbac.authorization.k8s.io</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a ServiceAccount and why do pods need one?</div>
+        <div class="interview-a">A ServiceAccount is the identity a pod uses to authenticate to the Kubernetes API. When a pod calls the API (to list pods, read ConfigMaps, etc.), it presents the ServiceAccount token. Without specifying one, pods use the default ServiceAccount. Best practices: create dedicated ServiceAccounts per application with minimal permissions (principle of least privilege). Disable auto-mounting the ServiceAccount token if the pod doesn't need API access: automountServiceAccountToken: false.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a NetworkPolicy and how does it work?</div>
+        <div class="interview-a">NetworkPolicy controls traffic between pods (L3/L4 rules). By default, all pods can communicate with all other pods. NetworkPolicy lets you: allow only specific pods to reach your database, block all ingress except from your frontend, restrict egress to only specific external IPs. Policies are additive — multiple policies combine. Important: NetworkPolicy requires a CNI plugin that supports it (Calico, Cilium, WeaveNet — NOT the default kubenet). Without a supporting CNI, NetworkPolicy is accepted but ignored.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('storage-k8s')">← Storage</button>
+        <button class="mark-done-btn" onclick="markDone('rbac')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- ===== CHEATSHEET ===== -->
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow" style="color:var(--accent)">// STUDY AID</div>
+        <div class="lesson-title">📋 Docker & K8s Cheatsheet</div>
+        <div class="lesson-subtitle">All key concepts, commands, and tradeoffs on one page. Review before your interview.</div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title docker-title">🐳 Docker Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>Container vs VM</td><td>Containers share kernel (faster, lighter). VMs have full OS (stronger isolation).</td></tr>
+          <tr><td>Image layers</td><td>Read-only layers stacked. Container adds writable layer on top.</td></tr>
+          <tr><td>Cache busting</td><td>Put frequently-changing files LAST. COPY package.json → RUN npm install → COPY src</td></tr>
+          <tr><td>Multi-stage build</td><td>Separate build & runtime stages. Only copy artifacts. Typical 5-10x size reduction.</td></tr>
+          <tr><td>CMD vs ENTRYPOINT</td><td>ENTRYPOINT = fixed executable. CMD = default args (overridable). Use exec form [].</td></tr>
+          <tr><td>Named volume</td><td>Docker manages location. Persists beyond container. Use for databases.</td></tr>
+          <tr><td>Bind mount</td><td>Host path mapped. Use for dev hot reload. Not portable.</td></tr>
+          <tr><td>Bridge network</td><td>Default. Containers communicate by name via Docker DNS.</td></tr>
+          <tr><td>Security rule #1</td><td>Never run as root. Add non-root USER in Dockerfile.</td></tr>
+          <tr><td>Secrets</td><td>Never ENV or COPY into image. Inject at runtime or use secret managers.</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title k8s-title">☸️ Kubernetes Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>etcd</td><td>The cluster brain. All state stored here. Most critical component. Always backup.</td></tr>
+          <tr><td>kube-scheduler</td><td>ASSIGNS pods to nodes. Does NOT start them (kubelet does).</td></tr>
+          <tr><td>kubelet</td><td>Node agent. Only component talking to container runtime directly.</td></tr>
+          <tr><td>Reconciliation loop</td><td>Controllers continuously compare desired vs actual state and act to fix.</td></tr>
+          <tr><td>Pod vs Deployment</td><td>Never create bare Pods. Deployments manage ReplicaSets → manage Pods.</td></tr>
+          <tr><td>Resources requests</td><td>Required for scheduler. Required for HPA. Always set both requests and limits.</td></tr>
+          <tr><td>OOMKilled</td><td>Container exceeded memory limit → killed. Set limits 2x requests as starting point.</td></tr>
+          <tr><td>Liveness probe</td><td>Failure = restart container. For deadlocks.</td></tr>
+          <tr><td>Readiness probe</td><td>Failure = remove from endpoints (no restart). For traffic gating.</td></tr>
+          <tr><td>ClusterIP</td><td>Internal only. NodePort = external via port. LoadBalancer = cloud LB. Ingress = HTTP routing.</td></tr>
+          <tr><td>K8s Secrets</td><td>Base64 ≠ encryption. Enable EncryptionConfig or use external secret managers.</td></tr>
+          <tr><td>StatefulSet vs Deployment</td><td>StatefulSet: stable identity, ordered pods, own PVC per pod. For databases.</td></tr>
+          <tr><td>HPA</td><td>Scales replica count. Needs metrics-server. Requires resource requests on pods.</td></tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Essential kubectl Commands</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang shell">SHELL — KUBECTL CHEATSHEET</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Core</span>
+kubectl get pods -n production -o wide
+kubectl describe pod &lt;name&gt; -n production  <span class="cm"># events, status, probe results</span>
+kubectl logs &lt;pod&gt; -c &lt;container&gt; --previous <span class="cm"># prev container logs</span>
+kubectl exec -it &lt;pod&gt; -- bash
+kubectl apply -f manifest.yaml
+kubectl delete -f manifest.yaml
+
+<span class="cm"># Deployments</span>
+kubectl rollout status deployment/myapp
+kubectl rollout undo deployment/myapp
+kubectl rollout history deployment/myapp
+kubectl set image deployment/myapp container=image:tag
+
+<span class="cm"># Debugging</span>
+kubectl get events --sort-by=.metadata.creationTimestamp
+kubectl top nodes
+kubectl top pods
+kubectl describe node &lt;node-name&gt;
+
+<span class="cm"># Config</span>
+kubectl config get-contexts
+kubectl config use-context my-cluster
+kubectl create secret generic mysecret --from-literal=password=abc
+kubectl get secret mysecret -o jsonpath='{.data.password}' | base64 -d</pre>
+        </div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rbac')">← RBAC</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TOPICS = ['docker-basics','dockerfile','images-layers','networking','volumes','compose','docker-security','k8s-architecture','pods-deployments','services-ingress','configmaps-secrets','scaling','storage-k8s','health-probes','rbac','cheatsheet'];
+const state = {
+  completed: new Set(JSON.parse(localStorage.getItem('dk-done') || '[]')),
+  xp: parseInt(localStorage.getItem('dk-xp') || '0'),
+  totalTopics: TOPICS.length
+};
+
+function showPage(p) {
+  document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  if (p === 'home') document.getElementById('nav-home').classList.add('active');
+  updateXP();
+}
+
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  const l = document.getElementById('lesson-' + id);
+  if (l) l.classList.add('active');
+  const n = document.getElementById('nav-' + id);
+  if (n) n.classList.add('active');
+  document.querySelector('main').scrollTo(0, 0);
+  window.scrollTo(0, 0);
+}
+
+function checkQuiz(btn, id, result) {
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById('quiz-' + id + '-fb');
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback show right';
+    fb.textContent = '✅ Correct! Well done.';
+    addXP(20);
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong';
+    fb.textContent = '❌ Not quite — review the section above.';
+    opts.forEach(o => {
+      if (o.getAttribute('onclick') && o.getAttribute('onclick').includes("'correct'")) {
+        o.classList.add('correct');
+      }
+    });
+  }
+}
+
+function toggleAnswer(el) {
+  el.classList.toggle('open');
+  const next = el.nextElementSibling;
+  if (next && next.classList.contains('interview-a')) next.classList.toggle('open');
+}
+
+function markDone(id) {
+  if (!state.completed.has(id)) {
+    state.completed.add(id);
+    addXP(50);
+    localStorage.setItem('dk-done', JSON.stringify([...state.completed]));
+    const n = document.getElementById('nav-' + id);
+    if (n) n.classList.add('completed');
+    const btn = event.target;
+    btn.textContent = '✓ Done!';
+  }
+  updateProgress();
+}
+
+function addXP(a) {
+  state.xp += a;
+  localStorage.setItem('dk-xp', state.xp.toString());
+  updateXP();
+}
+
+function updateXP() {
+  document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`;
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = (state.completed.size / state.totalTopics) * 100;
+  document.getElementById('globalProgress').style.width = pct + '%';
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 2000);
+  });
+}
+
+function init() {
+  state.completed.forEach(id => {
+    const n = document.getElementById('nav-' + id);
+    if (n) n.classList.add('completed');
+  });
+  updateProgress();
+  updateXP();
+}
+init();
+</script>
+</body>
+</html>

@@ -1,245 +1,957 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C# & .NET — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
-    --accent: #6b4bb3; --accent2: #9b6bdd; --accent3: #7c5cfc; --accent4: #00d4ff;
-    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
-    --card-radius: 12px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(107,75,179,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(107,75,179,0.03) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
-  }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
-  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(107,75,179,0.08); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
-  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(107,75,179,0.15); color: var(--accent); border: 1px solid rgba(107,75,179,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# & .NET 8 — Interview Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#090c14;--surface:#0e1220;--surface2:#131828;--border:#1a2035;--accent:#512bd4;--accent2:#00b4d8;--accent3:#4cc9f0;--accent4:#7209b7;--text:#e8eaf6;--text-dim:#8896b8;--text-dimmer:#3a4460;--yellow:#ffd60a;--green:#38b000;--card-radius:12px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(81,43,212,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(81,43,212,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+        header{position:sticky;top:0;z-index:100;background:rgba(9,12,20,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+        .logo{font-family:'Space Mono',monospace;font-size:14px;color:var(--accent3);letter-spacing:2px}
+        .logo span{color:var(--text-dim)}
+        .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+        .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width 0.5s ease;width:0%}
+        .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(255,214,10,0.1);border:1px solid rgba(255,214,10,0.2);padding:4px 12px;border-radius:20px}
+        .app{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+        nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+        .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+        .nav-item:hover{color:var(--text);background:var(--surface)}
+        .nav-item.active{color:var(--accent3);border-left-color:var(--accent3);background:rgba(76,201,240,0.05)}
+        .nav-item .icon{font-size:16px;width:20px;text-align:center}
+        .nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--accent3);display:none}
+        .nav-item.completed .done-dot{display:block}
+        main{overflow-y:auto}
+        .hero{padding:60px 48px;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at 20% 50%,rgba(81,43,212,0.07) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(76,201,240,0.05) 0%,transparent 60%)}
+        .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent3);margin-bottom:16px}
+        .hero h1{font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;margin-bottom:16px;background:linear-gradient(135deg,var(--text) 0%,var(--text-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero h1 .highlight{background:linear-gradient(135deg,var(--accent3) 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{color:var(--text-dim);font-size:16px;max-width:520px;line-height:1.7;margin-bottom:32px;font-weight:400}
+        .stat-row{display:flex;gap:32px;flex-wrap:wrap}
+        .stat{display:flex;flex-direction:column;gap:4px}
+        .stat-num{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--accent3)}
+        .stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+        .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border)}
+        .topic-card{background:var(--bg);padding:28px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+        .topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+        .topic-card:hover{background:var(--surface)}
+        .topic-card:hover::before{opacity:1}
+        .card-color-0::before{background:radial-gradient(circle at 0% 0%,rgba(81,43,212,0.1),transparent 60%)}
+        .card-color-1::before{background:radial-gradient(circle at 0% 0%,rgba(76,201,240,0.08),transparent 60%)}
+        .card-color-2::before{background:radial-gradient(circle at 0% 0%,rgba(114,9,183,0.08),transparent 60%)}
+        .card-color-3::before{background:radial-gradient(circle at 0% 0%,rgba(0,180,216,0.08),transparent 60%)}
+        .card-emoji{font-size:32px;margin-bottom:12px;display:block}
+        .card-title{font-size:16px;font-weight:700;margin-bottom:6px}
+        .card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:16px;font-weight:400}
+        .card-tag-row{display:flex;flex-wrap:wrap;gap:6px}
+        .tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+        .tag.hot{background:rgba(76,201,240,0.1);color:var(--accent3);border-color:rgba(76,201,240,0.2)}
+        .tag.key{background:rgba(81,43,212,0.1);color:#9b8bff;border-color:rgba(81,43,212,0.2)}
+        .lesson-page{display:none;padding:40px 48px;max-width:900px}
+        .lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+        .lesson-breadcrumb:hover{color:var(--accent3)}
+        .lesson-breadcrumb::before{content:'← '}
+        .lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+        .lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
+        .lesson-title{font-size:36px;font-weight:800;margin-bottom:12px}
+        .lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:600px;font-weight:400}
+        .content-section{margin-bottom:40px}
+        .section-title{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+        .section-title::before{content:'';width:3px;height:20px;background:var(--accent3);border-radius:2px}
+        .prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+        .prose strong{color:var(--text);font-weight:700}
+        .prose .hl{color:var(--accent3)}
+        .code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+        .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+        .code-lang{font-size:10px;letter-spacing:2px;color:var(--accent3);font-family:'Space Mono',monospace}
+        .copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+        .copy-btn:hover{color:var(--accent3);border-color:var(--accent3)}
+        pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.7;color:#b8cde8;font-family:'JetBrains Mono',monospace}
+        .kw{color:#569cd6}.fn{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#4a5568;font-style:italic}.op{color:#9cdcfe}.id{color:#dcdcaa}
+        .analogy-box{background:rgba(255,214,10,0.05);border:1px solid rgba(255,214,10,0.15);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:20px 24px;margin:20px 0}
+        .analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+        .analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+        .interview-box{background:rgba(81,43,212,0.05);border:1px solid rgba(81,43,212,0.2);border-radius:var(--card-radius);padding:20px 24px;margin:20px 0}
+        .interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9b8bff;margin-bottom:12px}
+        .interview-q{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+        .interview-q::after{content:'+';font-family:'Space Mono',monospace;color:#9b8bff;font-size:16px;transition:transform 0.2s}
+        .interview-q.open::after{transform:rotate(45deg)}
+        .interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400;padding-top:12px;border-top:1px solid var(--border);margin-top:8px}
+        .interview-a.open{display:block}
+        .info-box{background:rgba(76,201,240,0.05);border:1px solid rgba(76,201,240,0.15);border-left:3px solid var(--accent3);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7}
+        .warn-box{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.15);border-left:3px solid #ff6b35;border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7}
+        .warn-box strong{color:#ff6b35}
+        .cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+        .cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+        .cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.6}
+        .cheat-table tr:last-child td{border-bottom:none}
+        .cheat-table td:first-child{color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:12px}
+        .quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+        .quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px}
+        .quiz-q{font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.5}
+        .quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+        .quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:10px;font-weight:600}
+        .quiz-opt:hover{border-color:var(--accent3)}
+        .quiz-opt.correct{border-color:var(--green);background:rgba(56,176,0,0.05);color:var(--green)}
+        .quiz-opt.wrong{border-color:#e74c3c;background:rgba(231,76,60,0.05);color:#e74c3c}
+        .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+        .quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+        .quiz-feedback.show{display:block}
+        .quiz-feedback.right{background:rgba(56,176,0,0.1);color:var(--green);border:1px solid rgba(56,176,0,0.2)}
+        .quiz-feedback.wrong{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+        .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px}
+        .btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+        .btn-primary{background:var(--accent3);color:var(--bg)}
+        .btn-primary:hover{box-shadow:0 0 20px rgba(76,201,240,0.4);transform:translateY(-1px)}
+        .btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+        .btn-secondary:hover{border-color:var(--accent3);color:var(--text)}
+        .mark-done-btn{background:rgba(76,201,240,0.1);color:var(--accent3);border:1px solid rgba(76,201,240,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        #home-page{display:block}
+    </style>
 </head>
 <body>
 <header>
-  <div class="logo">C#<span>·</span>DOTNET <span>// PREP</span></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
-  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+    <div class="logo">C# <span>// .NET 8 PREP</span></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+    <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 <div class="app">
-  <nav class="sidebar">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">C#</div>
-    <div class="nav-item" onclick="showLesson('async-await')" id="nav-async-await"><span>⏳</span> Async/Await <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('linq')" id="nav-linq"><span>🔍</span> LINQ <span class="done-dot"></span></div>
-    <div class="nav-section-title">.NET</div>
-    <div class="nav-item" onclick="showLesson('di-middleware')" id="nav-di-middleware"><span>🪣</span> DI & Middleware <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('ef-core')" id="nav-ef-core"><span>🗄️</span> EF Core <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
-  </nav>
-  <main>
-    <div id="home-page">
-      <div class="hero">
-        <h1>Master <span class="highlight">C# & .NET</span></h1>
-        <p class="hero-sub">Interview prep for C# and .NET: async/await, LINQ, dependency injection, middleware, and EF Core.</p>
-      </div>
-      <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('async-await')"><span class="card-emoji">⏳</span><div class="card-title">Async/Await</div><div class="card-desc">Task, async/await, ConfigureAwait, cancellation</div></div>
-        <div class="topic-card" onclick="showLesson('linq')"><span class="card-emoji">🔍</span><div class="card-title">LINQ</div><div class="card-desc">Deferred execution, IEnumerable, query syntax</div></div>
-        <div class="topic-card" onclick="showLesson('di-middleware')"><span class="card-emoji">🪣</span><div class="card-title">DI & Middleware</div><div class="card-desc">Service lifetime, pipeline, minimal APIs</div></div>
-        <div class="topic-card" onclick="showLesson('ef-core')"><span class="card-emoji">🗄️</span><div class="card-title">EF Core</div><div class="card-desc">DbContext, migrations, queries, tracking</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
-      </div>
-    </div>
-    <div id="lesson-async-await" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">⏳ Async/Await</div>
-      <div class="lesson-subtitle">Task, async/await, ConfigureAwait, and cancellation.</div>
-      <div class="content-section">
-        <div class="section-title">Key concepts</div>
-        <div class="prose">Async methods return <strong>Task</strong> or <strong>Task&lt;T&gt;</strong>. <code>await</code> unwraps the result and frees the thread. Use <code>ConfigureAwait(false)</code> in library code to avoid capturing the sync context. Use <code>CancellationToken</code> for cancellation.</div>
-        <div class="code-block"><pre>public async Task&lt;User&gt; GetUserAsync(int id, CancellationToken ct = default)
+    <nav class="sidebar">
+        <div class="nav-section-title">Start Here</div>
+        <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span> Home</div>
+        <div class="nav-section-title">C# Core</div>
+        <div class="nav-item" onclick="showLesson('csharp-types')" id="nav-csharp-types"><span class="icon">📐</span> Types & Value vs Reference<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('oop-csharp')" id="nav-oop-csharp"><span class="icon">🧬</span> OOP in C#<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('generics')" id="nav-generics"><span class="icon">🔧</span> Generics & Collections<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('async-csharp')" id="nav-async-csharp"><span class="icon">⚡</span> Async/Await & Tasks<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('linq')" id="nav-linq"><span class="icon">🔍</span> LINQ<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('delegates-events')" id="nav-delegates-events"><span class="icon">📡</span> Delegates & Events<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('memory-gc')" id="nav-memory-gc"><span class="icon">🧠</span> Memory & GC<span class="done-dot"></span></div>
+        <div class="nav-section-title">.NET 8</div>
+        <div class="nav-item" onclick="showLesson('aspnet-core')" id="nav-aspnet-core"><span class="icon">🌐</span> ASP.NET Core<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('dependency-injection')" id="nav-dependency-injection"><span class="icon">💉</span> Dependency Injection<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('ef-core')" id="nav-ef-core"><span class="icon">🗄️</span> Entity Framework Core<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('middleware-pipeline')" id="nav-middleware-pipeline"><span class="icon">🔗</span> Middleware & Pipeline<span class="done-dot"></span></div>
+        <div class="nav-item" onclick="showLesson('dotnet-new-features')" id="nav-dotnet-new-features"><span class="icon">✨</span> .NET 8 New Features<span class="done-dot"></span></div>
+        <div class="nav-section-title">Interview Blitz</div>
+        <div class="nav-item" onclick="showLesson('cs-cheatsheet')" id="nav-cs-cheatsheet"><span class="icon">📋</span> Full Cheatsheet<span class="done-dot"></span></div>
+    </nav>
+    <main id="mainContent">
+        <div id="home-page">
+            <div class="hero">
+                <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+                <h1>Master <span class="highlight">C#</span> &<br>.NET 8</h1>
+                <p class="hero-sub">From value types and async/await to Entity Framework, dependency injection, and the latest .NET 8 features — everything for your C# interview.</p>
+                <div class="stat-row">
+                    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Core Topics</div></div>
+                    <div class="stat"><div class="stat-num">55+</div><div class="stat-label">Interview Questions</div></div>
+                    <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Code Examples</div></div>
+                </div>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card card-color-0" onclick="showLesson('csharp-types')"><span class="card-emoji">📐</span><div class="card-title">Types & Value vs Reference</div><div class="card-desc">Stack vs heap, struct vs class, boxing/unboxing, nullable types, records.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('oop-csharp')"><span class="card-emoji">🧬</span><div class="card-title">OOP in C#</div><div class="card-desc">Abstract vs interface, virtual vs override, sealed, polymorphism patterns.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('generics')"><span class="card-emoji">🔧</span><div class="card-title">Generics & Collections</div><div class="card-desc">List, Dictionary, HashSet, IEnumerable, generic constraints, covariance.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('async-csharp')"><span class="card-emoji">⚡</span><div class="card-title">Async/Await & Tasks</div><div class="card-desc">Task, ValueTask, ConfigureAwait, deadlocks, CancellationToken, Parallel.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-0" onclick="showLesson('linq')"><span class="card-emoji">🔍</span><div class="card-title">LINQ</div><div class="card-desc">Deferred execution, query vs method syntax, IQueryable vs IEnumerable.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('delegates-events')"><span class="card-emoji">📡</span><div class="card-title">Delegates & Events</div><div class="card-desc">Func, Action, Predicate, multicast delegates, events, EventHandler pattern.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('memory-gc')"><span class="card-emoji">🧠</span><div class="card-title">Memory & GC</div><div class="card-desc">Generations, IDisposable, using statement, finalizers, Span&lt;T&gt;, Memory&lt;T&gt;.</div><div class="card-tag-row"><span class="tag key">ADVANCED</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('aspnet-core')"><span class="card-emoji">🌐</span><div class="card-title">ASP.NET Core</div><div class="card-desc">Minimal API, controllers, filters, model binding, action results, routing.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-0" onclick="showLesson('dependency-injection')"><span class="card-emoji">💉</span><div class="card-title">Dependency Injection</div><div class="card-desc">Singleton, Scoped, Transient lifetimes, IServiceCollection, service locator anti-pattern.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+                <div class="topic-card card-color-1" onclick="showLesson('ef-core')"><span class="card-emoji">🗄️</span><div class="card-title">Entity Framework Core</div><div class="card-desc">DbContext, migrations, N+1, AsNoTracking, raw SQL, relationships.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+                <div class="topic-card card-color-2" onclick="showLesson('middleware-pipeline')"><span class="card-emoji">🔗</span><div class="card-title">Middleware & Pipeline</div><div class="card-desc">Request pipeline, custom middleware, filters, exception handling.</div><div class="card-tag-row"><span class="tag key">DOTNET CORE</span></div></div>
+                <div class="topic-card card-color-3" onclick="showLesson('dotnet-new-features')"><span class="card-emoji">✨</span><div class="card-title">.NET 8 New Features</div><div class="card-desc">Primary constructors, collection expressions, Frozen collections, Native AOT, Keyed DI.</div><div class="card-tag-row"><span class="tag hot">NEW IN .NET 8</span></div></div>
+            </div>
+        </div>
+
+        <!-- TYPES -->
+        <div id="lesson-csharp-types" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// C# CORE</div>
+                <div class="lesson-title">📐 Types: Value vs Reference</div>
+                <div class="lesson-subtitle">The most fundamental C# concept. Understanding the stack, heap, and type system prevents entire classes of bugs.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Value Types vs Reference Types</div>
+                <table class="cheat-table">
+                    <tr><th>Aspect</th><th>Value Types</th><th>Reference Types</th></tr>
+                    <tr><td>Stored on</td><td>Stack (usually)</td><td>Heap</td></tr>
+                    <tr><td>Examples</td><td>int, bool, struct, enum, double</td><td>class, string, array, interface</td></tr>
+                    <tr><td>Assignment</td><td>Copies the value</td><td>Copies the reference (pointer)</td></tr>
+                    <tr><td>Default value</td><td>0 / false / empty struct</td><td>null</td></tr>
+                    <tr><td>Nullable</td><td>int? (explicit nullable)</td><td>Always nullable by default</td></tr>
+                </table>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Value type — copy semantics</span>
+<span class="kw">int</span> a = <span class="nm">5</span>;
+<span class="kw">int</span> b = a;    <span class="cm">// b is a COPY</span>
+b = <span class="nm">10</span>;
+<span class="id">Console</span>.WriteLine(a); <span class="cm">// 5 — unchanged</span>
+
+<span class="cm">// Reference type — reference semantics</span>
+<span class="kw">var</span> list1 = <span class="kw">new</span> <span class="fn">List</span>&lt;<span class="kw">int</span>&gt; { <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span> };
+<span class="kw">var</span> list2 = list1;    <span class="cm">// list2 points to SAME list</span>
+list2.Add(<span class="nm">4</span>);
+<span class="id">Console</span>.WriteLine(list1.Count); <span class="cm">// 4 — list1 changed!</span>
+
+<span class="cm">// Boxing — wrapping value type in object (heap allocation!)</span>
+<span class="kw">int</span> x = <span class="nm">42</span>;
+<span class="kw">object</span> obj = x;   <span class="cm">// boxing — allocates on heap</span>
+<span class="kw">int</span> y = (<span class="kw">int</span>)obj; <span class="cm">// unboxing — type check + copy</span>
+<span class="cm">// Avoid in hot paths — causes GC pressure!</span>
+
+<span class="cm">// struct vs class — key differences</span>
+<span class="kw">struct</span> <span class="fn">Point</span> { <span class="kw">public int</span> X, Y; }  <span class="cm">// value type, stack allocated</span>
+<span class="kw">record</span> <span class="fn">Person</span>(<span class="kw">string</span> Name, <span class="kw">int</span> Age); <span class="cm">// immutable reference type (.NET 5+)</span>
+<span class="kw">record struct</span> <span class="fn">Coord</span>(<span class="kw">double</span> Lat, <span class="kw">double</span> Lon); <span class="cm">// value type record (.NET 6+)</span></pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Nullable Reference Types (C# 8+)</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Enable in .csproj: &lt;Nullable&gt;enable&lt;/Nullable&gt;</span>
+<span class="cm">// Now compiler warns about potential null dereferences</span>
+
+<span class="kw">string</span> name = <span class="st">"Hany"</span>;     <span class="cm">// non-nullable — cannot be null</span>
+<span class="kw">string</span>? nullableName = <span class="kw">null</span>; <span class="cm">// explicitly nullable</span>
+
+<span class="cm">// Null-conditional operator</span>
+<span class="kw">int</span>? length = nullableName?.Length; <span class="cm">// null if nullableName is null</span>
+
+<span class="cm">// Null-coalescing</span>
+<span class="kw">string</span> display = nullableName ?? <span class="st">"Anonymous"</span>;
+nullableName ??= <span class="st">"Default"</span>; <span class="cm">// assign if null</span>
+
+<span class="cm">// Null-forgiving operator (use sparingly!)</span>
+<span class="kw">string</span> guaranteed = nullableName!; <span class="cm">// "trust me, not null"</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is boxing and why should you avoid it?</div>
+                <div class="interview-a">Boxing converts a value type (int, struct) to object by allocating it on the heap and wrapping it. Unboxing is the reverse. Both are relatively expensive operations: boxing allocates heap memory (GC pressure), unboxing requires a type check and memory copy. Avoid in hot loops, sorting comparisons, or collections that could use generic alternatives (use List&lt;int&gt; instead of ArrayList).</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When should you use struct instead of class?</div>
+                <div class="interview-a">Use struct when: (1) it represents a single value (Point, Color, DateTime), (2) size is small (guideline: under 16 bytes), (3) it's logically immutable, (4) it won't be boxed frequently. Structs avoid heap allocation and GC pressure. Avoid structs for: objects with lots of behavior, large data, objects needing inheritance, objects passed frequently by reference.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between record and class in C#?</div>
+                <div class="interview-a">Records provide value-based equality (two records are equal if all properties are equal), immutability by default, built-in ToString(), and non-destructive mutation via `with` expressions. Classes use reference equality by default and are mutable. Use records for DTOs, value objects, and data transfer. Record structs (C# 10) combine record features with value type semantics.</div>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">What will Console.WriteLine(a) print?<br><small style="font-family:'JetBrains Mono',monospace;color:var(--text-dim);font-size:12px">int a = 5; int b = a; b = 10;</small></div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ct','correct')"><span class="opt-letter">A</span>5 ✓</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ct','wrong')"><span class="opt-letter">B</span>10</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ct','wrong')"><span class="opt-letter">C</span>0</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ct','wrong')"><span class="opt-letter">D</span>Error</div>
+                </div>
+                <div class="quiz-feedback" id="quiz-ct-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="mark-done-btn" onclick="markDone('csharp-types')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('oop-csharp')">Next: OOP →</button>
+            </div>
+        </div>
+
+        <!-- OOP -->
+        <div id="lesson-oop-csharp" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// C# CORE</div>
+                <div class="lesson-title">🧬 OOP in C#</div>
+                <div class="lesson-subtitle">Inheritance, polymorphism, abstract classes, interfaces — and the .NET 8 additions like default interface methods.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Abstract Class vs Interface</div>
+                <table class="cheat-table">
+                    <tr><th>Feature</th><th>Abstract Class</th><th>Interface</th></tr>
+                    <tr><td>Instantiation</td><td>❌ Cannot instantiate</td><td>❌ Cannot instantiate</td></tr>
+                    <tr><td>Multiple inheritance</td><td>❌ Single inheritance only</td><td>✅ Implement multiple</td></tr>
+                    <tr><td>State (fields)</td><td>✅ Can have fields</td><td>❌ No instance fields</td></tr>
+                    <tr><td>Constructor</td><td>✅ Can have constructors</td><td>❌ No constructors</td></tr>
+                    <tr><td>Default implementation</td><td>✅ Yes</td><td>✅ Yes (C# 8+)</td></tr>
+                    <tr><td>Access modifiers</td><td>Any</td><td>Public by default</td></tr>
+                    <tr><td>Use when</td><td>Shared implementation + IS-A</td><td>Contract + CAN-DO</td></tr>
+                </table>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Abstract class — IS-A relationship, shared state</span>
+<span class="kw">public abstract class</span> <span class="fn">Shape</span>
 {
-  await _httpClient.GetAsync(url, ct);
-  return await _db.Users.FindAsync(id, ct);
-}</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is the difference between Task.Run and async/await?</div>
-        <div class="interview-a">Task.Run offloads CPU-bound work to the thread pool. async/await is for I/O-bound work (no new thread; the method yields until I/O completes). Use Task.Run only when you have blocking or CPU-heavy code.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('async-await')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-linq" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔍 LINQ</div>
-      <div class="lesson-subtitle">Deferred execution, IEnumerable, IQueryable, and query syntax.</div>
-      <div class="content-section">
-        <div class="section-title">Deferred vs immediate execution</div>
-        <div class="prose"><strong>Deferred:</strong> The query is not executed until you iterate (foreach, ToList(), ToArray(), etc.). So you can build a query step by step and run it once. <strong>Immediate:</strong> Methods like Count(), First(), Single(), ToList() execute the query right away. Use deferred when you want to compose or delay; be aware that iterating twice runs the query twice unless you materialize with ToList().</div>
-        <div class="code-block"><pre>var q = items.Where(x => x.Active);  // no query yet
-var list = q.ToList();               // query runs here</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">IEnumerable vs IQueryable</div>
-        <div class="prose"><strong>IEnumerable</strong>: in-memory; operations are executed in .NET. <strong>IQueryable</strong>: expression tree; the provider (e.g. EF Core) translates to SQL and runs on the server. So filtering on IQueryable pushes the filter to the DB; filtering on IEnumerable runs in memory. Use IQueryable for DB-backed data to avoid loading everything.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When does a LINQ query actually execute?</div>
-        <div class="interview-a">When you enumerate the result: foreach, ToList(), ToArray(), Count(), First(), etc. Until then it is deferred. With IQueryable, execution happens when the query is translated and sent to the provider (e.g. database).</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why use IQueryable instead of IEnumerable for database queries?</div>
-        <div class="interview-a">IQueryable builds an expression tree that the provider (EF Core, etc.) converts to SQL. Filtering and projection happen in the database, so you only load what you need. With IEnumerable you would load full entities and filter in memory, which is inefficient for large data.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('linq')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-di-middleware" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🪣 DI & Middleware</div>
-      <div class="lesson-subtitle">Service lifetime (Singleton, Scoped, Transient) and request pipeline.</div>
-      <div class="content-section">
-        <div class="section-title">Service lifetimes</div>
-        <div class="prose"><strong>Singleton:</strong> One instance for the entire application lifetime. Use for stateless services, caches, config. Do not hold request-specific or scoped data. <strong>Scoped:</strong> One instance per request (or per scope). Use for DbContext, request-scoped state. <strong>Transient:</strong> New instance every time it is resolved. Use for lightweight, stateless services. Avoid injecting Scoped into Singleton (captured dependency).</div>
-        <div class="code-block"><pre>services.AddSingleton<ICache, Cache>();
-services.AddScoped<AppDbContext>();
-services.AddTransient<IEmailSender, EmailSender>();</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Middleware pipeline</div>
-        <div class="prose">Middleware runs in the order it is registered. Each middleware can call <code>next()</code> to pass to the next, or short-circuit (e.g. return 401). Order matters: e.g. authentication before authorization, exception handling first, CORS before endpoints. In minimal APIs and MVC, middleware wraps the entire request.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why not inject Scoped into Singleton?</div>
-        <div class="interview-a">Singleton lives for the app lifetime; Scoped is created per request. If a Singleton held a Scoped dependency, it would capture one scope (e.g. first request) and reuse it for all later requests, leading to wrong or stale data. Resolve Scoped from within a scope (e.g. in the controller or middleware).</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is the difference between Use and Run in middleware?</div>
-        <div class="interview-a"><code>Use</code> can call <code>next</code> to pass to the next middleware. <code>Run</code> is terminal: it does not have a next delegate and typically ends the pipeline. Use <code>Use</code> when you want to add logic before and optionally after the rest of the pipeline.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('di-middleware')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-ef-core" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🗄️ EF Core</div>
-      <div class="lesson-subtitle">DbContext, migrations, tracking, and eager loading.</div>
-      <div class="content-section">
-        <div class="section-title">DbContext and unit of work</div>
-        <div class="prose"><strong>DbContext</strong> represents a session with the database and a unit of work: track entities, cache them, and flush changes with <code>SaveChanges</code>. Register as Scoped so each request gets its own context. Use one DbContext per request; do not share across requests or use long-lived contexts for web apps.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Tracking and read-only queries</div>
-        <div class="prose">By default EF tracks entities so it can detect changes and persist them. For read-only queries use <code>AsNoTracking()</code> to avoid tracking overhead and prevent accidental updates. Use <code>AsNoTrackingWithIdentityResolution()</code> when you still want identity resolution but no change tracking.</div>
-        <div class="code-block"><pre>var users = await _db.Users.AsNoTracking().Where(u => u.Active).ToListAsync();</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Eager loading and N+1</div>
-        <div class="prose">Use <code>Include</code> and <code>ThenInclude</code> to load related data in one query and avoid N+1. For read-only projections, prefer <code>Select</code> to load only the columns you need. Avoid loading large graphs if you only need a few fields; project to DTOs or anonymous types.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When do you use AsNoTracking?</div>
-        <div class="interview-a">For read-only queries: when you only read data and do not need to update or delete those entities. It improves performance and prevents the context from tracking entities you do not intend to change. Use it in APIs that return DTOs or in reporting queries.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How do you avoid N+1 in EF Core?</div>
-        <div class="interview-a">Eager load with <code>Include</code>/<code>ThenInclude</code> when you need related entities. For simple data, use <code>Select</code> to project only the columns you need, possibly with a join, so EF generates a single efficient query instead of many.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('ef-core')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 C# & .NET cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for interviews.</div>
-      <div class="content-section">
-        <div class="section-title">C#</div>
-        <div class="prose">async/await, Task vs Task&lt;T&gt;, ConfigureAwait(false) in libraries, CancellationToken. LINQ: deferred vs immediate; IEnumerable (in-memory) vs IQueryable (expression tree, DB). Value vs reference types. IDisposable and using.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">.NET</div>
-        <div class="prose">DI: Singleton, Scoped, Transient; do not inject Scoped into Singleton. Middleware: order matters, Use vs Run. EF Core: DbContext (Scoped), migrations, AsNoTracking, Include/ThenInclude for N+1. Minimal APIs vs MVC controllers.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
-    </div>
-  </main>
+    <span class="kw">public string</span> Color { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="st">"Black"</span>; <span class="cm">// state OK</span>
+    <span class="kw">public abstract double</span> <span class="fn">Area</span>();              <span class="cm">// must override</span>
+    <span class="kw">public virtual string</span> <span class="fn">Describe</span>() =>        <span class="cm">// can override</span>
+        <span class="st">$"A {Color} shape with area {Area():F2}"</span>;
+}
+
+<span class="cm">// Interface — CAN-DO contract</span>
+<span class="kw">public interface</span> <span class="fn">IDrawable</span>
+{
+    <span class="kw">void</span> <span class="fn">Draw</span>();
+    <span class="kw">void</span> <span class="fn">DrawWithColor</span>(<span class="kw">string</span> color) => <span class="fn">Draw</span>(); <span class="cm">// default impl C#8+</span>
+}
+
+<span class="kw">public class</span> <span class="fn">Circle</span> : <span class="fn">Shape</span>, <span class="fn">IDrawable</span>
+{
+    <span class="kw">private double</span> _radius;
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="kw">double</span> r) => _radius = r;
+    <span class="kw">public override double</span> <span class="fn">Area</span>() => Math.PI * _radius * _radius;
+    <span class="kw">public void</span> <span class="fn">Draw</span>() => Console.<span class="fn">WriteLine</span>(<span class="st">"Drawing circle"</span>);
+}
+
+<span class="cm">// sealed — prevents inheritance</span>
+<span class="kw">public sealed class</span> <span class="fn">MySingleton</span> { }
+
+<span class="cm">// Covariant return types (C# 9)</span>
+<span class="kw">public class</span> <span class="fn">AnimalFactory</span> {
+    <span class="kw">public virtual</span> <span class="fn">Animal</span> <span class="fn">Create</span>() => <span class="kw">new</span> <span class="fn">Animal</span>();
+}
+<span class="kw">public class</span> <span class="fn">DogFactory</span> : <span class="fn">AnimalFactory</span> {
+    <span class="kw">public override</span> <span class="fn">Dog</span> <span class="fn">Create</span>() => <span class="kw">new</span> <span class="fn">Dog</span>(); <span class="cm">// Dog is Animal ✓</span>
+}</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: When do you use abstract class vs interface?</div>
+                <div class="interview-a">Use abstract class when: you have shared implementation/state that subclasses should inherit, you want IS-A relationship, you need a constructor, you want to evolve the API without breaking changes. Use interface when: you want a contract multiple types can implement (CAN-DO), you need multiple "inheritance", you want loose coupling. Rule of thumb: interfaces for contracts, abstract classes for base implementations.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between virtual, override, and new?</div>
+                <div class="interview-a">virtual marks a method as overridable in subclasses. override replaces a virtual/abstract method in a subclass — polymorphic dispatch works correctly. new hides (not overrides) a method — when called through a base reference, the base method runs, not the derived one. This is a common source of bugs. Always prefer virtual/override for intentional polymorphism.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('csharp-types')">← Types</button>
+                <button class="mark-done-btn" onclick="markDone('oop-csharp')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('async-csharp')">Next: Async →</button>
+            </div>
+        </div>
+
+        <!-- ASYNC -->
+        <div id="lesson-async-csharp" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// C# CORE</div>
+                <div class="lesson-title">⚡ Async/Await & Tasks</div>
+                <div class="lesson-subtitle">The most-asked C# topic in senior interviews. Tasks, deadlocks, ValueTask, CancellationToken.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Task & async/await Fundamentals</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// async methods return Task (void equiv), Task&lt;T&gt; (value), ValueTask&lt;T&gt;</span>
+<span class="kw">public async</span> Task&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataAsync</span>(<span class="kw">string</span> url)
+{
+    <span class="kw">using var</span> client = <span class="kw">new</span> <span class="fn">HttpClient</span>();
+    <span class="kw">var</span> response = <span class="kw">await</span> client.<span class="fn">GetStringAsync</span>(url);
+    <span class="kw">return</span> response.<span class="fn">ToUpper</span>();
+}
+
+<span class="cm">// PARALLEL — run concurrently (much faster for independent I/O)</span>
+<span class="kw">var</span> (users, orders) = <span class="kw">await</span> (
+    <span class="fn">GetUsersAsync</span>(),
+    <span class="fn">GetOrdersAsync</span>()   <span class="cm">// both start at same time</span>
+);
+<span class="cm">// Or: await Task.WhenAll(task1, task2, task3)</span>
+
+<span class="cm">// CancellationToken — always pass through for cancellable operations</span>
+<span class="kw">public async</span> Task&lt;<span class="fn">List</span>&lt;<span class="kw">string</span>&gt;&gt; <span class="fn">SearchAsync</span>(
+    <span class="kw">string</span> query,
+    <span class="fn">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    ct.<span class="fn">ThrowIfCancellationRequested</span>();
+    <span class="kw">return await</span> _db.Items
+        .Where(i => i.Name.Contains(query))
+        .ToListAsync(ct);  <span class="cm">// pass CT to EF Core!</span>
+}</pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">ConfigureAwait & Deadlocks</div>
+                <div class="warn-box"><strong>⚠️ Classic .NET Deadlock:</strong> Calling .Result or .Wait() on an async method in a synchronization context (like ASP.NET classic, WinForms, WPF) deadlocks. The async method tries to resume on the original thread, but that thread is blocked waiting for it.</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// ❌ DEADLOCK in sync context (WinForms, old ASP.NET)</span>
+<span class="kw">var</span> result = <span class="fn">GetDataAsync</span>().<span class="id">Result</span>; <span class="cm">// blocks thread → deadlock!</span>
+
+<span class="cm">// ✅ Use ConfigureAwait(false) in library code</span>
+<span class="cm">// "Don't capture the sync context — any thread can resume"</span>
+<span class="kw">public async</span> Task&lt;<span class="kw">string</span>&gt; <span class="fn">LibraryMethodAsync</span>()
+{
+    <span class="kw">var</span> data = <span class="kw">await</span> _httpClient.<span class="fn">GetStringAsync</span>(url)
+        .<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>); <span class="cm">// library code: always false</span>
+    <span class="kw">return</span> data;
+}
+
+<span class="cm">// ✅ ValueTask — for hot paths (avoids allocation when result is sync)</span>
+<span class="kw">public</span> ValueTask&lt;<span class="kw">int</span>&gt; <span class="fn">GetCachedValueAsync</span>()
+{
+    <span class="kw">if</span> (_cache.TryGetValue(<span class="st">"key"</span>, <span class="kw">out int</span> cached))
+        <span class="kw">return new</span> ValueTask&lt;<span class="kw">int</span>&gt;(cached); <span class="cm">// no allocation!</span>
+
+    <span class="kw">return new</span> ValueTask&lt;<span class="kw">int</span>&gt;(<span class="fn">FetchFromDbAsync</span>());
+}</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Explain the async/await deadlock scenario</div>
+                <div class="interview-a">In a synchronization context (old ASP.NET, WinForms): async/await captures the current SynchronizationContext. When you await, the continuation is scheduled on the captured context. If you block the context thread with .Result or .Wait(), the continuation can never run because the thread is blocked. Solution: (1) Never use .Result/.Wait() in async code, (2) Use ConfigureAwait(false) in library code, (3) In ASP.NET Core there's no SynchronizationContext, so this is less of an issue.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is ValueTask and when do you use it?</div>
+                <div class="interview-a">ValueTask&lt;T&gt; is a struct (value type) alternative to Task&lt;T&gt;. It avoids heap allocation when the result is already available synchronously. Use it for hot-path methods that often return synchronously (like cache lookups). Don't use ValueTask if: it will always be async, it needs to be awaited multiple times, or the code isn't performance-critical — it's more complex to use correctly.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What does ConfigureAwait(false) do?</div>
+                <div class="interview-a">By default, await captures the SynchronizationContext and resumes on it. ConfigureAwait(false) says "don't capture the context — resume on any available thread." Use in library code (NuGet packages) to avoid deadlocks in consumers who might be in a sync context. In ASP.NET Core application code, it's less critical since there's no SynchronizationContext, but it can still have slight performance benefits.</div>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">You have two independent API calls. What's the fastest way to run them?</div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">A</span>var a = await GetA(); var b = await GetB();</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ac','correct')"><span class="opt-letter">B</span>await Task.WhenAll(GetA(), GetB()); ✓</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">C</span>Task.Run(() => GetA()); Task.Run(() => GetB());</div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">D</span>Parallel.Invoke(() => GetA(), () => GetB());</div>
+                </div>
+                <div class="quiz-feedback" id="quiz-ac-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('oop-csharp')">← OOP</button>
+                <button class="mark-done-btn" onclick="markDone('async-csharp')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('linq')">Next: LINQ →</button>
+            </div>
+        </div>
+
+        <!-- LINQ -->
+        <div id="lesson-linq" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// C# CORE</div>
+                <div class="lesson-title">🔍 LINQ</div>
+                <div class="lesson-subtitle">Language Integrated Query — one of C#'s best features. Deferred execution, IQueryable vs IEnumerable, common operators.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">LINQ Fundamentals</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C# — LINQ</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">var</span> users = <span class="kw">new</span> <span class="fn">List</span>&lt;<span class="fn">User</span>&gt; { <span class="cm">/* ... */</span> };
+
+<span class="cm">// Method syntax (more common in practice)</span>
+<span class="kw">var</span> result = users
+    .Where(u => u.Age >= <span class="nm">18</span>)
+    .<span class="fn">OrderBy</span>(u => u.Name)
+    .<span class="fn">Select</span>(u => <span class="kw">new</span> { u.Name, u.Email })
+    .<span class="fn">Take</span>(<span class="nm">10</span>)
+    .<span class="fn">ToList</span>();  <span class="cm">// ← EXECUTES HERE (deferred!)</span>
+
+<span class="cm">// GroupBy</span>
+<span class="kw">var</span> byCity = users
+    .<span class="fn">GroupBy</span>(u => u.City)
+    .<span class="fn">Select</span>(g => <span class="kw">new</span> { City = g.Key, Count = g.Count() });
+
+<span class="cm">// Aggregate (like reduce)</span>
+<span class="kw">var</span> totalAge = users.<span class="fn">Aggregate</span>(<span class="nm">0</span>, (acc, u) => acc + u.Age);
+
+<span class="cm">// SelectMany — flatten nested collections</span>
+<span class="kw">var</span> allTags = posts.<span class="fn">SelectMany</span>(p => p.Tags).<span class="fn">Distinct</span>();</pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">IEnumerable vs IQueryable — Critical Difference</div>
+                <table class="cheat-table">
+                    <tr><th>Aspect</th><th>IEnumerable&lt;T&gt;</th><th>IQueryable&lt;T&gt;</th></tr>
+                    <tr><td>Executes</td><td>In-memory (C# code)</td><td>At the data source (SQL)</td></tr>
+                    <tr><td>Used with</td><td>LINQ to Objects</td><td>EF Core, LINQ to SQL</td></tr>
+                    <tr><td>Filter location</td><td>After loading from DB</td><td>Translated to WHERE clause</td></tr>
+                    <tr><td>Performance</td><td>Loads all data first</td><td>Only loads needed data</td></tr>
+                </table>
+                <div class="warn-box"><strong>⚠️ Performance Trap:</strong> Calling AsEnumerable() too early forces loading ALL data into memory before filtering. Always filter, sort, and paginate while still IQueryable — only call ToList()/AsEnumerable() at the end.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Deferred Execution</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// LINQ queries don't execute until enumerated!</span>
+<span class="kw">var</span> query = users.Where(u => u.Active); <span class="cm">// NO execution yet</span>
+<span class="cm">// ...code...</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> u <span class="kw">in</span> query) { } <span class="cm">// EXECUTES HERE</span>
+query.<span class="fn">ToList</span>();               <span class="cm">// EXECUTES HERE (forces eval)</span>
+query.<span class="fn">Count</span>();                <span class="cm">// EXECUTES HERE</span>
+query.<span class="fn">First</span>();                <span class="cm">// EXECUTES HERE</span>
+
+<span class="cm">// Benefit: compose queries before executing</span>
+<span class="kw">var</span> q = _db.Products.Where(p => p.Active);
+<span class="kw">if</span> (hasFilter) q = q.Where(p => p.Category == filter);
+<span class="kw">if</span> (sortByPrice) q = q.<span class="fn">OrderBy</span>(p => p.Price);
+<span class="kw">var</span> results = <span class="kw">await</span> q.<span class="fn">ToListAsync</span>(); <span class="cm">// ONE optimized SQL query</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is deferred execution in LINQ?</div>
+                <div class="interview-a">LINQ queries don't execute when you define them — they execute when you iterate (foreach) or call a materializing method (ToList, Count, First, etc.). This allows query composition: you can add Where/OrderBy clauses conditionally before executing. It also means queries reflect the state of the data at execution time, not definition time. Be careful: re-iterating a deferred query may execute it multiple times.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is using IEnumerable instead of IQueryable bad with EF Core?</div>
+                <div class="interview-a">IQueryable translates LINQ operations to SQL — filtering happens in the database. If you cast to IEnumerable (e.g., calling AsEnumerable() too early or accepting IEnumerable in a method), EF loads ALL matching rows into memory and then filters in C#. For a million-row table, that's catastrophic. Always keep queries as IQueryable until you're ready to materialize.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('async-csharp')">← Async</button>
+                <button class="mark-done-btn" onclick="markDone('linq')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('delegates-events')">Next: Delegates →</button>
+            </div>
+        </div>
+
+        <!-- DELEGATES & EVENTS -->
+        <div id="lesson-delegates-events" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// C# CORE</div>
+                <div class="lesson-title">📡 Delegates & Events</div>
+                <div class="lesson-subtitle">Type-safe function pointers. The foundation of events, callbacks, and functional programming in C#.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Func, Action, Predicate</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Built-in delegate types</span>
+<span class="cm">// Action&lt;T&gt; — returns void</span>
+<span class="fn">Action</span>&lt;<span class="kw">string</span>&gt; log = msg => Console.<span class="fn">WriteLine</span>(msg);
+<span class="fn">log</span>(<span class="st">"Hello"</span>);
+
+<span class="cm">// Func&lt;T, TResult&gt; — returns a value</span>
+<span class="fn">Func</span>&lt;<span class="kw">int</span>, <span class="kw">int</span>, <span class="kw">int</span>&gt; add = (a, b) => a + b;
+<span class="kw">int</span> sum = <span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">4</span>); <span class="cm">// 7</span>
+
+<span class="cm">// Predicate&lt;T&gt; — Func&lt;T, bool&gt;</span>
+<span class="fn">Predicate</span>&lt;<span class="kw">int</span>&gt; isEven = n => n % <span class="nm">2</span> == <span class="nm">0</span>;
+
+<span class="cm">// Multicast delegate — multiple methods</span>
+<span class="fn">Action</span>&lt;<span class="kw">string</span>&gt; pipeline = (<span class="kw">string</span> s) => Console.<span class="fn">WriteLine</span>(<span class="st">"Step 1"</span>);
+pipeline += (<span class="kw">string</span> s) => Console.<span class="fn">WriteLine</span>(<span class="st">"Step 2"</span>);
+<span class="fn">pipeline</span>(<span class="st">"go"</span>); <span class="cm">// calls both!</span>
+
+<span class="cm">// Events — encapsulated multicast delegate</span>
+<span class="kw">public class</span> <span class="fn">Button</span>
+{
+    <span class="kw">public event</span> <span class="fn">EventHandler</span>&lt;<span class="fn">ClickEventArgs</span>&gt; Clicked;
+
+    <span class="kw">protected virtual void</span> <span class="fn">OnClicked</span>(<span class="fn">ClickEventArgs</span> e)
+        => Clicked?.Invoke(<span class="kw">this</span>, e); <span class="cm">// null-safe invoke</span>
+}</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between a delegate and an event?</div>
+                <div class="interview-a">A delegate is a type-safe function pointer that can be assigned, invoked, and combined. An event is an encapsulated delegate — it restricts external access: from outside the class, you can only += (subscribe) or -= (unsubscribe), not directly invoke or assign. Events prevent external code from firing or resetting all subscriptions. They implement the Observer pattern.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a closure in C#?</div>
+                <div class="interview-a">A closure is a lambda or anonymous method that captures variables from its enclosing scope. The captured variable is kept alive as long as the closure exists. Example: int count = 0; Action inc = () => count++; inc(); // count is 1 — the lambda "closes over" count. This is powerful but be careful: capturing loop variables in old C# captured the variable by reference, not value (same as JavaScript's var problem).</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('linq')">← LINQ</button>
+                <button class="mark-done-btn" onclick="markDone('delegates-events')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('dependency-injection')">Next: DI →</button>
+            </div>
+        </div>
+
+        <!-- DEPENDENCY INJECTION -->
+        <div id="lesson-dependency-injection" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// .NET 8</div>
+                <div class="lesson-title">💉 Dependency Injection</div>
+                <div class="lesson-subtitle">The #1 most asked .NET interview topic. Lifetimes, registration, and the pitfalls that cause production bugs.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Service Lifetimes</div>
+                <table class="cheat-table">
+                    <tr><th>Lifetime</th><th>One instance per</th><th>Use for</th></tr>
+                    <tr><td>Singleton</td><td>App lifetime (one ever)</td><td>Configuration, caches, stateless services</td></tr>
+                    <tr><td>Scoped</td><td>HTTP request</td><td>DbContext, unit-of-work, request state</td></tr>
+                    <tr><td>Transient</td><td>Every injection</td><td>Lightweight, stateless services</td></tr>
+                </table>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C# — Program.cs / Startup</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">var</span> builder = WebApplication.<span class="fn">CreateBuilder</span>(args);
+
+<span class="cm">// Registration</span>
+builder.Services.<span class="fn">AddSingleton</span>&lt;<span class="fn">IConfigService</span>, <span class="fn">ConfigService</span>&gt;();
+builder.Services.<span class="fn">AddScoped</span>&lt;<span class="fn">IOrderService</span>, <span class="fn">OrderService</span>&gt;();
+builder.Services.<span class="fn">AddTransient</span>&lt;<span class="fn">IEmailSender</span>, <span class="fn">SmtpEmailSender</span>&gt;();
+
+<span class="cm">// Keyed services (.NET 8 new!)</span>
+builder.Services.<span class="fn">AddKeyedSingleton</span>&lt;<span class="fn">ICache</span>, <span class="fn">RedisCache</span>&gt;(<span class="st">"redis"</span>);
+builder.Services.<span class="fn">AddKeyedSingleton</span>&lt;<span class="fn">ICache</span>, <span class="fn">MemoryCache</span>&gt;(<span class="st">"memory"</span>);
+
+<span class="cm">// Usage in controller</span>
+<span class="kw">public class</span> <span class="fn">OrderController</span>(<span class="fn">IOrderService</span> orders, <span class="cm">// injected!</span>
+    [<span class="fn">FromKeyedServices</span>(<span class="st">"redis"</span>)] <span class="fn">ICache</span> cache) : <span class="fn">ControllerBase</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="fn">IActionResult</span>&gt; <span class="fn">GetOrders</span>()
+        => Ok(<span class="kw">await</span> orders.<span class="fn">GetAllAsync</span>());
+}</pre>
+                </div>
+            </div>
+            <div class="warn-box"><strong>⚠️ Captive Dependency Anti-Pattern:</strong> Never inject a Scoped or Transient service into a Singleton. The Singleton lives forever — it captures the Scoped service from its first request and reuses it for all requests, causing state sharing bugs. DI container will throw an exception in development by default (ValidateScopes option).</div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Singleton, Scoped, and Transient?</div>
+                <div class="interview-a">Singleton: one instance for the entire app lifetime — shared by all requests and threads. Must be thread-safe. Use for: configuration readers, in-memory caches, stateless services. Scoped: one instance per HTTP request — new instance per request, shared within a request. Use for: DbContext, unit of work. Transient: new instance every time it's requested from DI. Use for: lightweight, stateless, not shared operations.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Service Locator anti-pattern?</div>
+                <div class="interview-a">Service Locator means calling IServiceProvider.GetService() directly inside your classes instead of receiving dependencies via constructor injection. It's an anti-pattern because: dependencies are hidden (not visible in constructor), makes unit testing hard (need to set up the whole container), creates implicit coupling to the DI framework. Always prefer constructor injection.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('delegates-events')">← Delegates</button>
+                <button class="mark-done-btn" onclick="markDone('dependency-injection')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('ef-core')">Next: EF Core →</button>
+            </div>
+        </div>
+
+        <!-- EF CORE -->
+        <div id="lesson-ef-core" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// .NET 8</div>
+                <div class="lesson-title">🗄️ Entity Framework Core</div>
+                <div class="lesson-subtitle">EF Core patterns, N+1 problem, AsNoTracking, migrations, and performance best practices.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">EF Core Fundamentals</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="kw">public class</span> <span class="fn">AppDbContext</span> : <span class="fn">DbContext</span>
+{
+    <span class="kw">public</span> <span class="fn">AppDbContext</span>(<span class="fn">DbContextOptions</span>&lt;<span class="fn">AppDbContext</span>&gt; options) : <span class="kw">base</span>(options) { }
+
+    <span class="kw">public</span> DbSet&lt;<span class="fn">User</span>&gt; Users => Set&lt;<span class="fn">User</span>&gt;();
+    <span class="kw">public</span> DbSet&lt;<span class="fn">Order</span>&gt; Orders => Set&lt;<span class="fn">Order</span>&gt;();
+
+    <span class="kw">protected override void</span> <span class="fn">OnModelCreating</span>(<span class="fn">ModelBuilder</span> mb)
+    {
+        mb.Entity&lt;<span class="fn">User</span>&gt;().HasIndex(u => u.Email).<span class="fn">IsUnique</span>();
+        mb.Entity&lt;<span class="fn">User</span>&gt;().HasMany(u => u.Orders)
+            .<span class="fn">WithOne</span>(o => o.User)
+            .<span class="fn">HasForeignKey</span>(o => o.UserId);
+    }
+}
+
+<span class="cm">// Querying best practices</span>
+<span class="cm">// ✅ AsNoTracking for read-only queries (faster!)</span>
+<span class="kw">var</span> users = <span class="kw">await</span> _db.Users
+    .<span class="fn">AsNoTracking</span>()        <span class="cm">// skip change tracking</span>
+    .Where(u => u.Active)
+    .<span class="fn">Include</span>(u => u.Orders) <span class="cm">// eager load (prevent N+1)</span>
+    .<span class="fn">Select</span>(u => <span class="kw">new</span> { u.Name, OrderCount = u.Orders.Count })
+    .<span class="fn">ToListAsync</span>(ct);
+
+<span class="cm">// ✅ Split queries for large includes (.NET 5+)</span>
+<span class="kw">var</span> users = <span class="kw">await</span> _db.Users
+    .Include(u => u.Orders).<span class="fn">ThenInclude</span>(o => o.Items)
+    .<span class="fn">AsSplitQuery</span>()  <span class="cm">// multiple queries vs cartesian explosion</span>
+    .<span class="fn">ToListAsync</span>();</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is AsNoTracking and when should you use it?</div>
+                <div class="interview-a">AsNoTracking tells EF Core not to track the returned entities in the ChangeTracker. Tracking is needed for SaveChanges() to detect modifications. For read-only queries (GET endpoints, reports), tracking wastes memory and CPU. AsNoTracking improves performance significantly for read-heavy operations — typically 2x faster for large result sets. Use it whenever you don't need to update the returned entities.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How does EF Core handle N+1 and how do you fix it?</div>
+                <div class="interview-a">EF Core N+1 happens when you access a navigation property inside a loop without loading it upfront. Fix: (1) Include() for eager loading, (2) Select() to project only what's needed, (3) AsSplitQuery() to avoid cartesian explosions with multiple includes, (4) Use Load() explicitly. EF Core 3+ throws exceptions by default for implicit lazy loading (you must explicitly enable it with UseLazyLoadingProxies).</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('dependency-injection')">← DI</button>
+                <button class="mark-done-btn" onclick="markDone('ef-core')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('dotnet-new-features')">Next: .NET 8 Features →</button>
+            </div>
+        </div>
+
+        <!-- .NET 8 FEATURES -->
+        <div id="lesson-dotnet-new-features" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// .NET 8 NEW</div>
+                <div class="lesson-title">✨ .NET 8 New Features</div>
+                <div class="lesson-subtitle">The latest C# 12 and .NET 8 features you'll be asked about in 2024/2025 interviews.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">C# 12 & .NET 8 Highlights</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C# 12 / .NET 8</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// 1. Primary constructors (classes & structs)</span>
+<span class="kw">public class</span> <span class="fn">UserService</span>(<span class="fn">IUserRepository</span> repo, <span class="fn">ILogger</span>&lt;<span class="fn">UserService</span>&gt; logger)
+{
+    <span class="kw">public async</span> Task&lt;<span class="fn">User</span>&gt; <span class="fn">GetUser</span>(<span class="kw">int</span> id)
+    {
+        logger.<span class="fn">LogInformation</span>(<span class="st">"Getting user {Id}"</span>, id);
+        <span class="kw">return await</span> repo.<span class="fn">FindAsync</span>(id);  <span class="cm">// repo captured directly</span>
+    }
+}
+
+<span class="cm">// 2. Collection expressions (unified syntax)</span>
+<span class="kw">int</span>[] arr = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>];
+<span class="fn">List</span>&lt;<span class="kw">string</span>&gt; list = [<span class="st">"a"</span>, <span class="st">"b"</span>];
+<span class="kw">int</span>[] combined = [..arr, <span class="nm">4</span>, <span class="nm">5</span>];  <span class="cm">// spread operator</span>
+
+<span class="cm">// 3. Frozen collections — immutable, faster lookups</span>
+<span class="kw">var</span> frozen = <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">int</span>&gt; { [<span class="st">"a"</span>] = <span class="nm">1</span> }
+    .<span class="fn">ToFrozenDictionary</span>();  <span class="cm">// faster than ReadOnlyDictionary</span>
+
+<span class="cm">// 4. Keyed DI services</span>
+builder.Services.<span class="fn">AddKeyedScoped</span>&lt;<span class="fn">ICache</span>, <span class="fn">RedisCache</span>&gt;(<span class="st">"distributed"</span>);
+
+<span class="cm">// 5. Time abstraction (great for testing!)</span>
+<span class="kw">public class</span> <span class="fn">OrderService</span>(<span class="fn">TimeProvider</span> time)
+{
+    <span class="kw">public</span> Order <span class="fn">Create</span>() => <span class="kw">new</span> Order { CreatedAt = time.<span class="fn">GetUtcNow</span>() };
+}
+<span class="cm">// In tests: FakeTimeProvider — control time!</span>
+
+<span class="cm">// 6. Native AOT — ahead-of-time compilation</span>
+<span class="cm">// Faster startup, smaller memory, but no reflection by default</span>
+<span class="cm">// PublishAot: true in .csproj</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What are primary constructors in C# 12?</div>
+                <div class="interview-a">Primary constructors let you declare constructor parameters directly on the class/struct declaration. The parameters are automatically in scope throughout the class body — you don't need to declare private fields manually. They reduce boilerplate for DI injection patterns. Note: unlike record primary constructors, class primary constructors don't automatically create public properties — parameters are just in scope.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Native AOT and when would you use it?</div>
+                <div class="interview-a">Native AOT (Ahead-of-Time compilation) compiles .NET code to native machine code at publish time, not at runtime. Benefits: dramatically faster startup (milliseconds), lower memory usage, smaller deployment size. Limitations: no runtime code generation (reflection limited), no dynamic loading, longer publish times. Ideal for: AWS Lambda/serverless functions, CLI tools, microservices where cold start matters. Not suitable for: apps relying heavily on reflection (EF Core, many libraries).</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('ef-core')">← EF Core</button>
+                <button class="mark-done-btn" onclick="markDone('dotnet-new-features')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('cs-cheatsheet')">Next: Cheatsheet →</button>
+            </div>
+        </div>
+
+        <!-- GENERICS -->
+        <div id="lesson-generics" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header"><div class="lesson-eyebrow">// C# CORE</div><div class="lesson-title">🔧 Generics & Collections</div><div class="lesson-subtitle">Type-safe reusable code. List vs Array, Dictionary internals, generic constraints.</div></div>
+            <div class="content-section">
+                <div class="section-title">Generic Constraints</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Constraints tell the compiler what T can do</span>
+<span class="kw">public class</span> <span class="fn">Repository</span>&lt;T&gt; <span class="kw">where</span> T : <span class="kw">class</span>, <span class="fn">IEntity</span>, <span class="kw">new</span>()
+<span class="cm">// T must be: a class, implement IEntity, have parameterless constructor</span>
+
+<span class="cm">// Common constraints:</span>
+<span class="cm">// where T : class           → reference type</span>
+<span class="cm">// where T : struct          → value type (non-nullable)</span>
+<span class="cm">// where T : IComparable&lt;T&gt; → must be comparable</span>
+<span class="cm">// where T : new()           → must have default constructor</span>
+<span class="cm">// where T : notnull         → non-nullable (C# 8+)</span>
+
+<span class="cm">// Collections comparison</span>
+<span class="cm">// List&lt;T&gt; — dynamic array (O(1) amortized add, O(n) insert/remove)</span>
+<span class="cm">// LinkedList&lt;T&gt; — O(1) insert/remove, O(n) access by index</span>
+<span class="cm">// Dictionary&lt;K,V&gt; — hash table, O(1) average lookup</span>
+<span class="cm">// SortedDictionary — red-black tree, O(log n)</span>
+<span class="cm">// HashSet&lt;T&gt; — unique values, O(1) contains check</span>
+<span class="cm">// Stack&lt;T&gt; — LIFO, ConcurrentStack for thread safety</span>
+<span class="cm">// Queue&lt;T&gt; — FIFO, ConcurrentQueue for thread safety</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between List&lt;T&gt; and Array?</div>
+                <div class="interview-a">Arrays are fixed-size, allocated contiguously in memory, slightly faster for indexed access. List&lt;T&gt; is a dynamic array — it doubles capacity when full (amortized O(1) adds). Arrays are better when size is known and fixed; List when size varies. For performance-critical code, consider pre-allocating: new List&lt;T&gt;(capacity) to avoid reallocations.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Dictionary&lt;K,V&gt; work internally?</div>
+                <div class="interview-a">Dictionary uses a hash table. Keys are hashed (GetHashCode()), the hash is mapped to a bucket. Collisions are handled by chaining (linked list within bucket). Average O(1) for get/set/contains. Worst case O(n) with many hash collisions. Key requirements: GetHashCode() and Equals() must be correctly implemented for custom keys. Equal objects must have equal hash codes.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('oop-csharp')">← OOP</button>
+                <button class="mark-done-btn" onclick="markDone('generics')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('async-csharp')">Next: Async →</button>
+            </div>
+        </div>
+
+        <!-- MEMORY & GC -->
+        <div id="lesson-memory-gc" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header"><div class="lesson-eyebrow">// C# ADVANCED</div><div class="lesson-title">🧠 Memory & GC</div><div class="lesson-subtitle">GC generations, IDisposable pattern, Span&lt;T&gt; for zero-allocation code.</div></div>
+            <div class="content-section">
+                <div class="section-title">IDisposable & using</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// IDisposable pattern — deterministic cleanup</span>
+<span class="kw">public class</span> <span class="fn">FileProcessor</span> : <span class="fn">IDisposable</span>
+{
+    <span class="kw">private</span> <span class="fn">FileStream</span> _stream;
+    <span class="kw">private bool</span> _disposed;
+
+    <span class="kw">public void</span> <span class="fn">Dispose</span>()
+    {
+        <span class="fn">Dispose</span>(<span class="kw">true</span>);
+        GC.<span class="fn">SuppressFinalize</span>(<span class="kw">this</span>);
+    }
+
+    <span class="kw">protected virtual void</span> <span class="fn">Dispose</span>(<span class="kw">bool</span> disposing)
+    {
+        <span class="kw">if</span> (_disposed) <span class="kw">return</span>;
+        <span class="kw">if</span> (disposing) _stream?.<span class="fn">Dispose</span>();
+        _disposed = <span class="kw">true</span>;
+    }
+}
+
+<span class="cm">// using statement — auto-calls Dispose</span>
+<span class="kw">using var</span> processor = <span class="kw">new</span> <span class="fn">FileProcessor</span>(); <span class="cm">// C# 8+ scoped using</span>
+<span class="cm">// Dispose called at end of scope</span>
+
+<span class="cm">// Span&lt;T&gt; — zero-allocation slicing (.NET Core+)</span>
+<span class="kw">string</span> csv = <span class="st">"Hany,30,Cairo"</span>;
+<span class="fn">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; span = csv.AsSpan();
+<span class="kw">var</span> name = span[..<span class="nm">4</span>];   <span class="cm">// "Hany" — NO string allocation!</span>
+<span class="kw">var</span> age = span[<span class="nm">5</span>..<span class="nm">7</span>];    <span class="cm">// "30" — just a view</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How does .NET's garbage collector work?</div>
+                <div class="interview-a">.NET GC is generational: Gen 0 (newly allocated, collected most often), Gen 1 (survived Gen 0), Gen 2 (long-lived objects, collected rarely). Most objects die young (Gen 0) — this makes GC very efficient. The LOH (Large Object Heap, objects &gt;85KB) is collected with Gen 2. GC uses mark-and-sweep: mark all reachable objects, sweep unreachable, compact (Gen 0/1). Server GC mode is optimized for throughput; Workstation for responsiveness.</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Span&lt;T&gt; and why is it important?</div>
+                <div class="interview-a">Span&lt;T&gt; is a ref struct that represents a contiguous region of memory — a "view" into an array, string, or unmanaged memory without copying. It's stack-only (can't be a class field, can't be boxed, no heap allocation). Use for high-performance parsing, string manipulation, binary protocol parsing. Substring() allocates a new string; AsSpan() slicing doesn't. Critical for high-throughput APIs, parsers, and game/real-time code.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('delegates-events')">← Delegates</button>
+                <button class="mark-done-btn" onclick="markDone('memory-gc')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('aspnet-core')">Next: ASP.NET Core →</button>
+            </div>
+        </div>
+
+        <!-- ASP.NET CORE -->
+        <div id="lesson-aspnet-core" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header"><div class="lesson-eyebrow">// .NET 8</div><div class="lesson-title">🌐 ASP.NET Core</div><div class="lesson-subtitle">Minimal APIs, controllers, action filters, model binding, and the request pipeline.</div></div>
+            <div class="content-section">
+                <div class="section-title">Minimal API vs Controller</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C# — MINIMAL API (.NET 6+)</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Minimal API — simple, fast, less ceremony</span>
+<span class="kw">var</span> app = WebApplication.<span class="fn">Create</span>();
+
+app.<span class="fn">MapGet</span>(<span class="st">"/users/{id}"</span>, <span class="kw">async</span> (<span class="kw">int</span> id, <span class="fn">IUserService</span> svc) =>
+{
+    <span class="kw">var</span> user = <span class="kw">await</span> svc.<span class="fn">GetByIdAsync</span>(id);
+    <span class="kw">return</span> user <span class="kw">is null</span> ? Results.<span class="fn">NotFound</span>() : Results.<span class="fn">Ok</span>(user);
+});
+
+app.<span class="fn">MapPost</span>(<span class="st">"/users"</span>, <span class="kw">async</span> (<span class="fn">CreateUserDto</span> dto, <span class="fn">IUserService</span> svc) =>
+{
+    <span class="kw">var</span> user = <span class="kw">await</span> svc.<span class="fn">CreateAsync</span>(dto);
+    <span class="kw">return</span> Results.<span class="fn">Created</span>(<span class="st">$"/users/{user.Id}"</span>, user);
+});
+
+<span class="cm">// Group routes (.NET 7+ RouteGroupBuilder)</span>
+<span class="kw">var</span> usersGroup = app.<span class="fn">MapGroup</span>(<span class="st">"/api/users"</span>)
+    .<span class="fn">RequireAuthorization</span>()
+    .<span class="fn">WithTags</span>(<span class="st">"Users"</span>);
+
+usersGroup.<span class="fn">MapGet</span>(<span class="st">"/"</span>, <span class="fn">GetAllUsers</span>);
+usersGroup.<span class="fn">MapGet</span>(<span class="st">"/{id}"</span>, <span class="fn">GetUserById</span>);</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What are Action Filters and when do you use them?</div>
+                <div class="interview-a">Action filters run code before/after controller action execution. They implement IActionFilter or IAsyncActionFilter. Use cases: logging, performance metrics, validation, caching, exception handling. Available filters: Authorization (before everything), Resource (before model binding), Action (before/after action), Exception (on unhandled exception), Result (before/after result execution). Applied via [ServiceFilter], [TypeFilter], or globally in AddControllers().</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Minimal API vs Controllers — when to use each?</div>
+                <div class="interview-a">Minimal APIs: simpler projects, microservices, fewer conventions needed, slightly faster startup. Better for: simple CRUD APIs, Lambda/serverless, learning .NET. Controllers: larger apps needing conventions, action filters, complex routing, OpenAPI generation, testing patterns teams already know. In .NET 8, Minimal APIs support most Controller features (filters, authorization, validation) so the gap has closed significantly.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('memory-gc')">← Memory</button>
+                <button class="mark-done-btn" onclick="markDone('aspnet-core')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('middleware-pipeline')">Next: Middleware →</button>
+            </div>
+        </div>
+
+        <!-- MIDDLEWARE -->
+        <div id="lesson-middleware-pipeline" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header"><div class="lesson-eyebrow">// .NET 8</div><div class="lesson-title">🔗 Middleware & Pipeline</div><div class="lesson-subtitle">How requests flow through ASP.NET Core. Custom middleware, exception handling, short-circuiting.</div></div>
+            <div class="content-section">
+                <div class="section-title">Custom Middleware</div>
+                <div class="code-block"><div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                    <pre><span class="cm">// Custom middleware class</span>
+<span class="kw">public class</span> <span class="fn">RequestTimingMiddleware</span>(<span class="fn">RequestDelegate</span> next)
+{
+    <span class="kw">public async</span> Task <span class="fn">InvokeAsync</span>(<span class="fn">HttpContext</span> ctx)
+    {
+        <span class="kw">var</span> sw = <span class="fn">Stopwatch</span>.<span class="fn">StartNew</span>();
+
+        <span class="kw">await</span> next(ctx);  <span class="cm">// call next middleware in pipeline</span>
+
+        sw.Stop();
+        ctx.Response.Headers[<span class="st">"X-Response-Time"</span>] =
+            <span class="st">$"{sw.ElapsedMilliseconds}ms"</span>;
+    }
+}
+
+<span class="cm">// Register in pipeline (order matters!)</span>
+app.<span class="fn">UseExceptionHandler</span>();         <span class="cm">// 1. Must be first</span>
+app.<span class="fn">UseHttpsRedirection</span>();          <span class="cm">// 2.</span>
+app.<span class="fn">UseMiddleware</span>&lt;<span class="fn">RequestTimingMiddleware</span>&gt;(); <span class="cm">// 3. Custom</span>
+app.<span class="fn">UseAuthentication</span>();            <span class="cm">// 4. Who are you?</span>
+app.<span class="fn">UseAuthorization</span>();             <span class="cm">// 5. Can you do this?</span>
+app.<span class="fn">MapControllers</span>();               <span class="cm">// 6. Route to action</span></pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the ASP.NET Core middleware pipeline?</div>
+                <div class="interview-a">The pipeline is a chain of middleware components. Each request passes through them in order. Each middleware can: process the request, call next() to pass to the next middleware, process the response on the way back out, or short-circuit (not call next) to return immediately. The order matters: exception handling must be first to catch errors from all subsequent middleware. Authentication before Authorization.</div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('aspnet-core')">← ASP.NET Core</button>
+                <button class="mark-done-btn" onclick="markDone('middleware-pipeline')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showLesson('dotnet-new-features')">Next: .NET 8 Features →</button>
+            </div>
+        </div>
+
+        <!-- CHEATSHEET -->
+        <div id="lesson-cs-cheatsheet" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header"><div class="lesson-eyebrow">// STUDY AID</div><div class="lesson-title">📋 C# & .NET Cheatsheet</div><div class="lesson-subtitle">All key concepts for your interview on one page.</div></div>
+            <div class="content-section">
+                <div class="section-title">Core Concepts</div>
+                <table class="cheat-table">
+                    <tr><th>Term</th><th>Definition</th></tr>
+                    <tr><td>Value Type</td><td>Stored on stack, copy semantics (int, struct, enum)</td></tr>
+                    <tr><td>Reference Type</td><td>Stored on heap, reference semantics (class, string, array)</td></tr>
+                    <tr><td>Boxing</td><td>Value type → object (heap allocation, avoid in hot paths)</td></tr>
+                    <tr><td>Record</td><td>Immutable reference type with value equality (.NET 5+)</td></tr>
+                    <tr><td>Nullable&lt;T&gt; / T?</td><td>Value type that can be null. Use ?. and ?? operators</td></tr>
+                    <tr><td>Deferred execution</td><td>LINQ query runs when iterated, not when defined</td></tr>
+                    <tr><td>IQueryable</td><td>Translates LINQ to SQL at database level</td></tr>
+                    <tr><td>ConfigureAwait(false)</td><td>Don't capture sync context — prevents deadlocks in libraries</td></tr>
+                    <tr><td>ValueTask</td><td>Struct alternative to Task — no allocation when sync result</td></tr>
+                    <tr><td>AsNoTracking</td><td>Skip EF change tracking for read-only queries (2x faster)</td></tr>
+                    <tr><td>Span&lt;T&gt;</td><td>Zero-allocation memory view — stack-only ref struct</td></tr>
+                    <tr><td>Primary constructor</td><td>C# 12 — declare constructor params on class declaration</td></tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title">DI Lifetimes Quick Reference</div>
+                <table class="cheat-table">
+                    <tr><th>Lifetime</th><th>Created when</th><th>Destroyed when</th><th>Use for</th></tr>
+                    <tr><td>Singleton</td><td>First request</td><td>App shutdown</td><td>Config, caches, thread-safe services</td></tr>
+                    <tr><td>Scoped</td><td>Each HTTP request</td><td>Request ends</td><td>DbContext, user state, unit of work</td></tr>
+                    <tr><td>Transient</td><td>Each injection</td><td>Scope/request ends</td><td>Stateless, lightweight operations</td></tr>
+                </table>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('dotnet-new-features')">← .NET 8 Features</button>
+                <button class="mark-done-btn" onclick="markDone('cs-cheatsheet')">✓ Mark as Done</button>
+                <button class="btn btn-primary" onclick="showPage('home')">🏠 Home</button>
+            </div>
+        </div>
+    </main>
 </div>
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done-dotnet') || '[]')), xp: parseInt(localStorage.getItem('xp-dotnet') || '0'), totalTopics: 5 };
-function showPage(page) {
-  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (page === 'home') document.getElementById('nav-home').classList.add('active');
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-}
-function showLesson(id) {
-  document.getElementById('home-page').style.display = 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const lesson = document.getElementById('lesson-' + id);
-  if (lesson) lesson.classList.add('active');
-  const navItem = document.getElementById('nav-' + id);
-  if (navItem) navItem.classList.add('active');
-  window.scrollTo(0, 0);
-}
-function markDone(id) {
-  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-dotnet', JSON.stringify([...state.completed])); localStorage.setItem('xp-dotnet', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-}
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+    const state={completed:new Set(JSON.parse(localStorage.getItem('cs-done')||'[]')),xp:parseInt(localStorage.getItem('cs-xp')||'0'),totalTopics:12};
+    function showPage(p){document.getElementById('home-page').style.display=(p==='home')?'block':'none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(p==='home')document.getElementById('nav-home').classList.add('active');updateXP()}
+    function showLesson(id){document.getElementById('home-page').style.display='none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));const l=document.getElementById('lesson-'+id);if(l)l.classList.add('active');const n=document.getElementById('nav-'+id);if(n)n.classList.add('active');window.scrollTo(0,0)}
+    function checkQuiz(btn,id,result){const opts=btn.closest('.quiz-options').querySelectorAll('.quiz-opt');opts.forEach(o=>o.style.pointerEvents='none');const fb=document.getElementById('quiz-'+id+'-fb');if(result==='correct'){btn.classList.add('correct');fb.className='quiz-feedback show right';fb.textContent='✅ Correct!';addXP(20)}else{btn.classList.add('wrong');fb.className='quiz-feedback show wrong';fb.textContent='❌ Not quite — review above.'}}
+    function toggleAnswer(el){el.classList.toggle('open');const next=el.nextElementSibling;if(next&&next.classList.contains('interview-a'))next.classList.toggle('open')}
+    function markDone(id){if(!state.completed.has(id)){state.completed.add(id);addXP(50);localStorage.setItem('cs-done',JSON.stringify([...state.completed]));const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');const btn=event.target;btn.textContent='✓ Done!'}updateProgress()}
+    function addXP(a){state.xp+=a;localStorage.setItem('cs-xp',state.xp.toString());updateXP()}
+    function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress()}
+    function updateProgress(){const pct=(state.completed.size/state.totalTopics)*100;document.getElementById('globalProgress').style.width=pct+'%'}
+    function copyCode(btn){const pre=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000)})}
+    function init(){state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed')});updateProgress();updateXP()}
+    init();
 </script>
 </body>
 </html>

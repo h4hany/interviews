@@ -197,8 +197,10 @@ const fileStructure = {
         "Ruby & Rails": "Frameworks/Backend/Rails/ruby-rails-interview-prep.html",
         "C# & .NET": "Frameworks/Backend/dotNet/dotnet-interview-prep.html",
         "Database": "Databases/database-interview-prep.html",
+        "Redis / RabbitMQ / Kafka": "caching-messaging/redis-rabbitmq-kafka-prep.html",
         "HTML": "Frameworks/Frontend/basics/html-interview-prep.html",
         "System Design": "System Design/system-design-interview-prep.html",
+        "Docker & Kubernetes": "Infrastructure/docker-kubernetes-prep.html",
         "DevOps & Infrastructure": "DevOps/devops-infrastructure-interview-prep.html",
         "Design (SOLID, Patterns, OOD)": "design/design-interview-prep.html",
         "Behavioral & Leadership": "Resume-Career/behavioral-leadership-interview-prep.html",
@@ -568,11 +570,17 @@ function showWelcome() {
                     <a href="${p('Databases/database-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🗄️</span>Database
                     </a>
+                    <a href="${p('caching-messaging/redis-rabbitmq-kafka-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">📦</span>Redis / RabbitMQ / Kafka
+                    </a>
                     <a href="${p('Frameworks/Frontend/basics/html-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">📄</span>HTML
                     </a>
                     <a href="${p('System Design/system-design-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🏗️</span>System Design
+                    </a>
+                    <a href="${p('Infrastructure/docker-kubernetes-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🐳</span>Docker & Kubernetes
                     </a>
                     <a href="${p('DevOps/devops-infrastructure-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🔄</span>DevOps
