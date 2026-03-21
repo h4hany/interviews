@@ -49,7 +49,8 @@ const fileStructure = {
         "Node.js": "Frameworks/Backend/node/Node.md",
         "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html",
         "Java & Spring Boot (50+ Q&A)": "Frameworks/Backend/java/Java-Spring-Boot-Interview-QA.md",
-        "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/pyhton/Python-Django-FastAPI-Interview-QA.md"
+        "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/pyhton/Python-Django-FastAPI-Interview-QA.md",
+        "Python & FastAPI Playground": "Frameworks/Backend/pyhton/python-fastapi-prep.html"
     },
     "Databases": {
         "MySQL": "Databases/mysql.md",
@@ -106,7 +107,8 @@ const fileStructure = {
         "Microservices": "Architecture/Microservices.md",
         "Event-Driven Architecture": "Architecture/Event-Driven Architecture.md",
         "APIs": "Architecture/APIs.md",
-        "Distributed Systems": "Architecture/Distributed Systems.md"
+        "Distributed Systems": "Architecture/Distributed Systems.md",
+        "API, Distributed & Event Playground": "Architecture/api-distributed-event-microservices-prep.html"
     },
     "Infrastructure": {
         "Docker": "Infrastructure/Docker.md",
@@ -196,10 +198,14 @@ const fileStructure = {
         "Node.js": "Frameworks/Backend/node/nodejs-interview-prep.html",
         "Ruby & Rails": "Frameworks/Backend/Rails/ruby-rails-interview-prep.html",
         "C# & .NET": "Frameworks/Backend/dotNet/dotnet-interview-prep.html",
+        "Python & FastAPI": "Frameworks/Backend/pyhton/python-fastapi-prep.html",
         "Database": "Databases/database-interview-prep.html",
         "Redis / RabbitMQ / Kafka": "caching-messaging/redis-rabbitmq-kafka-prep.html",
         "HTML": "Frameworks/Frontend/basics/html-interview-prep.html",
+        "Angular & TypeScript": "Frameworks/Frontend/Angular/angular-typescript-prep.html",
+        "React & React Native": "Frameworks/Frontend/React/react-reactnative-prep.html",
         "System Design": "System Design/system-design-interview-prep.html",
+        "Architecture (API, Event, Distributed)": "Architecture/api-distributed-event-microservices-prep.html",
         "Docker & Kubernetes": "Infrastructure/docker-kubernetes-prep.html",
         "DevOps & Infrastructure": "DevOps/devops-infrastructure-interview-prep.html",
         "Design (SOLID, Patterns, OOD)": "design/design-interview-prep.html",
@@ -564,6 +570,9 @@ function showWelcome() {
                     <a href="${p('Frameworks/Backend/dotNet/dotnet-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🟣</span>C# & .NET
                     </a>
+                    <a href="${p('Frameworks/Backend/pyhton/python-fastapi-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🐍</span>Python & FastAPI
+                    </a>
                     <a href="${p('specialized/LLM/ai-engineering-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🤖</span>AI Engineering
                     </a>
@@ -576,8 +585,17 @@ function showWelcome() {
                     <a href="${p('Frameworks/Frontend/basics/html-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">📄</span>HTML
                     </a>
+                    <a href="${p('Frameworks/Frontend/Angular/angular-typescript-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🅰️</span>Angular & TS
+                    </a>
+                    <a href="${p('Frameworks/Frontend/React/react-reactnative-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">⚛️</span>React & RN
+                    </a>
                     <a href="${p('System Design/system-design-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🏗️</span>System Design
+                    </a>
+                    <a href="${p('Architecture/api-distributed-event-microservices-prep.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🧱</span>Architecture
                     </a>
                     <a href="${p('Infrastructure/docker-kubernetes-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🐳</span>Docker & Kubernetes

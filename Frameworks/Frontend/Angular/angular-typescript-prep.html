@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular & TypeScript — Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060810;--surface:#090c18;--surface2:#0e1222;--border:#161d32;
+  --ng:#dd0031;--ts:#3178c6;--accent:#dd0031;--accent2:#3178c6;--accent3:#f59e0b;--accent4:#34d399;--accent5:#a78bfa;
+  --text:#f0eeff;--text-dim:#6878a8;--text-dimmer:#1a2038;
+  --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(221,0,49,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(49,120,198,0.02) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 8% 20%,rgba(221,0,49,0.07) 0%,transparent 48%),radial-gradient(ellipse at 92% 80%,rgba(49,120,198,0.07) 0%,transparent 48%);pointer-events:none;z-index:0}
+header{position:sticky;top:0;z-index:100;background:rgba(6,8,16,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.logo-ng{color:var(--ng);font-weight:700;font-size:16px}.logo-sep{color:var(--text-dimmer)}.logo-ts{color:var(--ts);font-size:14px}
+.logo span{color:var(--text-dim)}
+.progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--ng),var(--ts));transition:width 0.5s ease;width:0%}
+.xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+.app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+.nav-item:hover{color:var(--text);background:var(--surface)}
+.nav-item.active{color:var(--ng);border-left-color:var(--ng);background:rgba(221,0,49,0.05)}
+.nav-item.ts-active{color:var(--ts);border-left-color:var(--ts);background:rgba(49,120,198,0.06)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+.nav-item.completed .done-dot{display:block}
+main{overflow-y:auto}
+.hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--ng);margin-bottom:16px}
+.hero h1{font-size:clamp(34px,5vw,60px);font-weight:800;line-height:1.06;margin-bottom:16px}
+.hl-ng{background:linear-gradient(135deg,var(--ng),#ff4d6d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hl-ts{background:linear-gradient(135deg,var(--ts),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+.stat-row{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--ng)}
+.stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+.section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+.sb-ng{background:rgba(221,0,49,0.12);color:var(--ng);border:1px solid rgba(221,0,49,0.3)}
+.sb-ts{background:rgba(49,120,198,0.12);color:var(--ts);border:1px solid rgba(49,120,198,0.3)}
+.section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;background:var(--border)}
+.topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.topic-card:hover{background:var(--surface)}
+.topic-card:hover::before{opacity:1}
+.cng::before{background:radial-gradient(circle at 0% 0%,rgba(221,0,49,0.1),transparent 60%)}
+.cts::before{background:radial-gradient(circle at 0% 0%,rgba(49,120,198,0.1),transparent 60%)}
+.co::before{background:radial-gradient(circle at 0% 0%,rgba(245,158,11,0.08),transparent 60%)}
+.card-emoji{font-size:28px;margin-bottom:10px;display:block}
+.card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+.card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.tag.hot{background:rgba(248,113,113,0.1);color:var(--red);border-color:rgba(248,113,113,0.2)}
+.tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+.tag.ng{background:rgba(221,0,49,0.1);color:var(--ng);border-color:rgba(221,0,49,0.2)}
+.tag.ts{background:rgba(49,120,198,0.1);color:var(--ts);border-color:rgba(49,120,198,0.2)}
+.lesson-page{display:none;padding:40px 48px;max-width:940px}
+.lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+.lesson-breadcrumb:hover{color:var(--ng)}
+.lesson-breadcrumb::before{content:'← '}
+.lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+.e-ng{color:var(--ng)}.e-ts{color:var(--ts)}.e-both{color:var(--accent3)}
+.lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+.lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+.content-section{margin-bottom:44px}
+.section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:20px;background:var(--ng);border-radius:2px;flex-shrink:0}
+.prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+.prose strong{color:var(--text);font-weight:700}
+.prose .hl{color:var(--ng)}.prose .h2{color:var(--ts)}.prose .h3{color:var(--accent3)}.prose .h4{color:var(--green)}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;color:var(--ng)}
+.code-lang.ts{color:var(--ts)}
+.copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.copy-btn:hover{color:var(--ng);border-color:var(--ng)}
+pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#b5c8f0;font-family:'JetBrains Mono',monospace}
+.kw{color:#7ec8e3}.fn{color:#93c5fd}.st{color:#86efac}.nm{color:#fbbf24}.cm{color:#253050;font-style:italic}.op{color:#67e8f9}.id{color:#f9a8d4}.cls{color:#34d399}.dc{color:#ff6b8a}
+.analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+.analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+.analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8}
+.info-box{background:rgba(49,120,198,0.04);border:1px solid rgba(49,120,198,0.15);border-left:3px solid var(--ts);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.info-box strong{color:var(--ts)}
+.warn-box{background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.warn-box strong{color:var(--red)}
+.success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.success-box strong{color:var(--green)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+.cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+.cheat-table tr:last-child td{border-bottom:none}
+.cheat-table td:first-child{color:var(--ng);font-family:'JetBrains Mono',monospace;font-size:12px}
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:22px 20px;margin:20px 0;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+.arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center}
+.ab-ng{border-color:rgba(221,0,49,0.5);color:var(--ng);background:rgba(221,0,49,0.07)}
+.ab-ts{border-color:rgba(49,120,198,0.5);color:var(--ts);background:rgba(49,120,198,0.07)}
+.ab-g{border-color:rgba(52,211,153,0.5);color:var(--green);background:rgba(52,211,153,0.06)}
+.ab-o{border-color:rgba(245,158,11,0.5);color:var(--accent3);background:rgba(245,158,11,0.06)}
+.ab-v{border-color:rgba(167,139,250,0.5);color:var(--accent5);background:rgba(167,139,250,0.06)}
+.ab-n{border-color:var(--border);color:var(--text-dim)}
+.arch-arrow{color:var(--text-dimmer);font-size:18px}
+.interview-box{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+.interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent5);margin-bottom:14px}
+.interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0}
+.interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent5);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+.interview-q.open::after{transform:rotate(45deg)}
+.interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+.interview-a.open{display:block}
+.quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+.quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin-bottom:16px}
+.quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+.quiz-opt:hover{border-color:var(--ng);background:var(--surface2)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+.opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+.quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.quiz-feedback.show{display:block}
+.quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+.quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+.btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+.btn-primary{background:var(--ng);color:#fff}
+.btn-primary:hover{box-shadow:0 0 20px rgba(221,0,49,0.35);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--ng);color:var(--text)}
+.mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#home-page{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-ng">Angular</span><span class="logo-sep">&amp;</span>
+    <span class="logo-ts">TypeScript</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">🔷 TypeScript</div>
+    <div class="nav-item" onclick="showLesson('ts-types')" id="nav-ts-types"><span class="icon">📐</span>Types &amp; Interfaces<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ts-advanced')" id="nav-ts-advanced"><span class="icon">🚀</span>Advanced Types<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ts-generics')" id="nav-ts-generics"><span class="icon">🔄</span>Generics<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ts-decorators')" id="nav-ts-decorators"><span class="icon">🎁</span>Decorators<span class="done-dot"></span></div>
+    <div class="nav-section-title">🔴 Angular Core</div>
+    <div class="nav-item" onclick="showLesson('ng-architecture')" id="nav-ng-architecture"><span class="icon">🏗️</span>Architecture &amp; Modules<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-components')" id="nav-ng-components"><span class="icon">🧩</span>Components Deep Dive<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-directives')" id="nav-ng-directives"><span class="icon">🎯</span>Directives &amp; Pipes<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-di')" id="nav-ng-di"><span class="icon">💉</span>Dependency Injection<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-services')" id="nav-ng-services"><span class="icon">⚙️</span>Services &amp; HTTP<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-routing')" id="nav-ng-routing"><span class="icon">🛣️</span>Routing &amp; Guards<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-forms')" id="nav-ng-forms"><span class="icon">📝</span>Forms<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-rxjs')" id="nav-ng-rxjs"><span class="icon">🌊</span>RxJS &amp; Observables<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-change-detection')" id="nav-ng-change-detection"><span class="icon">🔍</span>Change Detection<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-performance')" id="nav-ng-performance"><span class="icon">⚡</span>Performance &amp; Signals<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-testing')" id="nav-ng-testing"><span class="icon">🧪</span>Testing<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ng-standalone')" id="nav-ng-standalone"><span class="icon">✨</span>Standalone &amp; Angular 17+<span class="done-dot"></span></div>
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
+  </nav>
+
+  <main id="mainContent">
+    <!-- HOME -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-ng">Angular</span> &amp;<br><span class="hl-ts">TypeScript</span></h1>
+        <p class="hero-sub">Components, DI, RxJS, change detection, Signals, standalone components, reactive forms, routing guards, and every TypeScript concept you'll face in interviews — with real production code.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">16</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">70+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">55+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">16</div><div class="stat-label">Quizzes</div></div>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-ts">🔷 TYPESCRIPT</span><span class="section-badge-title">TypeScript Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cts" onclick="showLesson('ts-types')"><span class="card-emoji">📐</span><div class="card-title">Types &amp; Interfaces</div><div class="card-desc">type vs interface, union, intersection, literal types, type guards, discriminated unions.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cts" onclick="showLesson('ts-advanced')"><span class="card-emoji">🚀</span><div class="card-title">Advanced Types</div><div class="card-desc">Mapped types, conditional types, utility types (Partial, Required, Pick, Omit, Record).</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cts" onclick="showLesson('ts-generics')"><span class="card-emoji">🔄</span><div class="card-title">Generics</div><div class="card-desc">Generic functions, constraints, conditional generics, infer keyword, real use cases.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card co" onclick="showLesson('ts-decorators')"><span class="card-emoji">🎁</span><div class="card-title">Decorators</div><div class="card-desc">Class, method, property, parameter decorators. How Angular's @Component uses them.</div><div class="card-tag-row"><span class="tag ts">TYPESCRIPT</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-ng">🔴 ANGULAR</span><span class="section-badge-title">Angular Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cng" onclick="showLesson('ng-architecture')"><span class="card-emoji">🏗️</span><div class="card-title">Architecture &amp; Modules</div><div class="card-desc">NgModules, feature modules, lazy loading, providers, bootstrapping.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag ng">ANGULAR</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-components')"><span class="card-emoji">🧩</span><div class="card-title">Components Deep Dive</div><div class="card-desc">Lifecycle hooks, @Input/@Output, ViewChild, ContentChild, component communication.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-directives')"><span class="card-emoji">🎯</span><div class="card-title">Directives &amp; Pipes</div><div class="card-desc">Structural vs attribute directives, custom directives, pure vs impure pipes, async pipe.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-di')"><span class="card-emoji">💉</span><div class="card-title">Dependency Injection</div><div class="card-desc">Injector hierarchy, providers, tokens, useClass/useValue/useFactory, multi providers.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-services')"><span class="card-emoji">⚙️</span><div class="card-title">Services &amp; HTTP</div><div class="card-desc">HttpClient, interceptors, error handling, retry strategies, environment config.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-routing')"><span class="card-emoji">🛣️</span><div class="card-title">Routing &amp; Guards</div><div class="card-desc">Router, lazy loading, canActivate, resolve, route params, nested routes.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-forms')"><span class="card-emoji">📝</span><div class="card-title">Forms</div><div class="card-desc">Reactive vs template-driven, FormBuilder, FormArray, custom validators, async validators.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-rxjs')"><span class="card-emoji">🌊</span><div class="card-title">RxJS &amp; Observables</div><div class="card-desc">switchMap, mergeMap, combineLatest, Subject, BehaviorSubject, takeUntilDestroyed.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cng" onclick="showLesson('ng-change-detection')"><span class="card-emoji">🔍</span><div class="card-title">Change Detection</div><div class="card-desc">Zone.js, Default vs OnPush, detectChanges, markForCheck, async pipe trick.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card co" onclick="showLesson('ng-performance')"><span class="card-emoji">⚡</span><div class="card-title">Performance &amp; Signals</div><div class="card-desc">Signals, computed(), effect(), trackBy, lazy loading, bundle optimization.</div><div class="card-tag-row"><span class="tag hot">NEW 2024</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card co" onclick="showLesson('ng-testing')"><span class="card-emoji">🧪</span><div class="card-title">Testing</div><div class="card-desc">TestBed, ComponentFixture, spies, HttpClientTestingModule, fakeAsync.</div><div class="card-tag-row"><span class="tag key">PRODUCTION</span></div></div>
+        <div class="topic-card co" onclick="showLesson('ng-standalone')"><span class="card-emoji">✨</span><div class="card-title">Standalone &amp; Angular 17+</div><div class="card-desc">Standalone components, @if/@for control flow, deferrable views, SSR with hydration.</div><div class="card-tag-row"><span class="tag hot">NEW IN 17+</span></div></div>
+      </div>
+    </div>
+
+    <!-- TS TYPES -->
+    <div id="lesson-ts-types" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ts">// TYPESCRIPT</div>
+        <div class="lesson-title">📐 Types &amp; Interfaces</div>
+        <div class="lesson-subtitle">The TypeScript foundation every Angular developer must master. type vs interface, union types, and narrowing.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">type vs interface</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang ts">TYPESCRIPT — TYPES & INTERFACES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// interface — open, mergeable, extends with extends keyword</span>
+<span class="kw">interface</span> <span class="cls">User</span> {
+  id: <span class="kw">number</span>;
+  name: <span class="kw">string</span>;
+  email?: <span class="kw">string</span>;       <span class="cm">// optional</span>
+  <span class="kw">readonly</span> createdAt: Date;  <span class="cm">// immutable</span>
+}
+
+<span class="kw">interface</span> <span class="cls">User</span> {        <span class="cm">// declaration merging — adds to existing interface</span>
+  role: <span class="st">'admin'</span> | <span class="st">'user'</span>;
+}
+
+<span class="kw">interface</span> <span class="cls">AdminUser</span> <span class="kw">extends</span> <span class="cls">User</span> {
+  permissions: <span class="kw">string</span>[];
+}
+
+<span class="cm">// type — more powerful, can't be merged, can use unions</span>
+<span class="kw">type</span> <span class="cls">ID</span> = <span class="kw">number</span> | <span class="kw">string</span>;           <span class="cm">// union type</span>
+<span class="kw">type</span> <span class="cls">Point</span> = { x: <span class="kw">number</span>; y: <span class="kw">number</span> };
+<span class="kw">type</span> <span class="cls">3DPoint</span> = <span class="cls">Point</span> & { z: <span class="kw">number</span> };  <span class="cm">// intersection type</span>
+<span class="kw">type</span> <span class="cls">Status</span> = <span class="st">'active'</span> | <span class="st">'inactive'</span> | <span class="st">'banned'</span>;  <span class="cm">// literal union</span>
+<span class="kw">type</span> <span class="cls">Callback</span> = (err: <span class="cls">Error</span> | <span class="kw">null</span>, data: <span class="kw">unknown</span>) => <span class="kw">void</span>;
+
+<span class="cm">// Type guards — narrow types at runtime</span>
+<span class="kw">function</span> <span class="fn">isUser</span>(obj: <span class="kw">unknown</span>): obj <span class="kw">is</span> <span class="cls">User</span> {
+  <span class="kw">return</span> <span class="kw">typeof</span> obj === <span class="st">'object'</span> && obj !== <span class="kw">null</span> && <span class="st">'id'</span> <span class="kw">in</span> obj;
+}
+
+<span class="cm">// Discriminated unions — exhaustive pattern matching</span>
+<span class="kw">type</span> <span class="cls">Result</span>&lt;T&gt; =
+  | { status: <span class="st">'success'</span>; data: T }
+  | { status: <span class="st">'error'</span>;   error: <span class="kw">string</span> }
+  | { status: <span class="st">'loading'</span> };
+
+<span class="kw">function</span> <span class="fn">render</span>(result: <span class="cls">Result</span>&lt;<span class="cls">User</span>&gt;) {
+  <span class="kw">switch</span> (result.status) {
+    <span class="kw">case</span> <span class="st">'success'</span>: <span class="kw">return</span> result.data.name;  <span class="cm">// data typed as User</span>
+    <span class="kw">case</span> <span class="st">'error'</span>:   <span class="kw">return</span> result.error;       <span class="cm">// error typed as string</span>
+    <span class="kw">case</span> <span class="st">'loading'</span>: <span class="kw">return</span> <span class="st">'Loading...'</span>;
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between type and interface in TypeScript?</div>
+        <div class="interview-a">interface is open — you can extend it with additional properties via declaration merging (important for augmenting third-party types). It supports extends and implements naturally. type is more powerful — can define unions (string | number), intersections (&), mapped types, conditional types, and aliases for primitives. You cannot merge type aliases. Rule of thumb in Angular projects: use interface for object shapes (User, Product), use type for unions, function types, and complex type transformations. Both compile away at runtime.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are discriminated unions and why are they useful?</div>
+        <div class="interview-a">A discriminated union is a union type where each member has a common literal property (the discriminant) that uniquely identifies it. TypeScript narrows the type within switch/if blocks based on this discriminant. Use case: representing different states (loading/success/error), API responses, action types in state management. With exhaustive checking (add a default: case that assigns to never), TypeScript catches at compile time if you add a new union member but forget to handle it — extremely valuable for maintainability.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">Which TypeScript feature allows you to add properties to an existing interface from a different file?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'tst','wrong')"><span class="opt-letter">A</span>Type intersection (&)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'tst','correct')"><span class="opt-letter">B</span>Declaration merging — redeclare the interface with new properties ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'tst','wrong')"><span class="opt-letter">C</span>Type augmentation with type alias</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'tst','wrong')"><span class="opt-letter">D</span>Generic constraints</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-tst-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('ts-types')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ts-advanced')">Next: Advanced Types →</button>
+      </div>
+    </div>
+
+    <!-- TS ADVANCED -->
+    <div id="lesson-ts-advanced" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ts">// TYPESCRIPT</div>
+        <div class="lesson-title">🚀 Advanced Types</div>
+        <div class="lesson-subtitle">Mapped types, conditional types, and the utility types Angular devs use every day.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Utility Types</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang ts">TYPESCRIPT — UTILITY TYPES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">interface</span> <span class="cls">User</span> { id: <span class="kw">number</span>; name: <span class="kw">string</span>; email: <span class="kw">string</span>; age: <span class="kw">number</span> }
+
+<span class="cm">// Built-in utility types</span>
+<span class="kw">type</span> <span class="cls">PartialUser</span>   = Partial&lt;<span class="cls">User</span>&gt;;         <span class="cm">// all fields optional</span>
+<span class="kw">type</span> <span class="cls">RequiredUser</span>  = Required&lt;<span class="cls">User</span>&gt;;        <span class="cm">// all fields required</span>
+<span class="kw">type</span> <span class="cls">ReadonlyUser</span>  = Readonly&lt;<span class="cls">User</span>&gt;;        <span class="cm">// all fields readonly</span>
+<span class="kw">type</span> <span class="cls">UserPreview</span>   = Pick&lt;<span class="cls">User</span>, <span class="st">'id'</span> | <span class="st">'name'</span>&gt;;  <span class="cm">// pick fields</span>
+<span class="kw">type</span> <span class="cls">UserNoEmail</span>   = Omit&lt;<span class="cls">User</span>, <span class="st">'email'</span>&gt;;   <span class="cm">// exclude field</span>
+<span class="kw">type</span> <span class="cls">StringMap</span>     = Record&lt;<span class="kw">string</span>, <span class="kw">number</span>&gt;; <span class="cm">// {[key: string]: number}</span>
+<span class="kw">type</span> <span class="cls">NonNullUser</span>   = NonNullable&lt;<span class="cls">User</span> | <span class="kw">null</span> | <span class="kw">undefined</span>&gt;; <span class="cm">// removes null/undefined</span>
+<span class="kw">type</span> <span class="cls">ReturnType</span>    = ReturnType&lt;<span class="kw">typeof</span> <span class="fn">fetchUser</span>&gt;;   <span class="cm">// infer return type</span>
+<span class="kw">type</span> <span class="cls">Params</span>        = Parameters&lt;<span class="kw">typeof</span> <span class="fn">fetchUser</span>&gt;; <span class="cm">// infer param types</span>
+
+<span class="cm">// Mapped type — transform every property</span>
+<span class="kw">type</span> Nullable&lt;T&gt; = {
+  [K <span class="kw">in keyof</span> T]: T[K] | <span class="kw">null</span>;
+};
+<span class="kw">type</span> NullableUser = Nullable&lt;<span class="cls">User</span>&gt;; <span class="cm">// { id: number|null; name: string|null; ... }</span>
+
+<span class="cm">// Conditional type</span>
+<span class="kw">type</span> IsArray&lt;T&gt; = T <span class="kw">extends</span> <span class="kw">any</span>[] ? <span class="st">'yes'</span> : <span class="st">'no'</span>;
+<span class="kw">type</span> A = IsArray&lt;<span class="kw">string</span>[]&gt;;  <span class="cm">// 'yes'</span>
+<span class="kw">type</span> B = IsArray&lt;<span class="kw">string</span>&gt;;    <span class="cm">// 'no'</span>
+
+<span class="cm">// Template literal types (TS 4.1+)</span>
+<span class="kw">type</span> EventName = <span class="st">`on${Capitalize&lt;string&gt;}`</span>;
+<span class="kw">type</span> <span class="cls">CSSProperty</span> = <span class="st">`--${string}`</span>;  <span class="cm">// CSS custom property</span>
+
+<span class="cm">// Extract / Exclude</span>
+<span class="kw">type</span> Strings = Extract&lt;<span class="kw">string</span> | <span class="kw">number</span> | <span class="kw">boolean</span>, <span class="kw">string</span>&gt;;  <span class="cm">// string</span>
+<span class="kw">type</span> NoStrings = Exclude&lt;<span class="kw">string</span> | <span class="kw">number</span> | <span class="kw">boolean</span>, <span class="kw">string</span>&gt;; <span class="cm">// number | boolean</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between unknown and any?</div>
+        <div class="interview-a">both can hold any value, but any opts out of type checking entirely — you can do anything with an any value with no errors. unknown is the type-safe alternative — you can assign any value to unknown, but you can't use it until you narrow the type (with typeof, instanceof, or a type guard). Rule: never use any in production TypeScript. Use unknown for values whose type you genuinely don't know (API responses, JSON.parse results). This forces you to handle the type properly before using the value.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do Pick and Omit differ from Partial?</div>
+        <div class="interview-a">Partial&lt;T&gt; makes ALL properties of T optional — changes optionality but keeps all fields. Pick&lt;T, K&gt; creates a new type with only the specified keys K — useful for creating slimmer types for DTOs or view models. Omit&lt;T, K&gt; is the opposite — creates a type with all keys EXCEPT K. Common Angular pattern: Pick for response types (only expose needed fields to templates), Omit for create DTOs (exclude server-set fields like id and createdAt from POST body).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ts-types')">← Types &amp; Interfaces</button>
+        <button class="mark-done-btn" onclick="markDone('ts-advanced')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ts-generics')">Next: Generics →</button>
+      </div>
+    </div>
+
+    <!-- TS GENERICS -->
+    <div id="lesson-ts-generics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ts">// TYPESCRIPT</div>
+        <div class="lesson-title">🔄 Generics</div>
+        <div class="lesson-subtitle">Write reusable, type-safe code. Generics are everywhere in Angular — HttpClient, Observables, signals.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Generics in Practice</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang ts">TYPESCRIPT — GENERICS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// Generic function</span>
+<span class="kw">function</span> <span class="fn">first</span>&lt;T&gt;(arr: T[]): T | <span class="kw">undefined</span> {
+  <span class="kw">return</span> arr[<span class="nm">0</span>];
+}
+<span class="kw">const</span> n = <span class="fn">first</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]);  <span class="cm">// T inferred as number</span>
+<span class="kw">const</span> s = <span class="fn">first</span>([<span class="st">'a'</span>, <span class="st">'b'</span>]); <span class="cm">// T inferred as string</span>
+
+<span class="cm">// Generic constraint — T must have an id property</span>
+<span class="kw">function</span> <span class="fn">findById</span>&lt;T <span class="kw">extends</span> { id: <span class="kw">number</span> }&gt;(items: T[], id: <span class="kw">number</span>): T | <span class="kw">undefined</span> {
+  <span class="kw">return</span> items.<span class="fn">find</span>(item => item.id === id);
+}
+
+<span class="cm">// Generic class — type-safe HTTP service wrapper</span>
+<span class="kw">class</span> <span class="cls">ApiService</span>&lt;T&gt; {
+  <span class="kw">constructor</span>(<span class="kw">private</span> http: <span class="cls">HttpClient</span>, <span class="kw">private</span> baseUrl: <span class="kw">string</span>) {}
+
+  <span class="fn">getAll</span>(): <span class="cls">Observable</span>&lt;T[]&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;T[]&gt;(<span class="kw">this</span>.baseUrl);
+  }
+
+  <span class="fn">getById</span>(id: <span class="kw">number</span>): <span class="cls">Observable</span>&lt;T&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;T&gt;(<span class="st">`${this.baseUrl}/${id}`</span>);
+  }
+}
+
+<span class="cm">// infer keyword — extract type from conditional type</span>
+<span class="kw">type</span> UnpackArray&lt;T&gt; = T <span class="kw">extends</span> (<span class="kw">infer</span> U)[] ? U : T;
+<span class="kw">type</span> ItemType = UnpackArray&lt;<span class="kw">string</span>[]&gt;;  <span class="cm">// string</span>
+
+<span class="kw">type</span> UnpackPromise&lt;T&gt; = T <span class="kw">extends</span> <span class="cls">Promise</span>&lt;<span class="kw">infer</span> U&gt; ? U : T;
+<span class="kw">type</span> Resolved = UnpackPromise&lt;<span class="cls">Promise</span>&lt;<span class="cls">User</span>&gt;&gt;; <span class="cm">// User</span>
+
+<span class="cm">// Multiple type parameters</span>
+<span class="kw">function</span> <span class="fn">zip</span>&lt;A, B&gt;(a: A[], b: B[]): [A, B][] {
+  <span class="kw">return</span> a.<span class="fn">map</span>((item, i) => [item, b[i]]);
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are generics and why are they useful in Angular?</div>
+        <div class="interview-a">Generics allow writing reusable code that works with multiple types while maintaining type safety. Without generics you'd need any (loses type safety) or overloads (verbose). In Angular, generics are everywhere: HttpClient.get&lt;User[]&gt;('/api/users') returns Observable&lt;User[]&gt; — TypeScript knows the exact type of the stream. signal&lt;number&gt;(0) creates a typed signal. EventEmitter&lt;string&gt; emits only strings. FormControl&lt;string&gt; in typed forms. The constraint syntax &lt;T extends {...}&gt; ensures T has minimum required shape.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ts-advanced')">← Advanced Types</button>
+        <button class="mark-done-btn" onclick="markDone('ts-generics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ts-decorators')">Next: Decorators →</button>
+      </div>
+    </div>
+
+    <!-- TS DECORATORS -->
+    <div id="lesson-ts-decorators" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ts">// TYPESCRIPT</div>
+        <div class="lesson-title">🎁 TypeScript Decorators</div>
+        <div class="lesson-subtitle">Angular is built on decorators. Understanding them deeply explains how Angular's magic works.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Decorator Types</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang ts">TYPESCRIPT — DECORATORS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// Class decorator — receives the constructor</span>
+<span class="kw">function</span> <span class="fn">Sealed</span>(constructor: <span class="cls">Function</span>) {
+  <span class="cls">Object</span>.<span class="fn">seal</span>(constructor);
+  <span class="cls">Object</span>.<span class="fn">seal</span>(constructor.prototype);
+}
+
+<span class="dc">@Sealed</span>
+<span class="kw">class</span> <span class="cls">BugReport</span> {
+  type = <span class="st">"report"</span>;
+}
+
+<span class="cm">// Method decorator — logs execution time</span>
+<span class="kw">function</span> <span class="fn">Log</span>(target: <span class="kw">any</span>, key: <span class="kw">string</span>, descriptor: PropertyDescriptor) {
+  <span class="kw">const</span> original = descriptor.value;
+  descriptor.value = <span class="kw">function</span>(...args: <span class="kw">any</span>[]) {
+    console.<span class="fn">log</span>(<span class="st">`Calling ${key}`</span>);
+    <span class="kw">const</span> result = original.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+    console.<span class="fn">log</span>(<span class="st">`Done ${key}`</span>);
+    <span class="kw">return</span> result;
+  };
+  <span class="kw">return</span> descriptor;
+}
+
+<span class="cm">// Property decorator</span>
+<span class="kw">function</span> <span class="fn">MinLength</span>(min: <span class="kw">number</span>) {
+  <span class="kw">return function</span>(target: <span class="kw">any</span>, propertyKey: <span class="kw">string</span>) {
+    <span class="cm">// attach metadata for validation runtime use</span>
+    <span class="cls">Reflect</span>.<span class="fn">defineMetadata</span>(<span class="st">'minLength'</span>, min, target, propertyKey);
+  };
+}
+
+<span class="cm">// Angular uses decorators extensively:</span>
+<span class="dc">@Component</span>({              <span class="cm">// class decorator</span>
+  selector: <span class="st">'app-root'</span>,
+  template: <span class="st">'...'</span>
+})
+<span class="kw">class</span> <span class="cls">AppComponent</span> {
+  <span class="dc">@Input</span>() title: <span class="kw">string</span> = <span class="st">''</span>;   <span class="cm">// property decorator</span>
+  <span class="dc">@HostListener</span>(<span class="st">'click'</span>)          <span class="cm">// method decorator</span>
+  <span class="fn">onClick</span>() {}
+  <span class="kw">constructor</span>(<span class="dc">@Inject</span>(<span class="cls">MY_TOKEN</span>) val: <span class="kw">string</span>) {} <span class="cm">// param decorator</span>
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does @Component work under the hood?</div>
+        <div class="interview-a">@Component is a class decorator factory that takes a metadata object. Angular's compiler reads this metadata at build time using reflect-metadata. The decorator attaches the component metadata (selector, template, styles) to the class constructor. The Angular runtime (the compiler/JIT or Ivy AOT) uses this metadata to: create the component factory, compile the template into efficient JavaScript, register the component in the module's declarations. Ivy (Angular's current renderer) compiles decorators into static class fields (ɵcmp, ɵfac) during build, making them tree-shakeable.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ts-generics')">← Generics</button>
+        <button class="mark-done-btn" onclick="markDone('ts-decorators')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-architecture')">Next: Angular Architecture →</button>
+      </div>
+    </div>
+
+    <!-- NG ARCHITECTURE -->
+    <div id="lesson-ng-architecture" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🏗️ Architecture &amp; Modules</div>
+        <div class="lesson-subtitle">NgModules, feature modules, lazy loading, and Angular's compilation model.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">NgModule Architecture</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — MODULE STRUCTURE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { NgModule } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { BrowserModule } <span class="kw">from</span> <span class="st">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { RouterModule } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="dc">@NgModule</span>({
+  declarations: [<span class="cls">AppComponent</span>, <span class="cls">HeaderComponent</span>],  <span class="cm">// components, directives, pipes</span>
+  imports:      [<span class="cls">BrowserModule</span>, <span class="cls">RouterModule</span>],       <span class="cm">// other modules</span>
+  exports:      [<span class="cls">HeaderComponent</span>],                   <span class="cm">// make available to importers</span>
+  providers:    [<span class="cls">UserService</span>],                        <span class="cm">// module-scoped providers</span>
+  bootstrap:    [<span class="cls">AppComponent</span>],                       <span class="cm">// root component (AppModule only)</span>
+})
+<span class="kw">export class</span> <span class="cls">AppModule</span> {}
+
+<span class="cm">// Feature module with lazy loading</span>
+<span class="kw">const</span> routes = [
+  { path: <span class="st">'admin'</span>, loadChildren: () =>
+    <span class="kw">import</span>(<span class="st">'./admin/admin.module'</span>).<span class="fn">then</span>(m => m.<span class="cls">AdminModule</span>) }
+];
+
+<span class="cm">// SharedModule pattern — re-export common Angular modules</span>
+<span class="dc">@NgModule</span>({
+  imports:  [<span class="cls">CommonModule</span>, <span class="cls">FormsModule</span>, <span class="cls">ReactiveFormsModule</span>],
+  exports:  [<span class="cls">CommonModule</span>, <span class="cls">FormsModule</span>, <span class="cls">ReactiveFormsModule</span>,
+             <span class="cls">ButtonComponent</span>, <span class="cls">InputComponent</span>],   <span class="cm">// shared UI components</span>
+  declarations: [<span class="cls">ButtonComponent</span>, <span class="cls">InputComponent</span>],
+})
+<span class="kw">export class</span> <span class="cls">SharedModule</span> {}
+
+<span class="cm">// CoreModule pattern — singleton services + app-wide components</span>
+<span class="dc">@NgModule</span>({
+  imports: [<span class="cls">CommonModule</span>],
+  declarations: [<span class="cls">NavbarComponent</span>, <span class="cls">FooterComponent</span>],
+  exports:  [<span class="cls">NavbarComponent</span>, <span class="cls">FooterComponent</span>],
+  providers: [<span class="cls">AuthService</span>, <span class="cls">LoggingService</span>],  <span class="cm">// app-singleton services</span>
+})
+<span class="kw">export class</span> <span class="cls">CoreModule</span> {
+  <span class="kw">constructor</span>(<span class="dc">@Optional</span>() <span class="dc">@SkipSelf</span>() parent: <span class="cls">CoreModule</span>) {
+    <span class="kw">if</span> (parent) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">'CoreModule already loaded!'</span>);
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between declarations, imports, exports, and providers in NgModule?</div>
+        <div class="interview-a">declarations: components, directives, and pipes that belong to this module — they're "owned" by it. imports: other NgModules whose exported items this module needs. exports: subset of declarations (and imports) to make available to modules that import this one. providers: services available via DI in this module's component tree (in non-lazy modules, these become app-wide singletons unless scoped). A component can only be declared in ONE module. To use it elsewhere, the owning module must export it and the using module must import the owning module.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does lazy loading work in Angular?</div>
+        <div class="interview-a">Lazy loading defers loading a feature module's bundle until the route is navigated to. Router configuration: loadChildren: () => import('./feature/feature.module').then(m => m.FeatureModule). The router splits the module into a separate JS chunk at build time. When the user navigates to that route for the first time, Angular downloads the chunk, bootstraps the module, and renders the component. Benefits: smaller initial bundle, faster first load. Modern Angular (v17+) uses loadComponent with standalone components directly: loadComponent: () => import('./feature.component').then(c => c.FeatureComponent).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ts-decorators')">← Decorators</button>
+        <button class="mark-done-btn" onclick="markDone('ng-architecture')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-components')">Next: Components →</button>
+      </div>
+    </div>
+
+    <!-- NG COMPONENTS -->
+    <div id="lesson-ng-components" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🧩 Components Deep Dive</div>
+        <div class="lesson-subtitle">Lifecycle hooks, @Input/@Output, ViewChild, component communication — everything about Angular components.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Lifecycle Hooks</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — LIFECYCLE HOOKS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, OnInit, OnChanges, OnDestroy, AfterViewInit,
+         Input, Output, EventEmitter, ViewChild, SimpleChanges,
+         ElementRef } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="dc">@Component</span>({ selector: <span class="st">'app-user'</span>, template: <span class="st">`...`</span> })
+<span class="kw">export class</span> <span class="cls">UserComponent</span> <span class="kw">implements</span> <span class="cls">OnInit</span>, <span class="cls">OnChanges</span>, <span class="cls">OnDestroy</span>, <span class="cls">AfterViewInit</span> {
+
+  <span class="dc">@Input</span>() userId!: <span class="kw">number</span>;             <span class="cm">// ! = definite assignment</span>
+  <span class="dc">@Input</span>({ required: <span class="kw">true</span> }) name!: <span class="kw">string</span>;  <span class="cm">// Angular 16+ required input</span>
+  <span class="dc">@Output</span>() userDeleted = <span class="kw">new</span> EventEmitter&lt;<span class="kw">number</span>&gt;();
+
+  <span class="dc">@ViewChild</span>(<span class="st">'myInput'</span>) inputEl!: ElementRef&lt;<span class="cls">HTMLInputElement</span>&gt;;
+
+  <span class="cm">// 1. constructor — DI only, no DOM access, no @Input values yet</span>
+  <span class="kw">constructor</span>(<span class="kw">private</span> userService: <span class="cls">UserService</span>) {}
+
+  <span class="cm">// 2. ngOnChanges — called when @Input values change (before ngOnInit)</span>
+  <span class="fn">ngOnChanges</span>(changes: <span class="cls">SimpleChanges</span>) {
+    <span class="kw">if</span> (changes[<span class="st">'userId'</span>].<span class="fn">currentValue</span> !== changes[<span class="st">'userId'</span>].<span class="fn">previousValue</span>) {
+      <span class="kw">this</span>.<span class="fn">loadUser</span>();
+    }
+  }
+
+  <span class="cm">// 3. ngOnInit — component initialized, @Input values available</span>
+  <span class="fn">ngOnInit</span>() { <span class="kw">this</span>.<span class="fn">loadUser</span>(); }
+
+  <span class="cm">// 4. ngAfterViewInit — DOM ready, ViewChild available</span>
+  <span class="fn">ngAfterViewInit</span>() { <span class="kw">this</span>.inputEl.nativeElement.<span class="fn">focus</span>(); }
+
+  <span class="cm">// 5. ngOnDestroy — cleanup subscriptions, timers, event listeners</span>
+  <span class="fn">ngOnDestroy</span>() { <span class="kw">this</span>.subscription?.<span class="fn">unsubscribe</span>(); }
+
+  <span class="fn">delete</span>() { <span class="kw">this</span>.userDeleted.<span class="fn">emit</span>(<span class="kw">this</span>.userId); }
+}</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Component Communication Patterns</div>
+        <table class="cheat-table">
+          <tr><th>Pattern</th><th>Direction</th><th>How</th></tr>
+          <tr><td>@Input / @Output</td><td>Parent ↔ Child</td><td>Property binding + EventEmitter</td></tr>
+          <tr><td>ViewChild</td><td>Parent → Child (imperative)</td><td>Direct child component/DOM reference</td></tr>
+          <tr><td>Service (Subject)</td><td>Any ↔ Any</td><td>Shared BehaviorSubject in service</td></tr>
+          <tr><td>Router state</td><td>Routes</td><td>Query params, route params, state</td></tr>
+          <tr><td>ng-content</td><td>Parent → Child (slot)</td><td>Content projection</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between ngOnInit and constructor?</div>
+        <div class="interview-a">Constructor is a TypeScript/JavaScript concept — it runs when the class is instantiated. In Angular: use it ONLY for dependency injection. @Input values are NOT set yet, the template is not rendered, ViewChild is not available. ngOnInit is Angular's lifecycle hook — runs after the first change detection cycle. @Input values ARE set, child components are initialized. Use ngOnInit for: initialization logic, first data fetch, setting up subscriptions based on @Input values. Rule: constructor = inject services. ngOnInit = use them.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use ViewChild vs @Input/@Output?</div>
+        <div class="interview-a">@Input/@Output is declarative — data flows through the template. Preferred for most parent-child communication. ViewChild gives a direct reference to a child component/directive/element instance — use for: calling child component methods directly (child.focus(), child.reset()), accessing DOM elements (nativeElement.focus()), integrating with third-party libraries that need imperative APIs. Avoid overusing ViewChild — it creates tight coupling. If a parent needs to frequently call child methods, consider whether the logic should be in a shared service instead.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-architecture')">← Architecture</button>
+        <button class="mark-done-btn" onclick="markDone('ng-components')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-directives')">Next: Directives →</button>
+      </div>
+    </div>
+
+    <!-- NG DIRECTIVES -->
+    <div id="lesson-ng-directives" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🎯 Directives &amp; Pipes</div>
+        <div class="lesson-subtitle">Structural and attribute directives, custom directives, pure vs impure pipes, and the async pipe.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Custom Directive &amp; Pipe</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — DIRECTIVE + PIPE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Directive, HostListener, HostBinding, ElementRef, Input } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { Pipe, PipeTransform } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="cm">// Attribute directive — modifies element behavior/appearance</span>
+<span class="dc">@Directive</span>({ selector: <span class="st">'[appHighlight]'</span>, standalone: <span class="kw">true</span> })
+<span class="kw">export class</span> <span class="cls">HighlightDirective</span> {
+  <span class="dc">@Input</span>(<span class="st">'appHighlight'</span>) color: <span class="kw">string</span> = <span class="st">'yellow'</span>;
+
+  <span class="dc">@HostBinding</span>(<span class="st">'style.backgroundColor'</span>) bgColor = <span class="st">''</span>;
+
+  <span class="dc">@HostListener</span>(<span class="st">'mouseenter'</span>) onEnter() { <span class="kw">this</span>.bgColor = <span class="kw">this</span>.color; }
+  <span class="dc">@HostListener</span>(<span class="st">'mouseleave'</span>) onLeave() { <span class="kw">this</span>.bgColor = <span class="st">''</span>; }
+}
+
+<span class="cm">// Usage: &lt;p appHighlight="cyan"&gt;Hover me&lt;/p&gt;</span>
+
+<span class="cm">// Structural directive — creates/destroys DOM elements</span>
+<span class="dc">@Directive</span>({ selector: <span class="st">'[appUnless]'</span>, standalone: <span class="kw">true</span> })
+<span class="kw">export class</span> <span class="cls">UnlessDirective</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> vcr: <span class="cls">ViewContainerRef</span>, <span class="kw">private</span> tmpl: <span class="cls">TemplateRef</span>&lt;<span class="kw">any</span>&gt;) {}
+
+  <span class="dc">@Input</span>() <span class="kw">set</span> <span class="fn">appUnless</span>(condition: <span class="kw">boolean</span>) {
+    <span class="kw">if</span> (!condition) { <span class="kw">this</span>.vcr.<span class="fn">createEmbeddedView</span>(<span class="kw">this</span>.tmpl); }
+    <span class="kw">else</span>            { <span class="kw">this</span>.vcr.<span class="fn">clear</span>(); }
+  }
+}
+<span class="cm">// Usage: &lt;div *appUnless="isAdmin"&gt;Not an admin&lt;/div&gt;</span>
+
+<span class="cm">// Pure pipe — called only when input reference changes (fast!)</span>
+<span class="dc">@Pipe</span>({ name: <span class="st">'truncate'</span>, pure: <span class="kw">true</span>, standalone: <span class="kw">true</span> })
+<span class="kw">export class</span> <span class="cls">TruncatePipe</span> <span class="kw">implements</span> <span class="cls">PipeTransform</span> {
+  <span class="fn">transform</span>(value: <span class="kw">string</span>, limit = <span class="nm">100</span>): <span class="kw">string</span> {
+    <span class="kw">return</span> value.length > limit ? value.<span class="fn">slice</span>(<span class="nm">0</span>, limit) + <span class="st">'...'</span> : value;
+  }
+}
+<span class="cm">// Usage: {{ description | truncate:50 }}</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between structural and attribute directives?</div>
+        <div class="interview-a">Structural directives change the DOM layout — they add, remove, or replace elements. Prefixed with * (syntactic sugar for ng-template). Examples: *ngIf, *ngFor, *ngSwitch. Attribute directives change the appearance or behavior of an existing element without touching the DOM structure. Examples: [ngClass], [ngStyle], custom highlight directive. One element can have multiple attribute directives but only one structural directive (because structural directives change the view container).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between pure and impure pipes?</div>
+        <div class="interview-a">Pure pipes (default) are called only when the input reference changes — like a memoized function. Angular won't re-execute a pure pipe if the same reference is passed (even if the object's contents changed). Very performant. Impure pipes (pure: false) are called on every change detection cycle regardless — expensive. Use impure pipes for: arrays/objects where contents change without reference change (async pipe is impure — it subscribes to Observable). Rule: always start with pure. If you need to detect internal mutations, use impure — but prefer immutable data patterns to avoid needing it.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-components')">← Components</button>
+        <button class="mark-done-btn" onclick="markDone('ng-directives')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-di')">Next: DI →</button>
+      </div>
+    </div>
+
+    <!-- NG DI -->
+    <div id="lesson-ng-di" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">💉 Dependency Injection</div>
+        <div class="lesson-subtitle">Angular's hierarchical injector system. One of the most tested topics in Angular interviews.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Injector Hierarchy &amp; Providers</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — DEPENDENCY INJECTION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Injectable, InjectionToken, Inject, Optional, SkipSelf } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="cm">// providedIn: 'root' — singleton, tree-shakeable (preferred)</span>
+<span class="dc">@Injectable</span>({ providedIn: <span class="st">'root'</span> })
+<span class="kw">export class</span> <span class="cls">AuthService</span> {
+  isLoggedIn$ = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="kw">boolean</span>&gt;(<span class="kw">false</span>);
+}
+
+<span class="cm">// InjectionToken — for non-class values</span>
+<span class="kw">export const</span> API_URL = <span class="kw">new</span> <span class="cls">InjectionToken</span>&lt;<span class="kw">string</span>&gt;(<span class="st">'API_URL'</span>);
+
+<span class="cm">// Providing different types</span>
+<span class="kw">const</span> providers = [
+  <span class="cm">// useClass — swap implementation</span>
+  { provide: <span class="cls">LoggerService</span>, useClass: <span class="cls">ConsoleLoggerService</span> },
+  <span class="cm">// useValue — constant value</span>
+  { provide: API_URL, useValue: <span class="st">'https://api.example.com'</span> },
+  <span class="cm">// useFactory — dynamic creation</span>
+  { provide: <span class="cls">HttpClient</span>, useFactory: () => <span class="kw">new</span> <span class="cls">HttpClient</span>(...), deps: [<span class="cls">HttpHandler</span>] },
+  <span class="cm">// useExisting — alias one token to another</span>
+  { provide: <span class="cls">NewLogger</span>, useExisting: <span class="cls">OldLogger</span> },
+  <span class="cm">// multi provider — array of implementations</span>
+  { provide: HTTP_INTERCEPTORS, useClass: <span class="cls">AuthInterceptor</span>, multi: <span class="kw">true</span> },
+  { provide: HTTP_INTERCEPTORS, useClass: <span class="cls">LoggingInterceptor</span>, multi: <span class="kw">true</span> },
+];
+
+<span class="cm">// Inject in constructor (classic) or inject() function (Angular 14+)</span>
+<span class="dc">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">UserService</span> {
+  <span class="cm">// Modern functional injection (usable anywhere)</span>
+  <span class="kw">private</span> http = <span class="fn">inject</span>(<span class="cls">HttpClient</span>);
+  <span class="kw">private</span> apiUrl = <span class="fn">inject</span>(API_URL);
+
+  <span class="cm">// Or constructor injection</span>
+  <span class="kw">constructor</span>(
+    <span class="dc">@Inject</span>(API_URL) <span class="kw">private</span> url: <span class="kw">string</span>,
+    <span class="dc">@Optional</span>() <span class="kw">private</span> logger: <span class="cls">LoggerService</span>,
+  ) {}
+}</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Injector Hierarchy</div>
+        <div class="diagram">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:11px">
+            <div class="arch-box ab-ng">Root Injector<br><small>providedIn:'root' — app-wide singleton</small></div>
+            <div class="arch-arrow" style="transform:rotate(90deg)">→</div>
+            <div class="arch-box ab-ts">Module Injector<br><small>providers: [] in NgModule</small></div>
+            <div class="arch-arrow" style="transform:rotate(90deg)">→</div>
+            <div class="arch-box ab-g">Component Injector<br><small>providers: [] in @Component — new instance per component</small></div>
+            <div class="arch-arrow" style="transform:rotate(90deg)">→</div>
+            <div class="arch-box ab-n">Element Injector<br><small>directive providers</small></div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-dimmer);margin-top:10px">Angular walks up the tree until it finds a provider. No provider found → NullInjectorError</div>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between providedIn: 'root' and providing in a module?</div>
+        <div class="interview-a">providedIn: 'root' makes the service a singleton at the root injector level. The service is tree-shaken if never injected (not the case with NgModule providers). It's the modern preferred approach — clean, no circular dependency risk. Providing in an NgModule's providers array: registers the service in that module's injector. For lazy-loaded modules, this creates a child injector — the service is a new instance per lazy module, not a true app-wide singleton. Providing in a component's providers array: new instance per component instance — destroyed when the component is destroyed. Great for stateful services scoped to a component tree.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the inject() function and when would you use it over constructor injection?</div>
+        <div class="interview-a">inject() is a functional API (Angular 14+) that retrieves a dependency from the current injector. Works in: constructors, field initializers, factory providers, and injection context functions. Benefits: usable in standalone functions (not just classes), cleaner with functional patterns, works in class fields (avoids constructor parameter boilerplate). Required for: composable functions (like Angular signals, guards as functions), injection outside constructors. Constructor injection remains valid — inject() is an alternative, not a replacement. Both work in components and services.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-directives')">← Directives</button>
+        <button class="mark-done-btn" onclick="markDone('ng-di')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-services')">Next: Services &amp; HTTP →</button>
+      </div>
+    </div>
+
+    <!-- NG SERVICES -->
+    <div id="lesson-ng-services" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">⚙️ Services &amp; HttpClient</div>
+        <div class="lesson-subtitle">HTTP interceptors, error handling, retry strategies, and building robust data services.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">HttpClient &amp; Interceptors</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — HTTP + INTERCEPTOR</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Injectable, inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { HttpClient, HttpInterceptorFn, HttpRequest, HttpHandlerFn } <span class="kw">from</span> <span class="st">'@angular/common/http'</span>;
+<span class="kw">import</span> { Observable, throwError } <span class="kw">from</span> <span class="st">'rxjs'</span>;
+<span class="kw">import</span> { catchError, retry, timeout } <span class="kw">from</span> <span class="st">'rxjs/operators'</span>;
+
+<span class="cm">// Functional interceptor (Angular 15+ — preferred)</span>
+<span class="kw">export const</span> <span class="fn">authInterceptor</span>: <span class="cls">HttpInterceptorFn</span> = (
+  req: <span class="cls">HttpRequest</span>&lt;<span class="kw">unknown</span>&gt;,
+  next: <span class="cls">HttpHandlerFn</span>
+) => {
+  <span class="kw">const</span> authService = <span class="fn">inject</span>(<span class="cls">AuthService</span>);
+  <span class="kw">const</span> token = authService.<span class="fn">getToken</span>();
+
+  <span class="kw">if</span> (!token) <span class="kw">return</span> <span class="fn">next</span>(req);
+
+  <span class="kw">const</span> authReq = req.<span class="fn">clone</span>({
+    headers: req.headers.<span class="fn">set</span>(<span class="st">'Authorization'</span>, <span class="st">`Bearer ${token}`</span>)
+  });
+  <span class="kw">return</span> <span class="fn">next</span>(authReq);
+};
+
+<span class="cm">// Data service with error handling + retry</span>
+<span class="dc">@Injectable</span>({ providedIn: <span class="st">'root'</span> })
+<span class="kw">export class</span> <span class="cls">UserService</span> {
+  <span class="kw">private</span> http = <span class="fn">inject</span>(<span class="cls">HttpClient</span>);
+  <span class="kw">private</span> apiUrl = <span class="st">'https://api.example.com'</span>;
+
+  <span class="fn">getUsers</span>(): <span class="cls">Observable</span>&lt;<span class="cls">User</span>[]&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="cls">User</span>[]&gt;(<span class="st">`${this.apiUrl}/users`</span>).<span class="fn">pipe</span>(
+      <span class="fn">timeout</span>(<span class="nm">10000</span>),          <span class="cm">// error if no response in 10s</span>
+      <span class="fn">retry</span>({ count: <span class="nm">3</span>, delay: <span class="nm">1000</span> }),  <span class="cm">// retry 3x with 1s delay</span>
+      <span class="fn">catchError</span>(err => {
+        <span class="cm">// transform error for UI consumption</span>
+        <span class="kw">return</span> <span class="fn">throwError</span>(() => <span class="kw">new</span> <span class="cls">Error</span>(<span class="kw">this</span>.<span class="fn">getErrorMessage</span>(err)));
+      })
+    );
+  }
+
+  <span class="kw">private</span> <span class="fn">getErrorMessage</span>(err: <span class="kw">any</span>): <span class="kw">string</span> {
+    <span class="kw">if</span> (err.status === <span class="nm">404</span>) <span class="kw">return</span> <span class="st">'Resource not found'</span>;
+    <span class="kw">if</span> (err.status === <span class="nm">401</span>) <span class="kw">return</span> <span class="st">'Unauthorized'</span>;
+    <span class="kw">return</span> err.message ?? <span class="st">'Unknown error'</span>;
+  }
+}
+
+<span class="cm">// Register functional interceptors (standalone)</span>
+<span class="fn">bootstrapApplication</span>(<span class="cls">AppComponent</span>, {
+  providers: [<span class="fn">provideHttpClient</span>(<span class="fn">withInterceptors</span>([authInterceptor]))]
+});</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are HTTP interceptors and what are they used for?</div>
+        <div class="interview-a">Interceptors are middleware for HTTP requests and responses. They intercept every HttpClient request/response in the application. Common uses: (1) Auth token attachment — add Authorization header to all requests, (2) Error handling — globally catch 401/403 and redirect to login, (3) Loading indicator — show spinner on request, hide on response, (4) Request logging — log all API calls for debugging, (5) Caching — cache GET responses, (6) Response transformation — normalize API response format. Angular 15+ has functional interceptors (HttpInterceptorFn) which are simpler than the class-based approach and work with inject().</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-di')">← DI</button>
+        <button class="mark-done-btn" onclick="markDone('ng-services')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-routing')">Next: Routing →</button>
+      </div>
+    </div>
+
+    <!-- NG ROUTING -->
+    <div id="lesson-ng-routing" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🛣️ Routing &amp; Guards</div>
+        <div class="lesson-subtitle">Angular Router, lazy loading, route guards, resolve, and functional guard patterns.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Routes &amp; Guards</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — ROUTING + GUARDS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { AuthService } <span class="kw">from</span> <span class="st">'./auth.service'</span>;
+
+<span class="cm">// Functional guard (Angular 14+ — preferred over class-based)</span>
+<span class="kw">export const</span> <span class="fn">authGuard</span> = () => {
+  <span class="kw">const</span> auth = <span class="fn">inject</span>(<span class="cls">AuthService</span>);
+  <span class="kw">const</span> router = <span class="fn">inject</span>(<span class="cls">Router</span>);
+  <span class="kw">return</span> auth.isLoggedIn() || router.<span class="fn">createUrlTree</span>([<span class="st">'/login'</span>]);
+  <span class="cm">// return true = proceed, UrlTree = redirect, false = block</span>
+};
+
+<span class="cm">// Functional resolve guard</span>
+<span class="kw">export const</span> <span class="fn">userResolver</span> = (<span class="fn">route</span>: <span class="cls">ActivatedRouteSnapshot</span>) => {
+  <span class="kw">return</span> <span class="fn">inject</span>(<span class="cls">UserService</span>).<span class="fn">getUser</span>(<span class="fn">route</span>.params[<span class="st">'id'</span>]);
+};
+
+<span class="kw">export const</span> routes: <span class="cls">Routes</span> = [
+  { path: <span class="st">''</span>, redirectTo: <span class="st">'/home'</span>, pathMatch: <span class="st">'full'</span> },
+  { path: <span class="st">'home'</span>, component: <span class="cls">HomeComponent</span> },
+  { path: <span class="st">'login'</span>, component: <span class="cls">LoginComponent</span> },
+
+  <span class="cm">// Protected routes with canActivate</span>
+  {
+    path: <span class="st">'dashboard'</span>,
+    canActivate: [<span class="fn">authGuard</span>],
+    component: <span class="cls">DashboardComponent</span>,
+  },
+
+  <span class="cm">// Lazy-loaded feature with resolve</span>
+  {
+    path: <span class="st">'users/:id'</span>,
+    canActivate: [<span class="fn">authGuard</span>],
+    resolve: { user: <span class="fn">userResolver</span> },  <span class="cm">// data available before component loads</span>
+    loadComponent: () => <span class="kw">import</span>(<span class="st">'./user-detail.component'</span>)
+      .<span class="fn">then</span>(c => c.<span class="cls">UserDetailComponent</span>),
+  },
+
+  <span class="cm">// Nested routes with children</span>
+  {
+    path: <span class="st">'admin'</span>,
+    canActivate: [<span class="fn">authGuard</span>],
+    loadChildren: () => <span class="kw">import</span>(<span class="st">'./admin/admin.routes'</span>)
+      .<span class="fn">then</span>(r => r.adminRoutes),
+  },
+
+  { path: <span class="st">'**'</span>, component: <span class="cls">NotFoundComponent</span> },
+];
+
+<span class="cm">// In component: access resolved data</span>
+<span class="kw">export class</span> <span class="cls">UserDetailComponent</span> {
+  route = <span class="fn">inject</span>(<span class="cls">ActivatedRoute</span>);
+  user = <span class="kw">this</span>.route.snapshot.data[<span class="st">'user'</span>] <span class="kw">as</span> <span class="cls">User</span>;
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are the different types of route guards in Angular?</div>
+        <div class="interview-a">canActivate: controls whether a route can be activated — returns true/false/UrlTree. canActivateChild: same but for child routes. canDeactivate: controls whether you can leave a route (warn about unsaved changes). resolve: pre-fetches data before the component loads — the component receives ready data via ActivatedRoute. canLoad/canMatch: controls whether a lazy-loaded module should be downloaded at all. Angular 14+ replaced class-based guards with functional guards (simpler, use inject(), more composable). canActivate + UrlTree is the modern way to redirect instead of calling router.navigate() in the guard.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-services')">← Services</button>
+        <button class="mark-done-btn" onclick="markDone('ng-routing')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-forms')">Next: Forms →</button>
+      </div>
+    </div>
+
+    <!-- NG FORMS -->
+    <div id="lesson-ng-forms" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">📝 Forms</div>
+        <div class="lesson-subtitle">Reactive vs template-driven, FormBuilder, FormArray, custom validators — the complete forms guide.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Reactive Forms (Preferred)</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — REACTIVE FORMS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } <span class="kw">from</span> <span class="st">'@angular/forms'</span>;
+
+<span class="cm">// Custom validator</span>
+<span class="kw">export function</span> <span class="fn">noSpacesValidator</span>(ctrl: <span class="cls">AbstractControl</span>) {
+  <span class="kw">return</span> /\s/.test(ctrl.value) ? { noSpaces: <span class="kw">true</span> } : <span class="kw">null</span>;
+}
+
+<span class="cm">// Async validator (checks if username is taken)</span>
+<span class="kw">export function</span> <span class="fn">uniqueUsernameValidator</span>(userService: <span class="cls">UserService</span>) {
+  <span class="kw">return</span> (ctrl: <span class="cls">AbstractControl</span>) => {
+    <span class="kw">return</span> userService.<span class="fn">checkUsername</span>(ctrl.value).<span class="fn">pipe</span>(
+      <span class="fn">map</span>(taken => taken ? { usernameTaken: <span class="kw">true</span> } : <span class="kw">null</span>),
+      <span class="fn">catchError</span>(() => <span class="fn">of</span>(<span class="kw">null</span>))
+    );
+  };
+}
+
+<span class="dc">@Component</span>({ selector: <span class="st">'app-register'</span>, standalone: <span class="kw">true</span>, imports: [<span class="cls">ReactiveFormsModule</span>], template: <span class="st">`
+  &lt;form [formGroup]="form" (ngSubmit)="onSubmit()"&gt;
+    &lt;input formControlName="username"&gt;
+    &lt;span *ngIf="form.get('username')?.errors?.['usernameTaken']"&gt;Username taken&lt;/span&gt;
+
+    &lt;div formGroupName="address"&gt;
+      &lt;input formControlName="city"&gt;
+    &lt;/div&gt;
+
+    &lt;div formArrayName="phones"&gt;
+      &lt;div *ngFor="let phone of phones.controls; let i=index"&gt;
+        &lt;input [formControlName]="i"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+`</span> })
+<span class="kw">export class</span> <span class="cls">RegisterComponent</span> {
+  <span class="kw">private</span> fb = <span class="fn">inject</span>(<span class="cls">FormBuilder</span>);
+  <span class="kw">private</span> userService = <span class="fn">inject</span>(<span class="cls">UserService</span>);
+
+  form = <span class="kw">this</span>.fb.<span class="fn">group</span>({
+    username: [<span class="st">''</span>, [Validators.required, <span class="fn">noSpacesValidator</span>],
+                    [<span class="fn">uniqueUsernameValidator</span>(<span class="kw">this</span>.userService)]],
+    email: [<span class="st">''</span>, [Validators.required, Validators.email]],
+    address: <span class="kw">this</span>.fb.<span class="fn">group</span>({            <span class="cm">// nested FormGroup</span>
+      city: [<span class="st">''</span>, Validators.required],
+      country: [<span class="st">''</span>],
+    }),
+    phones: <span class="kw">this</span>.fb.<span class="fn">array</span>([<span class="st">''</span>]),      <span class="cm">// dynamic FormArray</span>
+  });
+
+  <span class="kw">get</span> phones() { <span class="kw">return this</span>.form.<span class="fn">get</span>(<span class="st">'phones'</span>) <span class="kw">as</span> <span class="cls">FormArray</span>; }
+  <span class="fn">addPhone</span>() { <span class="kw">this</span>.phones.<span class="fn">push</span>(<span class="kw">this</span>.fb.<span class="fn">control</span>(<span class="st">''</span>)); }
+}</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Reactive vs Template-Driven</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Reactive Forms</th><th>Template-Driven</th></tr>
+          <tr><td>Setup</td><td>Component class — FormBuilder</td><td>Template — ngModel</td></tr>
+          <tr><td>Data flow</td><td>Sync, explicit, immutable</td><td>Two-way binding, mutable</td></tr>
+          <tr><td>Validators</td><td>Functions — easy to unit test</td><td>Directives — harder to test</td></tr>
+          <tr><td>Complex forms</td><td>✅ FormArray, nested groups</td><td>❌ Gets messy fast</td></tr>
+          <tr><td>Testing</td><td>✅ No DOM needed</td><td>❌ Requires DOM/async</td></tr>
+          <tr><td>Use when</td><td>Most cases — especially complex forms</td><td>Simple forms, quick prototyping</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why are reactive forms preferred over template-driven forms?</div>
+        <div class="interview-a">Reactive forms are defined in the component class — they're synchronous, explicit, and testable without a DOM. Validators are pure functions (easy to unit test). State is a plain observable — you can subscribe to valueChanges and statusChanges. FormArray makes dynamic form controls trivial. Cross-field validation is done at group level. Template-driven forms use ngModel and directives in the template — state is managed by Angular internally and is only available after change detection. Testing requires fixture/async. For anything beyond a simple contact form, reactive forms are the correct choice.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-routing')">← Routing</button>
+        <button class="mark-done-btn" onclick="markDone('ng-forms')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-rxjs')">Next: RxJS →</button>
+      </div>
+    </div>
+
+    <!-- NG RXJS -->
+    <div id="lesson-ng-rxjs" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🌊 RxJS &amp; Observables</div>
+        <div class="lesson-subtitle">The operators Angular developers must know cold. switchMap, mergeMap, Subject types, and memory leak prevention.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Essential RxJS Operators</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — RXJS PATTERNS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, inject, DestroyRef } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { takeUntilDestroyed } <span class="kw">from</span> <span class="st">'@angular/core/rxjs-interop'</span>;
+<span class="kw">import</span> { switchMap, mergeMap, concatMap, exhaustMap,
+         combineLatest, debounceTime, distinctUntilChanged } <span class="kw">from</span> <span class="st">'rxjs'</span>;
+
+<span class="cm">// switchMap — cancel previous, use latest (search, navigation)</span>
+searchTerm$.<span class="fn">pipe</span>(
+  <span class="fn">debounceTime</span>(<span class="nm">300</span>),
+  <span class="fn">distinctUntilChanged</span>(),
+  <span class="fn">switchMap</span>(term => <span class="kw">this</span>.http.<span class="fn">get</span>(<span class="st">`/search?q=${term}`</span>))
+).<span class="fn">subscribe</span>(results => <span class="kw">this</span>.results = results);
+
+<span class="cm">// mergeMap — concurrent requests, all complete (parallel uploads)</span>
+files$.<span class="fn">pipe</span>(<span class="fn">mergeMap</span>(file => <span class="kw">this</span>.<span class="fn">upload</span>(file))).<span class="fn">subscribe</span>();
+
+<span class="cm">// concatMap — sequential, wait for each to complete (ordered actions)</span>
+actions$.<span class="fn">pipe</span>(<span class="fn">concatMap</span>(action => <span class="kw">this</span>.<span class="fn">saveAction</span>(action))).<span class="fn">subscribe</span>();
+
+<span class="cm">// exhaustMap — ignore new until current completes (form submit, prevent double)</span>
+submitBtn$.<span class="fn">pipe</span>(<span class="fn">exhaustMap</span>(() => <span class="kw">this</span>.form.<span class="fn">submit</span>())).<span class="fn">subscribe</span>();
+
+<span class="cm">// combineLatest — emit when ANY source changes (filters + data)</span>
+combineLatest([users$, filter$]).<span class="fn">pipe</span>(
+  <span class="fn">map</span>(([users, filter]) => users.<span class="fn">filter</span>(u => u.role === filter))
+).<span class="fn">subscribe</span>();
+
+<span class="cm">// Subject types</span>
+<span class="kw">const</span> subject    = <span class="kw">new</span> <span class="cls">Subject</span>&lt;<span class="kw">number</span>&gt;();            <span class="cm">// no initial value, no replay</span>
+<span class="kw">const</span> behavior   = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="kw">number</span>&gt;(<span class="nm">0</span>);    <span class="cm">// initial value, replay last</span>
+<span class="kw">const</span> replay     = <span class="kw">new</span> <span class="cls">ReplaySubject</span>&lt;<span class="kw">number</span>&gt;(<span class="nm">5</span>);       <span class="cm">// replay last 5 values</span>
+<span class="kw">const</span> asyncSubj  = <span class="kw">new</span> <span class="cls">AsyncSubject</span>&lt;<span class="kw">number</span>&gt;();          <span class="cm">// emit only on complete</span>
+
+<span class="cm">// Modern: takeUntilDestroyed — replaces manual unsubscribe!</span>
+<span class="dc">@Component</span>({...})
+<span class="kw">export class</span> <span class="cls">MyComponent</span> {
+  users$ = <span class="fn">inject</span>(<span class="cls">UserService</span>).<span class="fn">getUsers</span>().<span class="fn">pipe</span>(
+    <span class="fn">takeUntilDestroyed</span>()   <span class="cm">// auto-unsubscribes when component destroys</span>
+  );
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between switchMap, mergeMap, concatMap, and exhaustMap?</div>
+        <div class="interview-a">All four map each value to an inner Observable, but differ in how they handle concurrent inner observables. switchMap: cancels the previous inner observable when a new outer value arrives — use for search (cancel old request), navigation. mergeMap: subscribes to all inner observables concurrently — use for parallel operations (multiple uploads). concatMap: queues inner observables, waits for each to complete before starting the next — use for ordered sequential operations. exhaustMap: ignores new outer values while an inner observable is active — use for form submission (prevent double-submit). Memory rule: switch = search, merge = parallel, concat = sequential, exhaust = prevent duplicate.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between Subject, BehaviorSubject, and ReplaySubject?</div>
+        <div class="interview-a">Subject: plain multicast — subscribers only get values emitted AFTER they subscribe. No initial value. BehaviorSubject: requires an initial value. New subscribers immediately get the LAST emitted value (current state). Use for state (user, theme, auth status). ReplaySubject(n): replays the last N values to new subscribers. AsyncSubject: only emits the last value when the subject completes — rarely used. Rule: BehaviorSubject for state that has a current value (most Angular services). Subject for events/actions with no "current" concept. ReplaySubject when late subscribers need history (cache).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-forms')">← Forms</button>
+        <button class="mark-done-btn" onclick="markDone('ng-rxjs')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-change-detection')">Next: Change Detection →</button>
+      </div>
+    </div>
+
+    <!-- NG CHANGE DETECTION -->
+    <div id="lesson-ng-change-detection" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🔍 Change Detection</div>
+        <div class="lesson-subtitle">How Angular knows when to update the DOM. Zone.js, OnPush, and the key to Angular performance.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Default vs OnPush</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text"><strong>Default CD</strong> is like a CCTV system that checks every room every second — thorough but expensive.<br><br><strong>OnPush CD</strong> is like a motion sensor — it only checks a room when: a new object enters (new @Input reference), a button is pressed inside (DOM event), or someone explicitly rings the bell (markForCheck / async pipe). If nothing changed, the room isn't checked. Massive performance improvement for large trees.</div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — CHANGE DETECTION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, ChangeDetectionStrategy, ChangeDetectorRef,
+         inject, Input } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="cm">// OnPush — only checks when:</span>
+<span class="cm">//   1. @Input reference changes (not mutation!)</span>
+<span class="cm">//   2. DOM event inside this component</span>
+<span class="cm">//   3. async pipe emits</span>
+<span class="cm">//   4. markForCheck() / detectChanges() called</span>
+<span class="dc">@Component</span>({
+  selector: <span class="st">'app-user-card'</span>,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: <span class="st">`
+    &lt;!-- async pipe: subscribes, triggers CD on emission, unsubscribes --&gt;
+    &lt;div *ngIf="user$ | async as user"&gt;{{ user.name }}&lt;/div&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cls">UserCardComponent</span> {
+  <span class="dc">@Input</span>() userId!: <span class="kw">number</span>;
+  <span class="kw">private</span> cdr = <span class="fn">inject</span>(<span class="cls">ChangeDetectorRef</span>);
+
+  user$ = <span class="fn">inject</span>(<span class="cls">UserService</span>).<span class="fn">getUser</span>(<span class="kw">this</span>.userId);
+
+  <span class="cm">// ❌ WRONG with OnPush — mutating input doesn't trigger CD</span>
+  <span class="fn">badUpdate</span>(newName: <span class="kw">string</span>) {
+    <span class="kw">this</span>.user.name = newName;  <span class="cm">// same reference — OnPush won't detect</span>
+  }
+
+  <span class="cm">// ✅ CORRECT — new reference triggers OnPush</span>
+  <span class="fn">goodUpdate</span>(newName: <span class="kw">string</span>) {
+    <span class="kw">this</span>.user = { ...<span class="kw">this</span>.user, name: newName };  <span class="cm">// new object</span>
+  }
+
+  <span class="cm">// Manual trigger when needed (e.g., from non-Angular callback)</span>
+  <span class="fn">fromOutside</span>() {
+    <span class="kw">this</span>.cdr.<span class="fn">markForCheck</span>();   <span class="cm">// schedule check in next cycle</span>
+    <span class="cm">// or this.cdr.detectChanges(); // immediately check this subtree</span>
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Angular's change detection work?</div>
+        <div class="interview-a">Zone.js patches browser async APIs (setTimeout, Promises, DOM events). When any async operation completes, Zone.js notifies Angular, which triggers a change detection cycle. Starting from the root, Angular walks down the component tree, checking each component's template bindings. With Default strategy: every component is checked every cycle. With OnPush: a component subtree is skipped unless its inputs changed by reference, it received a DOM event, or an async pipe emitted. Signals (Angular 17+) are even more granular — only the specific template expressions that depend on a changed signal are re-evaluated.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between markForCheck and detectChanges?</div>
+        <div class="interview-a">markForCheck(): marks this component and all its ancestors as dirty — they'll be checked in the next change detection cycle (scheduled). Doesn't run CD immediately. Use when updating from outside Angular (WebSocket callbacks, third-party lib). detectChanges(): immediately runs change detection on this component and its descendants synchronously. Use when you need the DOM updated right now. Also works outside of Zone.js. Rule: markForCheck for normal async updates (let Angular schedule it), detectChanges for imperative updates that need immediate DOM reflection.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-rxjs')">← RxJS</button>
+        <button class="mark-done-btn" onclick="markDone('ng-change-detection')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-performance')">Next: Performance &amp; Signals →</button>
+      </div>
+    </div>
+
+    <!-- NG PERFORMANCE -->
+    <div id="lesson-ng-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-both">// ANGULAR MODERN</div>
+        <div class="lesson-title">⚡ Performance &amp; Signals</div>
+        <div class="lesson-subtitle">Angular Signals (Angular 16+), OnPush optimization, trackBy, lazy loading, and bundle strategies.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Angular Signals (v16+)</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — SIGNALS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, signal, computed, effect, inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { toSignal, toObservable } <span class="kw">from</span> <span class="st">'@angular/core/rxjs-interop'</span>;
+
+<span class="dc">@Component</span>({
+  selector: <span class="st">'app-counter'</span>,
+  standalone: <span class="kw">true</span>,
+  template: <span class="st">`
+    &lt;p&gt;Count: {{ count() }}&lt;/p&gt;          &lt;!-- read signal --&gt;
+    &lt;p&gt;Double: {{ double() }}&lt;/p&gt;        &lt;!-- computed auto-updates --&gt;
+    &lt;button (click)="increment()"&gt;+&lt;/button&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cls">CounterComponent</span> {
+  <span class="cm">// signal() — writable reactive primitive</span>
+  count = <span class="fn">signal</span>(<span class="nm">0</span>);
+
+  <span class="cm">// computed() — derived signal, re-evaluates only when dependencies change</span>
+  double = <span class="fn">computed</span>(() => <span class="kw">this</span>.<span class="fn">count</span>() * <span class="nm">2</span>);
+
+  <span class="cm">// effect() — side effects when signals change</span>
+  logEffect = <span class="fn">effect</span>(() => {
+    console.<span class="fn">log</span>(<span class="st">'Count changed:'</span>, <span class="kw">this</span>.<span class="fn">count</span>());
+  });
+
+  <span class="fn">increment</span>() {
+    <span class="kw">this</span>.count.<span class="fn">update</span>(n => n + <span class="nm">1</span>);  <span class="cm">// update based on previous</span>
+    <span class="cm">// or: this.count.set(5);         // set absolute value</span>
+  }
+
+  <span class="cm">// Bridge with RxJS</span>
+  users = <span class="fn">toSignal</span>(<span class="fn">inject</span>(<span class="cls">UserService</span>).<span class="fn">getUsers</span>(), { initialValue: [] });
+  count$ = <span class="fn">toObservable</span>(<span class="kw">this</span>.count); <span class="cm">// signal → Observable</span>
+}
+
+<span class="cm">// trackBy — prevent full list re-render</span>
+<span class="cm">// &lt;li *ngFor="let user of users; trackBy: trackById"&gt;</span>
+<span class="fn">trackById</span>(index: <span class="kw">number</span>, user: <span class="cls">User</span>) { <span class="kw">return</span> user.id; }</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are Angular Signals and how are they different from RxJS Observables?</div>
+        <div class="interview-a">Signals are synchronous reactive primitives — they hold a value and notify consumers when that value changes. Unlike Observables, they're always synchronous, always hold a current value (no need for initial values or subscriptions), and use fine-grained reactivity (only components that read a signal are re-rendered). Observables are lazy, async by default, handle streams of events over time, have powerful operators, and need explicit subscription management. Signals are better for component state; Observables for async streams, HTTP, and time-based operations. Angular 16+ allows interop: toSignal() converts Observable → Signal, toObservable() does the reverse.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use trackBy with ngFor?</div>
+        <div class="interview-a">Without trackBy, when the array reference changes, Angular destroys and recreates ALL DOM elements even if most items are unchanged. This causes: unnecessary DOM operations (expensive), loss of component state, janky animations. With trackBy: Angular identifies each item by the returned key (usually id). Only items whose key is new get created; items that moved are reused (just repositioned); items no longer in the array are destroyed. For a list of 100 items where only one changed: trackBy = 1 DOM operation vs no trackBy = 100 DOM operations. Always use trackBy with ngFor for dynamic lists.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-change-detection')">← Change Detection</button>
+        <button class="mark-done-btn" onclick="markDone('ng-performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-testing')">Next: Testing →</button>
+      </div>
+    </div>
+
+    <!-- NG TESTING -->
+    <div id="lesson-ng-testing" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR CORE</div>
+        <div class="lesson-title">🧪 Testing Angular</div>
+        <div class="lesson-subtitle">TestBed, ComponentFixture, spies, HttpClientTestingModule, and async testing patterns.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Component Testing</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR — TESTING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { ComponentFixture, TestBed, fakeAsync, tick } <span class="kw">from</span> <span class="st">'@angular/core/testing'</span>;
+<span class="kw">import</span> { provideHttpClientTesting, HttpTestingController } <span class="kw">from</span> <span class="st">'@angular/common/http/testing'</span>;
+<span class="kw">import</span> { of, throwError } <span class="kw">from</span> <span class="st">'rxjs'</span>;
+
+<span class="fn">describe</span>(<span class="st">'UserListComponent'</span>, () => {
+  <span class="kw">let</span> fixture: ComponentFixture&lt;<span class="cls">UserListComponent</span>&gt;;
+  <span class="kw">let</span> component: <span class="cls">UserListComponent</span>;
+  <span class="kw">let</span> userService: jasmine.SpyObj&lt;<span class="cls">UserService</span>&gt;;
+
+  <span class="fn">beforeEach</span>(<span class="kw">async</span> () => {
+    <span class="kw">const</span> spy = jasmine.<span class="fn">createSpyObj</span>(<span class="st">'UserService'</span>, [<span class="st">'getUsers'</span>, <span class="st">'deleteUser'</span>]);
+
+    <span class="kw">await</span> TestBed.<span class="fn">configureTestingModule</span>({
+      imports:   [<span class="cls">UserListComponent</span>],  <span class="cm">// standalone component</span>
+      providers: [{ provide: <span class="cls">UserService</span>, useValue: spy }]
+    }).<span class="fn">compileComponents</span>();
+
+    fixture   = TestBed.<span class="fn">createComponent</span>(<span class="cls">UserListComponent</span>);
+    component = fixture.componentInstance;
+    userService = TestBed.<span class="fn">inject</span>(<span class="cls">UserService</span>) <span class="kw">as</span> jasmine.SpyObj&lt;<span class="cls">UserService</span>&gt;;
+  });
+
+  <span class="fn">it</span>(<span class="st">'should load users on init'</span>, () => {
+    <span class="kw">const</span> mockUsers = [{ id: <span class="nm">1</span>, name: <span class="st">'Hany'</span> }];
+    userService.getUsers.<span class="fn">and</span>.<span class="fn">returnValue</span>(<span class="fn">of</span>(mockUsers));
+
+    fixture.<span class="fn">detectChanges</span>();  <span class="cm">// triggers ngOnInit</span>
+
+    <span class="fn">expect</span>(component.users).<span class="fn">toEqual</span>(mockUsers);
+    <span class="kw">const</span> listItems = fixture.nativeElement.<span class="fn">querySelectorAll</span>(<span class="st">'li'</span>);
+    <span class="fn">expect</span>(listItems.length).<span class="fn">toBe</span>(<span class="nm">1</span>);
+  });
+
+  <span class="fn">it</span>(<span class="st">'should handle delete with fakeAsync'</span>, fakeAsync(() => {
+    userService.deleteUser.<span class="fn">and</span>.<span class="fn">returnValue</span>(<span class="fn">of</span>(<span class="kw">void</span> <span class="nm">0</span>));
+    component.<span class="fn">deleteUser</span>(<span class="nm">1</span>);
+    <span class="fn">tick</span>();  <span class="cm">// flush async operations</span>
+    <span class="fn">expect</span>(userService.deleteUser).<span class="fn">toHaveBeenCalledWith</span>(<span class="nm">1</span>);
+  }));
+});</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is fakeAsync and when do you use it?</div>
+        <div class="interview-a">fakeAsync() gives you synchronous control over asynchronous code in tests. It wraps the test in a fake async zone. tick(ms) advances the virtual clock by the specified milliseconds, flushing pending timers. flushMicrotasks() flushes promise microtasks. Use fakeAsync when: testing setTimeout/setInterval effects, testing debounce behaviors, testing Promise-based code, testing delayed Observable emissions. Alternative: waitForAsync() + fixture.whenStable() for truly async tests. Rule: fakeAsync + tick is cleaner and more explicit — prefer it when possible.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-performance')">← Performance</button>
+        <button class="mark-done-btn" onclick="markDone('ng-testing')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ng-standalone')">Next: Standalone →</button>
+      </div>
+    </div>
+
+    <!-- NG STANDALONE -->
+    <div id="lesson-ng-standalone" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// ANGULAR MODERN</div>
+        <div class="lesson-title">✨ Standalone &amp; Angular 17+</div>
+        <div class="lesson-subtitle">Standalone components, the new @if/@for control flow, deferrable views, and SSR with hydration.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Standalone Components &amp; New Control Flow</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">ANGULAR 17+ — MODERN SYNTAX</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { Component, signal } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterLink, RouterOutlet } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="cm">// Standalone component — no NgModule needed!</span>
+<span class="dc">@Component</span>({
+  selector: <span class="st">'app-user-list'</span>,
+  standalone: <span class="kw">true</span>,
+  imports: [<span class="cls">RouterLink</span>, <span class="cls">CommonModule</span>],   <span class="cm">// direct imports</span>
+  template: <span class="st">`
+    &lt;!-- Angular 17 built-in control flow (no *ngIf/*ngFor) --&gt;
+    @if (isLoading()) {
+      &lt;app-spinner /&gt;
+    } @else if (users().length === 0) {
+      &lt;p&gt;No users found&lt;/p&gt;
+    } @else {
+      @for (user of users(); track user.id) {
+        &lt;app-user-card [user]="user" /&gt;
+      } @empty {
+        &lt;p&gt;Empty list&lt;/p&gt;
+      }
+    }
+
+    @switch (selectedTab()) {
+      @case ('profile') { &lt;app-profile /&gt; }
+      @case ('settings') { &lt;app-settings /&gt; }
+      @default { &lt;app-home /&gt; }
+    }
+
+    &lt;!-- Deferrable views — load heavy components lazily --&gt;
+    @defer (on viewport) {
+      &lt;app-heavy-chart [data]="chartData()" /&gt;
+    } @placeholder {
+      &lt;div&gt;Chart will load when visible&lt;/div&gt;
+    } @loading (minimum 200ms) {
+      &lt;app-skeleton /&gt;
+    } @error {
+      &lt;p&gt;Failed to load chart&lt;/p&gt;
+    }
+  `</span>
+})
+<span class="kw">export class</span> <span class="cls">UserListComponent</span> {
+  users = <span class="fn">signal</span>&lt;<span class="cls">User</span>[]&gt;([]);
+  isLoading = <span class="fn">signal</span>(<span class="kw">true</span>);
+  selectedTab = <span class="fn">signal</span>(<span class="st">'profile'</span>);
+}
+
+<span class="cm">// Bootstrap without AppModule</span>
+<span class="fn">bootstrapApplication</span>(<span class="cls">AppComponent</span>, {
+  providers: [
+    <span class="fn">provideRouter</span>(routes),
+    <span class="fn">provideHttpClient</span>(<span class="fn">withInterceptors</span>([authInterceptor])),
+    <span class="fn">provideAnimations</span>(),
+  ]
+});</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">NgModule vs Standalone</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>NgModule</th><th>Standalone (v17+)</th></tr>
+          <tr><td>Setup</td><td>Declare in module</td><td>standalone: true + imports[]</td></tr>
+          <tr><td>Lazy loading</td><td>loadChildren → module</td><td>loadComponent → component</td></tr>
+          <tr><td>Tree-shaking</td><td>Module level</td><td>Component level (better)</td></tr>
+          <tr><td>Boilerplate</td><td>High</td><td>Minimal</td></tr>
+          <tr><td>Testing</td><td>Module setup</td><td>Import directly — simpler</td></tr>
+          <tr><td>Recommendation</td><td>Legacy / large existing apps</td><td>✅ New apps (2024+)</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are standalone components and why are they the new default?</div>
+        <div class="interview-a">Standalone components (Angular 14, default in 17) eliminate the need for NgModules. Each component declares its own imports directly. Benefits: less boilerplate (no module file), better tree-shaking (components only bundle what they import), simpler lazy loading (loadComponent directly), easier testing (import component directly without module setup), clearer dependency graph (you can see exactly what a component needs). New Angular projects should use standalone by default. NgModules still work and are needed for migrating large existing apps gradually.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are deferrable views and when should you use them?</div>
+        <div class="interview-a">@defer is an Angular 17 template syntax that splits heavy components into separate lazy-loaded chunks, loaded based on triggers: on viewport (loads when scrolled into view), on interaction (loads on user click/hover), on idle (loads when browser is idle), on timer(2000) (loads after 2 seconds), when (condition) (loads when expression is truthy). @placeholder shows while not yet loading. @loading shows during download. @error shows on failure. Use for: complex charts below the fold, rich text editors, third-party heavy widgets, any component not needed on initial render. No route change needed — it's inline lazy loading.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-testing')">← Testing</button>
+        <button class="mark-done-btn" onclick="markDone('ng-standalone')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- CHEATSHEET -->
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-ng">// STUDY AID</div>
+        <div class="lesson-title">📋 Angular &amp; TypeScript Cheatsheet</div>
+        <div class="lesson-subtitle">Every key concept in one page. Review before your interview.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">🔷 TypeScript Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>type vs interface</td><td>interface = open, mergeable. type = unions, mapped types, aliases. Use interface for objects, type for everything else.</td></tr>
+          <tr><td>unknown vs any</td><td>unknown = safe (must narrow before use). any = unsafe (turns off type checking). Never use any in production.</td></tr>
+          <tr><td>Discriminated union</td><td>Common literal discriminant. Switch narrows type. Add never check for exhaustiveness.</td></tr>
+          <tr><td>Generics</td><td>&lt;T extends ...&gt; for constraints. infer to extract types from conditionals.</td></tr>
+          <tr><td>Utility types</td><td>Partial, Required, Pick, Omit, Record, NonNullable, ReturnType, Parameters.</td></tr>
+          <tr><td>Mapped types</td><td>{ [K in keyof T]: transform } — transform every property of T.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">🔴 Angular Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>constructor vs ngOnInit</td><td>constructor = DI only. ngOnInit = use @Inputs, start subscriptions, fetch data.</td></tr>
+          <tr><td>Change Detection</td><td>Default = check always. OnPush = check on new Input ref / DOM event / async pipe.</td></tr>
+          <tr><td>OnPush + objects</td><td>Must use new reference (spread/immutable), not mutation, to trigger CD.</td></tr>
+          <tr><td>providedIn: 'root'</td><td>App-wide singleton, tree-shakeable. Preferred over NgModule providers.</td></tr>
+          <tr><td>Signals</td><td>signal() = writable state. computed() = derived. effect() = side effects. Fine-grained reactivity.</td></tr>
+          <tr><td>switchMap</td><td>Cancel previous on new emission. Use for search/nav. mergeMap=parallel. concatMap=sequential. exhaustMap=prevent duplicate.</td></tr>
+          <tr><td>BehaviorSubject</td><td>Requires initial value. New subscribers get last value. Use for state. Subject = events (no initial).</td></tr>
+          <tr><td>trackBy</td><td>Always use with ngFor for dynamic lists. Returns stable ID to prevent full re-render.</td></tr>
+          <tr><td>async pipe</td><td>Subscribes + marks CD + unsubscribes automatically. Use instead of manual subscribe.</td></tr>
+          <tr><td>Interceptors</td><td>Middleware for all HTTP calls. Auth headers, error handling, loading state. multi:true for multiple.</td></tr>
+          <tr><td>Standalone</td><td>standalone: true + imports[]. New Angular default. No NgModule needed.</td></tr>
+          <tr><td>@defer</td><td>Inline lazy loading: on viewport/interaction/idle. @placeholder / @loading / @error.</td></tr>
+          <tr><td>inject()</td><td>Functional DI (Angular 14+). Works in constructors, field init, guards as functions.</td></tr>
+          <tr><td>canActivate guard</td><td>Return true/false/UrlTree. UrlTree = redirect. Functional guards use inject().</td></tr>
+          <tr><td>Pure vs impure pipe</td><td>Pure = only on reference change (fast). Impure = every CD cycle (expensive). async pipe is impure.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">RxJS Operators Decision Table</div>
+        <table class="cheat-table">
+          <tr><th>Operator</th><th>Behaviour</th><th>Classic use case</th></tr>
+          <tr><td>switchMap</td><td>Cancel previous inner on new outer</td><td>Live search, route params</td></tr>
+          <tr><td>mergeMap</td><td>All concurrent, none cancelled</td><td>Parallel uploads</td></tr>
+          <tr><td>concatMap</td><td>Queue, wait for each to complete</td><td>Sequential saves</td></tr>
+          <tr><td>exhaustMap</td><td>Ignore new while inner active</td><td>Prevent double form submit</td></tr>
+          <tr><td>combineLatest</td><td>Emit when any source changes</td><td>Multiple filters + data</td></tr>
+          <tr><td>forkJoin</td><td>Emit once when ALL complete</td><td>Parallel HTTP, all required</td></tr>
+          <tr><td>takeUntilDestroyed</td><td>Auto-unsubscribe on destroy</td><td>Every component subscription</td></tr>
+        </table>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ng-standalone')">← Standalone</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TOPICS=['ts-types','ts-advanced','ts-generics','ts-decorators','ng-architecture','ng-components','ng-directives','ng-di','ng-services','ng-routing','ng-forms','ng-rxjs','ng-change-detection','ng-performance','ng-testing','ng-standalone','cheatsheet'];
+const TS_LESSONS=['ts-types','ts-advanced','ts-generics','ts-decorators'];
+const state={
+  completed:new Set(JSON.parse(localStorage.getItem('ng-done')||'[]')),
+  xp:parseInt(localStorage.getItem('ng-xp')||'0'),
+  totalTopics:TOPICS.length
+};
+
+function showPage(p){
+  document.getElementById('home-page').style.display=(p==='home')?'block':'none';
+  document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active','ts-active'));
+  if(p==='home') document.getElementById('nav-home').classList.add('active');
+  updateXP();
+}
+
+function showLesson(id){
+  document.getElementById('home-page').style.display='none';
+  document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active','ts-active'));
+  const l=document.getElementById('lesson-'+id);
+  if(l) l.classList.add('active');
+  const n=document.getElementById('nav-'+id);
+  if(n) n.classList.add(TS_LESSONS.includes(id)?'ts-active':'active');
+  document.querySelector('main').scrollTo(0,0);
+  window.scrollTo(0,0);
+}
+
+function checkQuiz(btn,id,result){
+  const opts=btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+  const fb=document.getElementById('quiz-'+id+'-fb');
+  if(result==='correct'){
+    btn.classList.add('correct');
+    fb.className='quiz-feedback show right';
+    fb.textContent='✅ Correct! Well done.';
+    addXP(20);
+  } else {
+    btn.classList.add('wrong');
+    fb.className='quiz-feedback show wrong';
+    fb.textContent='❌ Not quite — review the section above.';
+    opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');});
+  }
+}
+
+function toggleAnswer(el){
+  el.classList.toggle('open');
+  const next=el.nextElementSibling;
+  if(next&&next.classList.contains('interview-a')) next.classList.toggle('open');
+}
+
+function markDone(id){
+  if(!state.completed.has(id)){
+    state.completed.add(id);
+    addXP(50);
+    localStorage.setItem('ng-done',JSON.stringify([...state.completed]));
+    const n=document.getElementById('nav-'+id);
+    if(n) n.classList.add('completed');
+    const btn=event.target;
+    btn.textContent='✓ Done!';
+  }
+  updateProgress();
+}
+
+function addXP(a){state.xp+=a;localStorage.setItem('ng-xp',state.xp.toString());updateXP();}
+function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress();}
+function updateProgress(){
+  document.getElementById('globalProgress').style.width=(state.completed.size/state.totalTopics*100)+'%';
+}
+function copyCode(btn){
+  const pre=btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000);});
+}
+function init(){
+  state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');});
+  updateProgress();updateXP();
+}
+init();
+</script>
+</body>
+</html>

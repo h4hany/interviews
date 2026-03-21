@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React & React Native — Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05080f;--surface:#090d18;--surface2:#0e1220;--border:#161d30;
+  --react:#61dafb;--rn:#0fa5e9;--accent:#61dafb;--accent2:#f97316;--accent3:#a78bfa;--accent4:#34d399;
+  --text:#e8f4ff;--text-dim:#6a88aa;--text-dimmer:#1e2a3d;
+  --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(97,218,251,0.025) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(97,218,251,0.015) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 10% 20%,rgba(97,218,251,0.07) 0%,transparent 50%),
+  radial-gradient(ellipse at 90% 80%,rgba(15,165,233,0.05) 0%,transparent 50%);
+  pointer-events:none;z-index:0}
+
+header{position:sticky;top:0;z-index:100;background:rgba(5,8,15,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.logo-react{color:var(--react);font-weight:700;font-size:15px}
+.logo-rn{color:var(--rn);font-size:13px}
+.logo-sep{color:var(--text-dimmer)}
+.logo span{color:var(--text-dim)}
+.progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--react),var(--rn));transition:width 0.5s ease;width:0%}
+.xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+
+.app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+.nav-item:hover{color:var(--text);background:var(--surface)}
+.nav-item.active{color:var(--react);border-left-color:var(--react);background:rgba(97,218,251,0.05)}
+.nav-item.rn-active{color:var(--rn);border-left-color:var(--rn);background:rgba(15,165,233,0.06)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+.nav-item.completed .done-dot{display:block}
+main{overflow-y:auto}
+
+.hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--react);margin-bottom:16px}
+.hero h1{font-size:clamp(34px,5vw,60px);font-weight:800;line-height:1.06;margin-bottom:16px}
+.hl-r{background:linear-gradient(135deg,var(--react),#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hl-rn{background:linear-gradient(135deg,var(--rn),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+.stat-row{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--react)}
+.stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+
+.section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+.sb-react{background:rgba(97,218,251,0.1);color:var(--react);border:1px solid rgba(97,218,251,0.3)}
+.sb-rn{background:rgba(15,165,233,0.1);color:var(--rn);border:1px solid rgba(15,165,233,0.3)}
+.section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;background:var(--border)}
+.topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.topic-card:hover{background:var(--surface)}
+.topic-card:hover::before{opacity:1}
+.cr::before{background:radial-gradient(circle at 0% 0%,rgba(97,218,251,0.1),transparent 60%)}
+.crn::before{background:radial-gradient(circle at 0% 0%,rgba(15,165,233,0.1),transparent 60%)}
+.co::before{background:radial-gradient(circle at 0% 0%,rgba(249,115,22,0.08),transparent 60%)}
+.cv::before{background:radial-gradient(circle at 0% 0%,rgba(167,139,250,0.08),transparent 60%)}
+.card-emoji{font-size:28px;margin-bottom:10px;display:block}
+.card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+.card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.tag.hot{background:rgba(249,115,22,0.1);color:var(--accent2);border-color:rgba(249,115,22,0.2)}
+.tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+.tag.react{background:rgba(97,218,251,0.1);color:var(--react);border-color:rgba(97,218,251,0.2)}
+.tag.rn{background:rgba(15,165,233,0.1);color:var(--rn);border-color:rgba(15,165,233,0.2)}
+
+.lesson-page{display:none;padding:40px 48px;max-width:940px}
+.lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+.lesson-breadcrumb:hover{color:var(--react)}
+.lesson-breadcrumb::before{content:'← '}
+.lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+.e-react{color:var(--react)}.e-rn{color:var(--rn)}.e-both{color:var(--accent3)}
+.lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+.lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+.content-section{margin-bottom:44px}
+.section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:20px;background:var(--react);border-radius:2px;flex-shrink:0}
+.prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+.prose strong{color:var(--text);font-weight:700}
+.prose .hl{color:var(--react)}.prose .h2{color:var(--accent2)}.prose .h3{color:var(--accent3)}.prose .h4{color:var(--green)}
+
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;color:var(--react)}
+.code-lang.rn{color:var(--rn)}
+.copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.copy-btn:hover{color:var(--react);border-color:var(--react)}
+pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#b0cce8;font-family:'JetBrains Mono',monospace}
+.kw{color:#7ec8e3}.fn{color:#93c5fd}.st{color:#86efac}.nm{color:#fbbf24}.cm{color:#253550;font-style:italic}.op{color:#67e8f9}.id{color:#f9a8d4}.cls{color:#34d399}
+
+.analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+.analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+.analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+.info-box{background:rgba(97,218,251,0.04);border:1px solid rgba(97,218,251,0.15);border-left:3px solid var(--react);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.info-box strong{color:var(--react)}
+.warn-box{background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.15);border-left:3px solid var(--accent2);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.warn-box strong{color:var(--accent2)}
+.success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.success-box strong{color:var(--green)}
+
+.cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+.cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+.cheat-table tr:last-child td{border-bottom:none}
+.cheat-table td:first-child{color:var(--react);font-family:'JetBrains Mono',monospace;font-size:12px}
+
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:22px 20px;margin:20px 0;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+.arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center}
+.ab-r{border-color:rgba(97,218,251,0.5);color:var(--react);background:rgba(97,218,251,0.07)}
+.ab-rn{border-color:rgba(15,165,233,0.5);color:var(--rn);background:rgba(15,165,233,0.07)}
+.ab-g{border-color:rgba(52,211,153,0.5);color:var(--green);background:rgba(52,211,153,0.06)}
+.ab-o{border-color:rgba(249,115,22,0.5);color:var(--accent2);background:rgba(249,115,22,0.06)}
+.ab-v{border-color:rgba(167,139,250,0.5);color:var(--accent3);background:rgba(167,139,250,0.06)}
+.ab-n{border-color:var(--border);color:var(--text-dim)}
+.arch-arrow{color:var(--text-dimmer);font-size:18px}
+
+.interview-box{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+.interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent3);margin-bottom:14px}
+.interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0}
+.interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent3);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+.interview-q.open::after{transform:rotate(45deg)}
+.interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+.interview-a.open{display:block}
+
+.quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+.quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px}
+.quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+.quiz-opt:hover{border-color:var(--react);background:var(--surface2)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+.opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+.quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.quiz-feedback.show{display:block}
+.quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+.quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+.btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+.btn-primary{background:var(--react);color:var(--bg)}
+.btn-primary:hover{box-shadow:0 0 20px rgba(97,218,251,0.35);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--react);color:var(--text)}
+.mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#home-page{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-react">React</span>
+    <span class="logo-sep">&</span>
+    <span class="logo-rn">React Native</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">⚛️ React Core</div>
+    <div class="nav-item" onclick="showLesson('jsx-rendering')" id="nav-jsx-rendering"><span class="icon">🖼️</span>JSX & Rendering<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('hooks')" id="nav-hooks"><span class="icon">🎣</span>Hooks Deep Dive<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('state-management')" id="nav-state-management"><span class="icon">🗃️</span>State Management<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('component-patterns')" id="nav-component-patterns"><span class="icon">🧩</span>Component Patterns<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('performance')" id="nav-performance"><span class="icon">⚡</span>Performance & Optimization<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('context-api')" id="nav-context-api"><span class="icon">🌐</span>Context API<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('react-router')" id="nav-react-router"><span class="icon">🛣️</span>React Router v6<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('data-fetching')" id="nav-data-fetching"><span class="icon">🔄</span>Data Fetching<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('forms')" id="nav-forms"><span class="icon">📝</span>Forms & Validation<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('testing-react')" id="nav-testing-react"><span class="icon">🧪</span>Testing React<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('react19')" id="nav-react19"><span class="icon">✨</span>React 19 New Features<span class="done-dot"></span></div>
+    <div class="nav-section-title">📱 React Native</div>
+    <div class="nav-item" onclick="showLesson('rn-basics')" id="nav-rn-basics"><span class="icon">📱</span>RN Basics & Architecture<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('rn-components')" id="nav-rn-components"><span class="icon">🧱</span>Core Components<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('rn-styling')" id="nav-rn-styling"><span class="icon">🎨</span>Styling & Layouts<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('rn-navigation')" id="nav-rn-navigation"><span class="icon">🧭</span>Navigation<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('rn-performance')" id="nav-rn-performance"><span class="icon">🚀</span>RN Performance<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('rn-platform')" id="nav-rn-platform"><span class="icon">📲</span>Native Modules & APIs<span class="done-dot"></span></div>
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
+  </nav>
+
+  <main id="mainContent">
+    <!-- HOME -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-r">React</span> &<br><span class="hl-rn">React Native</span></h1>
+        <p class="hero-sub">Hooks, performance, state management, component patterns, navigation, the new React 19 features, and everything React Native — all the interview topics you need, with real production code.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">17</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">70+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">55+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">17</div><div class="stat-label">Quizzes</div></div>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-react">⚛️ REACT</span><span class="section-badge-title">React Web Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cr" onclick="showLesson('jsx-rendering')"><span class="card-emoji">🖼️</span><div class="card-title">JSX & Rendering</div><div class="card-desc">Virtual DOM, reconciliation, keys, conditional rendering, lists.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span><span class="tag react">REACT</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('hooks')"><span class="card-emoji">🎣</span><div class="card-title">Hooks Deep Dive</div><div class="card-desc">useState, useEffect, useRef, useMemo, useCallback, useReducer, custom hooks.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('state-management')"><span class="card-emoji">🗃️</span><div class="card-title">State Management</div><div class="card-desc">useState vs useReducer, Redux Toolkit, Zustand, Jotai. When to use what.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('component-patterns')"><span class="card-emoji">🧩</span><div class="card-title">Component Patterns</div><div class="card-desc">Compound components, render props, HOCs, controlled vs uncontrolled.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('performance')"><span class="card-emoji">⚡</span><div class="card-title">Performance Optimization</div><div class="card-desc">memo, useMemo, useCallback, code splitting, lazy loading, profiler.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('context-api')"><span class="card-emoji">🌐</span><div class="card-title">Context API</div><div class="card-desc">createContext, useContext, context vs prop drilling, performance pitfalls.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card co" onclick="showLesson('react-router')"><span class="card-emoji">🛣️</span><div class="card-title">React Router v6</div><div class="card-desc">Routes, loaders, actions, nested routes, protected routes, useNavigate.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card co" onclick="showLesson('data-fetching')"><span class="card-emoji">🔄</span><div class="card-title">Data Fetching</div><div class="card-desc">React Query / TanStack Query, SWR, Suspense, server state vs client state.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card co" onclick="showLesson('forms')"><span class="card-emoji">📝</span><div class="card-title">Forms & Validation</div><div class="card-desc">React Hook Form, Zod validation, controlled vs uncontrolled, performance.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('testing-react')"><span class="card-emoji">🧪</span><div class="card-title">Testing React</div><div class="card-desc">React Testing Library, Jest, user events, mocking, testing hooks.</div><div class="card-tag-row"><span class="tag key">PRODUCTION</span></div></div>
+        <div class="topic-card cr" onclick="showLesson('react19')"><span class="card-emoji">✨</span><div class="card-title">React 19 New Features</div><div class="card-desc">Actions, useActionState, useOptimistic, Server Components, use() hook.</div><div class="card-tag-row"><span class="tag hot">NEW IN 2024</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-rn">📱 REACT NATIVE</span><span class="section-badge-title">Mobile Development Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card crn" onclick="showLesson('rn-basics')"><span class="card-emoji">📱</span><div class="card-title">RN Architecture</div><div class="card-desc">Old vs New architecture (Fabric + JSI). Bridge vs JSI. Metro bundler. Expo vs bare.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag rn">RN</span></div></div>
+        <div class="topic-card crn" onclick="showLesson('rn-components')"><span class="card-emoji">🧱</span><div class="card-title">Core Components</div><div class="card-desc">View, Text, Image, ScrollView, FlatList, SectionList, Pressable, Modal.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card crn" onclick="showLesson('rn-styling')"><span class="card-emoji">🎨</span><div class="card-title">Styling & Flexbox</div><div class="card-desc">StyleSheet, Flexbox (default column), responsive design, Platform-specific styles.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card crn" onclick="showLesson('rn-navigation')"><span class="card-emoji">🧭</span><div class="card-title">Navigation</div><div class="card-desc">React Navigation, Stack/Tab/Drawer, deep linking, passing params.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card crn" onclick="showLesson('rn-performance')"><span class="card-emoji">🚀</span><div class="card-title">RN Performance</div><div class="card-desc">JS thread vs UI thread, FlatList optimization, Reanimated, Hermes engine.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card crn" onclick="showLesson('rn-platform')"><span class="card-emoji">📲</span><div class="card-title">Native Modules & APIs</div><div class="card-desc">AsyncStorage, Camera, Permissions, Push Notifications, Platform.OS.</div><div class="card-tag-row"><span class="tag rn">RN</span><span class="tag key">PRODUCTION</span></div></div>
+      </div>
+    </div>
+
+    <!-- JSX & RENDERING -->
+    <div id="lesson-jsx-rendering" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🖼️ JSX & Rendering</div>
+        <div class="lesson-subtitle">How React transforms JSX into DOM updates. The Virtual DOM, reconciliation, and why keys matter so much.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">JSX Fundamentals</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — JSX ESSENTIALS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// JSX is syntactic sugar for React.createElement()</span>
+<span class="cm">// &lt;Button color="blue"&gt;Click&lt;/Button&gt;</span>
+<span class="cm">// ↓ compiles to:</span>
+<span class="cm">// React.createElement(Button, { color: "blue" }, "Click")</span>
+
+<span class="kw">const</span> <span class="fn">UserCard</span> = ({ user, onDelete }: Props) => {
+  <span class="cm">// Conditional rendering patterns</span>
+  <span class="kw">if</span> (!user) <span class="kw">return null</span>;                           <span class="cm">// early return</span>
+  <span class="kw">const</span> badge = user.role === <span class="st">"admin"</span> && &lt;<span class="fn">AdminBadge</span> /&gt;;  <span class="cm">// &&</span>
+  <span class="kw">const</span> status = user.active                         <span class="cm">// ternary</span>
+    ? &lt;<span class="fn">ActiveStatus</span> /&gt;
+    : &lt;<span class="fn">InactiveStatus</span> /&gt;;
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">div</span> className=<span class="st">"card"</span>&gt;
+      &lt;<span class="fn">h2</span>&gt;{user.name}&lt;/<span class="fn">h2</span>&gt;
+      {badge}
+      {status}
+
+      <span class="cm">{/* LIST RENDERING — always need a key! */}</span>
+      &lt;<span class="fn">ul</span>&gt;
+        {user.skills.<span class="fn">map</span>((skill) => (
+          &lt;<span class="fn">li</span> key={skill.id}&gt;{skill.name}&lt;/<span class="fn">li</span>&gt;  <span class="cm">// stable unique id as key</span>
+        ))}
+      &lt;/<span class="fn">ul</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  );
+};</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Virtual DOM & Reconciliation</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">The Virtual DOM is like a <strong>blueprint comparison</strong>. Instead of renovating your entire house every time, you compare the new blueprint to the old one, find only the changed rooms, and renovate only those. React compares old vDOM to new vDOM (diffing), finds the minimal set of changes (reconciliation), and applies only those to the real DOM (commit phase). This is why React is fast even with frequent state changes.</div>
+        </div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-r">State/Props<br><small>changes</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-v">Re-render<br><small>new vDOM</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-o">Diffing<br><small>compare old/new</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-g">Commit<br><small>update real DOM</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Keys — Why They Matter</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — KEYS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// ❌ BAD — index as key (breaks on reorder/insert/delete)</span>
+items.<span class="fn">map</span>((item, index) => &lt;<span class="fn">Item</span> key={index} {...item} /&gt;)
+<span class="cm">// If item at index 0 is removed, React thinks ALL items changed!</span>
+<span class="cm">// Causes: wrong component state, input focus loss, animation bugs</span>
+
+<span class="cm">// ✅ GOOD — stable unique ID as key</span>
+items.<span class="fn">map</span>((item) => &lt;<span class="fn">Item</span> key={item.id} {...item} /&gt;)
+
+<span class="cm">// ✅ GOOD — stable hash for items without ID</span>
+items.<span class="fn">map</span>((item) => &lt;<span class="fn">Item</span> key={`${item.name}-${item.type}`} {...item} /&gt;)
+
+<span class="cm">// Keys are also used to FORCE remount (reset state)</span>
+<span class="kw">const</span> [userId, setUserId] = <span class="fn">useState</span>(<span class="nm">1</span>);
+&lt;<span class="fn">UserProfile</span> key={userId} userId={userId} /&gt;
+<span class="cm">// Changing key forces full unmount + remount → fresh state!</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Virtual DOM and how does React use it?</div>
+        <div class="interview-a">The Virtual DOM is a lightweight JavaScript representation of the real DOM. When state or props change, React creates a new Virtual DOM tree and "diffs" it against the previous one using its reconciliation algorithm (Fiber). It finds the minimal set of changes needed and batches them into a single DOM update. This avoids expensive direct DOM manipulation — touching the real DOM is slow; comparing JavaScript objects is fast. React 18+ uses concurrent rendering with Fiber, allowing React to pause, resume, and prioritize rendering work.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why should you not use array index as a key?</div>
+        <div class="interview-a">React uses keys to identify which items changed, were added, or removed. Index keys break when: (1) Items are reordered — React sees different component at same index and destroys/recreates unnecessarily, (2) Items are inserted at the beginning — ALL subsequent items get new "identities" → performance hit and state bugs, (3) Items have internal state — a text input at index 1 that gets index 0 after deletion retains the wrong input value. Use stable, unique IDs. Only use index when the list is purely static and never reordered/filtered.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is React Fiber?</div>
+        <div class="interview-a">Fiber is React's reconciliation engine (rewritten in React 16). Key improvements over the old stack reconciler: (1) Incremental rendering — can split work into chunks and spread across frames, (2) Prioritization — urgent updates (user input) can interrupt and preempt lower-priority updates (data fetching), (3) Concurrency — the foundation for Concurrent Mode, Suspense, transitions, (4) Better error handling — error boundaries. Fiber represents each component as a "fiber" node in a linked list tree, enabling pausing and resuming traversal.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">You have a todo list where users can reorder items. Which key should you use?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'jsx','wrong')"><span class="opt-letter">A</span>The array index (0, 1, 2...)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'jsx','correct')"><span class="opt-letter">B</span>A stable unique ID like todo.id ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'jsx','wrong')"><span class="opt-letter">C</span>Math.random()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'jsx','wrong')"><span class="opt-letter">D</span>The todo text content</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-jsx-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('jsx-rendering')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('hooks')">Next: Hooks →</button>
+      </div>
+    </div>
+
+    <!-- HOOKS -->
+    <div id="lesson-hooks" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🎣 Hooks Deep Dive</div>
+        <div class="lesson-subtitle">The most important React topic. Every hook explained with gotchas, rules, and when to use each.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Essential Hooks</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — ALL CORE HOOKS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { useState, useEffect, useRef, useMemo, useCallback, useReducer } from <span class="st">'react'</span>;
+
+<span class="cm">// useState — local state</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="nm">0</span>);
+<span class="fn">setCount</span>(prev => prev + <span class="nm">1</span>);  <span class="cm">// functional update — safe with closures</span>
+
+<span class="cm">// useEffect — side effects</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> sub = api.<span class="fn">subscribe</span>(userId);  <span class="cm">// setup</span>
+  <span class="kw">return</span> () => sub.<span class="fn">unsubscribe</span>();      <span class="cm">// cleanup on unmount or dep change</span>
+}, [userId]);                            <span class="cm">// deps: re-run if userId changes</span>
+<span class="cm">// [] = run once on mount</span>
+<span class="cm">// no array = run after every render (usually wrong!)</span>
+
+<span class="cm">// useRef — mutable ref, no re-render on change</span>
+<span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;<span class="cls">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+<span class="kw">const</span> prevValue = <span class="fn">useRef</span>(value);  <span class="cm">// track previous value</span>
+inputRef.current?.<span class="fn">focus</span>();
+
+<span class="cm">// useMemo — memoize expensive computation</span>
+<span class="kw">const</span> sortedItems = <span class="fn">useMemo</span>(
+  () => [...items].<span class="fn">sort</span>((a, b) => a.price - b.price),
+  [items]  <span class="cm">// only re-sort when items changes</span>
+);
+
+<span class="cm">// useCallback — memoize function reference</span>
+<span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(() => {
+  <span class="fn">setCount</span>(prev => prev + <span class="nm">1</span>);
+}, []);  <span class="cm">// stable reference — safe to pass as prop to memo() children</span>
+
+<span class="cm">// useReducer — complex state logic</span>
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, initialState);
+<span class="fn">dispatch</span>({ type: <span class="st">'INCREMENT'</span>, payload: <span class="nm">5</span> });</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Custom Hooks — Reusable Logic</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — CUSTOM HOOKS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// Extract reusable stateful logic into custom hooks</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>&lt;T&gt;(key: <span class="kw">string</span>, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>&lt;T&gt;(() => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key);
+      <span class="kw">return</span> stored ? <span class="cls">JSON</span>.<span class="fn">parse</span>(stored) : initial;
+    } <span class="kw">catch</span> { <span class="kw">return</span> initial; }
+  });
+
+  <span class="kw">const</span> set = <span class="fn">useCallback</span>((val: T) => {
+    setValue(val);
+    localStorage.<span class="fn">setItem</span>(key, <span class="cls">JSON</span>.<span class="fn">stringify</span>(val));
+  }, [key]);
+
+  <span class="kw">return</span> [value, set] <span class="kw">as const</span>;
+}
+
+<span class="cm">// useDebounce — delay value changes</span>
+<span class="kw">function</span> <span class="fn">useDebounce</span>&lt;T&gt;(value: T, delay = <span class="nm">500</span>): T {
+  <span class="kw">const</span> [debouncedValue, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), delay);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(timer);
+  }, [value, delay]);
+  <span class="kw">return</span> debouncedValue;
+}
+
+<span class="cm">// Usage — clean and reusable!</span>
+<span class="kw">const</span> [theme, setTheme] = <span class="fn">useLocalStorage</span>(<span class="st">"theme"</span>, <span class="st">"dark"</span>);
+<span class="kw">const</span> debouncedSearch = <span class="fn">useDebounce</span>(searchQuery, <span class="nm">300</span>);</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Rules of Hooks</div>
+        <div class="warn-box">
+          <strong>⚠️ Rules of Hooks (enforced by ESLint plugin):</strong><br><br>
+          1. Only call hooks at the <strong>top level</strong> — never inside loops, conditions, or nested functions. React relies on the call order being the same every render.<br><br>
+          2. Only call hooks from <strong>React function components</strong> or <strong>custom hooks</strong> — not regular JS functions.<br><br>
+          Violation causes: "React Hook called conditionally" — React can't track which state belongs to which hook if order changes between renders.
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between useMemo and useCallback?</div>
+        <div class="interview-a">useMemo memoizes a computed VALUE — it caches the result of a function. useCallback memoizes a FUNCTION REFERENCE — it returns the same function instance across renders. useMemo: const sorted = useMemo(() => sort(items), [items]) — re-sorts only when items changes. useCallback: const handler = useCallback(() => doSomething(id), [id]) — returns same function reference unless id changes. Use useCallback when passing functions as props to memoized child components (otherwise memo() sees a new function every render and re-renders anyway).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Explain the useEffect cleanup function.</div>
+        <div class="interview-a">The function returned from useEffect runs BEFORE the next effect and when the component unmounts. Use it to cancel subscriptions, clear timers, abort fetch requests, or remove event listeners — anything that would leak if not cleaned up. Without cleanup: subscribing in useEffect without unsubscribing creates memory leaks. When userId changes and effect re-runs: old subscription is cleaned up, new subscription is created. When component unmounts: subscription is cleaned up. Pattern: setup in effect body, teardown in return function.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use useReducer instead of useState?</div>
+        <div class="interview-a">useReducer is better when: (1) State has multiple sub-values that update together (a form with 10 fields), (2) Next state depends on previous state with complex logic, (3) Multiple actions can trigger the same state shape in different ways, (4) State transitions need to be testable in isolation (reducer is a pure function — easy to unit test). useState is simpler for single values or simple objects. Rule of thumb: if you have more than 3-4 related useState calls, consider useReducer.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('jsx-rendering')">← JSX</button>
+        <button class="mark-done-btn" onclick="markDone('hooks')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('state-management')">Next: State Management →</button>
+      </div>
+    </div>
+
+    <!-- STATE MANAGEMENT -->
+    <div id="lesson-state-management" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🗃️ State Management</div>
+        <div class="lesson-subtitle">When useState isn't enough. Redux Toolkit, Zustand, Jotai, and how to choose the right tool.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">State Categories</div>
+        <table class="cheat-table">
+          <tr><th>Category</th><th>Examples</th><th>Tool</th></tr>
+          <tr><td>Local UI state</td><td>Modal open/close, form input, toggle</td><td>useState, useReducer</td></tr>
+          <tr><td>Shared client state</td><td>Auth user, theme, cart items</td><td>Context, Zustand, Jotai</td></tr>
+          <tr><td>Server state</td><td>API responses, DB data, loading/error</td><td>React Query / TanStack Query, SWR</td></tr>
+          <tr><td>URL state</td><td>Filters, pagination, search params</td><td>React Router (useSearchParams)</td></tr>
+          <tr><td>Form state</td><td>Field values, validation, dirty state</td><td>React Hook Form</td></tr>
+        </table>
+        <div class="warn-box"><strong>⚠️ Most common mistake:</strong> Using Redux or Zustand for server state (API data). Server state has unique needs: caching, background refetching, stale data, deduplication. Use React Query / TanStack Query for server state and a lightweight store (Zustand) for client state.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Zustand — Modern Minimal State</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — ZUSTAND</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { create } from <span class="st">'zustand'</span>;
+<span class="kw">import</span> { persist } from <span class="st">'zustand/middleware'</span>;
+
+<span class="kw">interface</span> <span class="cls">CartStore</span> {
+  items: <span class="cls">CartItem</span>[];
+  total: <span class="kw">number</span>;
+  <span class="fn">addItem</span>(item: <span class="cls">CartItem</span>): <span class="kw">void</span>;
+  <span class="fn">removeItem</span>(id: <span class="kw">string</span>): <span class="kw">void</span>;
+  <span class="fn">clear</span>(): <span class="kw">void</span>;
+}
+
+<span class="kw">export const</span> useCartStore = <span class="fn">create</span>&lt;<span class="cls">CartStore</span>&gt;()(
+  <span class="fn">persist</span>(
+    (set, get) => ({
+      items: [],
+      total: <span class="nm">0</span>,
+      <span class="fn">addItem</span>(item) {
+        set(state => ({
+          items: [...state.items, item],
+          total: state.total + item.price,
+        }));
+      },
+      <span class="fn">removeItem</span>(id) {
+        <span class="kw">const</span> item = get().items.<span class="fn">find</span>(i => i.id === id);
+        set(state => ({
+          items: state.items.<span class="fn">filter</span>(i => i.id !== id),
+          total: state.total - (item?.price ?? <span class="nm">0</span>),
+        }));
+      },
+      <span class="fn">clear</span>: () => set({ items: [], total: <span class="nm">0</span> }),
+    }),
+    { name: <span class="st">'cart-storage'</span> }  <span class="cm">// persists to localStorage</span>
+  )
+);
+
+<span class="cm">// Usage — no providers needed!</span>
+<span class="kw">const</span> { items, addItem } = <span class="fn">useCartStore</span>();
+<span class="cm">// Only re-render on exact slice change:</span>
+<span class="kw">const</span> total = <span class="fn">useCartStore</span>(state => state.total);</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Redux Toolkit — When You Need Full Power</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REDUX TOOLKIT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { createSlice, createAsyncThunk } from <span class="st">'@reduxjs/toolkit'</span>;
+
+<span class="cm">// createAsyncThunk — handle async actions cleanly</span>
+<span class="kw">export const</span> <span class="fn">fetchUser</span> = <span class="fn">createAsyncThunk</span>(
+  <span class="st">'user/fetch'</span>,
+  <span class="kw">async</span> (userId: <span class="kw">string</span>, { rejectWithValue }) => {
+    <span class="kw">try</span> {
+      <span class="kw">return await</span> api.<span class="fn">getUser</span>(userId);
+    } <span class="kw">catch</span> (err) {
+      <span class="kw">return</span> <span class="fn">rejectWithValue</span>(err.message);
+    }
+  }
+);
+
+<span class="kw">const</span> userSlice = <span class="fn">createSlice</span>({
+  name: <span class="st">'user'</span>,
+  initialState: { data: <span class="kw">null</span>, status: <span class="st">'idle'</span> },
+  reducers: {
+    <span class="fn">logout</span>: (state) => { state.data = <span class="kw">null</span>; }  <span class="cm">// Immer = mutable writes!</span>
+  },
+  extraReducers: (builder) => {
+    builder
+      .<span class="fn">addCase</span>(fetchUser.pending, (state) => { state.status = <span class="st">'loading'</span>; })
+      .<span class="fn">addCase</span>(fetchUser.fulfilled, (state, action) => {
+        state.status = <span class="st">'success'</span>;
+        state.data = action.payload;
+      })
+      .<span class="fn">addCase</span>(fetchUser.rejected, (state) => { state.status = <span class="st">'error'</span>; });
+  }
+});</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you choose Zustand over Redux Toolkit?</div>
+        <div class="interview-a">Zustand is simpler, less boilerplate, no Provider needed, tiny bundle (~1KB). Use Zustand for: most medium apps, client state that doesn't need Redux's powerful tooling, teams new to state management. Use Redux Toolkit when: large teams need strong conventions, need Redux DevTools for time-travel debugging, complex derived state (RTK Query + selectors), existing Redux codebase, need robust middleware ecosystem. For new projects in 2024, Zustand + TanStack Query for server state is often the better choice over Redux.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between server state and client state?</div>
+        <div class="interview-a">Client state is owned by the frontend — it lives only in your app (theme, modal open/closed, selected tab). You control when it changes. Server state lives on the server — your app just has a cached copy (user data from API, product list). Challenges with server state: cache invalidation (when is your cached data stale?), background refetching, optimistic updates, deduplication of identical requests, loading/error states per query. React Query/TanStack Query solves all of these. Putting API responses in Redux is working against the grain — you end up reimplementing what React Query does better.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('hooks')">← Hooks</button>
+        <button class="mark-done-btn" onclick="markDone('state-management')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('performance')">Next: Performance →</button>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div id="lesson-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">⚡ Performance Optimization</div>
+        <div class="lesson-subtitle">React renders fast by default. Know when and how to optimize — and crucially, when NOT to over-optimize.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Preventing Unnecessary Re-renders</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — MEMOIZATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { memo, useMemo, useCallback } from <span class="st">'react'</span>;
+
+<span class="cm">// React.memo — skip re-render if props unchanged</span>
+<span class="kw">const</span> <span class="fn">ExpensiveList</span> = <span class="fn">memo</span>(({ items, onSelect }: Props) => {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">ul</span>&gt;{items.<span class="fn">map</span>(item => (
+      &lt;<span class="fn">li</span> key={item.id} onClick={() => <span class="fn">onSelect</span>(item)}&gt;{item.name}&lt;/<span class="fn">li</span>&gt;
+    ))}&lt;/<span class="fn">ul</span>&gt;
+  );
+});
+
+<span class="cm">// Parent — WRONG: new function every render, memo() pointless!</span>
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="nm">0</span>);
+  <span class="kw">const</span> items = <span class="fn">useMemo</span>(() => <span class="fn">computeItems</span>(), []);  <span class="cm">// ✅ stable</span>
+
+  <span class="cm">// ❌ New function ref every render → memo() re-renders anyway!</span>
+  <span class="kw">const</span> handleSelect = (item) => <span class="fn">doSomething</span>(item);
+
+  <span class="cm">// ✅ Stable function ref — memo() works!</span>
+  <span class="kw">const</span> handleSelect = <span class="fn">useCallback</span>((item) => <span class="fn">doSomething</span>(item), []);
+
+  <span class="kw">return</span> &lt;<span class="fn">ExpensiveList</span> items={items} onSelect={handleSelect} /&gt;;
+}
+
+<span class="cm">// Code splitting — lazy load heavy components</span>
+<span class="kw">const</span> HeavyDashboard = <span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="st">'./Dashboard'</span>));
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">Suspense</span> fallback={&lt;<span class="fn">Spinner</span> /&gt;}&gt;
+      &lt;<span class="fn">HeavyDashboard</span> /&gt;
+    &lt;/<span class="fn">Suspense</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">When NOT to Optimize</div>
+        <div class="warn-box"><strong>Don't over-memoize!</strong> memo(), useMemo(), and useCallback all have overhead (memory + comparison cost). They're only worth it when:<br><br>
+        ✅ The component is genuinely expensive to render (100+ DOM nodes, heavy computation)<br>
+        ✅ memo() — only when re-renders with same props are actually happening<br>
+        ✅ useMemo — computation takes >1ms (sorting 1000s of items, complex calculations)<br>
+        ✅ useCallback — only when the function is a dependency in another hook or passed to memo() components<br><br>
+        Premature optimization with memo/useMemo makes code harder to read with little benefit. Profile first with React DevTools Profiler!</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">React 18 Concurrent Features</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — CONCURRENT MODE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { useTransition, useDeferredValue } from <span class="st">'react'</span>;
+
+<span class="cm">// useTransition — mark state update as non-urgent</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+
+<span class="kw">const</span> <span class="fn">handleSearch</span> = (query: <span class="kw">string</span>) => {
+  setSearchQuery(query);  <span class="cm">// urgent: update input immediately</span>
+  <span class="fn">startTransition</span>(() => {
+    setFilteredItems(<span class="fn">filterItems</span>(allItems, query));  <span class="cm">// non-urgent: can be interrupted</span>
+  });
+};
+<span class="cm">// isPending: show loading indicator while transitioning</span>
+
+<span class="cm">// useDeferredValue — defer non-urgent value update</span>
+<span class="kw">const</span> deferredQuery = <span class="fn">useDeferredValue</span>(searchQuery);
+<span class="cm">// deferredQuery lags behind searchQuery</span>
+<span class="cm">// Heavy component re-renders with deferredQuery, not every keypress</span>
+<span class="kw">const</span> results = <span class="fn">useMemo</span>(
+  () => <span class="fn">heavySearch</span>(items, deferredQuery),
+  [items, deferredQuery]
+);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What causes unnecessary re-renders in React?</div>
+        <div class="interview-a">Unnecessary re-renders happen when: (1) Parent re-renders causing child to re-render even though child's props didn't change — fix with React.memo(), (2) New object/array/function reference created inline every render ({} !== {} even with same content) — fix with useMemo/useCallback, (3) Context value changes causing all consumers to re-render even if they use only a small part — fix by splitting context or using state management library, (4) Missing or wrong dependency arrays in hooks causing stale closures or infinite loops. Use React DevTools Profiler to identify which components are expensive.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between useTransition and useDeferredValue?</div>
+        <div class="interview-a">Both help with non-urgent updates (React 18 concurrent features). useTransition: you CONTROL the state update — wrap a state setter in startTransition to mark it as low priority. The transition can be interrupted by urgent updates. Returns isPending to show loading UI. Use when: you have control over the state update. useDeferredValue: you RECEIVE a value and defer its downstream effects — React will use the old value for rendering while computing the new one, keeping the UI responsive. Use when: you receive a value from props or can't wrap the update in startTransition (e.g., in a third-party component).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('state-management')">← State Management</button>
+        <button class="mark-done-btn" onclick="markDone('performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('component-patterns')">Next: Patterns →</button>
+      </div>
+    </div>
+
+    <!-- COMPONENT PATTERNS -->
+    <div id="lesson-component-patterns" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🧩 Component Patterns</div>
+        <div class="lesson-subtitle">The design patterns that make React code scalable, composable, and maintainable.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Compound Components</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — COMPOUND COMPONENTS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// Compound components — flexible composition with shared state</span>
+<span class="kw">const</span> TabsContext = <span class="fn">createContext</span>&lt;<span class="cls">TabsContextType</span>&gt;(<span class="kw">null</span>!);
+
+<span class="kw">function</span> <span class="fn">Tabs</span>({ children, defaultTab }: Props) {
+  <span class="kw">const</span> [active, setActive] = <span class="fn">useState</span>(defaultTab);
+  <span class="kw">return</span> (
+    &lt;<span class="fn">TabsContext</span>.Provider value={{ active, setActive }}&gt;
+      &lt;<span class="fn">div</span> className=<span class="st">"tabs"</span>&gt;{children}&lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">TabsContext</span>.Provider&gt;
+  );
+}
+
+<span class="fn">Tabs</span>.Tab = <span class="kw">function</span> Tab({ id, children }: Props) {
+  <span class="kw">const</span> { active, setActive } = <span class="fn">useContext</span>(TabsContext);
+  <span class="kw">return</span> (
+    &lt;<span class="fn">button</span>
+      className={active === id ? <span class="st">'active'</span> : <span class="st">''</span>}
+      onClick={() => <span class="fn">setActive</span>(id)}
+    &gt;{children}&lt;/<span class="fn">button</span>&gt;
+  );
+};
+
+<span class="fn">Tabs</span>.Panel = <span class="kw">function</span> Panel({ id, children }: Props) {
+  <span class="kw">const</span> { active } = <span class="fn">useContext</span>(TabsContext);
+  <span class="kw">return</span> active === id ? &lt;<span class="fn">div</span>&gt;{children}&lt;/<span class="fn">div</span>&gt; : <span class="kw">null</span>;
+};
+
+<span class="cm">// Usage — flexible, readable, no prop drilling!</span>
+&lt;<span class="fn">Tabs</span> defaultTab=<span class="st">"overview"</span>&gt;
+  &lt;<span class="fn">Tabs</span>.Tab id=<span class="st">"overview"</span>&gt;Overview&lt;/<span class="fn">Tabs</span>.Tab&gt;
+  &lt;<span class="fn">Tabs</span>.Tab id=<span class="st">"details"</span>&gt;Details&lt;/<span class="fn">Tabs</span>.Tab&gt;
+  &lt;<span class="fn">Tabs</span>.Panel id=<span class="st">"overview"</span>&gt;&lt;<span class="fn">Overview</span> /&gt;&lt;/<span class="fn">Tabs</span>.Panel&gt;
+  &lt;<span class="fn">Tabs</span>.Panel id=<span class="st">"details"</span>&gt;&lt;<span class="fn">Details</span> /&gt;&lt;/<span class="fn">Tabs</span>.Panel&gt;
+&lt;/<span class="fn">Tabs</span>&gt;</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Controlled vs Uncontrolled Components</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — CONTROLLED vs UNCONTROLLED</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// Controlled — React owns the state</span>
+<span class="kw">function</span> <span class="fn">ControlledInput</span>() {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(<span class="st">''</span>);
+  <span class="kw">return</span> &lt;<span class="fn">input</span> value={value} onChange={e => <span class="fn">setValue</span>(e.target.value)} /&gt;;
+  <span class="cm">// ✅ Can validate on every keystroke</span>
+  <span class="cm">// ✅ Can programmatically change value</span>
+  <span class="cm">// ⚠️ Re-renders on every keystroke (use React Hook Form for perf)</span>
+}
+
+<span class="cm">// Uncontrolled — DOM owns the state</span>
+<span class="kw">function</span> <span class="fn">UncontrolledInput</span>() {
+  <span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;<span class="cls">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = () => console.<span class="fn">log</span>(inputRef.current?.value);
+  <span class="kw">return</span> &lt;<span class="fn">input</span> ref={inputRef} defaultValue=<span class="st">""</span> /&gt;;
+  <span class="cm">// ✅ No re-renders while typing</span>
+  <span class="cm">// ✅ Easy integration with non-React code</span>
+  <span class="cm">// ⚠️ Can't easily synchronize with other state</span>
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the compound component pattern and when do you use it?</div>
+        <div class="interview-a">Compound components share implicit state through Context instead of prop drilling. The parent component manages state, sub-components access it via Context. Examples: Tabs/Tab/Panel, Select/Option, Accordion/Item. Benefits: flexible composition (users arrange sub-components however they want), no prop explosion (no isOpen/onChange/items passed to single component), intuitive API that mirrors HTML (like select/option). Use when: you have a component with multiple related sub-parts that share state, and you want to give users composition flexibility.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are Higher-Order Components (HOCs) and are they still used?</div>
+        <div class="interview-a">HOCs are functions that take a component and return an enhanced component: const Enhanced = withAuth(MyComponent). They add cross-cutting concerns (authentication, logging, theming) without modifying the wrapped component. Mostly replaced by hooks in modern React — a custom useAuth() hook is simpler and more readable than withAuth(). HOCs are still used in: class components (hooks don't work there), third-party libraries (React Redux's connect), when you need to wrap a component you don't own. Prefer hooks for new code.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('performance')">← Performance</button>
+        <button class="mark-done-btn" onclick="markDone('component-patterns')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('context-api')">Next: Context →</button>
+      </div>
+    </div>
+
+    <!-- CONTEXT API -->
+    <div id="lesson-context-api" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🌐 Context API</div>
+        <div class="lesson-subtitle">Avoid prop drilling without a state library. Context pitfalls, performance patterns, and when to use Context vs Zustand.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Context Basics & Performance Trap</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — CONTEXT BEST PRACTICES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm">// ❌ BAD — single context with many values → ALL consumers re-render</span>
+<span class="kw">const</span> AppContext = <span class="fn">createContext</span>({ user, theme, cart, settings });
+<span class="cm">// Change cart → user-consuming components re-render too!</span>
+
+<span class="cm">// ✅ GOOD — split by concern (separate frequently-changing state)</span>
+<span class="kw">const</span> UserContext = <span class="fn">createContext</span>&lt;<span class="cls">User</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+<span class="kw">const</span> ThemeContext = <span class="fn">createContext</span>&lt;<span class="kw">string</span>&gt;(<span class="st">'light'</span>);
+
+<span class="cm">// ✅ BEST — memoize context value to avoid unnecessary re-renders</span>
+<span class="kw">function</span> <span class="fn">AuthProvider</span>({ children }: { children: ReactNode }) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>&lt;<span class="cls">User</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+
+  <span class="kw">const</span> login = <span class="fn">useCallback</span>(<span class="kw">async</span> (credentials) => {
+    <span class="kw">const</span> user = <span class="kw">await</span> api.<span class="fn">login</span>(credentials);
+    <span class="fn">setUser</span>(user);
+  }, []);
+
+  <span class="kw">const</span> logout = <span class="fn">useCallback</span>(() => <span class="fn">setUser</span>(<span class="kw">null</span>), []);
+
+  <span class="cm">// Memoize the context value object</span>
+  <span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ user, login, logout }), [user, login, logout]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">UserContext</span>.Provider value={value}&gt;
+      {children}
+    &lt;/<span class="fn">UserContext</span>.Provider&gt;
+  );
+}
+
+<span class="cm">// Custom hook for safe consumption</span>
+<span class="kw">function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">const</span> context = <span class="fn">useContext</span>(UserContext);
+  <span class="kw">if</span> (!context) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">'useAuth must be inside AuthProvider'</span>);
+  <span class="kw">return</span> context;
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a common performance problem with Context and how do you fix it?</div>
+        <div class="interview-a">Problem: every consumer of a Context re-renders when ANY value in the context changes, even if they don't use the changed value. If you put {user, theme, notifications} in one context, changing notifications causes user-consuming components to re-render unnecessarily. Solutions: (1) Split context by concern — separate UserContext, ThemeContext, NotificationContext, (2) Memoize context value with useMemo so it doesn't change unless actual values change, (3) Use useCallback for functions in context value, (4) For high-frequency updates, use a state management library (Zustand, Jotai) which only re-renders components that subscribe to changed slices.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When should you use Context vs Zustand/Redux?</div>
+        <div class="interview-a">Context: good for low-frequency updates (theme, auth user, language), data accessed by many components at different tree levels, when you want zero dependencies. Zustand/Redux: better for high-frequency updates (animations, real-time data), when you need to select specific slices (avoid unnecessary re-renders), complex update logic, multiple unrelated state slices, devtools. Context is not a state management solution — it's a dependency injection mechanism. For anything updated regularly or complex, use a proper store.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('component-patterns')">← Patterns</button>
+        <button class="mark-done-btn" onclick="markDone('context-api')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('data-fetching')">Next: Data Fetching →</button>
+      </div>
+    </div>
+
+    <!-- DATA FETCHING -->
+    <div id="lesson-data-fetching" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🔄 Data Fetching</div>
+        <div class="lesson-subtitle">React Query / TanStack Query — the modern standard for server state. Why it replaces useEffect for fetching.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Why React Query Beats useEffect for Fetching</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REACT QUERY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { useQuery, useMutation, useQueryClient } from <span class="st">'@tanstack/react-query'</span>;
+
+<span class="cm">// Basic query — handles loading, error, caching, refetching!</span>
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }: { userId: <span class="kw">string</span> }) {
+  <span class="kw">const</span> { data: user, isLoading, error, isStale } = <span class="fn">useQuery</span>({
+    queryKey: [<span class="st">'user'</span>, userId],   <span class="cm">// cache key — auto-deduplicates</span>
+    queryFn: () => api.<span class="fn">getUser</span>(userId),
+    staleTime: <span class="nm">5</span> * <span class="nm">60</span> * <span class="nm">1000</span>,    <span class="cm">// 5 min before considered stale</span>
+    gcTime: <span class="nm">10</span> * <span class="nm">60</span> * <span class="nm">1000</span>,       <span class="cm">// 10 min cache retention</span>
+    retry: <span class="nm">2</span>,                       <span class="cm">// retry failed requests twice</span>
+  });
+
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> &lt;<span class="fn">Spinner</span> /&gt;;
+  <span class="kw">if</span> (error) <span class="kw">return</span> &lt;<span class="fn">ErrorMessage</span> error={error} /&gt;;
+  <span class="kw">return</span> &lt;<span class="fn">div</span>&gt;{user?.name}&lt;/<span class="fn">div</span>&gt;;
+}
+
+<span class="cm">// Mutation — create/update/delete with optimistic updates</span>
+<span class="kw">function</span> <span class="fn">UpdateUser</span>() {
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>();
+
+  <span class="kw">const</span> mutation = <span class="fn">useMutation</span>({
+    mutationFn: (data: UpdateData) => api.<span class="fn">updateUser</span>(data),
+    <span class="fn">onMutate</span>(newData) {              <span class="cm">// optimistic update</span>
+      <span class="kw">const</span> prev = queryClient.<span class="fn">getQueryData</span>([<span class="st">'user'</span>, newData.id]);
+      queryClient.<span class="fn">setQueryData</span>([<span class="st">'user'</span>, newData.id], newData);
+      <span class="kw">return</span> { prev };              <span class="cm">// return context for rollback</span>
+    },
+    <span class="fn">onError</span>(err, _, context) {      <span class="cm">// rollback on error</span>
+      queryClient.<span class="fn">setQueryData</span>([<span class="st">'user'</span>, _.id], context?.prev);
+    },
+    <span class="fn">onSuccess</span>() {                   <span class="cm">// invalidate to refetch</span>
+      queryClient.<span class="fn">invalidateQueries</span>({ queryKey: [<span class="st">'user'</span>] });
+    },
+  });
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use React Query instead of useEffect for data fetching?</div>
+        <div class="interview-a">useEffect for fetching gives you a blank slate — you implement everything yourself: loading state, error handling, race conditions (two requests fired, second resolves first), cancellation, caching, deduplication, refetch on focus/online, stale data, background updates. React Query handles all of this. Additionally, useEffect has the "double invocation in StrictMode" problem where effects run twice in development. React Query gives you: automatic caching, background refetching, request deduplication, optimistic updates, infinite scroll, devtools. The setup cost is low; the benefits are massive.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('context-api')">← Context</button>
+        <button class="mark-done-btn" onclick="markDone('data-fetching')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('react-router')">Next: React Router →</button>
+      </div>
+    </div>
+
+    <!-- REACT ROUTER -->
+    <div id="lesson-react-router" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🛣️ React Router v6</div>
+        <div class="lesson-subtitle">Modern React routing — nested routes, loaders, protected routes, and the key v6 patterns.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">React Router v6 Essentials</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REACT ROUTER v6</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { createBrowserRouter, RouterProvider, Outlet, Navigate,
+         useNavigate, useParams, useSearchParams, Link } from <span class="st">'react-router-dom'</span>;
+
+<span class="cm">// Protected route component</span>
+<span class="kw">function</span> <span class="fn">RequireAuth</span>() {
+  <span class="kw">const</span> { user } = <span class="fn">useAuth</span>();
+  <span class="kw">return</span> user ? &lt;<span class="fn">Outlet</span> /&gt; : &lt;<span class="fn">Navigate</span> to=<span class="st">"/login"</span> replace /&gt;;
+}
+
+<span class="kw">const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="st">"/"</span>,
+    element: &lt;<span class="fn">RootLayout</span> /&gt;,  <span class="cm">// persistent layout with &lt;Outlet&gt;</span>
+    errorElement: &lt;<span class="fn">ErrorPage</span> /&gt;,
+    children: [
+      { index: <span class="kw">true</span>, element: &lt;<span class="fn">Home</span> /&gt; },
+      { path: <span class="st">"login"</span>, element: &lt;<span class="fn">Login</span> /&gt; },
+      {
+        element: &lt;<span class="fn">RequireAuth</span> /&gt;,  <span class="cm">// wrap protected routes</span>
+        children: [
+          {
+            path: <span class="st">"dashboard"</span>,
+            element: &lt;<span class="fn">Dashboard</span> /&gt;,
+            loader: <span class="kw">async</span> () => {  <span class="cm">// parallel data loading before render</span>
+              <span class="kw">return</span> { stats: <span class="kw">await</span> api.<span class="fn">getStats</span>() };
+            },
+          },
+          {
+            path: <span class="st">"users/:userId"</span>,
+            element: &lt;<span class="fn">UserDetail</span> /&gt;,
+            loader: ({ params }) => api.<span class="fn">getUser</span>(params.userId!),
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+<span class="cm">// In component</span>
+<span class="kw">const</span> { userId } = <span class="fn">useParams</span>();
+<span class="kw">const</span> [searchParams, setSearchParams] = <span class="fn">useSearchParams</span>();
+<span class="kw">const</span> navigate = <span class="fn">useNavigate</span>();
+<span class="fn">navigate</span>(<span class="st">'/dashboard'</span>, { replace: <span class="kw">true</span> });</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you implement protected routes in React?</div>
+        <div class="interview-a">Create a wrapper component that checks authentication and either renders Outlet (the protected content) or redirects. With React Router v6 createBrowserRouter: create a RequireAuth layout route, nest protected routes inside it. The component checks auth state, returns &lt;Outlet /&gt; if authenticated, &lt;Navigate to="/login" replace /&gt; otherwise. The `replace` prop prevents the login page from being added to browser history. Can also use a loader to check auth and redirect: if (!user) throw redirect('/login').</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('data-fetching')">← Data Fetching</button>
+        <button class="mark-done-btn" onclick="markDone('react-router')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('forms')">Next: Forms →</button>
+      </div>
+    </div>
+
+    <!-- FORMS -->
+    <div id="lesson-forms" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">📝 Forms & Validation</div>
+        <div class="lesson-subtitle">React Hook Form + Zod — the modern stack for performant, type-safe forms.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">React Hook Form + Zod</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REACT HOOK FORM + ZOD</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { useForm } from <span class="st">'react-hook-form'</span>;
+<span class="kw">import</span> { zodResolver } from <span class="st">'@hookform/resolvers/zod'</span>;
+<span class="kw">import</span> { z } from <span class="st">'zod'</span>;
+
+<span class="cm">// Define schema with Zod</span>
+<span class="kw">const</span> schema = z.<span class="fn">object</span>({
+  email: z.<span class="fn">string</span>().<span class="fn">email</span>(<span class="st">'Invalid email'</span>),
+  password: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="nm">8</span>, <span class="st">'Min 8 characters'</span>),
+  age: z.<span class="fn">number</span>().<span class="fn">min</span>(<span class="nm">18</span>).<span class="fn">max</span>(<span class="nm">120</span>).<span class="fn">optional</span>(),
+  role: z.<span class="fn">enum</span>([<span class="st">'admin'</span>, <span class="st">'user'</span>]),
+});
+
+<span class="kw">type</span> <span class="cls">FormData</span> = z.<span class="fn">infer</span>&lt;<span class="kw">typeof</span> schema&gt;;  <span class="cm">// TypeScript type from schema</span>
+
+<span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> { register, handleSubmit, formState: { errors, isSubmitting } } = <span class="fn">useForm</span>&lt;<span class="cls">FormData</span>&gt;({
+    resolver: <span class="fn">zodResolver</span>(schema),
+    defaultValues: { role: <span class="st">'user'</span> },
+  });
+
+  <span class="kw">const</span> onSubmit = <span class="kw">async</span> (data: <span class="cls">FormData</span>) => {
+    <span class="kw">await</span> api.<span class="fn">login</span>(data);  <span class="cm">// fully typed FormData</span>
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">form</span> onSubmit={<span class="fn">handleSubmit</span>(onSubmit)}&gt;
+      &lt;<span class="fn">input</span> {...<span class="fn">register</span>(<span class="st">'email'</span>)} type=<span class="st">"email"</span> /&gt;
+      {errors.email && &lt;<span class="fn">span</span>&gt;{errors.email.message}&lt;/<span class="fn">span</span>&gt;}
+
+      &lt;<span class="fn">input</span> {...<span class="fn">register</span>(<span class="st">'password'</span>)} type=<span class="st">"password"</span> /&gt;
+      {errors.password && &lt;<span class="fn">span</span>&gt;{errors.password.message}&lt;/<span class="fn">span</span>&gt;}
+
+      &lt;<span class="fn">button</span> type=<span class="st">"submit"</span> disabled={isSubmitting}&gt;
+        {isSubmitting ? <span class="st">'Logging in...'</span> : <span class="st">'Login'</span>}
+      &lt;/<span class="fn">button</span>&gt;
+    &lt;/<span class="fn">form</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is React Hook Form better than controlled forms for performance?</div>
+        <div class="interview-a">Controlled forms re-render the entire component on every keystroke — a form with 20 fields causes 20 re-renders per second while typing. React Hook Form uses uncontrolled inputs by default (refs, not state), so the component doesn't re-render while typing. Re-renders only happen for: initial render, form submission, specific field value subscriptions (watch()). With 100 users typing in complex forms, this is a significant performance difference. Additionally, React Hook Form integrates with Zod via zodResolver for type-safe validation derived from the same schema used for TypeScript types.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('react-router')">← React Router</button>
+        <button class="mark-done-btn" onclick="markDone('forms')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('testing-react')">Next: Testing →</button>
+      </div>
+    </div>
+
+    <!-- TESTING -->
+    <div id="lesson-testing-react" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">🧪 Testing React</div>
+        <div class="lesson-subtitle">React Testing Library — test behavior not implementation. Write tests that survive refactors.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Testing Library Fundamentals</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REACT TESTING LIBRARY</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { render, screen, waitFor } from <span class="st">'@testing-library/react'</span>;
+<span class="kw">import</span> userEvent from <span class="st">'@testing-library/user-event'</span>;
+
+<span class="cm">// Test behavior, not implementation!</span>
+describe(<span class="st">'LoginForm'</span>, () => {
+  it(<span class="st">'submits with valid credentials'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> user = userEvent.<span class="fn">setup</span>();
+    <span class="kw">const</span> mockLogin = jest.<span class="fn">fn</span>();
+
+    <span class="fn">render</span>(&lt;<span class="fn">LoginForm</span> onLogin={mockLogin} /&gt;);
+
+    <span class="cm">// Query by accessible roles (preferred)</span>
+    <span class="kw">await</span> user.<span class="fn">type</span>(screen.<span class="fn">getByLabelText</span>(<span class="st">/email/i</span>), <span class="st">'test@example.com'</span>);
+    <span class="kw">await</span> user.<span class="fn">type</span>(screen.<span class="fn">getByLabelText</span>(<span class="st">/password/i</span>), <span class="st">'password123'</span>);
+    <span class="kw">await</span> user.<span class="fn">click</span>(screen.<span class="fn">getByRole</span>(<span class="st">'button'</span>, { name: <span class="st">/login/i</span> }));
+
+    <span class="kw">await</span> <span class="fn">waitFor</span>(() => {
+      expect(mockLogin).<span class="fn">toHaveBeenCalledWith</span>({
+        email: <span class="st">'test@example.com'</span>,
+        password: <span class="st">'password123'</span>
+      });
+    });
+  });
+
+  it(<span class="st">'shows error for invalid email'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> user = userEvent.<span class="fn">setup</span>();
+    <span class="fn">render</span>(&lt;<span class="fn">LoginForm</span> onLogin={jest.<span class="fn">fn</span>()} /&gt;);
+
+    <span class="kw">await</span> user.<span class="fn">type</span>(screen.<span class="fn">getByLabelText</span>(<span class="st">/email/i</span>), <span class="st">'notanemail'</span>);
+    <span class="kw">await</span> user.<span class="fn">tab</span>();  <span class="cm">// trigger blur validation</span>
+
+    expect(screen.<span class="fn">getByText</span>(<span class="st">/invalid email/i</span>)).<span class="fn">toBeInTheDocument</span>();
+  });
+});</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Testing Library philosophy and why is it better than Enzyme?</div>
+        <div class="interview-a">React Testing Library is guided by: "The more your tests resemble the way your software is used, the more confidence they can give you." This means: query elements by accessible roles/labels (as users find them), interact via userEvent (as users interact), test visible outcomes. Enzyme tested React internals (component state, instance methods, lifecycle) — tests broke on every refactor even if behavior stayed the same. RTL tests survive refactors because they test what users see and do, not how components are implemented. Tests should give you confidence that user-facing behavior works.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('forms')">← Forms</button>
+        <button class="mark-done-btn" onclick="markDone('testing-react')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('react19')">Next: React 19 →</button>
+      </div>
+    </div>
+
+    <!-- REACT 19 -->
+    <div id="lesson-react19" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// REACT CORE</div>
+        <div class="lesson-title">✨ React 19 New Features</div>
+        <div class="lesson-subtitle">The biggest React release in years. Actions, useActionState, useOptimistic, Server Components, and the use() hook.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Actions & useActionState</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TSX — REACT 19</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { useActionState, useOptimistic, use } from <span class="st">'react'</span>;
+
+<span class="cm">// useActionState — handle form actions with pending/error state</span>
+<span class="kw">async function</span> <span class="fn">updateName</span>(prevState: <span class="kw">any</span>, formData: FormData) {
+  <span class="kw">const</span> name = formData.<span class="fn">get</span>(<span class="st">'name'</span>);
+  <span class="kw">const</span> result = <span class="kw">await</span> api.<span class="fn">updateUser</span>({ name });
+  <span class="kw">if</span> (!result.ok) <span class="kw">return</span> { error: <span class="st">'Update failed'</span> };
+  <span class="kw">return</span> { success: <span class="kw">true</span> };
+}
+
+<span class="kw">function</span> <span class="fn">NameForm</span>() {
+  <span class="kw">const</span> [state, formAction, isPending] = <span class="fn">useActionState</span>(updateName, <span class="kw">null</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">form</span> action={formAction}&gt;
+      &lt;<span class="fn">input</span> name=<span class="st">"name"</span> /&gt;
+      &lt;<span class="fn">button</span> type=<span class="st">"submit"</span> disabled={isPending}&gt;
+        {isPending ? <span class="st">'Saving...'</span> : <span class="st">'Save'</span>}
+      &lt;/<span class="fn">button</span>&gt;
+      {state?.error && &lt;<span class="fn">p</span>&gt;{state.error}&lt;/<span class="fn">p</span>&gt;}
+    &lt;/<span class="fn">form</span>&gt;
+  );
+}
+
+<span class="cm">// useOptimistic — show immediate feedback before server response</span>
+<span class="kw">function</span> <span class="fn">LikeButton</span>({ post }: { post: Post }) {
+  <span class="kw">const</span> [optimisticLikes, addOptimisticLike] = <span class="fn">useOptimistic</span>(
+    post.likes,
+    (current, _) => current + <span class="nm">1</span>  <span class="cm">// update function</span>
+  );
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">button</span> onClick={<span class="kw">async</span> () => {
+      <span class="fn">addOptimisticLike</span>(<span class="kw">null</span>);  <span class="cm">// instant UI update</span>
+      <span class="kw">await</span> api.<span class="fn">likePost</span>(post.id);  <span class="cm">// actual server call</span>
+    }}&gt;
+      ❤️ {optimisticLikes}         <span class="cm">// shows +1 immediately</span>
+    &lt;/<span class="fn">button</span>&gt;
+  );
+}
+
+<span class="cm">// use() hook — read resources in render (Promise, Context)</span>
+<span class="kw">function</span> <span class="fn">UserName</span>({ userPromise }: { userPromise: Promise&lt;User&gt; }) {
+  <span class="kw">const</span> user = <span class="fn">use</span>(userPromise);  <span class="cm">// Suspense-integrated! Works in conditionals.</span>
+  <span class="kw">return</span> &lt;<span class="fn">span</span>&gt;{user.name}&lt;/<span class="fn">span</span>&gt;;
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is useOptimistic and how does it improve UX?</div>
+        <div class="interview-a">useOptimistic enables instant UI feedback before the server confirms an action. Instead of: click "Like" → wait 500ms → show liked, you get: click "Like" → immediately show liked → server confirms. If server fails, automatically rolls back. This is the "optimistic update" pattern. useOptimistic takes the real value and an update function, returns an optimistic value that is immediately updated when you call addOptimisticUpdate(), but reverts to the real value once the server action completes. Dramatically improves perceived performance for write operations.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are React Server Components?</div>
+        <div class="interview-a">Server Components (RSC) render on the server and send their HTML output to the client — no JavaScript bundle sent for them. Benefits: (1) Zero bundle size — import heavy libraries (markdown parsers, DB clients) without shipping to client, (2) Direct database access from components, (3) Faster initial page load (no hydration needed for server components), (4) Automatic code splitting. Limitations: no useState, useEffect, event handlers — they're not interactive. The mental model: Server Components for data-fetching/static content, Client Components ("use client") for interaction. Requires Next.js App Router or similar framework.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('testing-react')">← Testing</button>
+        <button class="mark-done-btn" onclick="markDone('react19')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-basics')">Next: React Native →</button>
+      </div>
+    </div>
+
+    <!-- RN BASICS -->
+    <div id="lesson-rn-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">📱 RN Architecture</div>
+        <div class="lesson-subtitle">How React Native works under the hood. Old Bridge vs New Architecture (JSI + Fabric). Expo vs bare workflow.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Old Architecture (Bridge) vs New Architecture (JSI)</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Old (Bridge)</th><th>New (JSI + Fabric)</th></tr>
+          <tr><td>JS↔Native communication</td><td>Async JSON messages over bridge</td><td>Synchronous direct C++ calls via JSI</td></tr>
+          <tr><td>Performance</td><td>Serialization overhead, async lag</td><td>Synchronous, zero-copy, much faster</td></tr>
+          <tr><td>Threading model</td><td>3 threads: JS, Native, Shadow</td><td>Concurrent rendering, flexible threading</td></tr>
+          <tr><td>Layout</td><td>Asynchronous layout (Yoga)</td><td>Synchronous layout with Fabric</td></tr>
+          <tr><td>Adoption</td><td>Legacy (still works)</td><td>Default in RN 0.74+ / Expo SDK 51+</td></tr>
+        </table>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 BRIDGE ANALOGY</div>
+          <div class="analogy-text">Old Bridge is like communicating through a <strong>translator who writes notes</strong>. JS writes a note in JSON, passes it to the bridge, the native side reads it and responds — all async, with serialization overhead. New Architecture (JSI) is like they both speak the <strong>same language directly</strong> — JavaScript can hold a reference to a C++ object and call its methods synchronously, no translation, no waiting.</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Expo vs Bare Workflow</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th>Expo (Managed)</th><th>Bare Workflow</th></tr>
+          <tr><td>Native code</td><td>Managed by Expo</td><td>Full Xcode/Android Studio access</td></tr>
+          <tr><td>Setup</td><td>Minutes, no Xcode needed</td><td>Hours, full native setup</td></tr>
+          <tr><td>Custom native modules</td><td>Limited (Expo SDK modules)</td><td>Full freedom</td></tr>
+          <tr><td>OTA updates</td><td>✅ Expo Updates</td><td>✅ via EAS Update</td></tr>
+          <tr><td>App size</td><td>Larger (all Expo APIs included)</td><td>Only what you need</td></tr>
+          <tr><td>Best for</td><td>Most apps, getting started fast</td><td>Complex native integrations</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does React Native work? How is it different from React?</div>
+        <div class="interview-a">React and React Native share the same component model and reconciliation algorithm, but React targets the browser DOM while React Native targets native mobile platform APIs. When you write &lt;View&gt; in RN, it becomes android.view.ViewGroup on Android and UIView on iOS — no WebView, no HTML. The JavaScript runs in a separate thread (Hermes JS engine), communicating with the native UI thread. React Native provides polyfills for common web APIs (Fetch, WebSockets, Timers) but doesn't have browser-specific APIs (window, document, localStorage). Shared logic (business logic, hooks, most components) can be shared between React and React Native.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Hermes and why does React Native use it?</div>
+        <div class="interview-a">Hermes is a JavaScript engine built by Meta specifically for React Native. Advantages over V8/JSC: pre-compiled to bytecode at build time (faster startup — app doesn't need to parse JS on launch), lower memory usage, better garbage collection for mobile constraints. Default since RN 0.70. Performance impact: time-to-interactive reduced by 30-40% on Android for typical apps. Also enables: better debugging, faster development feedback, and is optimized for the mobile use case (not general-purpose web JS engine).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('react19')">← React 19</button>
+        <button class="mark-done-btn" onclick="markDone('rn-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-components')">Next: RN Components →</button>
+      </div>
+    </div>
+
+    <!-- RN COMPONENTS -->
+    <div id="lesson-rn-components" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">🧱 Core Components</div>
+        <div class="lesson-subtitle">The essential React Native components — FlatList, ScrollView, Pressable, and when to use each.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Core Components vs Web Equivalents</div>
+        <table class="cheat-table">
+          <tr><th>React Native</th><th>Web equivalent</th><th>Key notes</th></tr>
+          <tr><td>View</td><td>div</td><td>Default flexbox column, not block</td></tr>
+          <tr><td>Text</td><td>p / span</td><td>ALL text must be inside &lt;Text&gt;</td></tr>
+          <tr><td>TextInput</td><td>input</td><td>onChangeText, not onChange</td></tr>
+          <tr><td>Image</td><td>img</td><td>Requires {width, height} style</td></tr>
+          <tr><td>ScrollView</td><td>overflow: scroll</td><td>Renders ALL children — bad for long lists</td></tr>
+          <tr><td>FlatList</td><td>virtual list</td><td>Virtualized — renders only visible items</td></tr>
+          <tr><td>Pressable</td><td>button / div+onClick</td><td>Handles pressed states, accessibility</td></tr>
+          <tr><td>Modal</td><td>dialog / overlay</td><td>Renders above all other content</td></tr>
+          <tr><td>SafeAreaView</td><td>No equivalent</td><td>Avoids notches/home indicators</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang rn">REACT NATIVE — FLATLIST</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { FlatList, View, Text, Pressable, StyleSheet } from <span class="st">'react-native'</span>;
+
+<span class="cm">// FlatList — MUST use for long lists (virtualized)</span>
+<span class="kw">function</span> <span class="fn">UserList</span>({ users }: { users: User[] }) {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">FlatList</span>
+      data={users}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item, index }) => &lt;<span class="fn">UserRow</span> user={item} /&gt;}
+      <span class="cm">// Performance props:</span>
+      initialNumToRender={<span class="nm">10</span>}         <span class="cm">// items to render initially</span>
+      maxToRenderPerBatch={<span class="nm">5</span>}          <span class="cm">// items per batch while scrolling</span>
+      windowSize={<span class="nm">5</span>}                   <span class="cm">// render window (5 = 2.5 screens each side)</span>
+      removeClippedSubviews={<span class="kw">true</span>}     <span class="cm">// detach off-screen items</span>
+      getItemLayout={(_, index) => ({  <span class="cm">// fixed height = faster!</span>
+        length: <span class="nm">80</span>, offset: <span class="nm">80</span> * index, index
+      })}
+      ItemSeparatorComponent={() => &lt;<span class="fn">View</span> style={styles.separator} /&gt;}
+      ListEmptyComponent={&lt;<span class="fn">Text</span>&gt;No users&lt;/<span class="fn">Text</span>&gt;}
+      onEndReached={() => <span class="fn">loadMore</span>()}   <span class="cm">// infinite scroll</span>
+      onEndReachedThreshold={<span class="nm">0.5</span>}      <span class="cm">// trigger when 50% from end</span>
+      refreshControl={
+        &lt;<span class="fn">RefreshControl</span> refreshing={isRefreshing} onRefresh={<span class="fn">onRefresh</span>} /&gt;
+      }
+    /&gt;
+  );
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between ScrollView and FlatList?</div>
+        <div class="interview-a">ScrollView renders ALL its children immediately — great for small, fixed content (settings screen, form). If you put 1000 items in a ScrollView, all 1000 render at once: huge memory usage, slow initial render, janky scrolling. FlatList is virtualized — only renders items visible on screen plus a small buffer. Items outside the viewport are unmounted. For any list that could have more than ~20 items, always use FlatList. SectionList is FlatList with section headers. VirtualizedList is the base (use only for custom implementations).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-basics')">← RN Basics</button>
+        <button class="mark-done-btn" onclick="markDone('rn-components')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-styling')">Next: Styling →</button>
+      </div>
+    </div>
+
+    <!-- RN STYLING -->
+    <div id="lesson-rn-styling" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">🎨 Styling & Flexbox</div>
+        <div class="lesson-subtitle">StyleSheet, Flexbox defaults, responsive design with Dimensions, and platform-specific styles.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">RN Styling Fundamentals</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang rn">REACT NATIVE — STYLING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { StyleSheet, View, Text, Dimensions, Platform } from <span class="st">'react-native'</span>;
+
+<span class="cm">// ✅ StyleSheet.create — performance: validated once, frozen, less re-renders</span>
+<span class="kw">const</span> styles = StyleSheet.<span class="fn">create</span>({
+  container: {
+    flex: <span class="nm">1</span>,
+    flexDirection: <span class="st">'column'</span>,  <span class="cm">// DEFAULT in RN! (web default is row)</span>
+    alignItems: <span class="st">'center'</span>,
+    backgroundColor: <span class="st">'#fff'</span>,
+    padding: <span class="nm">16</span>,              <span class="cm">// unitless = dp (density-independent pixels)</span>
+  },
+  card: {
+    width: <span class="st">'100%'</span>,           <span class="cm">// string percentages ok</span>
+    borderRadius: <span class="nm">8</span>,
+    shadowColor: <span class="st">'#000'</span>,     <span class="cm">// iOS shadow</span>
+    shadowOffset: { width: <span class="nm">0</span>, height: <span class="nm">2</span> },
+    shadowOpacity: <span class="nm">0.1</span>,
+    elevation: <span class="nm">3</span>,             <span class="cm">// Android shadow</span>
+  },
+});
+
+<span class="cm">// Responsive — Dimensions</span>
+<span class="kw">const</span> { width, height } = Dimensions.<span class="fn">get</span>(<span class="st">'window'</span>);
+<span class="cm">// Or use useWindowDimensions hook (updates on orientation change!)</span>
+
+<span class="cm">// Platform-specific code</span>
+<span class="kw">const</span> styles2 = StyleSheet.<span class="fn">create</span>({
+  header: {
+    paddingTop: Platform.OS === <span class="st">'ios'</span> ? <span class="nm">44</span> : <span class="nm">20</span>,
+    ...Platform.<span class="fn">select</span>({
+      ios: { fontFamily: <span class="st">'SF Pro Display'</span> },
+      android: { fontFamily: <span class="st">'Roboto'</span> },
+    }),
+  },
+});
+
+<span class="cm">// Platform-specific files: Button.ios.tsx, Button.android.tsx</span>
+<span class="cm">// RN picks the right one automatically!</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">RN Flexbox vs CSS Flexbox Differences</div>
+        <table class="cheat-table">
+          <tr><th>Property</th><th>CSS default</th><th>React Native default</th></tr>
+          <tr><td>flexDirection</td><td>row</td><td>column ⚠️</td></tr>
+          <tr><td>alignContent</td><td>stretch</td><td>flex-start</td></tr>
+          <tr><td>flexShrink</td><td>1</td><td>0 ⚠️</td></tr>
+          <tr><td>Units</td><td>px, em, rem, %, vh/vw</td><td>Unitless numbers (dp) + % strings</td></tr>
+          <tr><td>position</td><td>static by default</td><td>relative by default</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you handle different screen sizes in React Native?</div>
+        <div class="interview-a">Several approaches: (1) useWindowDimensions hook — gets current screen size, re-renders on rotation. Use for layout-critical code: const {width} = useWindowDimensions(); columns = width > 768 ? 3 : 1. (2) Percentage widths — width: '100%' fills available space. (3) Flexbox — flex: 1 makes elements fill remaining space proportionally. (4) react-native-responsive-screen library — wp('100%') based on viewport. (5) rem-style scaling — create a scale function: scale(16) = 16 on 375px base screen, proportionally scaled on other screens. Avoid fixed pixel values for major layout dimensions.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-components')">← Components</button>
+        <button class="mark-done-btn" onclick="markDone('rn-styling')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-navigation')">Next: Navigation →</button>
+      </div>
+    </div>
+
+    <!-- RN NAVIGATION -->
+    <div id="lesson-rn-navigation" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">🧭 Navigation</div>
+        <div class="lesson-subtitle">React Navigation — Stack, Tab, Drawer, deep linking, and passing params between screens.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">React Navigation Setup</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang rn">REACT NATIVE — NAVIGATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> { NavigationContainer } from <span class="st">'@react-navigation/native'</span>;
+<span class="kw">import</span> { createStackNavigator } from <span class="st">'@react-navigation/stack'</span>;
+<span class="kw">import</span> { createBottomTabNavigator } from <span class="st">'@react-navigation/bottom-tabs'</span>;
+
+<span class="cm">// Type-safe navigation params</span>
+<span class="kw">type</span> <span class="cls">RootStackParams</span> = {
+  Home: <span class="kw">undefined</span>;
+  Profile: { userId: <span class="kw">string</span>; name: <span class="kw">string</span> };
+  Settings: <span class="kw">undefined</span>;
+};
+
+<span class="kw">const</span> Stack = createStackNavigator&lt;<span class="cls">RootStackParams</span>&gt;();
+<span class="kw">const</span> Tab = createBottomTabNavigator();
+
+<span class="kw">function</span> <span class="fn">MainTabs</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">Tab</span>.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          <span class="kw">const</span> icons = { Home: <span class="st">'🏠'</span>, Profile: <span class="st">'👤'</span> };
+          <span class="kw">return</span> &lt;<span class="fn">Text</span>&gt;{icons[route.name]}&lt;/<span class="fn">Text</span>&gt;;
+        },
+      })}
+    &gt;
+      &lt;<span class="fn">Tab</span>.Screen name=<span class="st">"Home"</span> component={HomeScreen} /&gt;
+      &lt;<span class="fn">Tab</span>.Screen name=<span class="st">"Profile"</span> component={ProfileScreen} /&gt;
+    &lt;/<span class="fn">Tab</span>.Navigator&gt;
+  );
+}
+
+<span class="cm">// Navigate and pass params</span>
+<span class="kw">function</span> <span class="fn">HomeScreen</span>({ navigation }) {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">Pressable</span> onPress={() =>
+      navigation.<span class="fn">navigate</span>(<span class="st">'Profile'</span>, { userId: <span class="st">'123'</span>, name: <span class="st">'Hany'</span> })
+    }&gt;
+      &lt;<span class="fn">Text</span>&gt;Go to Profile&lt;/<span class="fn">Text</span>&gt;
+    &lt;/<span class="fn">Pressable</span>&gt;
+  );
+}
+
+<span class="cm">// Receive params</span>
+<span class="kw">function</span> <span class="fn">ProfileScreen</span>({ route }) {
+  <span class="kw">const</span> { userId, name } = route.params;  <span class="cm">// typed!</span>
+  <span class="kw">return</span> &lt;<span class="fn">Text</span>&gt;{name}&lt;/<span class="fn">Text</span>&gt;;
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between Stack, Tab, and Drawer navigators?</div>
+        <div class="interview-a">Stack Navigator: screens stacked on top of each other — push/pop model (like browser history). Back button goes to previous screen. Common for: detail screens, flows (login → signup → verify). Bottom Tab Navigator: persistent tab bar at bottom, screens side by side — switch without losing state. Each tab has its own navigation stack. Drawer Navigator: slide-out menu from the side. Less common on mobile now (replaced by bottom tabs), better on tablet. They compose: a common pattern is Tab navigator where each tab has its own Stack navigator, combined under a root Stack navigator for auth screens.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-styling')">← Styling</button>
+        <button class="mark-done-btn" onclick="markDone('rn-navigation')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-performance')">Next: RN Performance →</button>
+      </div>
+    </div>
+
+    <!-- RN PERFORMANCE -->
+    <div id="lesson-rn-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">🚀 React Native Performance</div>
+        <div class="lesson-subtitle">The JS thread vs UI thread, animation performance with Reanimated, and FlatList optimization.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Threading Model</div>
+        <div class="diagram">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="color:var(--react);font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;margin-bottom:10px">JS THREAD</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div class="arch-box ab-r">React Logic</div>
+                <div class="arch-box ab-r">State updates</div>
+                <div class="arch-box ab-r">Business logic</div>
+                <div class="arch-box ab-r">API calls</div>
+              </div>
+              <div style="font-size:11px;color:var(--red);margin-top:8px">⚠️ If blocked → UI freezes!</div>
+            </div>
+            <div>
+              <div style="color:var(--rn);font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;margin-bottom:10px">UI THREAD (Main)</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div class="arch-box ab-rn">Native rendering</div>
+                <div class="arch-box ab-rn">Touch events</div>
+                <div class="arch-box ab-rn">Animations</div>
+                <div class="arch-box ab-rn">Gestures</div>
+              </div>
+              <div style="font-size:11px;color:var(--green);margin-top:8px">✅ Always stays smooth</div>
+            </div>
+          </div>
+        </div>
+        <div class="warn-box"><strong>The golden rule:</strong> Keep the JS thread free. If JS thread is busy (heavy computation, large state updates, re-renders), animations stutter and the UI becomes unresponsive. Move heavy work off JS thread: use Reanimated 2 (runs on UI thread), InteractionManager.runAfterInteractions for heavy post-render work, background threads via react-native-worker-threads.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">React Native Reanimated 2</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang rn">REACT NATIVE — REANIMATED 2</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> Animated, {
+  useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS
+} from <span class="st">'react-native-reanimated'</span>;
+
+<span class="kw">function</span> <span class="fn">AnimatedCard</span>() {
+  <span class="kw">const</span> translateX = <span class="fn">useSharedValue</span>(<span class="nm">0</span>);
+  <span class="kw">const</span> opacity = <span class="fn">useSharedValue</span>(<span class="nm">1</span>);
+
+  <span class="cm">// Runs on UI thread — smooth even if JS is busy!</span>
+  <span class="kw">const</span> animatedStyle = <span class="fn">useAnimatedStyle</span>(() => ({
+    transform: [{ translateX: translateX.value }],
+    opacity: opacity.value,
+  }));
+
+  <span class="kw">const</span> <span class="fn">handlePress</span> = () => {
+    translateX.value = <span class="fn">withSpring</span>(<span class="nm">100</span>);  <span class="cm">// spring animation</span>
+    opacity.value = <span class="fn">withTiming</span>(<span class="nm">0</span>, { duration: <span class="nm">300</span> });
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">Animated</span>.View style={[styles.card, animatedStyle]}&gt;
+      &lt;<span class="fn">Pressable</span> onPress={handlePress}&gt;
+        &lt;<span class="fn">Text</span>&gt;Swipe Me&lt;/<span class="fn">Text</span>&gt;
+      &lt;/<span class="fn">Pressable</span>&gt;
+    &lt;/<span class="fn">Animated</span>.View&gt;
+  );
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use Reanimated 2 over Animated API?</div>
+        <div class="interview-a">React Native's built-in Animated API drives animations on the JS thread (unless using useNativeDriver: true, which is limited). If JS thread is busy, animations stutter. Reanimated 2 runs animation logic on the UI thread using worklets — compiled functions that run on the native side. This means animations stay smooth at 60/120fps even while JS is processing heavy updates. Additionally, Reanimated integrates with React Native Gesture Handler for fluid gesture-driven animations (swipe to delete, drag-and-drop) that feel native. For any production app with non-trivial animations, Reanimated 2 is the standard.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-navigation')">← Navigation</button>
+        <button class="mark-done-btn" onclick="markDone('rn-performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('rn-platform')">Next: Native APIs →</button>
+      </div>
+    </div>
+
+    <!-- RN PLATFORM -->
+    <div id="lesson-rn-platform" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-rn">// REACT NATIVE</div>
+        <div class="lesson-title">📲 Native Modules & APIs</div>
+        <div class="lesson-subtitle">Accessing device capabilities — storage, camera, push notifications, permissions, and platform detection.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Essential Native APIs</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang rn">REACT NATIVE — NATIVE APIs</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> AsyncStorage from <span class="st">'@react-native-async-storage/async-storage'</span>;
+<span class="kw">import</span> { Platform, PermissionsAndroid, Linking, Alert } from <span class="st">'react-native'</span>;
+
+<span class="cm">// AsyncStorage — persistent key-value (NOT secure, not for tokens)</span>
+<span class="kw">await</span> AsyncStorage.<span class="fn">setItem</span>(<span class="st">'@user_prefs'</span>, JSON.<span class="fn">stringify</span>(prefs));
+<span class="kw">const</span> stored = <span class="kw">await</span> AsyncStorage.<span class="fn">getItem</span>(<span class="st">'@user_prefs'</span>);
+
+<span class="cm">// Secure storage for tokens:</span>
+<span class="cm">// iOS: Keychain (react-native-keychain)</span>
+<span class="cm">// Android: EncryptedSharedPreferences</span>
+
+<span class="cm">// Platform detection</span>
+<span class="kw">const</span> isIOS = Platform.OS === <span class="st">'ios'</span>;
+<span class="kw">const</span> isAndroid = Platform.OS === <span class="st">'android'</span>;
+<span class="kw">const</span> iosVersion = Platform.Version;  <span class="cm">// iOS: string "17.0", Android: number</span>
+
+<span class="cm">// Permissions (Android requires explicit request)</span>
+<span class="kw">const</span> <span class="fn">requestCameraPermission</span> = <span class="kw">async</span> () => {
+  <span class="kw">if</span> (Platform.OS === <span class="st">'android'</span>) {
+    <span class="kw">const</span> granted = <span class="kw">await</span> PermissionsAndroid.<span class="fn">request</span>(
+      PermissionsAndroid.PERMISSIONS.CAMERA
+    );
+    <span class="kw">return</span> granted === PermissionsAndroid.RESULTS.GRANTED;
+  }
+  <span class="kw">return true</span>;  <span class="cm">// iOS: declare in Info.plist, system handles prompt</span>
+};
+
+<span class="cm">// Deep linking</span>
+Linking.<span class="fn">openURL</span>(<span class="st">'https://example.com'</span>);
+Linking.<span class="fn">openURL</span>(<span class="st">'tel:+201011234567'</span>);
+Linking.<span class="fn">openURL</span>(<span class="st">'mailto:test@example.com'</span>);
+
+<span class="cm">// Alert (native dialog)</span>
+Alert.<span class="fn">alert</span>(<span class="st">'Delete?'</span>, <span class="st">'This cannot be undone'</span>, [
+  { text: <span class="st">'Cancel'</span>, style: <span class="st">'cancel'</span> },
+  { text: <span class="st">'Delete'</span>, style: <span class="st">'destructive'</span>, onPress: <span class="fn">handleDelete</span> },
+]);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you securely store sensitive data in React Native?</div>
+        <div class="interview-a">AsyncStorage is NOT secure — it's plain text files on device, accessible with device access. For sensitive data: iOS — use Keychain Services (react-native-keychain wraps it). Android — use EncryptedSharedPreferences or Android Keystore (react-native-keychain also supports this). react-native-keychain provides a unified API: Keychain.setGenericPassword(username, password) and Keychain.getGenericPassword(). For authentication tokens, always use platform secure storage. Never store passwords or API keys in AsyncStorage, Redux state, or JavaScript variables that could be exposed.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do push notifications work in React Native?</div>
+        <div class="interview-a">Push notifications use platform services: APNs (Apple Push Notification service) for iOS, FCM (Firebase Cloud Messaging) for Android. Flow: (1) App registers for notifications, gets a device token, (2) App sends token to your backend, (3) Backend sends push via APNs/FCM with the device token, (4) Platform delivers to device even when app is closed. In React Native: use @notifee/react-native or @react-native-firebase/messaging. Always request permission before showing prompts (iOS requires explicit permission; Android 13+ also requires it). Handle: foreground notifications, background notifications, notification taps opening specific screens (deep linking).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-performance')">← RN Performance</button>
+        <button class="mark-done-btn" onclick="markDone('rn-platform')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- CHEATSHEET -->
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-react">// STUDY AID</div>
+        <div class="lesson-title">📋 React & RN Cheatsheet</div>
+        <div class="lesson-subtitle">Everything on one page. Review before your interview.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">⚛️ React Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>Keys</td><td>Use stable unique IDs. Never index for dynamic lists — breaks on reorder.</td></tr>
+          <tr><td>useState</td><td>Use functional update (prev => prev+1) when new state depends on previous.</td></tr>
+          <tr><td>useEffect deps</td><td>[] = run once. [dep] = run on change. No array = every render (usually wrong).</td></tr>
+          <tr><td>useRef</td><td>Mutable value that doesn't cause re-render. DOM access. Stores previous values.</td></tr>
+          <tr><td>useMemo</td><td>Memoize expensive computed value. Don't overuse — has overhead.</td></tr>
+          <tr><td>useCallback</td><td>Memoize function reference. Use when passing to memo() children.</td></tr>
+          <tr><td>React.memo</td><td>Skip re-render if props unchanged. Only helps if re-renders are actually happening.</td></tr>
+          <tr><td>Context perf</td><td>All consumers re-render on any change. Split context by concern. Memoize value.</td></tr>
+          <tr><td>Server state</td><td>Use React Query, not Redux. Handles caching, refetching, deduplication.</td></tr>
+          <tr><td>React 19</td><td>useActionState (form actions), useOptimistic (instant UI), use() hook, Server Components.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">📱 React Native Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>flexDirection</td><td>DEFAULT is column in RN (not row like CSS!)</td></tr>
+          <tr><td>ScrollView vs FlatList</td><td>FlatList for any list that could be long. ScrollView renders ALL children.</td></tr>
+          <tr><td>JS thread</td><td>If busy → UI freezes. Keep heavy work off it. Use Reanimated for animations.</td></tr>
+          <tr><td>Reanimated 2</td><td>Animations run on UI thread → smooth even if JS is busy.</td></tr>
+          <tr><td>AsyncStorage</td><td>NOT secure. Use react-native-keychain for tokens/passwords.</td></tr>
+          <tr><td>Platform.OS</td><td>'ios' or 'android'. Platform.select() for platform-specific styles.</td></tr>
+          <tr><td>New Architecture</td><td>JSI replaces Bridge → synchronous JS↔Native, faster, less overhead.</td></tr>
+          <tr><td>Hermes</td><td>Facebook's JS engine for RN. Pre-compiled bytecode → faster startup.</td></tr>
+          <tr><td>getItemLayout</td><td>Provide to FlatList for fixed-height items → much faster scrolling.</td></tr>
+          <tr><td>SafeAreaView</td><td>Always wrap root screen — handles notches and home indicators.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Hooks Decision Guide</div>
+        <table class="cheat-table">
+          <tr><th>Need</th><th>Hook</th></tr>
+          <tr><td>Simple local state</td><td>useState</td></tr>
+          <tr><td>Complex related state / actions</td><td>useReducer</td></tr>
+          <tr><td>Side effects / subscriptions</td><td>useEffect (with cleanup)</td></tr>
+          <tr><td>DOM / mutable ref (no re-render)</td><td>useRef</td></tr>
+          <tr><td>Expensive computation</td><td>useMemo</td></tr>
+          <tr><td>Stable function reference</td><td>useCallback</td></tr>
+          <tr><td>Context value</td><td>useContext</td></tr>
+          <tr><td>Deferred non-urgent update</td><td>useDeferredValue / useTransition</td></tr>
+          <tr><td>Form actions + pending state</td><td>useActionState (React 19)</td></tr>
+          <tr><td>Optimistic UI updates</td><td>useOptimistic (React 19)</td></tr>
+        </table>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('rn-platform')">← Native APIs</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TOPICS = ['jsx-rendering','hooks','state-management','component-patterns','performance','context-api','react-router','data-fetching','forms','testing-react','react19','rn-basics','rn-components','rn-styling','rn-navigation','rn-performance','rn-platform','cheatsheet'];
+const state = {
+  completed: new Set(JSON.parse(localStorage.getItem('rn-done') || '[]')),
+  xp: parseInt(localStorage.getItem('rn-xp') || '0'),
+  totalTopics: TOPICS.length
+};
+
+function showPage(p) {
+  document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none';
+  document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active','rn-active'));
+  if (p === 'home') document.getElementById('nav-home').classList.add('active');
+  updateXP();
+}
+
+function showLesson(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active','rn-active'));
+  const l = document.getElementById('lesson-' + id);
+  if (l) l.classList.add('active');
+  const n = document.getElementById('nav-' + id);
+  if (n) {
+    n.classList.add(id.startsWith('rn-') ? 'rn-active' : 'active');
+  }
+  document.querySelector('main').scrollTo(0, 0);
+  window.scrollTo(0, 0);
+}
+
+function checkQuiz(btn, id, result) {
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById('quiz-' + id + '-fb');
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback show right';
+    fb.textContent = '✅ Correct! Well done.';
+    addXP(20);
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong';
+    fb.textContent = '❌ Not quite — review the section above.';
+    opts.forEach(o => {
+      if (o.getAttribute('onclick') && o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');
+    });
+  }
+}
+
+function toggleAnswer(el) {
+  el.classList.toggle('open');
+  const next = el.nextElementSibling;
+  if (next && next.classList.contains('interview-a')) next.classList.toggle('open');
+}
+
+function markDone(id) {
+  if (!state.completed.has(id)) {
+    state.completed.add(id);
+    addXP(50);
+    localStorage.setItem('rn-done', JSON.stringify([...state.completed]));
+    const n = document.getElementById('nav-' + id);
+    if (n) n.classList.add('completed');
+    const btn = event.target;
+    btn.textContent = '✓ Done!';
+  }
+  updateProgress();
+}
+
+function addXP(a) { state.xp += a; localStorage.setItem('rn-xp', state.xp.toString()); updateXP(); }
+function updateXP() { document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`; updateProgress(); }
+function updateProgress() {
+  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics * 100) + '%';
+}
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'COPIED!'; setTimeout(() => btn.textContent = 'COPY', 2000);
+  });
+}
+function init() {
+  state.completed.forEach(id => {
+    const n = document.getElementById('nav-' + id);
+    if (n) n.classList.add('completed');
+  });
+  updateProgress(); updateXP();
+}
+init();
+</script>
+</body>
+</html>

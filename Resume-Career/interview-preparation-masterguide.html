@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Preparation — Master Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0e;
+  --surface: #0d1018;
+  --surface2: #131720;
+  --border: #1c2233;
+  --border2: #242d42;
+  --gold: #f0c040;
+  --gold2: #d4a520;
+  --red: #ff4d6d;
+  --green: #3dfaaa;
+  --blue: #4da6ff;
+  --purple: #c084fc;
+  --orange: #fb923c;
+  --teal: #2dd4bf;
+  --text: #e8eeff;
+  --text-dim: #6a7a9a;
+  --text-dimmer: #1e2840;
+  --r: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* GRAIN TEXTURE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* AMBIENT GLOW */
+.ambient {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+.ambient-1 { width: 600px; height: 400px; background: rgba(240,192,64,0.04); top: -100px; left: -200px; }
+.ambient-2 { width: 500px; height: 500px; background: rgba(77,166,255,0.04); bottom: -100px; right: -100px; }
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,10,14,0.95);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px;
+}
+.logo-main { font-size: 22px; color: var(--gold); }
+.logo-sub { font-size: 14px; color: var(--text-dim); letter-spacing: 3px; }
+.header-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+.progress-track {
+  width: 200px;
+  height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--orange));
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* LAYOUT */
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); position: relative; z-index: 1; }
+
+/* SIDEBAR */
+nav {
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.nav-section {
+  padding: 16px 20px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dimmer);
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 20px;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-dim);
+  border-left: 2px solid transparent;
+  transition: all 0.18s;
+}
+.nav-item:hover { color: var(--text); background: var(--surface); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(240,192,64,0.05); }
+.nav-item .ni { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: none; }
+.nav-item.done .done-dot { display: block; }
+
+/* MAIN */
+main { overflow-y: auto; }
+
+/* HERO */
+.hero {
+  padding: 60px 56px 50px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: 'MASTER GUIDE';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 140px;
+  color: rgba(240,192,64,0.03);
+  letter-spacing: 10px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-label::before { content: ''; width: 30px; height: 1px; background: var(--gold2); }
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(44px, 6vw, 72px);
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+.hero h1 span { color: var(--gold); }
+.hero-desc {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 580px;
+  font-weight: 400;
+  margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-n {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.stat-l { font-size: 11px; color: var(--text-dimmer); letter-spacing: 1px; text-transform: uppercase; }
+
+/* SECTION CARDS GRID */
+.cards-section { padding: 0; }
+.section-hdr {
+  padding: 28px 56px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.section-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.chip-gold { color: var(--gold); border-color: rgba(240,192,64,0.3); background: rgba(240,192,64,0.07); }
+.chip-blue { color: var(--blue); border-color: rgba(77,166,255,0.3); background: rgba(77,166,255,0.07); }
+.chip-green { color: var(--green); border-color: rgba(61,250,170,0.3); background: rgba(61,250,170,0.07); }
+.chip-purple { color: var(--purple); border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.07); }
+.chip-orange { color: var(--orange); border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.07); }
+.section-title { font-size: 17px; font-weight: 700; }
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: var(--border); }
+.card {
+  background: var(--bg);
+  padding: 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; }
+.card:hover { background: var(--surface); }
+.card:hover::before { opacity: 1; }
+.cg::before { background: radial-gradient(circle at 0% 0%, rgba(240,192,64,0.08), transparent 60%); }
+.cb::before { background: radial-gradient(circle at 0% 0%, rgba(77,166,255,0.08), transparent 60%); }
+.cv::before { background: radial-gradient(circle at 0% 0%, rgba(192,132,252,0.08), transparent 60%); }
+.co::before { background: radial-gradient(circle at 0% 0%, rgba(251,146,60,0.08), transparent 60%); }
+.ct::before { background: radial-gradient(circle at 0% 0%, rgba(61,250,170,0.08), transparent 60%); }
+.card-icon { font-size: 30px; margin-bottom: 12px; display: block; }
+.card-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.65; margin-bottom: 14px; }
+.card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.ctag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border2);
+}
+.ctag.hot { background: rgba(255,77,109,0.1); color: var(--red); border-color: rgba(255,77,109,0.2); }
+.ctag.key { background: rgba(61,250,170,0.1); color: var(--green); border-color: rgba(61,250,170,0.2); }
+.ctag.gold { background: rgba(240,192,64,0.1); color: var(--gold); border-color: rgba(240,192,64,0.2); }
+
+/* PAGE */
+.page { display: none; padding: 44px 56px; max-width: 980px; }
+.page.active { display: block; animation: fadeIn 0.28s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.breadcrumb {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dimmer);
+  cursor: pointer;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb:hover { color: var(--gold); }
+.breadcrumb::before { content: '←'; }
+
+.page-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 2px;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+.page-subtitle { color: var(--text-dim); font-size: 15px; line-height: 1.75; max-width: 660px; margin-bottom: 36px; }
+
+.block { margin-bottom: 48px; }
+.block-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.block-title::before { content: ''; width: 3px; height: 20px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
+
+/* TIMELINE */
+.timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+.timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 1px; background: var(--border2); }
+.tl-item { display: flex; gap: 20px; padding-bottom: 28px; position: relative; }
+.tl-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  z-index: 1;
+}
+.tl-dot.gold { background: rgba(240,192,64,0.15); border-color: rgba(240,192,64,0.4); }
+.tl-dot.blue { background: rgba(77,166,255,0.12); border-color: rgba(77,166,255,0.4); }
+.tl-dot.green { background: rgba(61,250,170,0.12); border-color: rgba(61,250,170,0.4); }
+.tl-dot.purple { background: rgba(192,132,252,0.12); border-color: rgba(192,132,252,0.4); }
+.tl-dot.orange { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.4); }
+.tl-content { flex: 1; padding-top: 6px; }
+.tl-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.tl-body { font-size: 13px; color: var(--text-dim); line-height: 1.85; }
+.tl-body strong { color: var(--text); font-weight: 600; }
+.tl-body .hl-g { color: var(--gold); }
+.tl-body .hl-b { color: var(--blue); }
+.tl-body .hl-r { color: var(--red); }
+.tl-body .hl-v { color: var(--purple); }
+.tl-body .hl-t { color: var(--teal); }
+.tl-sub {
+  margin-top: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tl-sub-item {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  display: flex;
+  gap: 8px;
+}
+.tl-sub-item::before { content: '→'; color: var(--gold2); flex-shrink: 0; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.data-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--surface2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+}
+.data-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; line-height: 1.65; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td:first-child { color: var(--gold); font-weight: 600; font-size: 13px; }
+.data-table tr:hover td { background: var(--surface); }
+
+/* BOXES */
+.info-box {
+  background: rgba(77,166,255,0.04);
+  border: 1px solid rgba(77,166,255,0.18);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.info-box strong { color: var(--blue); }
+.warn-box {
+  background: rgba(255,77,109,0.04);
+  border: 1px solid rgba(255,77,109,0.18);
+  border-left: 3px solid var(--red);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.warn-box strong { color: var(--red); }
+.success-box {
+  background: rgba(61,250,170,0.04);
+  border: 1px solid rgba(61,250,170,0.18);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.success-box strong { color: var(--green); }
+.gold-box {
+  background: rgba(240,192,64,0.04);
+  border: 1px solid rgba(240,192,64,0.2);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 18px 22px;
+  margin: 20px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.85;
+}
+.gold-box strong { color: var(--gold); }
+.gold-box .gold-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold2);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* CODE BLOCKS */
+.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin: 16px 0; }
+.code-hdr { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+.code-lang { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--gold); }
+.copy-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dimmer); background: none; border: 1px solid var(--border); padding: 3px 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+.copy-btn:hover { color: var(--gold); border-color: var(--gold); }
+pre { padding: 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.75; color: #a0b4d0; font-family: 'JetBrains Mono', monospace; }
+.ph { color: #7ec8e3; } .pv { color: #86efac; } .pc { color: #253550; font-style: italic; }
+
+/* CHECKLIST */
+.checklist { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.check-item:hover { border-color: var(--border2); }
+.check-item.checked { border-color: rgba(61,250,170,0.3); background: rgba(61,250,170,0.03); }
+.check-item.checked .cbox { background: var(--green); border-color: var(--green); color: var(--bg); font-size: 10px; }
+.cbox { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0; transition: all 0.2s; margin-top: 1px; }
+
+/* ACCORDION */
+.accordion { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.acc-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.acc-hdr {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 12px;
+  transition: background 0.2s;
+}
+.acc-hdr:hover { background: var(--surface2); }
+.acc-title { font-size: 14px; font-weight: 700; }
+.acc-arrow { color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 18px; transition: transform 0.2s; flex-shrink: 0; }
+.acc-arrow.open { transform: rotate(45deg); }
+.acc-body { display: none; padding: 0 20px 18px; font-size: 13px; color: var(--text-dim); line-height: 1.85; border-top: 1px solid var(--border); }
+.acc-body.open { display: block; }
+.acc-body strong { color: var(--text); font-weight: 600; }
+.acc-body .ah { color: var(--gold); font-weight: 600; }
+.acc-body .ab { color: var(--blue); }
+.acc-body .ag { color: var(--green); }
+.acc-body .av { color: var(--purple); }
+.acc-body .ao { color: var(--orange); }
+.acc-body li { padding-left: 16px; position: relative; margin-top: 6px; list-style: none; }
+.acc-body li::before { content: '→'; position: absolute; left: 0; color: var(--gold2); font-size: 11px; }
+
+/* PROMPT BOX */
+.prompt-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin: 16px 0;
+}
+.prompt-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.prompt-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--purple); }
+.prompt-body { padding: 18px 20px; font-size: 13px; color: var(--text-dim); line-height: 1.85; white-space: pre-wrap; }
+.prompt-body .ph2 { color: var(--gold); font-weight: 600; }
+.prompt-body .pv2 { color: var(--teal); }
+
+/* PHASE CARDS */
+.phase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 16px 0; }
+.phase-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.phase-card::after {
+  content: attr(data-week);
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 60px;
+  color: rgba(240,192,64,0.05);
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+.phase-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--text-dimmer); margin-bottom: 6px; }
+.phase-title { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: 10px; }
+.phase-items { display: flex; flex-direction: column; gap: 5px; }
+.phase-item { font-size: 12.5px; color: var(--text-dim); display: flex; gap: 8px; line-height: 1.6; }
+.phase-item::before { content: '·'; color: var(--gold2); flex-shrink: 0; }
+
+/* NAV BUTTONS */
+.page-nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-top: 1px solid var(--border); margin-top: 48px; flex-wrap: wrap; gap: 12px; }
+.btn { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1px; padding: 12px 24px; border-radius: 6px; cursor: pointer; border: none; transition: all 0.2s; font-weight: 700; }
+.btn-primary { background: var(--gold); color: var(--bg); }
+.btn-primary:hover { box-shadow: 0 0 20px rgba(240,192,64,0.3); transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--text-dim); border: 1px solid var(--border2); }
+.btn-secondary:hover { border-color: var(--gold); color: var(--text); }
+.mark-btn { background: rgba(61,250,170,0.1); color: var(--green); border: 1px solid rgba(61,250,170,0.3); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.mark-btn:hover { background: rgba(61,250,170,0.18); }
+
+::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+#home-page { display: block; }
+
+/* TOOL CARDS */
+.tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 16px 0; }
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.tool-card:hover { border-color: var(--border2); }
+.tool-icon { font-size: 28px; margin-bottom: 10px; }
+.tool-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.tool-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 3px; margin-bottom: 10px; display: inline-block; }
+.tb-free { background: rgba(61,250,170,0.1); color: var(--green); border: 1px solid rgba(61,250,170,0.2); }
+.tb-paid { background: rgba(251,146,60,0.1); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+.tb-free2 { background: rgba(77,166,255,0.1); color: var(--blue); border: 1px solid rgba(77,166,255,0.2); }
+.tool-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
+.tool-use { font-size: 12px; color: var(--text-dimmer); line-height: 1.6; }
+.tool-use strong { color: var(--gold); }
+
+/* DAY SCHEDULE */
+.day-schedule { display: grid; grid-template-columns: 100px 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin: 16px 0; }
+.ds-time { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); }
+.ds-act { padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.ds-time:last-child, .ds-act:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<header>
+  <div class="logo">
+    <span class="logo-main">INTERVIEW PREP</span>
+    <span class="logo-sub">// MASTER GUIDE</span>
+  </div>
+  <div class="header-progress">
+    <div class="progress-track"><div class="progress-fill" id="globalProgress"></div></div>
+    <span id="progressLabel">0 / 8</span>
+  </div>
+</header>
+
+<div class="app">
+  <nav>
+    <div class="nav-section">Entry Point</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="ni">🏠</span>Overview</div>
+    <div class="nav-section">Phase 0 — Before You Apply</div>
+    <div class="nav-item" onclick="showPage('company-research')" id="nav-company-research"><span class="ni">🔍</span>Company Research<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showPage('scheduling')" id="nav-scheduling"><span class="ni">📅</span>When to Schedule<span class="done-dot"></span></div>
+    <div class="nav-section">Phase 1 — Study Plan</div>
+    <div class="nav-item" onclick="showPage('study-plan')" id="nav-study-plan"><span class="ni">📚</span>Study Plan by Level<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showPage('daily-routine')" id="nav-daily-routine"><span class="ni">⏱️</span>Daily Routine<span class="done-dot"></span></div>
+    <div class="nav-section">Phase 2 — AI Tools</div>
+    <div class="nav-item" onclick="showPage('ai-tools')" id="nav-ai-tools"><span class="ni">🤖</span>AI Tools Guide<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showPage('mock-prompts')" id="nav-mock-prompts"><span class="ni">💬</span>Mock Interview Prompts<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showPage('notebooklm')" id="nav-notebooklm"><span class="ni">📓</span>NotebookLM Deep Dive<span class="done-dot"></span></div>
+    <div class="nav-section">Final</div>
+    <div class="nav-item" onclick="showPage('night-before')" id="nav-night-before"><span class="ni">🌙</span>Night Before Checklist<span class="done-dot"></span></div>
+  </nav>
+
+  <main id="mainContent">
+
+    <!-- HOME -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-label">// THE ENTRY POINT FOR EVERY INTERVIEW</div>
+        <h1>HOW TO PASS<br><span>ANY INTERVIEW</span></h1>
+        <p class="hero-desc">A systematic, actionable guide covering every phase — from the moment you decide to apply, to the night before the interview. Includes AI tooling, real prompts, scheduling rules, and company research playbooks.</p>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-n">8</div><div class="stat-l">Sections</div></div>
+          <div class="stat"><div class="stat-n">40+</div><div class="stat-l">Action Items</div></div>
+          <div class="stat"><div class="stat-n">15+</div><div class="stat-l">AI Prompts</div></div>
+          <div class="stat"><div class="stat-n">4</div><div class="stat-l">Study Plans</div></div>
+        </div>
+      </div>
+
+      <div class="section-hdr"><span class="section-chip chip-gold">PHASE 0</span><span class="section-title">Before You Apply</span></div>
+      <div class="cards-grid">
+        <div class="card cg" onclick="showPage('company-research')"><span class="card-icon">🔍</span><div class="card-title">Company Research</div><div class="card-desc">What to search for, where to look, and how to tailor your answers to their specific culture and stack.</div><div class="card-tags"><span class="ctag gold">FIRST STEP</span><span class="ctag hot">CRITICAL</span></div></div>
+        <div class="card cg" onclick="showPage('scheduling')"><span class="card-icon">📅</span><div class="card-title">When to Schedule</div><div class="card-desc">Exact timelines by level and situation. How to negotiate timing without seeming unconfident.</div><div class="card-tags"><span class="ctag key">TIMING</span></div></div>
+      </div>
+
+      <div class="section-hdr"><span class="section-chip chip-blue">PHASE 1</span><span class="section-title">Study Plan</span></div>
+      <div class="cards-grid">
+        <div class="card cb" onclick="showPage('study-plan')"><span class="card-icon">📚</span><div class="card-title">Study Plan by Level</div><div class="card-desc">Junior, mid, senior, and staff-level study plans with phases, weeks, and exact topics to cover.</div><div class="card-tags"><span class="ctag key">STRUCTURED</span><span class="ctag gold">ALL LEVELS</span></div></div>
+        <div class="card cb" onclick="showPage('daily-routine')"><span class="card-icon">⏱️</span><div class="card-title">Daily Routine</div><div class="card-desc">Hour-by-hour schedule. How to split time between coding, system design, and behavioral prep every day.</div><div class="card-tags"><span class="ctag key">DAILY HABIT</span></div></div>
+      </div>
+
+      <div class="section-hdr"><span class="section-chip chip-purple">PHASE 2</span><span class="section-title">AI Tooling</span></div>
+      <div class="cards-grid">
+        <div class="card cv" onclick="showPage('ai-tools')"><span class="card-icon">🤖</span><div class="card-title">AI Tools Guide</div><div class="card-desc">Which tools to use for what. ChatGPT, Claude, NotebookLM, Cursor, Pramp — and how to combine them.</div><div class="card-tags"><span class="ctag hot">SPEED UP 10x</span></div></div>
+        <div class="card cv" onclick="showPage('mock-prompts')"><span class="card-icon">💬</span><div class="card-title">Mock Interview Prompts</div><div class="card-desc">Ready-to-paste prompts for ChatGPT/Claude to simulate coding interviews, system design, and behavioral rounds.</div><div class="card-tags"><span class="ctag key">COPY & PASTE</span><span class="ctag hot">HIGH VALUE</span></div></div>
+        <div class="card cv" onclick="showPage('notebooklm')"><span class="card-icon">📓</span><div class="card-title">NotebookLM Deep Dive</div><div class="card-desc">Step-by-step: how to set up NotebookLM with your notes, what to upload, and the exact queries to run.</div><div class="card-tags"><span class="ctag key">FREE TOOL</span></div></div>
+      </div>
+
+      <div class="section-hdr"><span class="section-chip chip-green">FINAL</span><span class="section-title">Interview Day</span></div>
+      <div class="cards-grid">
+        <div class="card ct" onclick="showPage('night-before')"><span class="card-icon">🌙</span><div class="card-title">Night Before Checklist</div><div class="card-desc">The 20-item checklist to run through the evening before. Technical setup, mental prep, and logistics.</div><div class="card-tags"><span class="ctag key">FINAL STEP</span></div></div>
+      </div>
+    </div>
+
+    <!-- COMPANY RESEARCH -->
+    <div id="page-company-research" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 0 — BEFORE YOU APPLY</div>
+      <div class="page-title">COMPANY RESEARCH</div>
+      <div class="page-subtitle">The single most neglected step. Candidates who research deeply answer "why this company?" and "how do you handle X?" 10x better than those who don't. Here's exactly what to search for and where.</div>
+
+      <div class="block">
+        <div class="block-title">Step-by-Step Research Playbook</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot gold">1</div>
+            <div class="tl-content">
+              <div class="tl-title">Understand the Business (30 min)</div>
+              <div class="tl-body">Before anything technical, understand what the company actually does and how they make money. This shapes every answer you give — "why this company", trade-off decisions, and leadership stories all need business context.<br><br>
+              <strong>What to search:</strong> <span class="hl-g">"[Company] business model"</span>, <span class="hl-g">"[Company] revenue 2024"</span>, <span class="hl-g">"[Company] products overview"</span>, <span class="hl-g">"[Company] recent news"</span></div>
+              <div class="tl-sub">
+                <div class="tl-sub-item">What product/service do they offer and who pays for it?</div>
+                <div class="tl-sub-item">Who are their main competitors? What's their competitive advantage?</div>
+                <div class="tl-sub-item">Any recent news — funding, layoffs, product launches, controversies?</div>
+                <div class="tl-sub-item">Public company? Check their latest earnings call for priorities.</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot blue">2</div>
+            <div class="tl-content">
+              <div class="tl-title">Study Their Tech Stack &amp; Engineering Culture (45 min)</div>
+              <div class="tl-body">Knowing their stack lets you prepare relevant examples and signal genuine interest in their technical challenges. Their engineering blog reveals problems they care about.<br><br>
+              <strong>Where to look:</strong> <span class="hl-b">LinkedIn → Company → Jobs</span> (stack appears in JDs), <span class="hl-b">engineering.{company}.com</span>, <span class="hl-b">StackShare.io</span>, <span class="hl-b">Glassdoor → Reviews → Tech</span></div>
+              <div class="tl-sub">
+                <div class="tl-sub-item">What languages/frameworks are in 3+ job descriptions?</div>
+                <div class="tl-sub-item">Read their last 5 engineering blog posts — what problems do they write about?</div>
+                <div class="tl-sub-item">Do they use microservices or monolith? Cloud (AWS/GCP/Azure)? Which DBs?</div>
+                <div class="tl-sub-item">Scale: millions of users? Real-time? Global?</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot purple">3</div>
+            <div class="tl-content">
+              <div class="tl-title">Learn Their Interview Process (30 min)</div>
+              <div class="tl-body">Most companies follow predictable patterns. Knowing their format removes surprise and lets you allocate prep time correctly.<br><br>
+              <strong>Where to look:</strong> <span class="hl-v">Glassdoor → Interviews tab</span>, <span class="hl-v">Blind app</span>, <span class="hl-v">Leetcode Discuss → [Company] interview</span>, <span class="hl-v">Reddit r/cscareerquestions</span></div>
+              <div class="tl-sub">
+                <div class="tl-sub-item">How many rounds? What type (coding, system design, behavioral, take-home)?</div>
+                <div class="tl-sub-item">What coding platform? (CoderPad, HackerRank, Google Doc, Zoom share screen)</div>
+                <div class="tl-sub-item">Do they ask LeetCode Hard? Or focus more on system design?</div>
+                <div class="tl-sub-item">Are there technical screens before the full loop?</div>
+                <div class="tl-sub-item">How long does their process take from application to offer?</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot orange">4</div>
+            <div class="tl-content">
+              <div class="tl-title">Understand Their Values &amp; Culture (20 min)</div>
+              <div class="tl-body">Every company — from Amazon to a startup — has documented values that interviewers use to evaluate behavioral answers. Matching your stories to their values is the difference between "good candidate" and "culture fit".<br><br>
+              <strong>Where to look:</strong> <span class="hl-g">Company careers page</span>, <span class="hl-g">About/Mission page</span>, <span class="hl-g">LinkedIn posts by company leaders</span></div>
+              <div class="tl-sub">
+                <div class="tl-sub-item">List their 3–5 stated values. Map each to one of your STAR stories.</div>
+                <div class="tl-sub-item">Amazon → 16 LPs (critical — every question maps to one). Google → Googliness + L, P, C, C. Meta → Move fast, build, be direct.</div>
+                <div class="tl-sub-item">Startups: look for "bias for action", "ownership", "growth mindset".</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot green">5</div>
+            <div class="tl-content">
+              <div class="tl-title">Research Your Specific Team &amp; Role (20 min)</div>
+              <div class="tl-body">If you know the team or manager, research them specifically. This makes your "why this role" answer authentic and helps you prepare smart questions to ask at the end.<br><br>
+              <strong>Where to look:</strong> <span class="hl-t">LinkedIn profile of the recruiter/hiring manager</span>, <span class="hl-t">Team page on company website</span>, <span class="hl-t">GitHub if it's an open-source team</span></div>
+              <div class="tl-sub">
+                <div class="tl-sub-item">What has the team shipped recently? (Blog, press releases, product changelog)</div>
+                <div class="tl-sub-item">What does the hiring manager post/write about? What do they care about?</div>
+                <div class="tl-sub-item">Prepare 2–3 specific questions about the team's work — not generic ones.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Research Output: What You Should Have Before Day 1</div>
+        <div class="gold-box">
+          <span class="gold-label">// RESEARCH BRIEF TEMPLATE</span>
+          After your research, write a one-page brief for yourself with:
+          <br><br><strong>Company:</strong> What they do, how they make money, recent news<br>
+          <strong>Stack:</strong> Languages/frameworks they use that you should be ready to discuss<br>
+          <strong>Interview format:</strong> Rounds, types, platform, difficulty signal<br>
+          <strong>Their values (mapped to your stories):</strong> "Customer Obsession → my story about rebuilding the checkout flow"<br>
+          <strong>My "why this company":</strong> 2 specific, genuine reasons<br>
+          <strong>My 3 smart questions to ask:</strong> Specific to their team or recent work
+        </div>
+        <div class="warn-box"><strong>Red flag:</strong> If you can't name at least two specific things about the company's engineering challenges or product decisions, you haven't researched enough. Generic praise ("great company", "impressive growth") is immediately visible to interviewers.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Use Claude/ChatGPT to Accelerate Research</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">PASTE THIS INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">I'm preparing for an interview at <span class="ph2">[COMPANY NAME]</span> for a <span class="ph2">[ROLE TITLE]</span> position (<span class="ph2">[LEVEL, e.g. Senior Software Engineer]</span>).
+
+Please help me with:
+
+1. <span class="pv2">Company overview</span>: What they do, their main products, business model, and any major recent news
+2. <span class="pv2">Tech stack</span>: What technologies they likely use based on their engineering blog and job descriptions
+3. <span class="pv2">Culture and values</span>: Their stated values and what they look for in interviews
+4. <span class="pv2">Interview process</span>: What their typical interview loop looks like (rounds, types, focus areas)
+5. <span class="pv2">Smart questions I can ask</span>: 5 specific, thoughtful questions based on their recent work
+
+My background: <span class="ph2">[2-3 sentences about your experience]</span>
+
+Also suggest which of my background points I should emphasize and which of their values my stories should map to.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="mark-btn" onclick="markDone('company-research')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('scheduling')">Next: When to Schedule →</button>
+      </div>
+    </div>
+
+    <!-- SCHEDULING -->
+    <div id="page-scheduling" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 0 — TIMING</div>
+      <div class="page-title">WHEN TO SCHEDULE</div>
+      <div class="page-subtitle">The single most common mistake: scheduling too early and showing up unprepared, or delaying forever. Here's the exact timing framework by level, situation, and what to do when a recruiter pushes you.</div>
+
+      <div class="block">
+        <div class="block-title">Scheduling Timeline by Level</div>
+        <table class="data-table">
+          <tr><th>Your Situation</th><th>Weeks Before Scheduling</th><th>Why</th></tr>
+          <tr><td>Junior (0–2 yrs)</td><td>4–6 weeks</td><td>Need time for DSA patterns, fundamentals, and first behavioral stories. Phone screen can be sooner (2–3 weeks) but push the full loop out.</td></tr>
+          <tr><td>Mid-level (2–5 yrs)</td><td>3–4 weeks</td><td>System design + coding + behavioral. Assume fundamentals are solid; focus on depth and polish.</td></tr>
+          <tr><td>Senior (5–8 yrs)</td><td>2–3 weeks</td><td>Deep system design, leadership stories, and company-specific research. Assume coding skills are there.</td></tr>
+          <tr><td>Staff / Principal (8+ yrs)</td><td>2–4 weeks</td><td>Architecture scope, org influence stories, bar-raiser prep. Research their eng org specifically.</td></tr>
+          <tr><td>Already actively studying</td><td>1–2 weeks</td><td>Polish and company-specific only. Don't waste momentum by waiting too long.</td></tr>
+          <tr><td>Switching stack/language</td><td>Add 2–4 weeks</td><td>Language/framework depth takes extra time. Don't interview in a stack you're not confident in yet.</td></tr>
+          <tr><td>Dream company (FAANG/high-bar)</td><td>Add 2 weeks</td><td>Higher bar = more preparation. Don't rush your best shot.</td></tr>
+        </table>
+        <div class="info-box"><strong>Rule of thumb:</strong> Schedule the phone screen or recruiter call for 2 weeks out. That's the first step, low-stakes. Use what you learn about the process to set the full loop date correctly — usually 2–4 weeks after the screen.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">When a Recruiter Pressures You to Schedule Sooner</div>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">Script: "I need you to schedule within 3 days"</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Say this:</span> "I'm very interested in this opportunity and want to make sure I'm at my best for the interview. I have some commitments this week — would [specific date, 1–2 weeks out] work? I want to give this the attention it deserves."<br><br>
+              <span class="ag">Key insight:</span> Recruiters almost always have flexibility. The 3-day deadline is often an opening move, not a hard constraint. Most companies have rolling interviews and would rather wait 2 weeks for a good candidate than rush a poor interview.<br><br>
+              <span class="ab">If they truly can't wait:</span> Take the screen now, ask to set the full loop later. A phone screen you can prep for in 48 hours is fine — it buys you time for the real rounds.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">Script: "The role might be filled — can you do it this week?"</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Say this:</span> "I understand — I don't want to miss this. I can do a screen this week. For the full technical loop, I'd want [X days] to ensure I represent my best work. Is that timeline possible?"<br><br>
+              <span class="ag">Reality check:</span> "Role might be filled" is a common recruiter tactic. Rare exceptions exist (VP replacement, emergency hire), but most open roles take 4–8 weeks to close. Your window is usually wider than they imply.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">When should you just say yes and go early?</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <ul>
+                <li>The role is your dream job and you're 80%+ ready today</li>
+                <li>You've already been preparing for weeks and this is a polish situation</li>
+                <li>It's a company where rejection ≠ permanent — you can reapply in 6–12 months</li>
+                <li>You're currently unemployed and need the practice reps regardless</li>
+                <li>The recruiter specifically says they have an urgent VP mandate and it's true</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">What to Confirm When You Schedule</div>
+        <div class="checklist" id="scheduleChecklist">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Confirm exact format: How many rounds? Coding, system design, behavioral, or all?</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Confirm duration per round (45 min? 60 min?) so you know how deep to go</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Ask about the coding platform (CoderPad, HackerRank, Zoom screenshare, Google Doc)</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Ask if they want you to prepare anything (e.g. "bring a design you've worked on")</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Ask if there's anything specific about the role you should know before the interview</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Confirm timezone and video platform (Zoom, Meet, Teams)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('company-research')">← Company Research</button>
+        <button class="mark-btn" onclick="markDone('scheduling')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('study-plan')">Next: Study Plan →</button>
+      </div>
+    </div>
+
+    <!-- STUDY PLAN -->
+    <div id="page-study-plan" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 1 — PREPARATION</div>
+      <div class="page-title">STUDY PLAN BY LEVEL</div>
+      <div class="page-subtitle">Five phases that apply to every level. Your level determines how much time you spend on each phase and how deep you go. Below: the universal phases + level-specific plans.</div>
+
+      <div class="block">
+        <div class="block-title">The 5 Universal Phases</div>
+        <div class="phase-grid">
+          <div class="phase-card" data-week="1">
+            <div class="phase-num">PHASE 01</div>
+            <div class="phase-title">Foundations</div>
+            <div class="phase-items">
+              <div class="phase-item">Language you'll use in the interview (syntax, OOP, concurrency)</div>
+              <div class="phase-item">Data structures: array, hashmap, tree, graph, stack, queue</div>
+              <div class="phase-item">Big O — time and space complexity analysis</div>
+              <div class="phase-item">Skip if: you code daily in this language (you have this)</div>
+            </div>
+          </div>
+          <div class="phase-card" data-week="2">
+            <div class="phase-num">PHASE 02</div>
+            <div class="phase-title">Coding Patterns</div>
+            <div class="phase-items">
+              <div class="phase-item">Two pointers, sliding window, binary search</div>
+              <div class="phase-item">DFS / BFS on trees and graphs</div>
+              <div class="phase-item">Dynamic programming (top 10 DP patterns)</div>
+              <div class="phase-item">Target: Blind 75 or NeetCode 150</div>
+              <div class="phase-item">1–2 problems/day, always review solution after</div>
+            </div>
+          </div>
+          <div class="phase-card" data-week="3">
+            <div class="phase-num">PHASE 03</div>
+            <div class="phase-title">System Design</div>
+            <div class="phase-items">
+              <div class="phase-item">Concepts: load balancing, caching, sharding, queues, CDN</div>
+              <div class="phase-item">3–5 full designs (URL shortener, feed, chat, search)</div>
+              <div class="phase-item">Every design: requirements → HLD → component deep-dive → trade-offs</div>
+              <div class="phase-item">Senior+: add distributed systems, consistency models</div>
+            </div>
+          </div>
+          <div class="phase-card" data-week="4">
+            <div class="phase-num">PHASE 04</div>
+            <div class="phase-title">Role-Specific Depth</div>
+            <div class="phase-items">
+              <div class="phase-item">Backend: API design, DB, one framework deep</div>
+              <div class="phase-item">Frontend: React/Angular, state, performance</div>
+              <div class="phase-item">Staff: architecture, org impact, mentoring stories</div>
+              <div class="phase-item">Use the other prep apps in this suite</div>
+            </div>
+          </div>
+          <div class="phase-card" data-week="5">
+            <div class="phase-num">PHASE 05</div>
+            <div class="phase-title">Behavioral + Company Fit</div>
+            <div class="phase-items">
+              <div class="phase-item">5–8 STAR stories prepared (see Behavioral app)</div>
+              <div class="phase-item">Map stories to company values</div>
+              <div class="phase-item">"Tell me about yourself" — practiced out loud 10+ times</div>
+              <div class="phase-item">3 smart questions to ask — company specific</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Sprint Plans by Level</div>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">📗 Junior (0–2 yrs) — 4 to 6 Week Sprint</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Week 1–2:</span> Language foundations + data structures. Start LeetCode Easy problems (20–30). Write code by hand for basic sorting and search.<br>
+              <span class="ah">Week 3–4:</span> LeetCode Medium problems (25–35). Focus on two pointers, sliding window, DFS/BFS. Get to 50+ total solved.<br>
+              <span class="ah">Week 5:</span> Basic system design concepts (no need to go deep). 5–6 STAR behavioral stories. "Tell me about yourself" practiced.<br>
+              <span class="ah">Week 6:</span> Mock interviews (2–3 full sessions). Company research. Rest before the interview.<br><br>
+              <span class="av">Focus distribution:</span> 60% coding, 15% system design basics, 25% behavioral + company prep
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">📘 Mid-Level (2–5 yrs) — 3 to 4 Week Sprint</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Week 1:</span> Refresh LeetCode patterns. Do 15–20 medium problems across the key patterns. Code in your interview language daily.<br>
+              <span class="ah">Week 2:</span> System design (2–3 full practice designs). Start behavioral stories (7–8 ready).<br>
+              <span class="ah">Week 3:</span> Role-specific depth (use the framework prep apps). Mock interviews x2. Company research.<br>
+              <span class="ah">Week 4 (if available):</span> Weak areas only. Full mock loop (coding + system design + behavioral). Rest.<br><br>
+              <span class="av">Focus distribution:</span> 40% coding, 35% system design, 25% behavioral
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">📙 Senior (5–8 yrs) — 2 to 3 Week Sprint</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Week 1:</span> 10–15 LeetCode mediums (assume strong fundamentals). System design daily — 1 design per day minimum, discuss trade-offs out loud.<br>
+              <span class="ah">Week 2:</span> Leadership behavioral stories (conflict, failure, cross-team, mentoring, ownership). Company LP mapping. Mock x2.<br>
+              <span class="ah">Week 3 (if available):</span> Polish. Full loop mock. Weak areas. Company-specific questions.<br><br>
+              <span class="av">Focus distribution:</span> 25% coding, 50% system design, 25% behavioral/leadership<br><br>
+              <span class="ao">Senior signal:</span> You should be able to discuss trade-offs, not just solutions. "We chose X over Y because of Z constraint."
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)">
+              <span class="acc-title">📕 Staff / Principal (8+ yrs) — 2 to 4 Week Sprint</span>
+              <span class="acc-arrow">+</span>
+            </div>
+            <div class="acc-body">
+              <span class="ah">Week 1:</span> Architecture-level system design (distributed systems, multi-region, consistency models). Review your top 3 technical achievements with measurable scope.<br>
+              <span class="ah">Week 2:</span> Leadership and organizational influence stories. How you set technical direction. How you dealt with ambiguity at scale.<br>
+              <span class="ah">Week 3:</span> Company-specific prep (their engineering org, their known architectural challenges). Prepare questions that show strategic thinking.<br>
+              <span class="ah">Week 4 (if needed):</span> Coding warmup (don't let this slip). Mock with someone at the same level.<br><br>
+              <span class="av">Focus distribution:</span> 15% coding, 50% architecture/design, 35% leadership/org<br><br>
+              <span class="ao">Staff signal:</span> You should be talking about impact across teams, setting standards others follow, and making decisions with 2–3 year time horizons.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Topic Priority Matrix</div>
+        <table class="data-table">
+          <tr><th>Topic</th><th>Junior</th><th>Mid</th><th>Senior</th><th>Staff</th></tr>
+          <tr><td>LeetCode (Easy/Med)</td><td>🔴 High</td><td>🟡 Medium</td><td>🟡 Low-Med</td><td>🟢 Low</td></tr>
+          <tr><td>System Design</td><td>🟢 Basics</td><td>🔴 High</td><td>🔴 High</td><td>🔴 Critical</td></tr>
+          <tr><td>Architecture/Distributed</td><td>🟢 Skip</td><td>🟢 Low</td><td>🟡 Medium</td><td>🔴 Critical</td></tr>
+          <tr><td>Behavioral / STAR</td><td>🟡 Medium</td><td>🔴 High</td><td>🔴 High</td><td>🔴 Critical</td></tr>
+          <tr><td>Framework deep-dive</td><td>🟡 Medium</td><td>🔴 High</td><td>🟡 Medium</td><td>🟢 Low</td></tr>
+          <tr><td>Company research</td><td>🟡 Medium</td><td>🔴 High</td><td>🔴 High</td><td>🔴 Critical</td></tr>
+          <tr><td>Leadership stories</td><td>🟢 Skip</td><td>🟡 Low</td><td>🔴 High</td><td>🔴 Critical</td></tr>
+        </table>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('scheduling')">← Scheduling</button>
+        <button class="mark-btn" onclick="markDone('study-plan')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('daily-routine')">Next: Daily Routine →</button>
+      </div>
+    </div>
+
+    <!-- DAILY ROUTINE -->
+    <div id="page-daily-routine" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 1 — DAILY HABITS</div>
+      <div class="page-title">DAILY ROUTINE</div>
+      <div class="page-subtitle">How to structure each day during your prep sprint. The session lengths assume 2–3 hours of available prep time per day on top of your job or other commitments.</div>
+
+      <div class="block">
+        <div class="block-title">The 3-Hour Daily Template (Weekday)</div>
+        <div class="day-schedule">
+          <div class="ds-time">Session 1<br>45 min</div>
+          <div class="ds-act"><strong>Coding problem</strong> — Pick one problem from your current pattern focus. Spend 25 min solving independently (no hints). Spend 20 min reviewing the optimal solution and understanding edge cases. Log: did you get it? What would you do differently?</div>
+          <div class="ds-time">Session 2<br>60 min</div>
+          <div class="ds-act"><strong>Core topic study</strong> — Rotate daily: Mon/Thu = System Design, Tue/Fri = Role-specific depth (framework/DB/infra), Wed/Sat = Behavioral stories + company research. Use the prep apps in this suite for structured content.</div>
+          <div class="ds-time">Session 3<br>30 min</div>
+          <div class="ds-act"><strong>Review + consolidation</strong> — Re-read yesterday's notes. Run a flashcard session in NotebookLM. Practice saying 1 STAR story out loud. Update your story bank if you thought of a new angle.</div>
+          <div class="ds-time">Weekly<br>Saturday</div>
+          <div class="ds-act"><strong>Full mock session (2 hrs)</strong> — 45 min coding problem timed, 45 min system design out loud, 30 min behavioral Q&amp;A with Claude/ChatGPT. Identify the one weakest area and make it next week's priority.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Rotation Schedule (3-Week Example)</div>
+        <table class="data-table">
+          <tr><th>Week</th><th>Coding</th><th>System Design</th><th>Behavioral / Company</th></tr>
+          <tr><td>Week 1</td><td>2 pointers, sliding window, binary search (3–4 problems/day)</td><td>Read: load balancing, caching, databases. 1 full design (URL shortener)</td><td>Write 5 STAR stories. Draft "tell me about yourself"</td></tr>
+          <tr><td>Week 2</td><td>DFS/BFS on trees, graphs, recursion (2–3 problems/day)</td><td>2 full designs (news feed, chat). Discuss trade-offs out loud</td><td>Map stories to company values. Research company tech blog</td></tr>
+          <tr><td>Week 3</td><td>DP patterns + review weak areas (1–2 problems/day)</td><td>1 design focused on your weak area. Mock design interview</td><td>Full mock loop x2. Company research final brief. Rest</td></tr>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Mental Rules to Follow Every Day</div>
+        <div class="checklist">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div><strong>Never skip the review.</strong> Solving a problem without reviewing the optimal solution teaches you nothing. The review IS the learning.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div><strong>Always say things out loud.</strong> Coding and system design are communication tests, not just problem-solving. Narrate your thinking from day one.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div><strong>One mock per week, minimum.</strong> Timed pressure reveals gaps that relaxed study never will. Mock early, mock often.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div><strong>Track your weak areas.</strong> Keep a note with patterns/topics you got wrong. Revisit them twice before the interview.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div><strong>Stop the day before.</strong> No new topics the day before your interview. Review only your notes and stories. Rest. Sleep 8 hours.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('study-plan')">← Study Plan</button>
+        <button class="mark-btn" onclick="markDone('daily-routine')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('ai-tools')">Next: AI Tools →</button>
+      </div>
+    </div>
+
+    <!-- AI TOOLS -->
+    <div id="page-ai-tools" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 2 — AI TOOLING</div>
+      <div class="page-title">AI TOOLS GUIDE</div>
+      <div class="page-subtitle">The right AI tool for the right job. Used correctly, these tools can compress 3 weeks of prep into 1. Used wrong (copy-pasting answers without thinking), they create a false sense of readiness.</div>
+
+      <div class="block">
+        <div class="block-title">The AI Toolkit</div>
+        <div class="tool-grid">
+          <div class="tool-card">
+            <div class="tool-icon">🤖</div>
+            <div class="tool-name">Claude / ChatGPT</div>
+            <div class="tool-badge tb-free">FREE TIER</div>
+            <div class="tool-desc">General-purpose AI for simulating mock interviews, getting solution explanations, behavioral story feedback, and open-ended Q&amp;A on any topic.</div>
+            <div class="tool-use"><strong>Best for:</strong> Mock coding rounds, system design discussion, STAR story critique, "explain this concept differently"</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-icon">📓</div>
+            <div class="tool-name">NotebookLM</div>
+            <div class="tool-badge tb-free">FREE</div>
+            <div class="tool-desc">Google's AI that answers from YOUR uploaded sources only. Zero hallucination risk. Upload your notes and it becomes a personal tutor grounded in exactly what you've studied.</div>
+            <div class="tool-use"><strong>Best for:</strong> Quiz me on my notes, generate flashcards, explain concepts from my study material, audio overview for commute</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-icon">👥</div>
+            <div class="tool-name">Pramp</div>
+            <div class="tool-badge tb-free2">FREE</div>
+            <div class="tool-desc">Free peer mock interview platform. You interview someone, they interview you. Real back-and-forth, real timing pressure. Nothing replaces a human interviewer.</div>
+            <div class="tool-use"><strong>Best for:</strong> Final week practice. Coding interviews with a real human. Getting feedback on your communication style</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-icon">💻</div>
+            <div class="tool-name">Cursor / Copilot</div>
+            <div class="tool-badge tb-paid">PAID</div>
+            <div class="tool-desc">AI-enhanced coding environment. Use it to understand patterns and implementations while studying, not during the actual interview.</div>
+            <div class="tool-use"><strong>Best for:</strong> Implementing system design components to understand them, debugging your practice solutions, "explain this code"</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-icon">🧩</div>
+            <div class="tool-name">NeetCode.io</div>
+            <div class="tool-badge tb-free">FREE</div>
+            <div class="tool-desc">The best structured LeetCode resource. Video explanations of every Blind 75 problem + roadmap by topic. Better than LeetCode Discuss for understanding patterns.</div>
+            <div class="tool-use"><strong>Best for:</strong> Understanding WHY a solution works. Pattern-focused roadmap. Post-solve review</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-icon">🎙️</div>
+            <div class="tool-name">Claude Voice / ChatGPT Voice</div>
+            <div class="tool-badge tb-free">FREE</div>
+            <div class="tool-desc">Use the mobile app voice mode to practice speaking your STAR stories and system design explanations. Crucial — most candidates never practice speaking out loud.</div>
+            <div class="tool-use"><strong>Best for:</strong> Verbal practice of STAR stories, explaining system design while walking/commuting, "tell me about yourself" practice</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Tool Combination Strategy by Week</div>
+        <table class="data-table">
+          <tr><th>Week</th><th>Primary AI Tool</th><th>How to Use It</th></tr>
+          <tr><td>Weeks 1–2 (Learning phase)</td><td>Claude / ChatGPT</td><td>Ask it to explain concepts you don't understand. "Explain consistent hashing like I'm a mid-level engineer." After solving a problem: "Here's my solution — what's the optimal approach and why is mine suboptimal?"</td></tr>
+          <tr><td>Weeks 2–3 (Practice phase)</td><td>NotebookLM</td><td>Upload your study notes and ask it to quiz you. "Generate 10 system design interview questions from my notes." "Quiz me on my STAR stories." Run the audio overview while commuting.</td></tr>
+          <tr><td>Week before interview</td><td>Claude / ChatGPT + Pramp</td><td>Full mock interviews with Claude (see mock prompts page). At least one real mock on Pramp for live pressure. Critique your behavioral stories.</td></tr>
+          <tr><td>Night before</td><td>NotebookLM</td><td>One review session — ask it to quiz you on your 5 weakest topics. 15 minutes max. Then stop and rest.</td></tr>
+        </table>
+      </div>
+
+      <div class="warn-box"><strong>The danger of AI-assisted prep:</strong> AI gives you answers. Real interviews ask you to produce answers. Always close the AI, wait 10 minutes, then try to reproduce what you learned from scratch. If you can't do it, you didn't learn it.</div>
+      <div class="success-box"><strong>The right mindset:</strong> AI is your tutor, not your proxy. Use it to understand concepts faster, get more practice reps, and stress-test your understanding — not to pre-generate answers you'll try to recall verbatim.</div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('daily-routine')">← Daily Routine</button>
+        <button class="mark-btn" onclick="markDone('ai-tools')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('mock-prompts')">Next: Mock Prompts →</button>
+      </div>
+    </div>
+
+    <!-- MOCK PROMPTS -->
+    <div id="page-mock-prompts" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 2 — READY-TO-PASTE</div>
+      <div class="page-title">MOCK INTERVIEW PROMPTS</div>
+      <div class="page-subtitle">Copy these directly into Claude or ChatGPT. Each prompt is designed to simulate a specific interview type with realistic pressure. Replace the bracketed fields with your info.</div>
+
+      <div class="block">
+        <div class="block-title">Prompt 1 — Full Coding Interview Simulation</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">CODING MOCK — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">You are a senior software engineer at <span class="ph2">[Company Name]</span> conducting a technical coding interview. I am interviewing for a <span class="ph2">[Senior/Mid/Junior]</span> Software Engineer position.
+
+<span class="pv2">Your behavior:</span>
+- Ask me exactly ONE coding problem appropriate for this level and company
+- Do NOT give me any hints unless I am completely stuck and ask for them
+- Respond only with brief interviewer-style responses (not long explanations)
+- When I say "I'm done", evaluate my solution: correctness, time/space complexity, edge cases I missed, and what a stronger solution would look like
+- After evaluation, ask me one follow-up question like a real interviewer would
+
+<span class="pv2">My constraints:</span>
+- I will write my answer in <span class="ph2">[Python / JavaScript / Java / TypeScript]</span>
+- I am targeting <span class="ph2">[Easy / Medium / Hard]</span> difficulty
+- Focus area: <span class="ph2">[arrays + hashing / trees + graphs / dynamic programming / any]</span>
+
+Start by introducing yourself briefly as the interviewer, then give me the problem. Do NOT explain it — give it to me the way a real interviewer would.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Prompt 2 — System Design Interview Simulation</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">SYSTEM DESIGN MOCK — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">You are a staff engineer at <span class="ph2">[Company Name]</span> conducting a system design interview. I am a <span class="ph2">[Senior / Staff]</span> level candidate.
+
+<span class="pv2">Your behavior:</span>
+- Give me ONE system design question (choose something appropriate for the company — e.g. if it's a fintech, maybe a payment system; if it's social media, maybe a news feed)
+- Respond as a real interviewer: be terse, probe my assumptions, ask "why did you choose X over Y?", ask about scale, failure modes, and trade-offs
+- Do NOT explain the solution — ask questions that push me to think deeper
+- After 30 minutes (or when I say done), give me: 3 things I did well, 3 things I missed or could go deeper on, and what a senior-level answer would have added
+
+<span class="pv2">My background:</span> <span class="ph2">[2-3 sentences about your experience and level]</span>
+
+Start with the question. Keep your responses short — be a real interviewer, not a teacher.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Prompt 3 — Behavioral Interview Simulation</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">BEHAVIORAL MOCK — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">You are an engineering manager at <span class="ph2">[Company Name]</span> conducting a behavioral interview. I am interviewing for <span class="ph2">[role and level]</span>.
+
+<span class="pv2">Company values to evaluate against:</span> <span class="ph2">[e.g. Amazon: Ownership, Customer Obsession, Bias for Action / Google: Googleyness, Leadership, Cognitive ability / Startup: autonomy, bias for action, growth mindset]</span>
+
+<span class="pv2">Your behavior:</span>
+- Ask me 4 behavioral questions one at a time — wait for my full answer before asking the next
+- After each answer, ask ONE probing follow-up question ("What was the result?", "What would you do differently?", "What was the hardest part?")
+- After all 4 answers, give me detailed feedback: What signals I showed well, what signals were missing, what a stronger answer would have included, and whether my stories mapped well to the company values
+
+<span class="pv2">My background:</span> <span class="ph2">[Your years of experience, current role, 1-2 sentence context]</span>
+
+Start with the first behavioral question now.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Prompt 4 — STAR Story Critique</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">STORY CRITIQUE — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">I'm preparing for an interview at <span class="ph2">[Company Name]</span> and I want you to critique my STAR story.
+
+<span class="pv2">The question I'm answering:</span> <span class="ph2">[e.g. "Tell me about a time you failed and what you learned from it"]</span>
+
+<span class="pv2">My answer:</span>
+<span class="ph2">[Paste your full STAR story here]</span>
+
+<span class="pv2">Please evaluate on:</span>
+1. Is the Situation clear and concise (not too long)?
+2. Is my specific Task/responsibility clear — or does it sound like a team effort?
+3. Is the Action detailed enough — do I explain my thinking, not just my actions?
+4. Is the Result quantified? Does it have real impact?
+5. Does this map to <span class="ph2">[Company's values, e.g. Amazon Ownership LP]</span>?
+6. What would you add or cut?
+7. What follow-up questions would a real interviewer ask about this story?
+
+Be direct and specific. I want honest critique, not encouragement.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Prompt 5 — "Tell Me About Yourself" Coach</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">SELF INTRO COACH — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">I'm preparing my "Tell me about yourself" answer for an interview at <span class="ph2">[Company Name]</span> for a <span class="ph2">[role + level]</span> position.
+
+<span class="pv2">My background:</span>
+- Current role: <span class="ph2">[Your current title and main responsibility]</span>
+- Years of experience: <span class="ph2">[X years]</span>
+- Key past experiences: <span class="ph2">[2–3 bullet points about relevant past roles/projects]</span>
+- Why I'm interested in this role: <span class="ph2">[Your genuine reason]</span>
+
+<span class="pv2">Here's my current answer (or attempt):</span>
+<span class="ph2">[Paste your answer, or write "help me build one from scratch"]</span>
+
+Please:
+1. Rewrite it using the Present → Past → Future formula (90 seconds when spoken)
+2. Make it specific to <span class="ph2">[Company Name]</span> — not a generic answer
+3. Point out anything that sounds generic, vague, or off-putting
+4. Suggest what to emphasize given the company's focus and values</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Prompt 6 — Concept Explainer</div>
+        <div class="prompt-box">
+          <div class="prompt-hdr"><span class="prompt-label">CONCEPT EXPLAINER — PASTE INTO CLAUDE / CHATGPT</span><button class="copy-btn" onclick="copyPrompt(this)">COPY</button></div>
+          <div class="prompt-body">I'm preparing for a <span class="ph2">[Senior / Mid]</span> software engineer interview and I need to understand the following concept deeply enough to explain it in an interview and answer follow-up questions:
+
+<span class="pv2">Concept:</span> <span class="ph2">[e.g. "How does database indexing work?" / "Explain the CAP theorem" / "What is the event loop in Node.js?"]</span>
+
+Please explain it:
+1. In plain language first (like talking to a smart non-engineer)
+2. Then technically — how it actually works internally
+3. With a concrete real-world analogy
+4. With 3 interview follow-up questions someone might ask, and the ideal answer to each
+5. With the common misconceptions candidates have about it
+
+After explaining, ask me to explain it back to you in my own words — then critique my explanation.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('ai-tools')">← AI Tools</button>
+        <button class="mark-btn" onclick="markDone('mock-prompts')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('notebooklm')">Next: NotebookLM →</button>
+      </div>
+    </div>
+
+    <!-- NOTEBOOKLM -->
+    <div id="page-notebooklm" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// PHASE 2 — DEEP DIVE</div>
+      <div class="page-title">NOTEBOOKLM GUIDE</div>
+      <div class="page-subtitle">Google's free AI that answers only from your uploaded sources — no hallucinations, no internet. When loaded with your study material, it becomes the most focused interview coach you can have.</div>
+
+      <div class="block">
+        <div class="block-title">Why NotebookLM is Different</div>
+        <table class="data-table">
+          <tr><th>Feature</th><th>ChatGPT / Claude</th><th>NotebookLM</th></tr>
+          <tr><td>Answers from</td><td>All of the internet (may hallucinate)</td><td>ONLY your uploaded sources (cited)</td></tr>
+          <tr><td>Best use</td><td>Open-ended exploration, mock interviews</td><td>Studying YOUR notes, testing YOUR knowledge</td></tr>
+          <tr><td>Hallucination risk</td><td>Medium (verify important facts)</td><td>Very low (cites exact passage)</td></tr>
+          <tr><td>Audio overview</td><td>❌ No</td><td>✅ Yes — podcast-style summary of your sources</td></tr>
+          <tr><td>Cost</td><td>Free tier limited</td><td>Free (Google account)</td></tr>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Step-by-Step Setup</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot gold">1</div>
+            <div class="tl-content">
+              <div class="tl-title">Access &amp; Create</div>
+              <div class="tl-body">Go to <span class="hl-g">notebooklm.google.com</span>. Sign in with your Google account. Click <strong>New Notebook</strong>. Name it by topic: "System Design Prep", "Behavioral Stories", "React &amp; TypeScript".</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot blue">2</div>
+            <div class="tl-content">
+              <div class="tl-title">What to Upload</div>
+              <div class="tl-body">NotebookLM accepts: <span class="hl-b">PDFs, Google Docs, text files, YouTube URLs, website URLs</span>. Keep one notebook per theme (max ~50 sources per notebook).</div>
+              <div class="tl-sub">
+                <div class="tl-sub-item"><strong>Notebook 1 — System Design:</strong> Upload your system design notes as PDF/Doc. Add 2–3 YouTube system design talks (paste the URL). Add the company's engineering blog URL.</div>
+                <div class="tl-sub-item"><strong>Notebook 2 — Behavioral:</strong> Your 8 STAR stories as a Google Doc. The Behavioral prep app content (export to PDF). The company's values/culture page URL.</div>
+                <div class="tl-sub-item"><strong>Notebook 3 — Stack-specific:</strong> Upload the framework prep apps as PDFs. Your personal notes on the language/framework. Any official docs you've annotated.</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot green">3</div>
+            <div class="tl-content">
+              <div class="tl-title">How to Export the Prep Apps</div>
+              <div class="tl-body">The prep apps in this suite are HTML files. To add them to NotebookLM: <span class="hl-t">Open the app → File → Print → Save as PDF</span>. Upload that PDF to NotebookLM. Alternatively, copy the key content sections into a Google Doc.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot purple">4</div>
+            <div class="tl-content">
+              <div class="tl-title">Use the Audio Overview</div>
+              <div class="tl-body">Click <span class="hl-v">"Generate Audio Overview"</span> after uploading your sources. NotebookLM creates a 10–20 minute podcast-style conversation between two AI hosts summarizing your material. <strong>Listen during commute, gym, or cooking.</strong> This is free passive review time.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Best Queries to Run in NotebookLM</div>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">For System Design Notebooks</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li>"Quiz me with 5 system design questions based on these sources. Wait for my answer before evaluating."</li>
+                <li>"What are the key trade-offs I should know from these sources?"</li>
+                <li>"List all the concepts mentioned in these sources that I should be able to explain in an interview."</li>
+                <li>"Generate 10 flashcards covering the most important concepts."</li>
+                <li>"Based on my notes, what are the 3 topics I haven't covered deeply enough?"</li>
+                <li>"Explain consistent hashing based only on what's in my uploaded sources."</li>
+              </ul>
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">For Behavioral Notebooks</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li>"List all my STAR stories and which interview questions each one covers."</li>
+                <li>"Which of my stories map to [Company's] leadership principles?"</li>
+                <li>"I'm going to answer a behavioral question. Tell me which of my stored stories is the best fit: 'Tell me about a time you disagreed with your manager.'"</li>
+                <li>"Are there any interview question types that none of my current stories cover?"</li>
+                <li>"Generate 5 follow-up questions an interviewer might ask about my failure story."</li>
+              </ul>
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">For Technical Depth Notebooks</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li>"Quiz me on the most commonly asked interview questions in these sources."</li>
+                <li>"What is the difference between X and Y based on my notes?" (grounded, no hallucination)</li>
+                <li>"Summarize the top 10 concepts from these sources in bullet points."</li>
+                <li>"Generate a study guide structured as: concept → definition → example → common interview question."</li>
+                <li>"What are the most likely interview questions about [topic] based on my sources?"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gold-box">
+        <span class="gold-label">// PRO TIP</span>
+        <strong>The best NotebookLM workflow:</strong> After each study session, copy your key notes into a running Google Doc ("My Interview Notes — Week 1"). Upload that doc to NotebookLM at the end of each week. By week 3, NotebookLM will be quizzing you from a comprehensive personal knowledge base — not generic internet content.
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('mock-prompts')">← Mock Prompts</button>
+        <button class="mark-btn" onclick="markDone('notebooklm')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('night-before')">Next: Night Before →</button>
+      </div>
+    </div>
+
+    <!-- NIGHT BEFORE -->
+    <div id="page-night-before" class="page">
+      <div class="breadcrumb" onclick="showPage('home')">Back to Overview</div>
+      <div class="page-eyebrow">// FINAL — INTERVIEW DAY</div>
+      <div class="page-title">NIGHT BEFORE CHECKLIST</div>
+      <div class="page-subtitle">The night before is about consolidation and logistics — not learning. No new topics. No cramming. Execute this checklist then get 8 hours of sleep.</div>
+
+      <div class="block">
+        <div class="block-title">🔧 Technical Logistics (30 min)</div>
+        <div class="checklist" id="techChecklist">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Test camera — ensure lighting is in front of you (not behind), background is clean and professional</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Test microphone — ask someone to confirm audio quality, or record yourself for 30 seconds and listen back</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Test internet connection — run a speed test (speedtest.net). If unstable, use ethernet or position closer to router</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Test the video platform they use (Zoom, Meet, Teams) — make sure you can join without install issues</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>If coding on their platform (CoderPad, HackerRank) — log in now and run a test snippet so there are no surprises</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Close all non-essential apps — especially Slack, email, social media. Turn off phone notifications</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Have pen and paper ready for system design sketching or note-taking during the interview</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Confirm the exact interview time in YOUR timezone — double-check for daylight savings if cross-timezone</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">🧠 Mental Preparation (30 min)</div>
+        <div class="checklist" id="mentalChecklist">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Review your "tell me about yourself" — say it out loud once, not in your head. Just once.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Review your 3 strongest STAR stories — just the headlines ("the CI/CD outage story", "the disagreement with PM story"). Don't re-read them fully.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Review your 3 smart questions to ask the interviewer — make sure they still feel genuine and specific</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Review the company name, the team, and the role title — sounds obvious but interviewers notice when candidates mix up details</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Run a 15-minute NotebookLM session — ask it to quiz you on your 3 weakest topics. Stop after 15 minutes.</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Remind yourself: interviewing is a skill. One awkward question won't disqualify you. One silence is fine. Thinking out loud is valued.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">☀️ Morning of the Interview</div>
+        <div class="checklist" id="morningChecklist">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Wake up at least 2 hours before the interview — no one is sharp immediately after waking</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Eat a real meal beforehand — blood sugar affects thinking clarity more than you expect</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Log into the interview platform 5–10 minutes early — not 30 minutes early (creates anxiety), not on time (creates rush)</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>Have a glass of water at your desk — speaking for 60 minutes makes your throat dry</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="cbox">✓</div>If you're anxious: take 3 slow deep breaths before joining. This physiologically reduces the stress response.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">🚨 In The Interview — Emergency Reminders</div>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">If you get a problem you don't know</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <span class="ah">Don't panic.</span> Say: "Let me make sure I understand the problem correctly. Can I clarify a few things?" Repeat the problem back in your own words. Ask about constraints. Ask about edge cases. <span class="ag">Buying yourself 3–5 minutes of clarification is normal and expected.</span><br><br>
+              Then: think out loud. Say "My first instinct is X, but let me think about the complexity..." Even if you don't find the optimal solution, demonstrating structured thinking under pressure is evaluated positively.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">If you go blank on a behavioral question</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <span class="ah">Say this:</span> "That's a great question — let me take a moment to think of the best example." Then pause silently for 5–10 seconds. This is fine and professional. <span class="ag">Silence means thinking, not failure.</span><br><br>
+              If you truly can't find a perfect story: "I don't have a perfect example of exactly that, but here's the closest situation I've been in..." Then tell a partial story honestly. Partial + honest >> forced + fabricated.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">If your system design goes off-track</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <span class="ah">Reset with:</span> "Let me step back and make sure I'm addressing the core requirements." Draw a simple box diagram. Start over from requirements → scale → HLD → component detail.<br><br>
+              <span class="ag">Interviewers for system design are evaluating your thinking process, not your final diagram.</span> A candidate who recovers cleanly from a wrong direction shows more than one who never goes wrong.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-title">What to say at the END of every round</span><span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              When they say "Do you have any questions for me?" — <span class="ah">always ask 2–3 questions</span>. Saying "I have no questions" is a red flag. It signals either you didn't prepare or you're not genuinely interested.<br><br>
+              Use your pre-prepared company-specific questions. A good one: "What does success look like for someone in this role in the first 6 months?" Another: "What's the hardest technical challenge your team is currently working on?"<br><br>
+              End every round with: "Thank you — I really enjoyed this conversation." Then send a thank-you email to the recruiter within 2 hours.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gold-box">
+        <span class="gold-label">// FINAL THOUGHT</span>
+        <strong>You are more prepared than you feel.</strong> The anxiety you feel the night before is normal and shared by every candidate — including the ones who get offers. Your job in the interview is not to be perfect. It is to be clear, structured, honest, and curious. Those qualities are what interviewers remember.
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-secondary" onclick="showPage('notebooklm')">← NotebookLM</button>
+        <button class="mark-btn" onclick="markDone('night-before')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Overview</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const PAGES = ['company-research','scheduling','study-plan','daily-routine','ai-tools','mock-prompts','notebooklm','night-before'];
+const state = {
+  done: new Set(JSON.parse(localStorage.getItem('ipc-done') || '[]')),
+  total: PAGES.length
+};
+
+function showPage(id) {
+  document.getElementById('home-page').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  if (id === 'home') {
+    document.getElementById('home-page').style.display = 'block';
+    document.getElementById('nav-home').classList.add('active');
+  } else {
+    const pg = document.getElementById('page-' + id);
+    if (pg) pg.classList.add('active');
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('active');
+  }
+  document.querySelector('main').scrollTo(0, 0);
+  window.scrollTo(0, 0);
+}
+
+function markDone(id) {
+  if (!state.done.has(id)) {
+    state.done.add(id);
+    localStorage.setItem('ipc-done', JSON.stringify([...state.done]));
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('done');
+    const btn = event.target;
+    btn.textContent = '✓ Done!';
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = (state.done.size / state.total * 100);
+  document.getElementById('globalProgress').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = state.done.size + ' / ' + state.total;
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+function toggleAcc(hdr) {
+  const arrow = hdr.querySelector('.acc-arrow');
+  const body = hdr.nextElementSibling;
+  arrow.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function copyPrompt(btn) {
+  const body = btn.closest('.prompt-box').querySelector('.prompt-body');
+  const text = body.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 2000);
+  });
+}
+
+function init() {
+  state.done.forEach(id => {
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('done');
+  });
+  updateProgress();
+}
+init();
+</script>
+</body>
+</html>

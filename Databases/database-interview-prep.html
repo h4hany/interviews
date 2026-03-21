@@ -1,232 +1,1541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Database — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
-    --accent: #00ff88; --accent2: #00d4ff; --accent3: #7c5cfc; --accent4: #ff6b35;
-    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
-    --card-radius: 12px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-    padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px;
-  }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
-  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,255,136,0.05); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
-  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(0,255,136,0.1); color: var(--accent); border: 1px solid rgba(0,255,136,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Databases — MySQL, MongoDB & PostgreSQL Interview Mastery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#07080d;--surface:#0c0e16;--surface2:#11131e;--border:#1b1e2e;
+      --mysql:#f29111;--mongo:#13aa52;--pg:#336791;
+      --accent:#f29111;--accent2:#13aa52;--accent3:#336791;--accent4:#a78bfa;
+      --text:#eef0ff;--text-dim:#7880aa;--text-dimmer:#252838;
+      --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(242,145,17,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(51,103,145,0.02) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(242,145,17,0.04) 0%,transparent 50%),radial-gradient(ellipse at 90% 70%,rgba(51,103,145,0.05) 0%,transparent 50%),radial-gradient(ellipse at 50% 90%,rgba(19,170,82,0.03) 0%,transparent 40%);pointer-events:none;z-index:0}
+
+    header{position:sticky;top:0;z-index:100;background:rgba(7,8,13,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+    .logo-mysql{color:var(--mysql)}
+    .logo-mongo{color:var(--mongo)}
+    .logo-pg{color:var(--pg)}
+    .logo-sep{color:var(--text-dimmer);font-size:10px}
+    .logo span{color:var(--text-dim)}
+    .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--mysql),var(--mongo),var(--pg));transition:width 0.5s ease;width:0%}
+    .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+
+    .app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+    nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+    .nav-item:hover{color:var(--text);background:var(--surface)}
+    .nav-item.active,.nav-item.m-active{color:var(--mysql);border-left-color:var(--mysql);background:rgba(242,145,17,0.05)}
+    .nav-item.mg-active{color:var(--mongo);border-left-color:var(--mongo);background:rgba(19,170,82,0.05)}
+    .nav-item.pg-active{color:var(--pg);border-left-color:var(--pg);background:rgba(51,103,145,0.07)}
+    .nav-item .icon{font-size:15px;width:20px;text-align:center}
+    .nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+    .nav-item.completed .done-dot{display:block}
+    main{overflow-y:auto}
+
+    .hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+    .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--yellow);margin-bottom:16px}
+    .hero h1{font-size:clamp(32px,4.5vw,58px);font-weight:800;line-height:1.06;margin-bottom:16px}
+    .hl-mysql{background:linear-gradient(135deg,var(--mysql),#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hl-mongo{background:linear-gradient(135deg,var(--mongo),#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hl-pg{background:linear-gradient(135deg,var(--pg),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+    .stat-row{display:flex;gap:28px;flex-wrap:wrap}
+    .stat{display:flex;flex-direction:column;gap:4px}
+    .stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--yellow)}
+    .stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+
+    .section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+    .section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+    .section-badge.mysql{background:rgba(242,145,17,0.12);color:var(--mysql);border:1px solid rgba(242,145,17,0.3)}
+    .section-badge.mongo{background:rgba(19,170,82,0.12);color:var(--mongo);border:1px solid rgba(19,170,82,0.3)}
+    .section-badge.pg{background:rgba(51,103,145,0.15);color:var(--pg);border:1px solid rgba(51,103,145,0.3)}
+    .section-badge.core{background:rgba(167,139,250,0.12);color:var(--accent4);border:1px solid rgba(167,139,250,0.3)}
+    .section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:1px;background:var(--border)}
+    .topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+    .topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+    .topic-card:hover{background:var(--surface)}
+    .topic-card:hover::before{opacity:1}
+    .cm::before{background:radial-gradient(circle at 0% 0%,rgba(242,145,17,0.1),transparent 60%)}
+    .cmg::before{background:radial-gradient(circle at 0% 0%,rgba(19,170,82,0.1),transparent 60%)}
+    .cpg::before{background:radial-gradient(circle at 0% 0%,rgba(51,103,145,0.1),transparent 60%)}
+    .cc::before{background:radial-gradient(circle at 0% 0%,rgba(167,139,250,0.08),transparent 60%)}
+    .card-emoji{font-size:28px;margin-bottom:10px;display:block}
+    .card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+    .card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+    .card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+    .tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+    .tag.hot{background:rgba(248,113,113,0.1);color:var(--red);border-color:rgba(248,113,113,0.2)}
+    .tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+    .tag.mysql{background:rgba(242,145,17,0.1);color:var(--mysql);border-color:rgba(242,145,17,0.2)}
+    .tag.mongo{background:rgba(19,170,82,0.1);color:var(--mongo);border-color:rgba(19,170,82,0.2)}
+    .tag.pg{background:rgba(51,103,145,0.12);color:#60a5fa;border-color:rgba(51,103,145,0.3)}
+
+    .lesson-page{display:none;padding:40px 48px;max-width:940px}
+    .lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+    .lesson-breadcrumb:hover{color:var(--yellow)}
+    .lesson-breadcrumb::before{content:'← '}
+    .lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+    .lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+    .e-mysql{color:var(--mysql)}.e-mongo{color:var(--mongo)}.e-pg{color:var(--pg)}.e-core{color:var(--accent4)}
+    .lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+    .lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+    .content-section{margin-bottom:44px}
+    .section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .section-title::before{content:'';width:3px;height:20px;border-radius:2px;flex-shrink:0}
+    .st-mysql .section-title::before,.section-title.st-mysql::before{background:var(--mysql)}
+    .st-mongo .section-title::before,.section-title.st-mongo::before{background:var(--mongo)}
+    .st-pg .section-title::before,.section-title.st-pg::before{background:var(--pg)}
+    .section-title::before{background:var(--yellow)}
+    .prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+    .prose strong{color:var(--text);font-weight:700}
+    .prose .hl{color:var(--yellow)}.prose .hm{color:var(--mysql)}.prose .hmg{color:var(--mongo)}.prose .hpg{color:var(--pg)}.prose .hv{color:var(--accent4)}
+
+    .code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+    .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+    .code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace}
+    .cl-sql{color:var(--mysql)}.cl-mongo{color:var(--mongo)}.cl-pg{color:var(--pg)}.cl-shell{color:var(--green)}.cl-js{color:var(--yellow)}
+    .copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+    .copy-btn:hover{color:var(--yellow);border-color:var(--yellow)}
+    pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#c5cee8;font-family:'JetBrains Mono',monospace}
+    .kw{color:#7ec8e3}.fn{color:#93c5fd}.st{color:#86efac}.nm{color:#fbbf24}.cm{color:#3a4060;font-style:italic}.op{color:#f9a825}.id{color:#f87171}
+
+    .analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+    .analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+    .analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+    .info-box{background:rgba(96,165,250,0.04);border:1px solid rgba(96,165,250,0.15);border-left:3px solid #60a5fa;border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .info-box strong{color:#60a5fa}
+    .warn-box{background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .warn-box strong{color:var(--red)}
+    .success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .success-box strong{color:var(--green)}
+
+    .cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+    .cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+    .cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+    .cheat-table tr:last-child td{border-bottom:none}
+    .cheat-table td:first-child{color:var(--yellow);font-family:'JetBrains Mono',monospace;font-size:12px}
+
+    .diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:22px 20px;margin:20px 0;overflow-x:auto}
+    .arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+    .arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center}
+    .ab-mysql{border-color:rgba(242,145,17,0.5);color:var(--mysql);background:rgba(242,145,17,0.06)}
+    .ab-mongo{border-color:rgba(19,170,82,0.5);color:var(--mongo);background:rgba(19,170,82,0.06)}
+    .ab-pg{border-color:rgba(51,103,145,0.5);color:#60a5fa;background:rgba(51,103,145,0.07)}
+    .ab-cyan{border-color:rgba(96,165,250,0.4);color:#60a5fa;background:rgba(96,165,250,0.05)}
+    .ab-green{border-color:rgba(52,211,153,0.4);color:var(--green);background:rgba(52,211,153,0.05)}
+    .ab-purple{border-color:rgba(167,139,250,0.4);color:var(--accent4);background:rgba(167,139,250,0.05)}
+    .arch-arrow{color:var(--text-dimmer);font-size:18px}
+
+    .interview-box{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+    .interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent4);margin-bottom:14px}
+    .interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0}
+    .interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent4);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+    .interview-q.open::after{transform:rotate(45deg)}
+    .interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+    .interview-a.open{display:block}
+
+    .quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+    .quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--mysql);margin-bottom:16px}
+    .quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+    .quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+    .quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+    .quiz-opt:hover{border-color:var(--accent4);background:var(--surface2)}
+    .quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+    .quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+    .opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+    .quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+    .quiz-feedback.show{display:block}
+    .quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+    .quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+
+    .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+    .btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+    .btn-primary{background:var(--yellow);color:var(--bg)}
+    .btn-primary:hover{box-shadow:0 0 20px rgba(251,191,36,0.3);transform:translateY(-1px)}
+    .btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+    .btn-secondary:hover{border-color:var(--yellow);color:var(--text)}
+    .mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+    .mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    #home-page{display:block}
+  </style>
 </head>
 <body>
 <header>
-  <div class="logo">DB<span>·</span>PREP <span>// DATABASE</span></div>
+  <div class="logo">
+    <span class="logo-mysql">MySQL</span><span class="logo-sep">·</span>
+    <span class="logo-mongo">MongoDB</span><span class="logo-sep">·</span>
+    <span class="logo-pg">PostgreSQL</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
   <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 <div class="app">
   <nav class="sidebar">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">Concepts</div>
-    <div class="nav-item" onclick="showLesson('acid-indexes')" id="nav-acid-indexes"><span>🔒</span> ACID & Indexes <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('sql-joins')" id="nav-sql-joins"><span>🔗</span> SQL & Joins <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('scaling')" id="nav-scaling"><span>📈</span> Scaling & Replication <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('nosql')" id="nav-nosql"><span>📄</span> NoSQL <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">📚 Core Concepts</div>
+    <div class="nav-item" onclick="showLesson('db-fundamentals')" id="nav-db-fundamentals"><span class="icon">🧱</span>DB Fundamentals<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('acid-transactions')" id="nav-acid-transactions"><span class="icon">⚖️</span>ACID & Transactions<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('indexes')" id="nav-indexes"><span class="icon">🗂️</span>Indexing Deep Dive<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('normalization')" id="nav-normalization"><span class="icon">📐</span>Normalization<span class="done-dot"></span></div>
+    <div class="nav-section-title">🟠 MySQL</div>
+    <div class="nav-item" onclick="showLesson('mysql-basics')" id="nav-mysql-basics"><span class="icon">🔧</span>MySQL Core<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mysql-joins')" id="nav-mysql-joins"><span class="icon">🔗</span>JOINs & Queries<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mysql-performance')" id="nav-mysql-performance"><span class="icon">⚡</span>Performance & EXPLAIN<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mysql-replication')" id="nav-mysql-replication"><span class="icon">🔁</span>Replication & Scaling<span class="done-dot"></span></div>
+    <div class="nav-section-title">🟢 MongoDB</div>
+    <div class="nav-item" onclick="showLesson('mongo-basics')" id="nav-mongo-basics"><span class="icon">📄</span>MongoDB Core<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mongo-schema')" id="nav-mongo-schema"><span class="icon">📊</span>Schema Design<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mongo-aggregation')" id="nav-mongo-aggregation"><span class="icon">🔄</span>Aggregation Pipeline<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('mongo-performance')" id="nav-mongo-performance"><span class="icon">⚡</span>Indexes & Performance<span class="done-dot"></span></div>
+    <div class="nav-section-title">🔵 PostgreSQL</div>
+    <div class="nav-item" onclick="showLesson('pg-basics')" id="nav-pg-basics"><span class="icon">🐘</span>PostgreSQL Core<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('pg-advanced')" id="nav-pg-advanced"><span class="icon">🚀</span>Advanced Features<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('pg-performance')" id="nav-pg-performance"><span class="icon">📈</span>Performance Tuning<span class="done-dot"></span></div>
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('db-comparison')" id="nav-db-comparison"><span class="icon">🆚</span>SQL vs NoSQL vs When<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
   </nav>
-  <main>
+
+  <main id="mainContent">
+    <!-- HOME -->
     <div id="home-page">
       <div class="hero">
-        <h1>Master <span class="highlight">Database</span> Interviews</h1>
-        <p class="hero-sub">ACID, indexes, SQL, joins, scaling, replication, and NoSQL.</p>
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-mysql">MySQL</span>,<br><span class="hl-mongo">MongoDB</span> &<br><span class="hl-pg">PostgreSQL</span></h1>
+        <p class="hero-sub">ACID, indexes, joins, aggregation pipelines, replication, schema design, and performance tuning. Every database interview topic, explained clearly with real code.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">17</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">65+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Quizzes</div></div>
+        </div>
       </div>
+
+      <div class="section-header"><span class="section-badge core">📚 CORE</span><span class="section-badge-title">Database Fundamentals</span></div>
       <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('acid-indexes')"><span class="card-emoji">🔒</span><div class="card-title">ACID & Indexes</div><div class="card-desc">Transactions, isolation, B-tree, composite indexes</div></div>
-        <div class="topic-card" onclick="showLesson('sql-joins')"><span class="card-emoji">🔗</span><div class="card-title">SQL & Joins</div><div class="card-desc">INNER, LEFT, subqueries, window functions</div></div>
-        <div class="topic-card" onclick="showLesson('scaling')"><span class="card-emoji">📈</span><div class="card-title">Scaling & Replication</div><div class="card-desc">Read replicas, sharding, CAP</div></div>
-        <div class="topic-card" onclick="showLesson('nosql')"><span class="card-emoji">📄</span><div class="card-title">NoSQL</div><div class="card-desc">Document, key-value, when to use</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+        <div class="topic-card cc" onclick="showLesson('db-fundamentals')"><span class="card-emoji">🧱</span><div class="card-title">DB Fundamentals</div><div class="card-desc">Storage engines, B-tree vs Hash indexes, SQL vs NoSQL, CAP theorem applied.</div><div class="card-tag-row"><span class="tag key">START HERE</span></div></div>
+        <div class="topic-card cc" onclick="showLesson('acid-transactions')"><span class="card-emoji">⚖️</span><div class="card-title">ACID & Transactions</div><div class="card-desc">Atomicity, Consistency, Isolation, Durability. Isolation levels, deadlocks, locking.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cc" onclick="showLesson('indexes')"><span class="card-emoji">🗂️</span><div class="card-title">Indexing Deep Dive</div><div class="card-desc">B-tree, composite, covering, partial indexes. When indexes hurt performance.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cc" onclick="showLesson('normalization')"><span class="card-emoji">📐</span><div class="card-title">Normalization</div><div class="card-desc">1NF through BCNF, denormalization tradeoffs, practical design rules.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge mysql">🟠 MYSQL</span><span class="section-badge-title">MySQL Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cm" onclick="showLesson('mysql-basics')"><span class="card-emoji">🔧</span><div class="card-title">MySQL Core</div><div class="card-desc">InnoDB vs MyISAM, data types, DDL vs DML, storage engines, constraints.</div><div class="card-tag-row"><span class="tag mysql">MYSQL</span><span class="tag key">FUNDAMENTAL</span></div></div>
+        <div class="topic-card cm" onclick="showLesson('mysql-joins')"><span class="card-emoji">🔗</span><div class="card-title">JOINs & Queries</div><div class="card-desc">INNER, LEFT, RIGHT, FULL OUTER, CROSS, SELF joins. Subqueries, CTEs, window functions.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cm" onclick="showLesson('mysql-performance')"><span class="card-emoji">⚡</span><div class="card-title">Performance & EXPLAIN</div><div class="card-desc">Reading EXPLAIN output, query optimization, slow query log, covering indexes.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cm" onclick="showLesson('mysql-replication')"><span class="card-emoji">🔁</span><div class="card-title">Replication & Scaling</div><div class="card-desc">Master-slave, GTID replication, read replicas, partitioning strategies.</div><div class="card-tag-row"><span class="tag mysql">MYSQL</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge mongo">🟢 MONGODB</span><span class="section-badge-title">MongoDB Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cmg" onclick="showLesson('mongo-basics')"><span class="card-emoji">📄</span><div class="card-title">MongoDB Core</div><div class="card-desc">Documents, collections, BSON, CRUD operations, operators, ObjectId.</div><div class="card-tag-row"><span class="tag mongo">MONGODB</span><span class="tag key">FUNDAMENTAL</span></div></div>
+        <div class="topic-card cmg" onclick="showLesson('mongo-schema')"><span class="card-emoji">📊</span><div class="card-title">Schema Design</div><div class="card-desc">Embedding vs referencing, denormalization, data modeling patterns for MongoDB.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cmg" onclick="showLesson('mongo-aggregation')"><span class="card-emoji">🔄</span><div class="card-title">Aggregation Pipeline</div><div class="card-desc">$match, $group, $lookup, $unwind, $project. The MongoDB equivalent of SQL GROUP BY + JOIN.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cmg" onclick="showLesson('mongo-performance')"><span class="card-emoji">⚡</span><div class="card-title">Indexes & Performance</div><div class="card-desc">Single field, compound, multikey, text, geospatial indexes. explain(), Atlas.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge pg">🔵 POSTGRESQL</span><span class="section-badge-title">PostgreSQL Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cpg" onclick="showLesson('pg-basics')"><span class="card-emoji">🐘</span><div class="card-title">PostgreSQL Core</div><div class="card-desc">MVCC, table inheritance, schemas, sequences, custom types, extensions.</div><div class="card-tag-row"><span class="tag pg">POSTGRES</span><span class="tag key">FUNDAMENTAL</span></div></div>
+        <div class="topic-card cpg" onclick="showLesson('pg-advanced')"><span class="card-emoji">🚀</span><div class="card-title">Advanced Features</div><div class="card-desc">JSONB, CTEs, window functions, partitioning, full-text search, PostGIS.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cpg" onclick="showLesson('pg-performance')"><span class="card-emoji">📈</span><div class="card-title">Performance Tuning</div><div class="card-desc">VACUUM, ANALYZE, EXPLAIN ANALYZE, parallel queries, connection pooling.</div><div class="card-tag-row"><span class="tag pg">POSTGRES</span></div></div>
+        <div class="topic-card cc" onclick="showLesson('db-comparison')"><span class="card-emoji">🆚</span><div class="card-title">Which DB to Choose?</div><div class="card-desc">Decision framework — when to use MySQL vs PostgreSQL vs MongoDB. Real tradeoffs.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
       </div>
     </div>
-    <div id="lesson-acid-indexes" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔒 ACID & Indexes</div>
-      <div class="lesson-subtitle">Transactions, isolation levels, and index types.</div>
-      <div class="prose">ACID: Atomicity (all or nothing), Consistency (constraints hold), Isolation (concurrent transactions don’t interfere), Durability (committed data persists). Isolation levels: Read uncommitted, Read committed, Repeatable read, Serializable. Indexes: B-tree (default), hash, composite (order matters), covering index.</div>
-      <div class="code-block"><pre>-- Composite index: (a, b) helps WHERE a = ? AND b = ?
-CREATE INDEX idx_ab ON t(a, b);</pre></div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When would you use a composite index?</div>
-        <div class="interview-a">When queries filter or sort by multiple columns. The column order matters: put equality filters first, then range/sort. (a, b) can be used for “WHERE a = ?” or “WHERE a = ? AND b = ?”, but not for “WHERE b = ?” alone.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is a covering index?</div>
-        <div class="interview-a">An index that contains all columns required by a query (including in the SELECT list). The database can satisfy the query from the index alone without reading the table (index-only scan), which is faster and reduces I/O.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('acid-indexes')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-sql-joins" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔗 SQL & Joins</div>
-      <div class="lesson-subtitle">INNER, LEFT, subqueries, window functions.</div>
-      <div class="content-section">
-        <div class="section-title">Join types</div>
-        <div class="prose"><strong>INNER JOIN:</strong> Only rows that match in both tables. <strong>LEFT (OUTER) JOIN:</strong> All rows from the left table; matching rows from the right, or NULL where there is no match. Use when you want to keep all left rows (e.g. all users and their orders, or NULL if no orders). RIGHT JOIN is the same but from the right. FULL OUTER: all from both, NULL where no match.</div>
-        <div class="code-block"><pre>SELECT u.name, o.id
-FROM users u
-LEFT JOIN orders o ON u.id = o.user_id;</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Subqueries and window functions</div>
-        <div class="prose"><strong>Subqueries:</strong> Use for EXISTS, IN, or a scalar (single value) in SELECT/WHERE. Correlated subquery references outer query. <strong>Window functions:</strong> ROW_NUMBER(), RANK(), DENSE_RANK(), SUM() OVER (PARTITION BY ... ORDER BY ...) compute over a partition without collapsing rows. Useful for top-N per group, running totals, and rankings.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: INNER JOIN vs LEFT JOIN — when to use which?</div>
-        <div class="interview-a">Use INNER when you only want rows that have a match in both tables. Use LEFT when you want all rows from the left table and optional data from the right (e.g. list all users and their last order, or NULL if they have none).</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What is the difference between ROW_NUMBER, RANK, and DENSE_RANK?</div>
-        <div class="interview-a">ROW_NUMBER assigns a unique number per row (no ties). RANK leaves gaps after ties (1,2,2,4). DENSE_RANK does not leave gaps (1,2,2,3). Use ROW_NUMBER for a unique ordering; RANK/DENSE_RANK when you care about ranking with ties.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('sql-joins')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-scaling" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📈 Scaling & Replication</div>
-      <div class="lesson-subtitle">Read replicas, sharding, CAP.</div>
-      <div class="prose">Primary accepts writes and replicates to replicas (eventual consistency for reads). Sharding: partition data by shard key (e.g. user_id) across nodes; choose key to avoid hot spots. CAP: in a partition you cannot have all three of Consistency, Availability, Partition tolerance; choose CP or AP. CAP: you can’t have Consistency, Availability, and Partition tolerance all at once; choose CP or AP.</div>
-      <button class="mark-done-btn" onclick="markDone('scaling')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-nosql" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📄 NoSQL</div>
-      <div class="lesson-subtitle">Document, key-value, when to use.</div>
-      <div class="content-section">
-        <div class="section-title">Document stores (e.g. MongoDB)</div>
-        <div class="prose">Documents (e.g. JSON/BSON) with flexible schema. Good for nested data, catalogs, content, and when schema evolves often. Query by fields and use indexes. Avoid deep nesting if you need to query inside it. Replication and sharding are common. Weaker consistency and no joins; model data so related info is in one document or accept application-level joins.</div>
+
+    <!-- ===== DB FUNDAMENTALS ===== -->
+    <div id="lesson-db-fundamentals" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// CORE CONCEPTS</div>
+        <div class="lesson-title">🧱 Database Fundamentals</div>
+        <div class="lesson-subtitle">The building blocks every database interview starts with — storage, indexes, relational vs non-relational.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Key-value (e.g. Redis)</div>
-        <div class="prose">Simple get/set by key. Use for cache, sessions, rate limiting, pub/sub, and simple lookups. Very fast, in-memory option. Persistence (RDB, AOF) available. Not for complex queries or relationships. Good as a cache layer in front of SQL or as a session store.</div>
+        <div class="section-title">How Databases Store Data</div>
+        <div class="prose">At the lowest level, databases store data in <strong>pages</strong> (typically 8KB or 16KB). Pages are organized into <strong>tablespaces</strong> on disk. When you query, the DB reads pages into a <strong>buffer pool</strong> (in-memory cache). The goal: minimize disk I/O by keeping hot pages in memory.</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-cyan">Query</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-green">Query Planner<br><small>parse + optimize</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-purple">Buffer Pool<br><small>in-memory pages</small></div>
+            <div class="arch-arrow">cache miss ↓</div>
+            <div class="arch-box ab-mysql">Disk Storage<br><small>tablespace files</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">B-Tree — The Foundation of Every Index</div>
+        <div class="prose">Almost all database indexes use a <strong>B-Tree</strong> (Balanced Tree). It keeps data sorted and enables: exact lookups O(log N), range queries, ORDER BY without sorting. Each node holds multiple keys, keeping the tree shallow even for billions of rows.</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">A B-Tree is like a <strong>phone book with table of contents</strong>. The table of contents (root node) tells you which section to open. Each section header (internal nodes) narrows it down further. The actual entries (leaf nodes) have the data. You never read the whole book — you jump directly to the right page in O(log N) steps.</div>
+        </div>
+        <table class="cheat-table">
+          <tr><th>Index Type</th><th>Structure</th><th>Best for</th><th>NOT good for</th></tr>
+          <tr><td>B-Tree</td><td>Balanced tree, sorted</td><td>Equality, ranges, ORDER BY, LIKE 'abc%'</td><td>LIKE '%abc' (leading wildcard)</td></tr>
+          <tr><td>Hash</td><td>Hash table</td><td>Exact equality only (=)</td><td>Range queries, ORDER BY</td></tr>
+          <tr><td>Full-text</td><td>Inverted index</td><td>Text search (MATCH AGAINST)</td><td>Numeric ranges</td></tr>
+          <tr><td>Spatial (R-Tree)</td><td>Rectangle tree</td><td>Geospatial queries (ST_Within)</td><td>Non-spatial data</td></tr>
+          <tr><td>Bitmap</td><td>Bit arrays</td><td>Low cardinality (status, gender)</td><td>High cardinality</td></tr>
+        </table>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: When would you choose NoSQL over SQL?</div>
-        <div class="interview-a">When schema is fluid or you need horizontal scale and can accept eventual consistency. Document DBs suit nested, variable-shaped data. Key-value suits cache and simple lookups. Choose SQL when you need ACID, complex queries, joins, and strong consistency.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a database index and what are the tradeoffs?</div>
+        <div class="interview-a">An index is a separate data structure (usually B-Tree) that maps column values to row locations, enabling fast lookups without scanning all rows. Tradeoffs: READS get faster (O(log N) vs O(N) full scan). WRITES get slower — every INSERT/UPDATE/DELETE must also update all relevant indexes. Storage increases — indexes consume disk space (sometimes as much as the table). Too many indexes can hurt write-heavy tables more than the read benefit is worth. Rule: index columns used in WHERE, JOIN ON, ORDER BY, GROUP BY — but profile first.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between clustered and non-clustered indexes?</div>
+        <div class="interview-a">Clustered index: the table rows are physically stored in the index order. There can be only ONE clustered index per table (it IS the table). In MySQL InnoDB, the primary key is always the clustered index. Lookup by PK is extremely fast — no extra step needed. Non-clustered index: a separate structure pointing to rows. After finding the key in the index, there's an extra "lookup" to fetch the actual row (unless it's a covering index). A table can have many non-clustered indexes.</div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What are the downsides of document stores?</div>
-        <div class="interview-a">No joins (denormalize or join in app). Weaker consistency guarantees. Duplication if same data lives in many documents. Schema flexibility can lead to inconsistency. Complex queries and transactions are harder than in SQL. Good fit for read-heavy, flexible-schema workloads.</div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('db-fundamentals')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('acid-transactions')">Next: ACID →</button>
       </div>
-      <button class="mark-done-btn" onclick="markDone('nosql')">✓ Mark as done</button>
     </div>
+
+    <!-- ===== ACID ===== -->
+    <div id="lesson-acid-transactions" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// CORE CONCEPTS</div>
+        <div class="lesson-title">⚖️ ACID & Transactions</div>
+        <div class="lesson-subtitle">The most important database interview topic. Isolation levels, deadlocks, and what every developer must know about transactions.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">ACID Properties</div>
+        <table class="cheat-table">
+          <tr><th>Property</th><th>Meaning</th><th>What guarantees it</th></tr>
+          <tr><td>Atomicity</td><td>All operations in a transaction succeed, or all are rolled back — never partial.</td><td>Transaction log (WAL / undo log)</td></tr>
+          <tr><td>Consistency</td><td>DB moves from one valid state to another. All constraints satisfied.</td><td>Constraints, triggers, app logic</td></tr>
+          <tr><td>Isolation</td><td>Concurrent transactions don't interfere with each other.</td><td>Locks, MVCC</td></tr>
+          <tr><td>Durability</td><td>Committed transactions survive crashes — written to persistent storage.</td><td>Write-Ahead Logging (WAL)</td></tr>
+        </table>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 BANK TRANSFER ANALOGY</div>
+          <div class="analogy-text"><strong>Atomicity:</strong> Transfer $100 from A to B — both debit AND credit happen, or neither.<br><strong>Consistency:</strong> Total money before transfer = total money after (conservation).<br><strong>Isolation:</strong> Two simultaneous transfers from A don't see each other's intermediate states.<br><strong>Durability:</strong> Once "Transfer confirmed" — even a power cut can't lose it.</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Isolation Levels — Critical for Interviews</div>
+        <table class="cheat-table">
+          <tr><th>Level</th><th>Dirty Read</th><th>Non-repeatable Read</th><th>Phantom Read</th><th>Performance</th></tr>
+          <tr><td>READ UNCOMMITTED</td><td>❌ Possible</td><td>❌ Possible</td><td>❌ Possible</td><td>Fastest</td></tr>
+          <tr><td>READ COMMITTED</td><td>✅ Prevented</td><td>❌ Possible</td><td>❌ Possible</td><td>Fast (default in PG)</td></tr>
+          <tr><td>REPEATABLE READ</td><td>✅ Prevented</td><td>✅ Prevented</td><td>❌ Possible*</td><td>Medium (default MySQL)</td></tr>
+          <tr><td>SERIALIZABLE</td><td>✅ Prevented</td><td>✅ Prevented</td><td>✅ Prevented</td><td>Slowest</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — TRANSACTION EXAMPLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- Set isolation level</span>
+<span class="kw">SET</span> TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+<span class="kw">START TRANSACTION</span>;
+
+<span class="cm">-- Check balance</span>
+<span class="kw">SELECT</span> balance <span class="kw">FROM</span> accounts <span class="kw">WHERE</span> id = <span class="nm">1</span> <span class="kw">FOR UPDATE</span>; <span class="cm">-- lock row!</span>
+
+<span class="cm">-- Deduct from sender</span>
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - <span class="nm">100</span> <span class="kw">WHERE</span> id = <span class="nm">1</span>;
+
+<span class="cm">-- Add to receiver</span>
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + <span class="nm">100</span> <span class="kw">WHERE</span> id = <span class="nm">2</span>;
+
+<span class="kw">COMMIT</span>; <span class="cm">-- both changes permanent</span>
+<span class="cm">-- or ROLLBACK; -- undo everything</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Read Anomalies Explained</div>
+        <div class="prose">
+          <strong>Dirty Read:</strong> Transaction A reads uncommitted changes from Transaction B. If B rolls back, A has read data that never existed.<br><br>
+          <strong>Non-repeatable Read:</strong> Transaction A reads a row twice, gets different values — Transaction B updated it between reads.<br><br>
+          <strong>Phantom Read:</strong> Transaction A queries rows matching a condition twice, gets different rows — Transaction B inserted/deleted matching rows between the two queries.
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Deadlocks</div>
+        <div class="warn-box"><strong>Deadlock:</strong> Transaction A locks row 1, waits for row 2. Transaction B locks row 2, waits for row 1. Both wait forever. DBs detect this and kill one transaction (the "victim").<br><br><strong>Prevention:</strong> Always acquire locks in the same ORDER across all transactions. Keep transactions short. Use SELECT FOR UPDATE carefully.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are the four ACID properties?</div>
+        <div class="interview-a">Atomicity: all-or-nothing — a transaction's operations all succeed or all fail together. Consistency: the database moves from one valid state to another, maintaining all defined rules and constraints. Isolation: concurrent transactions execute as if they were serial — they don't see each other's intermediate states (level of isolation is configurable). Durability: once committed, data survives system failures — written to non-volatile storage via WAL.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between optimistic and pessimistic locking?</div>
+        <div class="interview-a">Pessimistic locking: lock the resource before reading — assumes conflicts will happen. Use SELECT FOR UPDATE to lock rows. Transaction holds the lock until commit. Good for: high-contention write scenarios. Downside: reduced concurrency, deadlock risk. Optimistic locking: read without locking, check at write time if data changed (using a version column). If changed, retry. Good for: read-heavy, low-contention scenarios. Downside: retry logic complexity. Most web apps use optimistic locking for better scalability.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is MVCC?</div>
+        <div class="interview-a">Multi-Version Concurrency Control keeps multiple versions of each row. When a transaction modifies a row, the DB creates a new version instead of overwriting. Readers see the version that was current when their transaction started. This means readers don't block writers and writers don't block readers — dramatically improving concurrency. PostgreSQL and InnoDB (MySQL) both use MVCC. The tradeoff: old versions accumulate and must be cleaned up (VACUUM in PostgreSQL, purge in InnoDB).</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">Transaction A reads a row. Transaction B then updates and commits that row. Transaction A reads the same row again and gets a different value. What anomaly is this?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">A</span>Dirty Read</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ac','correct')"><span class="opt-letter">B</span>Non-repeatable Read ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">C</span>Phantom Read</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'ac','wrong')"><span class="opt-letter">D</span>Deadlock</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-ac-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('db-fundamentals')">← Fundamentals</button>
+        <button class="mark-done-btn" onclick="markDone('acid-transactions')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('indexes')">Next: Indexes →</button>
+      </div>
+    </div>
+
+    <!-- ===== INDEXES ===== -->
+    <div id="lesson-indexes" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// CORE CONCEPTS</div>
+        <div class="lesson-title">🗂️ Indexing Deep Dive</div>
+        <div class="lesson-subtitle">The single most impactful performance topic. Composite, covering, partial indexes — and when NOT to index.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Index Design Rules</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — INDEX PATTERNS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- Single column index</span>
+<span class="kw">CREATE INDEX</span> idx_email <span class="kw">ON</span> users (email);
+<span class="cm">-- Good for: WHERE email = 'x'  ORDER BY email</span>
+
+<span class="cm">-- Composite index — COLUMN ORDER MATTERS!</span>
+<span class="kw">CREATE INDEX</span> idx_user_status_date <span class="kw">ON</span> orders (user_id, status, created_at);
+<span class="cm">-- Supports: WHERE user_id = 1</span>
+<span class="cm">--           WHERE user_id = 1 AND status = 'active'</span>
+<span class="cm">--           WHERE user_id = 1 AND status = 'active' AND created_at > '2024-01-01'</span>
+<span class="cm">-- Does NOT help: WHERE status = 'active'  ← skips leading column!</span>
+<span class="cm">-- Does NOT help: WHERE created_at > '...' ← skips two columns!</span>
+
+<span class="cm">-- Covering index — includes all columns query needs (no table lookup)</span>
+<span class="kw">CREATE INDEX</span> idx_covering <span class="kw">ON</span> orders (user_id, status)
+  <span class="kw">INCLUDE</span> (total_amount, created_at);   <span class="cm">-- PG syntax</span>
+<span class="cm">-- SELECT total_amount, created_at WHERE user_id=1 AND status='paid'</span>
+<span class="cm">-- → satisfied entirely from index, NO table read!</span>
+
+<span class="cm">-- Partial index — index only a subset of rows</span>
+<span class="kw">CREATE INDEX</span> idx_pending <span class="kw">ON</span> orders (created_at)
+  <span class="kw">WHERE</span> status = <span class="st">'pending'</span>;  <span class="cm">-- only indexes pending orders (smaller, faster)</span>
+
+<span class="cm">-- Functional index</span>
+<span class="kw">CREATE INDEX</span> idx_lower_email <span class="kw">ON</span> users (LOWER(email));
+<span class="cm">-- WHERE LOWER(email) = 'hany@example.com'  ← now uses index</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">The Left-Prefix Rule</div>
+        <div class="info-box"><strong>Critical Rule:</strong> For a composite index on (A, B, C), the DB can use it for queries involving A, A+B, or A+B+C. It CANNOT skip leading columns. If you query only on B or C, the index is NOT used. This is the most common indexing mistake in interviews.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">When Indexes Hurt</div>
+        <div class="warn-box"><strong>Don't over-index!</strong> Each index means: INSERT creates N+1 writes (one per index). UPDATE may update multiple indexes. DELETE cleans up all indexes. For write-heavy tables (logs, events), too many indexes can make writes 2-5x slower. Also: indexes on low-cardinality columns (status with 3 values on a large table) may not help — the DB might prefer a full scan anyway. Always measure with EXPLAIN.</div>
+        <table class="cheat-table">
+          <tr><th>Situation</th><th>Index helps?</th><th>Why</th></tr>
+          <tr><td>WHERE status='active' (99% of rows)</td><td>❌ No</td><td>Full scan is faster for high % of rows</td></tr>
+          <tr><td>WHERE email = 'x@x.com'</td><td>✅ Yes</td><td>High cardinality, unique value</td></tr>
+          <tr><td>LIKE '%searchterm%'</td><td>❌ No</td><td>Leading wildcard prevents B-tree use</td></tr>
+          <tr><td>LIKE 'search%'</td><td>✅ Yes</td><td>Trailing wildcard works with B-tree</td></tr>
+          <tr><td>WHERE YEAR(created_at) = 2024</td><td>❌ No</td><td>Function on column prevents index use</td></tr>
+          <tr><td>WHERE created_at >= '2024-01-01'</td><td>✅ Yes</td><td>Direct column comparison</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a covering index?</div>
+        <div class="interview-a">A covering index includes all columns a query needs, so the query can be satisfied entirely from the index without reading the actual table (no "table lookup" or "heap fetch"). This is extremely fast because the index is smaller and often cached. Example: index on (user_id, status) with INCLUDE (total_amount) — a query SELECT total_amount WHERE user_id=1 AND status='paid' reads only the index. Create covering indexes for your most frequent, performance-critical queries.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why does a function call on an indexed column prevent index usage?</div>
+        <div class="interview-a">WHERE YEAR(created_at) = 2024 cannot use an index on created_at because the DB would need to apply YEAR() to every row's value to find matches — the index is sorted by the raw value, not the computed value. Fix: rewrite to a range — WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'. Or create a functional/expression index: CREATE INDEX ON orders (YEAR(created_at)). This is a very common performance anti-pattern.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('acid-transactions')">← ACID</button>
+        <button class="mark-done-btn" onclick="markDone('indexes')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('normalization')">Next: Normalization →</button>
+      </div>
+    </div>
+
+    <!-- ===== NORMALIZATION ===== -->
+    <div id="lesson-normalization" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// CORE CONCEPTS</div>
+        <div class="lesson-title">📐 Normalization</div>
+        <div class="lesson-subtitle">Organizing data to reduce redundancy and improve integrity — and when to deliberately break the rules.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Normal Forms</div>
+        <table class="cheat-table">
+          <tr><th>Form</th><th>Rule</th><th>Eliminates</th></tr>
+          <tr><td>1NF</td><td>All column values are atomic (no repeating groups, no arrays in cells)</td><td>Repeating groups</td></tr>
+          <tr><td>2NF</td><td>1NF + every non-key column depends on the WHOLE primary key (no partial dependencies)</td><td>Partial dependencies</td></tr>
+          <tr><td>3NF</td><td>2NF + no transitive dependencies (non-key columns don't depend on other non-key columns)</td><td>Transitive dependencies</td></tr>
+          <tr><td>BCNF</td><td>Every determinant is a candidate key</td><td>Anomalies in 3NF tables with overlapping keys</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Denormalization — When to Break the Rules</div>
+        <div class="prose">Normalization is great for <strong>write integrity</strong> but can hurt <strong>read performance</strong> — lots of JOINs for common queries. <strong>Denormalization</strong> deliberately adds redundancy to improve read speed.</div>
+        <div class="success-box"><strong>Good reasons to denormalize:</strong> A query JOINing 5 tables runs 10K/sec — flatten into one table. Reporting/analytics tables (OLAP) benefit from denormalized star schemas. Read-heavy data that changes rarely (user's country stored in orders table). Caching computed values (order_total stored instead of recalculated).</div>
+        <div class="warn-box"><strong>Denormalization risks:</strong> Update anomalies — if user changes email, must update all denormalized copies. Data inconsistency if updates miss some copies. Increased storage. Make sure you have the READS to justify it.</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Explain 3NF with an example.</div>
+        <div class="interview-a">3NF: no transitive dependencies. Example: Order table has (order_id, customer_id, customer_city, customer_country). customer_city → customer_country is a transitive dependency (city determines country, not order_id). This is a 3NF violation — if a customer moves cities, we must update all their orders. Fix: move city/country to a Customers table. Orders only stores customer_id (FK). Now city and country depend directly on customer_id, not transitively through city.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you choose denormalization over strict normalization?</div>
+        <div class="interview-a">Denormalize when: (1) A normalized query requires many JOINs and runs too slowly under load, (2) Read-to-write ratio is very high (reads >> writes), (3) The duplicated data changes rarely (e.g., product category name in an orders table), (4) Analytics/reporting databases (OLAP) — star/snowflake schema with fact and dimension tables. Always normalize first, then denormalize specific queries that prove to be bottlenecks. Don't prematurely denormalize.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('indexes')">← Indexes</button>
+        <button class="mark-done-btn" onclick="markDone('normalization')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mysql-basics')">Next: MySQL Core →</button>
+      </div>
+    </div>
+
+    <!-- ===== MYSQL BASICS ===== -->
+    <div id="lesson-mysql-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mysql">// MYSQL</div>
+        <div class="lesson-title">🔧 MySQL Core</div>
+        <div class="lesson-subtitle">InnoDB storage engine, data types, constraints, and essential MySQL-specific knowledge for interviews.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title" style="--c:var(--mysql)">InnoDB vs MyISAM</div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>InnoDB ✅ (use this)</th><th>MyISAM ⚠️ (legacy)</th></tr>
+          <tr><td>Transactions</td><td>✅ Full ACID</td><td>❌ No</td></tr>
+          <tr><td>Foreign keys</td><td>✅ Yes</td><td>❌ No</td></tr>
+          <tr><td>Row-level locking</td><td>✅ Yes</td><td>❌ Table-level only</td></tr>
+          <tr><td>Crash recovery</td><td>✅ Automatic (WAL)</td><td>❌ Manual repair needed</td></tr>
+          <tr><td>Full-text search</td><td>✅ Yes (MySQL 5.6+)</td><td>✅ Yes</td></tr>
+          <tr><td>Default since</td><td>MySQL 5.5+</td><td>Legacy default</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — MYSQL TABLE DESIGN</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">CREATE TABLE</span> users (
+  id         <span class="kw">BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY</span>,
+  email      <span class="kw">VARCHAR</span>(<span class="nm">255</span>) <span class="kw">NOT NULL UNIQUE</span>,
+  name       <span class="kw">VARCHAR</span>(<span class="nm">100</span>) <span class="kw">NOT NULL</span>,
+  status     <span class="kw">ENUM</span>(<span class="st">'active'</span>, <span class="st">'inactive'</span>, <span class="st">'banned'</span>) <span class="kw">DEFAULT</span> <span class="st">'active'</span>,
+  metadata   <span class="kw">JSON</span>,                        <span class="cm">-- MySQL 5.7+ native JSON</span>
+  created_at <span class="kw">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>,
+  updated_at <span class="kw">TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</span>
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+<span class="cm">-- utf8mb4: full Unicode including emoji (utf8 in MySQL is only 3-byte!)</span>
+
+<span class="kw">CREATE TABLE</span> orders (
+  id         <span class="kw">BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY</span>,
+  user_id    <span class="kw">BIGINT UNSIGNED NOT NULL</span>,
+  total      <span class="kw">DECIMAL</span>(<span class="nm">10</span>,<span class="nm">2</span>) <span class="kw">NOT NULL</span>,    <span class="cm">-- use DECIMAL not FLOAT for money!</span>
+  <span class="kw">FOREIGN KEY</span> (user_id) <span class="kw">REFERENCES</span> users(id) <span class="kw">ON DELETE CASCADE</span>
+);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use BIGINT for IDs instead of INT?</div>
+        <div class="interview-a">INT UNSIGNED max value is ~4.29 billion. Sounds like a lot, but high-traffic apps can hit this in years. Twitter famously ran into this problem. BIGINT UNSIGNED supports ~18.4 quintillion — effectively unlimited. The performance difference is negligible. Always use BIGINT for IDs in production systems that might grow. Also consider using UUID or Snowflake IDs for distributed systems to avoid ID collision across multiple database instances.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why never use FLOAT for monetary values?</div>
+        <div class="interview-a">FLOAT and DOUBLE use binary floating-point representation, which cannot exactly represent many decimal fractions. 0.1 + 0.2 = 0.30000000000000004 in floating-point. For money, even a fraction of a cent error is unacceptable — accumulated over millions of transactions it becomes significant. Use DECIMAL(10,2) — it stores exact decimal values. Or store amounts as integers (cents instead of dollars): 1099 cents instead of $10.99 — this is what Stripe and most payment systems do.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('normalization')">← Normalization</button>
+        <button class="mark-done-btn" onclick="markDone('mysql-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mysql-joins')">Next: JOINs →</button>
+      </div>
+    </div>
+
+    <!-- ===== MYSQL JOINS ===== -->
+    <div id="lesson-mysql-joins" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mysql">// MYSQL</div>
+        <div class="lesson-title">🔗 JOINs & Advanced Queries</div>
+        <div class="lesson-subtitle">Every JOIN type, CTEs, window functions, subqueries — the SQL you'll be asked to write in interviews.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">All JOIN Types</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — JOIN TYPES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- INNER JOIN — only matching rows in BOTH tables</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">INNER JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id;
+
+<span class="cm">-- LEFT JOIN — all users, with order data if it exists (NULL if not)</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id;
+<span class="cm">-- Users with NO orders: name=Hany, total=NULL</span>
+
+<span class="cm">-- Find users with NO orders (anti-join pattern)</span>
+<span class="kw">SELECT</span> u.name <span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">WHERE</span> o.id <span class="kw">IS NULL</span>;   <span class="cm">-- NULL means no matching order!</span>
+
+<span class="cm">-- SELF JOIN — join table to itself</span>
+<span class="kw">SELECT</span> e.name <span class="kw">AS</span> employee, m.name <span class="kw">AS</span> manager
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.id;</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">CTEs & Window Functions</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — CTE + WINDOW FUNCTIONS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- CTE (Common Table Expression) — readable temp result</span>
+<span class="kw">WITH</span> monthly_revenue <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    DATE_FORMAT(created_at, <span class="st">'%Y-%m'</span>) <span class="kw">AS</span> month,
+    <span class="kw">SUM</span>(total) <span class="kw">AS</span> revenue
+  <span class="kw">FROM</span> orders
+  <span class="kw">WHERE</span> status = <span class="st">'completed'</span>
+  <span class="kw">GROUP BY</span> month
+),
+top_months <span class="kw">AS</span> (                         <span class="cm">-- chain CTEs</span>
+  <span class="kw">SELECT</span> * <span class="kw">FROM</span> monthly_revenue
+  <span class="kw">WHERE</span> revenue > <span class="nm">100000</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> top_months <span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>;
+
+<span class="cm">-- Window functions — calculations across related rows</span>
+<span class="kw">SELECT</span>
+  name,
+  salary,
+  <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> salary_rank,
+  <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> dense_rank,
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+  <span class="fn">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept_id) <span class="kw">AS</span> dept_total,
+  <span class="fn">LAG</span>(salary, <span class="nm">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary) <span class="kw">AS</span> prev_salary
+<span class="kw">FROM</span> employees;
+
+<span class="cm">-- Running total</span>
+<span class="kw">SELECT</span> date, revenue,
+  <span class="fn">SUM</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> date <span class="kw">ROWS UNBOUNDED PRECEDING</span>) <span class="kw">AS</span> running_total
+<span class="kw">FROM</span> daily_sales;</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between RANK(), DENSE_RANK(), and ROW_NUMBER()?</div>
+        <div class="interview-a">All three number rows within a window partition. ROW_NUMBER(): always unique sequential numbers 1,2,3,4 — no ties. RANK(): tied rows get the same rank, then skips — 1,2,2,4 (no rank 3 after two rank-2s). DENSE_RANK(): tied rows get same rank, no skipping — 1,2,2,3. Use ROW_NUMBER for pagination (always unique), RANK/DENSE_RANK for leaderboards and competitions. Interview trick: "find top 3 earners per department" — use DENSE_RANK with PARTITION BY dept.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between WHERE and HAVING?</div>
+        <div class="interview-a">WHERE filters BEFORE aggregation — it filters individual rows. You cannot use aggregate functions in WHERE. HAVING filters AFTER aggregation — it filters groups. You can use aggregate functions in HAVING. Execution order: FROM → WHERE (filter rows) → GROUP BY → HAVING (filter groups) → SELECT → ORDER BY. Example: WHERE salary > 50000 filters employees before grouping. HAVING COUNT(*) > 5 filters departments that have more than 5 employees after grouping.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mysql-basics')">← MySQL Core</button>
+        <button class="mark-done-btn" onclick="markDone('mysql-joins')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mysql-performance')">Next: Performance →</button>
+      </div>
+    </div>
+
+    <!-- ===== MYSQL PERFORMANCE ===== -->
+    <div id="lesson-mysql-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mysql">// MYSQL</div>
+        <div class="lesson-title">⚡ MySQL Performance & EXPLAIN</div>
+        <div class="lesson-subtitle">Reading query execution plans, identifying bottlenecks, and applying the right fixes.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">EXPLAIN — Reading Query Plans</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — EXPLAIN OUTPUT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">EXPLAIN</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = <span class="nm">123</span> <span class="kw">AND</span> status = <span class="st">'active'</span>;
+
+<span class="cm">-- Key columns to check:</span>
+<span class="cm">-- type: access method (best → worst)</span>
+<span class="cm">--   system → const → eq_ref → ref → range → index → ALL</span>
+<span class="cm">-- ALL = FULL TABLE SCAN = bad! Fix with an index.</span>
+<span class="cm">-- ref/range = index usage = good</span>
+
+<span class="cm">-- rows: estimated rows examined (lower is better)</span>
+<span class="cm">-- key: which index was used (NULL = no index!)</span>
+<span class="cm">-- Extra:</span>
+<span class="cm">--   "Using index"  = covering index ✅ (fast)</span>
+<span class="cm">--   "Using where"  = filter applied after index</span>
+<span class="cm">--   "Using filesort" = extra sort step ⚠️ (add index on ORDER BY col)</span>
+<span class="cm">--   "Using temporary" = temp table ⚠️ (avoid GROUP BY without index)</span>
+
+<span class="cm">-- Full format with cost estimates</span>
+<span class="kw">EXPLAIN</span> FORMAT=JSON <span class="kw">SELECT</span> ...;
+<span class="kw">EXPLAIN ANALYZE SELECT</span> ...;  <span class="cm">-- MySQL 8.0+ actually runs it</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Common Performance Fixes</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — QUERY OPTIMIZATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- ❌ SLOW: SELECT * fetches unnecessary columns</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="st">'x@x.com'</span>;
+
+<span class="cm">-- ✅ FAST: select only what you need</span>
+<span class="kw">SELECT</span> id, name <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="st">'x@x.com'</span>;
+
+<span class="cm">-- ❌ SLOW: N+1 problem (loop query in app code)</span>
+<span class="cm">-- for each user: SELECT * FROM orders WHERE user_id = ?</span>
+
+<span class="cm">-- ✅ FAST: single JOIN</span>
+<span class="kw">SELECT</span> u.id, u.name, COUNT(o.id) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">GROUP BY</span> u.id;
+
+<span class="cm">-- ❌ SLOW: function on indexed column kills index</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> YEAR(created_at) = <span class="nm">2024</span>;
+
+<span class="cm">-- ✅ FAST: range on the column itself</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> created_at >= <span class="st">'2024-01-01'</span> <span class="kw">AND</span> created_at < <span class="st">'2025-01-01'</span>;
+
+<span class="cm">-- ❌ SLOW: OR on different columns</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="st">'x'</span> <span class="kw">OR</span> phone = <span class="st">'y'</span>;
+
+<span class="cm">-- ✅ FAST: UNION (uses each index separately)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="st">'x'</span>
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> phone = <span class="st">'y'</span>;</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What does "Using filesort" in EXPLAIN mean and how do you fix it?</div>
+        <div class="interview-a">"Using filesort" means MySQL needs to sort the result set using an extra sorting operation (not necessarily file-based, despite the name). This is slow for large datasets. Fix: add an index on the ORDER BY column(s). If your query is WHERE status='active' ORDER BY created_at, create a composite index on (status, created_at). The query can use the index both for filtering and for sorted order, eliminating the filesort. For GROUP BY, same principle — index on the GROUP BY column(s).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the slow query log and how do you use it?</div>
+        <div class="interview-a">The slow query log records queries that exceed a time threshold (long_query_time, default 10s — set to 0.5s or 1s in practice). Enable with: SET GLOBAL slow_query_log = 'ON'; SET GLOBAL long_query_time = 1; Analyze with pt-query-digest (Percona Toolkit) to find the top time-consuming query patterns. This is the primary tool for production performance investigation — shows real-world slow queries, not theoretical ones.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mysql-joins')">← JOINs</button>
+        <button class="mark-done-btn" onclick="markDone('mysql-performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mysql-replication')">Next: Replication →</button>
+      </div>
+    </div>
+
+    <!-- ===== MYSQL REPLICATION ===== -->
+    <div id="lesson-mysql-replication" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mysql">// MYSQL</div>
+        <div class="lesson-title">🔁 MySQL Replication & Scaling</div>
+        <div class="lesson-subtitle">Master-replica replication, GTID, read scaling, and partitioning strategies.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Replication Architecture</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-mysql">Primary<br>(writes)</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <span style="color:var(--text-dimmer);font-size:11px">Binary Log</span>
+              <div class="arch-arrow">→</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="arch-box ab-green">Replica 1 (reads)</div>
+              <div class="arch-box ab-green">Replica 2 (reads)</div>
+              <div class="arch-box ab-green">Replica 3 (reads)</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-dimmer);margin-top:10px">Primary writes to binlog → Replicas apply changes asynchronously → Replication lag!</div>
+        </div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>Traditional Replication</th><th>GTID Replication</th></tr>
+          <tr><td>Failover</td><td>Manual — find binlog position</td><td>Automatic — GTID is global unique</td></tr>
+          <tr><td>Slave promotion</td><td>Complex, error-prone</td><td>Simple, automatic</td></tr>
+          <tr><td>Multi-source</td><td>Complex</td><td>Supported</td></tr>
+          <tr><td>Use today</td><td>Legacy</td><td>✅ Recommended</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Table Partitioning</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-sql">SQL — PARTITIONING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- RANGE partitioning — great for time-series data</span>
+<span class="kw">CREATE TABLE</span> events (
+  id         <span class="kw">BIGINT NOT NULL</span>,
+  event_date <span class="kw">DATE NOT NULL</span>,
+  data       <span class="kw">JSON</span>
+)
+<span class="kw">PARTITION BY RANGE</span> (YEAR(event_date)) (
+  <span class="kw">PARTITION</span> p2022 <span class="kw">VALUES LESS THAN</span> (<span class="nm">2023</span>),
+  <span class="kw">PARTITION</span> p2023 <span class="kw">VALUES LESS THAN</span> (<span class="nm">2024</span>),
+  <span class="kw">PARTITION</span> p2024 <span class="kw">VALUES LESS THAN</span> (<span class="nm">2025</span>),
+  <span class="kw">PARTITION</span> pmax  <span class="kw">VALUES LESS THAN MAXVALUE</span>
+);
+
+<span class="cm">-- Querying only 2024 partition (partition pruning!)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> events
+<span class="kw">WHERE</span> event_date <span class="kw">BETWEEN</span> <span class="st">'2024-01-01'</span> <span class="kw">AND</span> <span class="st">'2024-12-31'</span>;
+<span class="cm">-- Only scans p2024 partition — ignores all others!</span>
+
+<span class="cm">-- Drop old partition (instant operation!)</span>
+<span class="kw">ALTER TABLE</span> events <span class="kw">DROP PARTITION</span> p2022;
+<span class="cm">-- vs DELETE FROM events WHERE YEAR(event_date) = 2022; ← slow!</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is replication lag and how do you mitigate it?</div>
+        <div class="interview-a">Replication lag is the delay between a write on the primary and it appearing on replicas. Causes: heavy write load on primary, slow network, replica hardware slower than primary. Mitigation: (1) Read-your-own-writes: route reads to primary for 1-2s after a write, (2) Synchronous replication (semi-sync): primary waits for at least one replica to acknowledge before committing — reduces lag but slows writes, (3) Scale replicas: more replicas share the replication work, (4) Parallel replication: MySQL 5.7+ applies relay log in parallel by schema or transaction.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mysql-performance')">← Performance</button>
+        <button class="mark-done-btn" onclick="markDone('mysql-replication')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mongo-basics')">Next: MongoDB Core →</button>
+      </div>
+    </div>
+
+    <!-- ===== MONGO BASICS ===== -->
+    <div id="lesson-mongo-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mongo">// MONGODB</div>
+        <div class="lesson-title">📄 MongoDB Core</div>
+        <div class="lesson-subtitle">Documents, BSON, CRUD operations, and the fundamental MongoDB concepts every interview will test.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Documents & Collections</div>
+        <div class="prose">MongoDB stores data as <strong>BSON documents</strong> (Binary JSON) in <strong>collections</strong>. Unlike SQL tables, collections don't enforce a schema — each document can have different fields.</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-mongo">MONGODB — CRUD</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// INSERT</span>
+db.users.<span class="fn">insertOne</span>({
+  name: <span class="st">"Hany"</span>,
+  email: <span class="st">"hany@example.com"</span>,
+  age: <span class="nm">30</span>,
+  tags: [<span class="st">"developer"</span>, <span class="st">"backend"</span>],  <span class="cm">// arrays native</span>
+  address: {                            <span class="cm">// nested document</span>
+    city: <span class="st">"Cairo"</span>,
+    country: <span class="st">"Egypt"</span>
+  }
+});
+
+<span class="cm">// FIND — query operators</span>
+db.users.<span class="fn">find</span>({ age: { $gte: <span class="nm">25</span>, $lt: <span class="nm">35</span> } });     <span class="cm">// range</span>
+db.users.<span class="fn">find</span>({ tags: <span class="st">"developer"</span> });              <span class="cm">// match array element</span>
+db.users.<span class="fn">find</span>({ <span class="st">"address.city"</span>: <span class="st">"Cairo"</span> });        <span class="cm">// nested field</span>
+db.users.<span class="fn">find</span>({ $or: [{ age: <span class="nm">30</span> }, { age: <span class="nm">25</span> }] }); <span class="cm">// OR</span>
+db.users.<span class="fn">find</span>({ email: { $regex: <span class="st">/gmail\.com$/</span> } }); <span class="cm">// regex</span>
+
+<span class="cm">// Projection — select fields</span>
+db.users.<span class="fn">find</span>({}, { name: <span class="nm">1</span>, email: <span class="nm">1</span>, _id: <span class="nm">0</span> }); <span class="cm">// 1=include, 0=exclude</span>
+
+<span class="cm">// UPDATE</span>
+db.users.<span class="fn">updateOne</span>(
+  { _id: ObjectId(<span class="st">"..."</span>) },
+  { $set: { name: <span class="st">"Hany Updated"</span> }, $inc: { age: <span class="nm">1</span> } }
+);
+db.users.<span class="fn">updateMany</span>({ status: <span class="st">"inactive"</span> }, { $set: { archived: <span class="kw">true</span> } });
+
+<span class="cm">// DELETE</span>
+db.users.<span class="fn">deleteOne</span>({ _id: ObjectId(<span class="st">"..."</span>) });
+db.users.<span class="fn">deleteMany</span>({ createdAt: { $lt: <span class="kw">new</span> <span class="fn">Date</span>(<span class="st">'2020-01-01'</span>) } });</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Common Update Operators</div>
+        <table class="cheat-table">
+          <tr><th>Operator</th><th>What it does</th><th>Example</th></tr>
+          <tr><td>$set</td><td>Set field value</td><td>{$set: {name: "Hany"}}</td></tr>
+          <tr><td>$unset</td><td>Remove a field</td><td>{$unset: {oldField: ""}}</td></tr>
+          <tr><td>$inc</td><td>Increment a number</td><td>{$inc: {views: 1}}</td></tr>
+          <tr><td>$push</td><td>Append to array</td><td>{$push: {tags: "new"}}</td></tr>
+          <tr><td>$addToSet</td><td>Add to array if not exists (unique)</td><td>{$addToSet: {tags: "dev"}}</td></tr>
+          <tr><td>$pull</td><td>Remove from array by value</td><td>{$pull: {tags: "old"}}</td></tr>
+          <tr><td>$rename</td><td>Rename a field</td><td>{$rename: {old: "new"}}</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is BSON and how does it differ from JSON?</div>
+        <div class="interview-a">BSON (Binary JSON) is MongoDB's internal storage format. Differences from JSON: (1) Binary encoded — more efficient for storage and traversal, (2) Supports additional types not in JSON: Date, Binary, ObjectId, Decimal128, Int32, Int64 — JSON only has Number (double), (3) Includes length prefixes — can skip fields without parsing entire document, (4) Not human-readable (unlike JSON). When you use MongoDB drivers, they automatically serialize/deserialize between your language objects and BSON.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is an ObjectId?</div>
+        <div class="interview-a">ObjectId is MongoDB's default _id type — a 12-byte BSON type: 4 bytes timestamp (seconds since epoch), 5 bytes random value (machine + process), 3 bytes incrementing counter. This makes ObjectIds: globally unique without coordination between nodes, sortable by creation time (ObjectId embeds timestamp), lightweight to generate (no DB roundtrip needed). You can extract creation time: new ObjectId().getTimestamp(). Used in sharded clusters to avoid ID conflicts across shards.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mysql-replication')">← MySQL Replication</button>
+        <button class="mark-done-btn" onclick="markDone('mongo-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mongo-schema')">Next: Schema Design →</button>
+      </div>
+    </div>
+
+    <!-- ===== MONGO SCHEMA ===== -->
+    <div id="lesson-mongo-schema" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mongo">// MONGODB</div>
+        <div class="lesson-title">📊 MongoDB Schema Design</div>
+        <div class="lesson-subtitle">The most important MongoDB decision: embed vs reference. Real patterns used by production systems.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Embed vs Reference</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-mongo">MONGODB — EMBED VS REFERENCE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ✅ EMBED — when data belongs to parent, accessed together</span>
+{
+  _id: ObjectId(<span class="st">"..."</span>),
+  name: <span class="st">"Hany"</span>,
+  address: {              <span class="cm">// embedded — 1 read to get user + address</span>
+    street: <span class="st">"123 Main"</span>,
+    city: <span class="st">"Cairo"</span>
+  },
+  phones: [               <span class="cm">// embed arrays too</span>
+    { type: <span class="st">"mobile"</span>, number: <span class="st">"01011..."</span> }
+  ]
+}
+<span class="cm">// Pros: 1 read, atomicity, no $lookup needed</span>
+<span class="cm">// Cons: document grows large, can't query embedded alone</span>
+
+<span class="cm">// ✅ REFERENCE — when data is independent, accessed separately</span>
+<span class="cm">// users collection:</span>
+{ _id: ObjectId(<span class="st">"user1"</span>), name: <span class="st">"Hany"</span> }
+
+<span class="cm">// orders collection (references user):</span>
+{
+  _id: ObjectId(<span class="st">"order1"</span>),
+  userId: ObjectId(<span class="st">"user1"</span>),  <span class="cm">// reference</span>
+  items: [...],
+  total: <span class="nm">150.00</span>
+}
+<span class="cm">// Pros: independent queries, smaller docs, no data duplication</span>
+<span class="cm">// Cons: requires $lookup (JOIN equivalent), 2 reads</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Decision Framework</div>
+        <table class="cheat-table">
+          <tr><th>Embed when</th><th>Reference when</th></tr>
+          <tr><td>Data belongs to parent (address → user)</td><td>Data has independent lifecycle (orders exist after user deletion)</td></tr>
+          <tr><td>Always accessed together</td><td>Accessed independently</td></tr>
+          <tr><td>One-to-one relationship</td><td>Many-to-many relationship</td></tr>
+          <tr><td>One-to-few (user has 1-5 addresses)</td><td>One-to-many unbounded (user has millions of events)</td></tr>
+          <tr><td>Child doesn't need querying alone</td><td>You query the child collection directly</td></tr>
+        </table>
+        <div class="warn-box"><strong>⚠️ Document size limit: 16MB.</strong> Never embed unbounded arrays — a user's entire order history, all comments on a post, etc. These will hit the 16MB limit. Reference instead, or use the Bucket Pattern (group related data: {month: "2024-01", events: [...50 events]}).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you model a many-to-many relationship in MongoDB?</div>
+        <div class="interview-a">Option 1: Store arrays of references in both documents. User: {following: [userId1, userId2]}, Post: {likes: [userId1, userId3]}. Simple but arrays can grow large. Option 2: Intermediate collection (like SQL junction table). {userId: X, postId: Y, likedAt: Date} — this works well for large-scale many-to-many with metadata. Option 3: Denormalize (embed summaries). Post: {likes_count: 1203, recent_likers: [...last 5 users]}. Choice depends on query patterns and relationship scale.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does MongoDB handle transactions?</div>
+        <div class="interview-a">Since MongoDB 4.0 (replica sets) and 4.2 (sharded clusters), MongoDB supports multi-document ACID transactions similar to SQL. Use for: operations that must be atomic across multiple documents/collections (transfer between accounts). Single-document operations are ALWAYS atomic — an update to one document is atomic even without a transaction. Transactions in MongoDB have overhead — design schemas to avoid needing them by embedding related data. When you do need them: session.startTransaction(), try operations, session.commitTransaction().</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mongo-basics')">← MongoDB Core</button>
+        <button class="mark-done-btn" onclick="markDone('mongo-schema')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mongo-aggregation')">Next: Aggregation →</button>
+      </div>
+    </div>
+
+    <!-- ===== MONGO AGGREGATION ===== -->
+    <div id="lesson-mongo-aggregation" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mongo">// MONGODB</div>
+        <div class="lesson-title">🔄 Aggregation Pipeline</div>
+        <div class="lesson-subtitle">MongoDB's powerful data transformation pipeline — the equivalent of SQL's GROUP BY, JOIN, and computed columns combined.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Pipeline Stages</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-mongo">MONGODB — AGGREGATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre>db.orders.<span class="fn">aggregate</span>([
+  <span class="cm">// 1. $match — filter documents (like WHERE) — put FIRST for performance</span>
+  { $match: { status: <span class="st">"completed"</span>, createdAt: { $gte: <span class="kw">new</span> <span class="fn">Date</span>(<span class="st">"2024-01-01"</span>) } } },
+
+  <span class="cm">// 2. $lookup — LEFT JOIN another collection</span>
+  { $lookup: {
+    from: <span class="st">"users"</span>,
+    localField: <span class="st">"userId"</span>,
+    foreignField: <span class="st">"_id"</span>,
+    as: <span class="st">"user"</span>         <span class="cm">// result is an array!</span>
+  }},
+
+  <span class="cm">// 3. $unwind — flatten array from $lookup</span>
+  { $unwind: <span class="st">"$user"</span> },
+
+  <span class="cm">// 4. $group — GROUP BY equivalent</span>
+  { $group: {
+    _id: <span class="st">"$user._id"</span>,         <span class="cm">// group by user</span>
+    userName: { $first: <span class="st">"$user.name"</span> },
+    totalSpent: { $sum: <span class="st">"$total"</span> },
+    orderCount: { $sum: <span class="nm">1</span> },
+    avgOrder: { $avg: <span class="st">"$total"</span> },
+    maxOrder: { $max: <span class="st">"$total"</span> }
+  }},
+
+  <span class="cm">// 5. $project — shape output (like SELECT)</span>
+  { $project: {
+    _id: <span class="nm">0</span>,
+    userId: <span class="st">"$_id"</span>,
+    userName: <span class="nm">1</span>,
+    totalSpent: { $round: [<span class="st">"$totalSpent"</span>, <span class="nm">2</span>] },
+    orderCount: <span class="nm">1</span>
+  }},
+
+  <span class="cm">// 6. $sort — ORDER BY</span>
+  { $sort: { totalSpent: -<span class="nm">1</span> } },
+
+  <span class="cm">// 7. $limit / $skip — pagination</span>
+  { $limit: <span class="nm">10</span> }
+]);</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Key Aggregation Operators</div>
+        <table class="cheat-table">
+          <tr><th>Stage</th><th>SQL Equivalent</th><th>Key use</th></tr>
+          <tr><td>$match</td><td>WHERE</td><td>Filter — always put first!</td></tr>
+          <tr><td>$group</td><td>GROUP BY</td><td>Aggregate ($sum, $avg, $count, $push)</td></tr>
+          <tr><td>$project</td><td>SELECT (fields + computed)</td><td>Reshape, compute new fields</td></tr>
+          <tr><td>$sort</td><td>ORDER BY</td><td>Sort results</td></tr>
+          <tr><td>$lookup</td><td>LEFT JOIN</td><td>Join another collection</td></tr>
+          <tr><td>$unwind</td><td>Flatten (no SQL equiv)</td><td>Expand array to multiple docs</td></tr>
+          <tr><td>$limit / $skip</td><td>LIMIT / OFFSET</td><td>Pagination</td></tr>
+          <tr><td>$facet</td><td>Multiple GROUP BY (no SQL equiv)</td><td>Multi-dimensional aggregation</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why should $match be placed first in the pipeline?</div>
+        <div class="interview-a">$match early reduces the number of documents flowing through subsequent stages. If you have 10M documents and filter to 1,000 with $match, subsequent $lookup, $group, $sort operate on 1,000 docs instead of 10M — orders of magnitude faster. Also, $match at the start can use indexes. If $match comes after $group or $project, the query has already abandoned index usage. Golden rule: filter early, project late.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mongo-schema')">← Schema Design</button>
+        <button class="mark-done-btn" onclick="markDone('mongo-aggregation')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('mongo-performance')">Next: Mongo Performance →</button>
+      </div>
+    </div>
+
+    <!-- ===== MONGO PERFORMANCE ===== -->
+    <div id="lesson-mongo-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-mongo">// MONGODB</div>
+        <div class="lesson-title">⚡ MongoDB Indexes & Performance</div>
+        <div class="lesson-subtitle">Index types, explain(), and the patterns that make MongoDB fast at scale.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">MongoDB Index Types</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-mongo">MONGODB — INDEXES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Single field</span>
+db.users.<span class="fn">createIndex</span>({ email: <span class="nm">1</span> }, { unique: <span class="kw">true</span> });
+<span class="cm">// 1 = ascending, -1 = descending</span>
+
+<span class="cm">// Compound index — order matters (same left-prefix rule as SQL)</span>
+db.orders.<span class="fn">createIndex</span>({ userId: <span class="nm">1</span>, status: <span class="nm">1</span>, createdAt: -<span class="nm">1</span> });
+
+<span class="cm">// Multikey index — automatically created when indexing array field</span>
+db.posts.<span class="fn">createIndex</span>({ tags: <span class="nm">1</span> });
+<span class="cm">// Supports: find({ tags: "mongodb" }) ← finds docs where array contains value</span>
+
+<span class="cm">// Text index — full-text search</span>
+db.articles.<span class="fn">createIndex</span>({ title: <span class="st">"text"</span>, body: <span class="st">"text"</span> });
+db.articles.<span class="fn">find</span>({ $text: { $search: <span class="st">"mongodb performance"</span> } });
+
+<span class="cm">// TTL index — auto-delete documents after expiry</span>
+db.sessions.<span class="fn">createIndex</span>({ createdAt: <span class="nm">1</span> }, { expireAfterSeconds: <span class="nm">3600</span> });
+<span class="cm">// Sessions automatically deleted 1 hour after createdAt</span>
+
+<span class="cm">// Partial index — only index documents matching a filter</span>
+db.orders.<span class="fn">createIndex</span>(
+  { userId: <span class="nm">1</span>, createdAt: -<span class="nm">1</span> },
+  { partialFilterExpression: { status: <span class="st">"pending"</span> } }
+);
+
+<span class="cm">// Analyze query performance</span>
+db.orders.<span class="fn">find</span>({ userId: <span class="nm">123</span> }).<span class="fn">explain</span>(<span class="st">"executionStats"</span>);
+<span class="cm">// Look for: COLLSCAN (bad) vs IXSCAN (good)</span>
+<span class="cm">// totalDocsExamined should ≈ nReturned</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a TTL index in MongoDB?</div>
+        <div class="interview-a">A TTL (Time-To-Live) index automatically deletes documents after a specified time. Create with: createIndex({createdAt: 1}, {expireAfterSeconds: 86400}). MongoDB runs a background thread every 60 seconds that removes expired documents. Uses: session storage, cache collections, temporary data, logs with retention policies, OTP codes. The field must be a Date type. Note: TTL indexes only work on single-field indexes, not compound indexes.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the WiredTiger storage engine?</div>
+        <div class="interview-a">WiredTiger is MongoDB's default storage engine since MongoDB 3.2. Key features: document-level concurrency control (not collection-level like MMAPv1), compression (snappy by default — reduces disk by 80%+), MVCC for concurrent reads and writes, checkpoint-based durability with journaling. In practice: WiredTiger's document-level locking means multiple operations on different documents in the same collection don't block each other — critical for high-concurrency workloads.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mongo-aggregation')">← Aggregation</button>
+        <button class="mark-done-btn" onclick="markDone('mongo-performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('pg-basics')">Next: PostgreSQL →</button>
+      </div>
+    </div>
+
+    <!-- ===== PG BASICS ===== -->
+    <div id="lesson-pg-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-pg">// POSTGRESQL</div>
+        <div class="lesson-title">🐘 PostgreSQL Core</div>
+        <div class="lesson-subtitle">MVCC, VACUUM, schemas, sequences, and what makes PostgreSQL the most feature-rich open-source database.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">PostgreSQL Advantages Over MySQL</div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>PostgreSQL</th><th>MySQL</th></tr>
+          <tr><td>Standard compliance</td><td>Very high (SQL standard)</td><td>Moderate</td></tr>
+          <tr><td>JSONB</td><td>✅ Native indexable JSONB</td><td>✅ JSON (less powerful)</td></tr>
+          <tr><td>Full-text search</td><td>✅ Built-in, powerful</td><td>✅ Basic</td></tr>
+          <tr><td>Partitioning</td><td>✅ Declarative partitioning</td><td>✅ Partitioning</td></tr>
+          <tr><td>Custom types</td><td>✅ Composite, range, enum, domain</td><td>⚠️ Limited</td></tr>
+          <tr><td>Extensions</td><td>✅ PostGIS, TimescaleDB, pgvector</td><td>⚠️ Limited</td></tr>
+          <tr><td>CTEs</td><td>✅ Recursive CTEs, writable CTEs</td><td>✅ Non-recursive only (8.0+)</td></tr>
+          <tr><td>Concurrency</td><td>MVCC — reads never block writes</td><td>MVCC (InnoDB)</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">MVCC & VACUUM</div>
+        <div class="prose">PostgreSQL's MVCC never overwrites or deletes rows in place. Instead, it creates new versions (<strong>tuple versions</strong>). Old versions ("dead tuples") accumulate and must be cleaned by <strong>VACUUM</strong>.</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-pg">SQL — POSTGRESQL ESSENTIALS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- Sequences (PostgreSQL's auto-increment)</span>
+<span class="kw">CREATE TABLE</span> users (
+  id    <span class="kw">BIGSERIAL PRIMARY KEY</span>,   <span class="cm">-- BIGSERIAL = BIGINT + sequence</span>
+  email <span class="kw">TEXT NOT NULL UNIQUE</span>,
+  data  <span class="kw">JSONB</span>                     <span class="cm">-- JSONB: binary JSON, indexable</span>
+);
+
+<span class="cm">-- ENUM type</span>
+<span class="kw">CREATE TYPE</span> order_status <span class="kw">AS ENUM</span> (<span class="st">'pending'</span>, <span class="st">'paid'</span>, <span class="st">'shipped'</span>);
+
+<span class="cm">-- Schemas (namespaces — like databases within a database)</span>
+<span class="kw">CREATE SCHEMA</span> analytics;
+<span class="kw">CREATE TABLE</span> analytics.events (...);
+
+<span class="cm">-- VACUUM — reclaim space from dead tuples</span>
+<span class="kw">VACUUM</span> users;           <span class="cm">-- reclaim space, non-blocking</span>
+<span class="kw">VACUUM FULL</span> users;      <span class="cm">-- compact table, LOCKS TABLE (use carefully!)</span>
+<span class="kw">VACUUM ANALYZE</span> users;   <span class="cm">-- vacuum + update statistics for planner</span>
+
+<span class="cm">-- Check table bloat</span>
+<span class="kw">SELECT</span> relname, n_dead_tup, n_live_tup,
+  round(n_dead_tup::numeric / nullif(n_live_tup,<span class="nm">0</span>) * <span class="nm">100</span>, <span class="nm">2</span>) <span class="kw">AS</span> dead_pct
+<span class="kw">FROM</span> pg_stat_user_tables <span class="kw">ORDER BY</span> n_dead_tup <span class="kw">DESC</span>;</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is VACUUM in PostgreSQL and why is it needed?</div>
+        <div class="interview-a">PostgreSQL's MVCC never deletes rows in place — it marks old versions as "dead tuples." These accumulate and waste disk space. VACUUM reclaims this space and updates statistics used by the query planner. autovacuum runs automatically in the background. VACUUM FULL compacts the table to minimum size but requires an exclusive lock. Without regular VACUUM on write-heavy tables: (1) table bloat — 10GB table grows to 100GB, (2) index bloat, (3) transaction ID wraparound (critical bug preventing all writes). Monitor with pg_stat_user_tables.n_dead_tup.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between TEXT and VARCHAR in PostgreSQL?</div>
+        <div class="interview-a">In PostgreSQL, TEXT and VARCHAR(n) are stored identically — there's no performance difference. VARCHAR(n) adds a length constraint. TEXT has no length limit. The PostgreSQL documentation actually recommends TEXT or VARCHAR without a length limit over VARCHAR(n) unless you have a specific reason for the constraint. This is different from MySQL where VARCHAR has an internal representation that differs from TEXT types.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('mongo-performance')">← Mongo Performance</button>
+        <button class="mark-done-btn" onclick="markDone('pg-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('pg-advanced')">Next: PG Advanced →</button>
+      </div>
+    </div>
+
+    <!-- ===== PG ADVANCED ===== -->
+    <div id="lesson-pg-advanced" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-pg">// POSTGRESQL</div>
+        <div class="lesson-title">🚀 PostgreSQL Advanced Features</div>
+        <div class="lesson-subtitle">JSONB, recursive CTEs, partitioning, full-text search, and the features that make PostgreSQL uniquely powerful.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">JSONB — Best of Both Worlds</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-pg">SQL — JSONB</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- Store dynamic data in JSONB column</span>
+<span class="kw">CREATE TABLE</span> products (
+  id       <span class="kw">BIGSERIAL PRIMARY KEY</span>,
+  name     <span class="kw">TEXT NOT NULL</span>,
+  metadata <span class="kw">JSONB</span>              <span class="cm">-- flexible attributes</span>
+);
+
+<span class="kw">INSERT INTO</span> products (name, metadata) <span class="kw">VALUES</span>
+(<span class="st">'Laptop'</span>, <span class="st">'{"brand":"Dell","ram":16,"tags":["electronics","computing"]}'</span>);
+
+<span class="cm">-- Query JSON fields</span>
+<span class="kw">SELECT</span> metadata->>><span class="st">'brand'</span> <span class="kw">AS</span> brand  <span class="cm">-- ->> returns text</span>
+<span class="kw">FROM</span> products
+<span class="kw">WHERE</span> metadata->>><span class="st">'brand'</span> = <span class="st">'Dell'</span>
+  <span class="kw">AND</span> (metadata->>><span class="st">'ram'</span>)::<span class="kw">int</span> >= <span class="nm">16</span>;
+
+<span class="cm">-- Array containment</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> products
+<span class="kw">WHERE</span> metadata @> <span class="st">'{"tags": ["electronics"]}'</span>;  <span class="cm">-- @> = contains</span>
+
+<span class="cm">-- GIN index on JSONB (makes all queries above fast)</span>
+<span class="kw">CREATE INDEX</span> idx_metadata <span class="kw">ON</span> products USING <span class="fn">GIN</span> (metadata);
+
+<span class="cm">-- Recursive CTE — hierarchical data (categories, org charts)</span>
+<span class="kw">WITH RECURSIVE</span> category_tree <span class="kw">AS</span> (
+  <span class="cm">-- Base case: root categories</span>
+  <span class="kw">SELECT</span> id, name, parent_id, <span class="nm">0</span> <span class="kw">AS</span> depth
+  <span class="kw">FROM</span> categories <span class="kw">WHERE</span> parent_id <span class="kw">IS NULL</span>
+
+  <span class="kw">UNION ALL</span>
+
+  <span class="cm">-- Recursive case: children</span>
+  <span class="kw">SELECT</span> c.id, c.name, c.parent_id, ct.depth + <span class="nm">1</span>
+  <span class="kw">FROM</span> categories c
+  <span class="kw">JOIN</span> category_tree ct <span class="kw">ON</span> c.parent_id = ct.id
+)
+<span class="kw">SELECT</span> REPEAT(<span class="st">'  '</span>, depth) || name <span class="kw">AS</span> tree
+<span class="kw">FROM</span> category_tree;</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Table Partitioning</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-pg">SQL — DECLARATIVE PARTITIONING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- Declarative partitioning (PostgreSQL 10+)</span>
+<span class="kw">CREATE TABLE</span> measurements (
+  id          <span class="kw">BIGSERIAL</span>,
+  sensor_id   <span class="kw">INT NOT NULL</span>,
+  recorded_at <span class="kw">TIMESTAMPTZ NOT NULL</span>,
+  value       <span class="kw">NUMERIC</span>
+) <span class="kw">PARTITION BY RANGE</span> (recorded_at);
+
+<span class="cm">-- Create monthly partitions</span>
+<span class="kw">CREATE TABLE</span> measurements_2024_01
+  <span class="kw">PARTITION OF</span> measurements
+  <span class="kw">FOR VALUES FROM</span> (<span class="st">'2024-01-01'</span>) <span class="kw">TO</span> (<span class="st">'2024-02-01'</span>);
+
+<span class="kw">CREATE TABLE</span> measurements_2024_02
+  <span class="kw">PARTITION OF</span> measurements
+  <span class="kw">FOR VALUES FROM</span> (<span class="st">'2024-02-01'</span>) <span class="kw">TO</span> (<span class="st">'2024-03-01'</span>);
+
+<span class="cm">-- Queries auto-use partition pruning:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> measurements
+<span class="kw">WHERE</span> recorded_at >= <span class="st">'2024-01-01'</span> <span class="kw">AND</span> recorded_at < <span class="st">'2024-02-01'</span>;
+<span class="cm">-- Only scans measurements_2024_01!</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between JSON and JSONB in PostgreSQL?</div>
+        <div class="interview-a">JSON stores the exact input text, preserving whitespace, key order, and duplicate keys. It must be re-parsed on every operation. JSONB stores data in a decomposed binary format — parsed on write, but operations are much faster. JSONB: supports indexes (GIN indexes for containment @>, key existence ?), faster reads, smaller storage (deduplicates keys). JSON: faster writes (no parsing), preserves exact input. In practice: always use JSONB unless you specifically need to preserve the exact input format or key ordering.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('pg-basics')">← PG Core</button>
+        <button class="mark-done-btn" onclick="markDone('pg-advanced')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('pg-performance')">Next: PG Performance →</button>
+      </div>
+    </div>
+
+    <!-- ===== PG PERFORMANCE ===== -->
+    <div id="lesson-pg-performance" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-pg">// POSTGRESQL</div>
+        <div class="lesson-title">📈 PostgreSQL Performance Tuning</div>
+        <div class="lesson-subtitle">EXPLAIN ANALYZE, connection pooling, index types, and the configuration knobs that matter most.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">EXPLAIN ANALYZE</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang cl-pg">SQL — EXPLAIN ANALYZE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">-- EXPLAIN: estimated plan. EXPLAIN ANALYZE: actually runs it</span>
+<span class="kw">EXPLAIN</span> (ANALYZE, BUFFERS, FORMAT TEXT)
+<span class="kw">SELECT</span> u.name, <span class="kw">COUNT</span>(o.id)
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">WHERE</span> u.created_at > <span class="st">'2024-01-01'</span>
+<span class="kw">GROUP BY</span> u.id;
+
+<span class="cm">-- Key things to look for:</span>
+<span class="cm">-- "Seq Scan" = full table scan (maybe needs index)</span>
+<span class="cm">-- "Index Scan" = uses index ✅</span>
+<span class="cm">-- "Index Only Scan" = covering index ✅✅ (fastest)</span>
+<span class="cm">-- "Hash Join" vs "Nested Loop" — planner chooses based on row estimates</span>
+<span class="cm">-- actual time=X..Y  (X=first row, Y=all rows)</span>
+<span class="cm">-- rows=N vs actual rows=M — large diff means stale statistics!</span>
+<span class="cm">-- "Buffers: shared hit=N read=M" — hit=from cache, read=from disk</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">PostgreSQL Index Types</div>
+        <table class="cheat-table">
+          <tr><th>Index</th><th>Use case</th></tr>
+          <tr><td>B-Tree (default)</td><td>Equality, ranges, ORDER BY — everything standard</td></tr>
+          <tr><td>GIN</td><td>JSONB, arrays, full-text search (tsvector). Multiple values per row.</td></tr>
+          <tr><td>GiST</td><td>Geospatial (PostGIS), range types, nearest-neighbor</td></tr>
+          <tr><td>BRIN</td><td>Very large tables where values correlate with physical location (time-series). Tiny index.</td></tr>
+          <tr><td>Hash</td><td>Equality only (=). Slightly faster than B-Tree for equality on large values.</td></tr>
+          <tr><td>SP-GiST</td><td>Partitioned search (phone numbers, IP addresses)</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Connection Pooling</div>
+        <div class="warn-box"><strong>PostgreSQL creates a new process per connection!</strong> Each connection uses ~5-10MB RAM. 1000 connections = 5-10GB just for connections. Use a connection pooler:<br><br>
+          <strong>PgBouncer</strong> — most popular. Modes: session (one DB conn per client session), transaction (conn returned after each transaction — most efficient), statement. For most apps: transaction pooling.<br><br>
+          <strong>Pgpool-II</strong> — adds load balancing and replication routing.<br><br>
+          Typical setup: App → PgBouncer (10K client connections) → PostgreSQL (50-100 DB connections).</div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What configuration parameters most impact PostgreSQL performance?</div>
+        <div class="interview-a">Most impactful: (1) shared_buffers — PostgreSQL's buffer pool. Set to 25% of RAM. (2) work_mem — memory per sort/hash operation (watch out: can multiply by connections × operations). (3) effective_cache_size — hint to planner about total cacheable memory (OS + PG). Set to 75% of RAM. (4) max_connections — keep low, use PgBouncer. (5) checkpoint_completion_target=0.9 — spread checkpoint writes. (6) wal_buffers — WAL write buffer. Use pgtune.leopard.in to generate baseline config.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is ANALYZE and when should you run it?</div>
+        <div class="interview-a">ANALYZE collects statistics about table content (column cardinality, value distributions, correlation with physical order) and stores them in pg_statistic. The query planner uses these statistics to estimate row counts and choose optimal join strategies and index usage. autovacuum runs ANALYZE automatically. Run manually after: bulk data loads (millions of rows), major data distribution changes, after restoring from backup. Without good statistics, the planner makes poor decisions — "rows=1 estimated vs 100,000 actual" causes sequential scans where indexes should be used.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('pg-advanced')">← PG Advanced</button>
+        <button class="mark-done-btn" onclick="markDone('pg-performance')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('db-comparison')">Next: DB Comparison →</button>
+      </div>
+    </div>
+
+    <!-- ===== DB COMPARISON ===== -->
+    <div id="lesson-db-comparison" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// INTERVIEW PREP</div>
+        <div class="lesson-title">🆚 Which Database to Choose?</div>
+        <div class="lesson-subtitle">The framework for answering "which database would you use?" — the most common database interview question.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">MySQL vs PostgreSQL vs MongoDB</div>
+        <table class="cheat-table">
+          <tr><th>Aspect</th><th style="color:var(--mysql)">MySQL</th><th style="color:var(--mongo)">MongoDB</th><th style="color:#60a5fa">PostgreSQL</th></tr>
+          <tr><td>Type</td><td>Relational SQL</td><td>Document NoSQL</td><td>Relational SQL</td></tr>
+          <tr><td>Schema</td><td>Fixed, strict</td><td>Flexible, schemaless</td><td>Fixed (+ JSONB escape hatch)</td></tr>
+          <tr><td>Scaling</td><td>Vertical primary, read replicas</td><td>Horizontal (native sharding)</td><td>Vertical primary, read replicas</td></tr>
+          <tr><td>Transactions</td><td>Full ACID</td><td>ACID (4.0+, limited)</td><td>Full ACID (best-in-class)</td></tr>
+          <tr><td>Performance</td><td>Excellent for OLTP</td><td>Fast writes, flexible reads</td><td>Excellent, very configurable</td></tr>
+          <tr><td>JSON support</td><td>Basic JSON</td><td>Native (it IS JSON)</td><td>Excellent JSONB + indexes</td></tr>
+          <tr><td>Best for</td><td>Web apps, e-commerce, CMS</td><td>Catalogs, logs, flexible schemas</td><td>Complex queries, analytics, geospatial</td></tr>
+          <tr><td>Avoid when</td><td>Complex queries, advanced features</td><td>Need complex transactions</td><td>Simple CRUD at extreme scale</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Decision Framework</div>
+        <div class="success-box"><strong>Choose PostgreSQL when:</strong> Complex SQL queries with many JOINs, need full ACID transactions, advanced features (JSONB, partitioning, full-text, geospatial via PostGIS, time-series via TimescaleDB), analytics/reporting, data integrity is critical. PostgreSQL is the "default best choice" for most new projects.</div>
+        <div class="info-box" style="border-left-color:var(--mysql)"><strong style="color:var(--mysql)">Choose MySQL when:</strong> Team is highly experienced with MySQL, running on WordPress/Drupal (MySQL ecosystem), need simpler setup, existing infrastructure is MySQL-based. MySQL 8.0 has closed much of the gap with PostgreSQL.</div>
+        <div class="success-box" style="border-left-color:var(--mongo)"><strong style="color:var(--mongo)">Choose MongoDB when:</strong> Data is truly document-shaped with varying attributes (product catalogs, user profiles, CMS), schema changes frequently during development, need native horizontal sharding, team is more comfortable with JSON than SQL, hierarchical data with variable depth.</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 REAL COMPANY EXAMPLES</div>
+          <div class="analogy-text">
+            <strong>Airbnb:</strong> MySQL for core bookings (ACID needed), MongoDB for listing metadata (flexible schema).<br>
+            <strong>GitHub:</strong> MySQL for repositories, users, issues (relational data).<br>
+            <strong>The Guardian:</strong> MongoDB for flexible content model.<br>
+            <strong>Instagram:</strong> PostgreSQL for user data, Cassandra for feeds.<br>
+            <strong>Uber:</strong> PostgreSQL → MySQL (for specific scaling needs) → custom distributed DB.<br>
+            <em>Most large companies use multiple databases for different use cases.</em>
+          </div>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: MySQL vs PostgreSQL — which would you choose and why?</div>
+        <div class="interview-a">For new projects, I'd default to PostgreSQL: it's more standards-compliant, has more powerful features (JSONB, window functions, recursive CTEs, better partitioning, PostGIS), and better ACID semantics. MySQL has a larger ecosystem for web frameworks and is slightly simpler to get started. If the team has deep MySQL expertise or the stack heavily uses MySQL tooling (Vitess, PlanetScale), MySQL makes sense. MySQL 8.0 has closed many gaps but PostgreSQL still leads in features.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would MongoDB be better than PostgreSQL?</div>
+        <div class="interview-a">MongoDB excels when: (1) Data is document-centric with highly variable structure — product catalogs where different product types have completely different attributes, (2) Development speed is priority and schema evolves rapidly, (3) Need native horizontal sharding across many nodes (sharded MongoDB clusters scale more easily than PostgreSQL), (4) Workload is simple reads/writes by document ID with occasional aggregations — no complex multi-table JOINs. For most apps with relational data, PostgreSQL with JSONB columns gives you the flexibility without sacrificing SQL power.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">You're building a financial transactions system for a bank. Transfers must be atomic, balances must always be accurate, and you need complex reporting queries with multiple JOINs. Which database?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'dc','wrong')"><span class="opt-letter">A</span>MongoDB — flexible schema</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'dc','wrong')"><span class="opt-letter">B</span>Redis — fast in-memory</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'dc','correct')"><span class="opt-letter">C</span>PostgreSQL — ACID transactions + complex queries ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'dc','wrong')"><span class="opt-letter">D</span>Cassandra — high availability</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-dc-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('pg-performance')">← PG Performance</button>
+        <button class="mark-done-btn" onclick="markDone('db-comparison')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- ===== CHEATSHEET ===== -->
     <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 Database cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for interviews.</div>
-      <div class="content-section">
-        <div class="section-title">ACID & isolation</div>
-        <div class="prose">Atomicity, Consistency, Isolation, Durability. Isolation levels: Read uncommitted → Read committed → Repeatable read → Serializable. Know dirty read, non-repeatable read, phantom read.</div>
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-core">// STUDY AID</div>
+        <div class="lesson-title">📋 Full Database Cheatsheet</div>
+        <div class="lesson-subtitle">Every key concept, command, and comparison on one page. Review before your interview.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Indexes</div>
-        <div class="prose">B-tree (default), hash, composite (left-prefix rule), covering index. Indexes speed reads, slow writes, use storage.</div>
+        <div class="section-title">Core Concepts Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>ACID</td><td>Atomicity (all or nothing), Consistency (valid state), Isolation (concurrent), Durability (survives crashes)</td></tr>
+          <tr><td>MVCC</td><td>Multiple row versions for concurrent reads/writes. Readers don't block writers. Old versions need cleanup (VACUUM).</td></tr>
+          <tr><td>B-Tree index</td><td>Balanced tree, sorted. Supports equality, range, ORDER BY. Cannot help LIKE '%prefix'.</td></tr>
+          <tr><td>Covering index</td><td>Index contains all columns query needs — no table lookup. Fastest possible read.</td></tr>
+          <tr><td>Composite index</td><td>Left-prefix rule — can skip trailing columns but NOT leading ones.</td></tr>
+          <tr><td>Cardinality</td><td>Number of distinct values. High cardinality (email) = good for index. Low cardinality (boolean) = index may not help.</td></tr>
+          <tr><td>Isolation levels</td><td>READ UNCOMMITTED → READ COMMITTED → REPEATABLE READ → SERIALIZABLE. More isolation = more locking.</td></tr>
+          <tr><td>Deadlock</td><td>Two transactions waiting for each other's locks. DB kills one. Prevention: lock in consistent order.</td></tr>
+          <tr><td>N+1 problem</td><td>1 query + N queries in a loop. Fix: JOIN or eager loading.</td></tr>
+          <tr><td>Replication lag</td><td>Delay between primary write and replica read. Handle with read-your-writes routing.</td></tr>
+        </table>
       </div>
       <div class="content-section">
-        <div class="section-title">SQL & joins</div>
-        <div class="prose">INNER vs LEFT. Subqueries: EXISTS, IN, scalar. Window functions: ROW_NUMBER, RANK, DENSE_RANK, SUM OVER.</div>
+        <div class="section-title">MySQL vs PostgreSQL vs MongoDB — Quick Comparison</div>
+        <table class="cheat-table">
+          <tr><th>Choose when...</th><th style="color:var(--mysql)">MySQL</th><th style="color:var(--mongo)">MongoDB</th><th style="color:#60a5fa">PostgreSQL</th></tr>
+          <tr><td>Schema changes often</td><td>❌</td><td>✅</td><td>⚠️ (JSONB helps)</td></tr>
+          <tr><td>Complex JOINs needed</td><td>✅</td><td>❌</td><td>✅✅</td></tr>
+          <tr><td>Full ACID transactions</td><td>✅</td><td>⚠️ limited</td><td>✅✅</td></tr>
+          <tr><td>Horizontal sharding</td><td>❌ hard</td><td>✅ native</td><td>❌ hard</td></tr>
+          <tr><td>Geospatial queries</td><td>⚠️ basic</td><td>✅</td><td>✅✅ (PostGIS)</td></tr>
+          <tr><td>Document-shaped data</td><td>❌</td><td>✅✅</td><td>✅ (JSONB)</td></tr>
+          <tr><td>WordPress/Drupal</td><td>✅ ecosystem</td><td>❌</td><td>⚠️ works but uncommon</td></tr>
+        </table>
       </div>
       <div class="content-section">
-        <div class="section-title">Scaling & CAP</div>
-        <div class="prose">Read replicas (eventual consistency). Sharding (partition by key). CAP: in a partition, choose CP or AP.</div>
+        <div class="section-title">EXPLAIN Red Flags</div>
+        <table class="cheat-table">
+          <tr><th>What you see</th><th>Problem</th><th>Fix</th></tr>
+          <tr><td>Seq Scan / COLLSCAN</td><td>Full table scan</td><td>Add index on WHERE/JOIN column</td></tr>
+          <tr><td>Using filesort (MySQL)</td><td>Extra sort step</td><td>Add index on ORDER BY column</td></tr>
+          <tr><td>Using temporary (MySQL)</td><td>Temp table</td><td>Index on GROUP BY column</td></tr>
+          <tr><td>rows >> actual rows</td><td>Stale statistics</td><td>Run ANALYZE (PG) or ANALYZE TABLE (MySQL)</td></tr>
+          <tr><td>key=NULL (MySQL)</td><td>No index used</td><td>Check if function on column, add index</td></tr>
+          <tr><td>High shared read (PG)</td><td>Many disk reads</td><td>Increase shared_buffers or add covering index</td></tr>
+        </table>
       </div>
       <div class="content-section">
-        <div class="section-title">NoSQL</div>
-        <div class="prose">Document: flexible schema, nested data. Key-value: cache, sessions. Use when schema is fluid or you need horizontal scale and can relax strong consistency.</div>
+        <div class="section-title">MongoDB vs SQL Vocabulary</div>
+        <table class="cheat-table">
+          <tr><th>SQL</th><th>MongoDB</th></tr>
+          <tr><td>Database</td><td>Database</td></tr>
+          <tr><td>Table</td><td>Collection</td></tr>
+          <tr><td>Row / Record</td><td>Document</td></tr>
+          <tr><td>Column</td><td>Field</td></tr>
+          <tr><td>Primary key</td><td>_id</td></tr>
+          <tr><td>JOIN</td><td>$lookup (aggregation)</td></tr>
+          <tr><td>GROUP BY</td><td>$group (aggregation)</td></tr>
+          <tr><td>WHERE</td><td>$match (aggregation) or filter in find()</td></tr>
+          <tr><td>SELECT</td><td>$project (aggregation) or projection in find()</td></tr>
+          <tr><td>EXPLAIN</td><td>explain("executionStats")</td></tr>
+        </table>
       </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('db-comparison')">← DB Comparison</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
     </div>
+
   </main>
 </div>
+
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done-db') || '[]')), xp: parseInt(localStorage.getItem('xp-db') || '0'), totalTopics: 5 };
-function showPage(page) {
-  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (page === 'home') document.getElementById('nav-home').classList.add('active');
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-}
-function showLesson(id) {
-  document.getElementById('home-page').style.display = 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const lesson = document.getElementById('lesson-' + id);
-  if (lesson) lesson.classList.add('active');
-  const navItem = document.getElementById('nav-' + id);
-  if (navItem) navItem.classList.add('active');
-  window.scrollTo(0, 0);
-}
-function markDone(id) {
-  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-db', JSON.stringify([...state.completed])); localStorage.setItem('xp-db', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-}
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+  const TOPICS = ['db-fundamentals','acid-transactions','indexes','normalization','mysql-basics','mysql-joins','mysql-performance','mysql-replication','mongo-basics','mongo-schema','mongo-aggregation','mongo-performance','pg-basics','pg-advanced','pg-performance','db-comparison','cheatsheet'];
+  const state = {
+    completed: new Set(JSON.parse(localStorage.getItem('db-done') || '[]')),
+    xp: parseInt(localStorage.getItem('db-xp') || '0'),
+    totalTopics: TOPICS.length
+  };
+
+  function showPage(p) {
+    document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none';
+    document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x => {
+      x.classList.remove('active','m-active','mg-active','pg-active');
+    });
+    if (p === 'home') document.getElementById('nav-home').classList.add('active');
+    updateXP();
+  }
+
+  function showLesson(id) {
+    document.getElementById('home-page').style.display = 'none';
+    document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x => {
+      x.classList.remove('active','m-active','mg-active','pg-active');
+    });
+    const l = document.getElementById('lesson-' + id);
+    if (l) l.classList.add('active');
+    const n = document.getElementById('nav-' + id);
+    if (n) {
+      if (id.startsWith('mysql')) n.classList.add('m-active');
+      else if (id.startsWith('mongo')) n.classList.add('mg-active');
+      else if (id.startsWith('pg')) n.classList.add('pg-active');
+      else n.classList.add('active');
+    }
+    document.querySelector('main').scrollTo(0, 0);
+    window.scrollTo(0, 0);
+  }
+
+  function checkQuiz(btn, id, result) {
+    const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.style.pointerEvents = 'none');
+    const fb = document.getElementById('quiz-' + id + '-fb');
+    if (result === 'correct') {
+      btn.classList.add('correct');
+      fb.className = 'quiz-feedback show right';
+      fb.textContent = '✅ Correct! Well done.';
+      addXP(20);
+    } else {
+      btn.classList.add('wrong');
+      fb.className = 'quiz-feedback show wrong';
+      fb.textContent = '❌ Not quite — review the section above.';
+      opts.forEach(o => {
+        if (o.getAttribute('onclick') && o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');
+      });
+    }
+  }
+
+  function toggleAnswer(el) {
+    el.classList.toggle('open');
+    const next = el.nextElementSibling;
+    if (next && next.classList.contains('interview-a')) next.classList.toggle('open');
+  }
+
+  function markDone(id) {
+    if (!state.completed.has(id)) {
+      state.completed.add(id);
+      addXP(50);
+      localStorage.setItem('db-done', JSON.stringify([...state.completed]));
+      const n = document.getElementById('nav-' + id);
+      if (n) n.classList.add('completed');
+      const btn = event.target;
+      btn.textContent = '✓ Done!';
+    }
+    updateProgress();
+  }
+
+  function addXP(a) {
+    state.xp += a;
+    localStorage.setItem('db-xp', state.xp.toString());
+    updateXP();
+  }
+
+  function updateXP() {
+    document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = (state.completed.size / state.totalTopics) * 100;
+    document.getElementById('globalProgress').style.width = pct + '%';
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'COPIED!';
+      setTimeout(() => btn.textContent = 'COPY', 2000);
+    });
+  }
+
+  function init() {
+    state.completed.forEach(id => {
+      const n = document.getElementById('nav-' + id);
+      if (n) n.classList.add('completed');
+    });
+    updateProgress();
+    updateXP();
+  }
+  init();
 </script>
 </body>
 </html>

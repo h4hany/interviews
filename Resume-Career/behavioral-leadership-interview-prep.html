@@ -1,210 +1,1431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Behavioral & Leadership — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e; --accent: #ff6b9d; --accent3: #7c5cfc; --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d; --card-radius: 12px; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,107,157,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,157,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
-  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,107,157,0.05); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(255,107,157,0.1); color: var(--accent); border: 1px solid rgba(255,107,157,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behavioral & Leadership — Interview Mastery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#07060c;--surface:#0d0b16;--surface2:#12101e;--border:#1e1a2e;
+      --accent:#c084fc;--accent2:#f472b6;--accent3:#fb923c;--accent4:#34d399;--accent5:#60a5fa;
+      --text:#f0eaff;--text-dim:#7868a8;--text-dimmer:#221e35;
+      --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(192,132,252,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(244,114,182,0.015) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 25%,rgba(192,132,252,0.07) 0%,transparent 50%),radial-gradient(ellipse at 85% 75%,rgba(244,114,182,0.05) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(251,146,60,0.03) 0%,transparent 55%);pointer-events:none;z-index:0}
+
+    header{position:sticky;top:0;z-index:100;background:rgba(7,6,12,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+    .logo-b{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:14px;font-weight:700}
+    .logo span{color:var(--text-dim)}
+    .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));transition:width 0.5s ease;width:0%}
+    .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+
+    .app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+    nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+    .nav-item:hover{color:var(--text);background:var(--surface)}
+    .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(192,132,252,0.06)}
+    .nav-item .icon{font-size:15px;width:20px;text-align:center}
+    .nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+    .nav-item.completed .done-dot{display:block}
+    main{overflow-y:auto}
+
+    .hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+    .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px}
+    .hero h1{font-size:clamp(34px,5vw,58px);font-weight:800;line-height:1.06;margin-bottom:16px}
+    .hero h1 .hl{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+    .stat-row{display:flex;gap:28px;flex-wrap:wrap}
+    .stat{display:flex;flex-direction:column;gap:4px}
+    .stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--accent)}
+    .stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+
+    .section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+    .section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+    .sb-star{background:rgba(192,132,252,0.12);color:var(--accent);border:1px solid rgba(192,132,252,0.3)}
+    .sb-lead{background:rgba(244,114,182,0.12);color:var(--accent2);border:1px solid rgba(244,114,182,0.3)}
+    .sb-hot{background:rgba(251,146,60,0.12);color:var(--accent3);border:1px solid rgba(251,146,60,0.3)}
+    .sb-exec{background:rgba(96,165,250,0.12);color:var(--accent5);border:1px solid rgba(96,165,250,0.3)}
+    .section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;background:var(--border)}
+    .topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+    .topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+    .topic-card:hover{background:var(--surface)}
+    .topic-card:hover::before{opacity:1}
+    .cv::before{background:radial-gradient(circle at 0% 0%,rgba(192,132,252,0.1),transparent 60%)}
+    .cp::before{background:radial-gradient(circle at 0% 0%,rgba(244,114,182,0.1),transparent 60%)}
+    .co::before{background:radial-gradient(circle at 0% 0%,rgba(251,146,60,0.08),transparent 60%)}
+    .cb::before{background:radial-gradient(circle at 0% 0%,rgba(96,165,250,0.08),transparent 60%)}
+    .card-emoji{font-size:28px;margin-bottom:10px;display:block}
+    .card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+    .card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+    .card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+    .tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+    .tag.hot{background:rgba(251,146,60,0.1);color:var(--accent3);border-color:rgba(251,146,60,0.2)}
+    .tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+    .tag.amz{background:rgba(251,191,36,0.1);color:var(--yellow);border-color:rgba(251,191,36,0.2)}
+    .tag.ldr{background:rgba(192,132,252,0.1);color:var(--accent);border-color:rgba(192,132,252,0.2)}
+
+    /* LESSON */
+    .lesson-page{display:none;padding:40px 48px;max-width:960px}
+    .lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+    .lesson-breadcrumb:hover{color:var(--accent)}
+    .lesson-breadcrumb::before{content:'← '}
+    .lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+    .lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+    .e-star{color:var(--accent)}.e-lead{color:var(--accent2)}.e-hot{color:var(--accent3)}.e-exec{color:var(--accent5)}
+    .lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+    .lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:680px;font-weight:400}
+
+    .content-section{margin-bottom:44px}
+    .section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .section-title::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px;flex-shrink:0}
+    .prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+    .prose strong{color:var(--text);font-weight:700}
+    .prose .hl{color:var(--accent)}.prose .h2{color:var(--accent2)}.prose .h3{color:var(--accent3)}.prose .h4{color:var(--green)}.prose .h5{color:var(--accent5)}
+
+    /* STAR STORY */
+    .story-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+    .story-header{background:var(--surface2);padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+    .story-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent)}
+    .story-q{font-size:14px;font-weight:700;color:var(--text)}
+    .star-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+    .star-part{padding:18px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .star-part:nth-child(2n){border-right:none}
+    .star-part:nth-child(n+3){border-bottom:none}
+    .star-letter{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:6px}
+    .sl-s{color:var(--accent)}.sl-t{color:var(--accent2)}.sl-a{color:var(--accent3)}.sl-r{color:var(--green)}
+    .star-word{font-size:11px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+    .star-desc{font-size:12px;color:var(--text-dim);line-height:1.7}
+    .star-tips{padding:14px 20px;border-top:1px solid var(--border);background:rgba(192,132,252,0.03)}
+    .star-tips-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dimmer);margin-bottom:8px}
+    .star-tip{font-size:12px;color:var(--text-dim);line-height:1.75;margin-bottom:4px;padding-left:14px;position:relative}
+    .star-tip::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+    /* EXAMPLE ANSWER */
+    .example-answer{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+    .ea-header{background:var(--surface2);padding:12px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+    .ea-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent2)}
+    .ea-q{font-size:13px;font-weight:700;color:var(--text)}
+    .ea-body{padding:20px;display:grid;grid-template-columns:100px 1fr;gap:0}
+    .ea-section{display:contents}
+    .ea-tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:4px 10px;border-radius:4px;margin:8px 10px 8px 0;align-self:start;white-space:nowrap}
+    .ea-tag.sit{background:rgba(192,132,252,0.12);color:var(--accent);border:1px solid rgba(192,132,252,0.25)}
+    .ea-tag.task{background:rgba(244,114,182,0.12);color:var(--accent2);border:1px solid rgba(244,114,182,0.25)}
+    .ea-tag.act{background:rgba(251,146,60,0.12);color:var(--accent3);border:1px solid rgba(251,146,60,0.25)}
+    .ea-tag.res{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.25)}
+    .ea-text{font-size:13px;color:var(--text-dim);line-height:1.8;padding:8px 0;border-bottom:1px solid var(--border)}
+    .ea-section:last-child .ea-text{border-bottom:none}
+
+    /* BOXES */
+    .analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+    .analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+    .analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8}
+    .info-box{background:rgba(192,132,252,0.04);border:1px solid rgba(192,132,252,0.18);border-left:3px solid var(--accent);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .info-box strong{color:var(--accent)}
+    .warn-box{background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .warn-box strong{color:var(--red)}
+    .success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .success-box strong{color:var(--green)}
+
+    .cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+    .cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+    .cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+    .cheat-table tr:last-child td{border-bottom:none}
+    .cheat-table td:first-child{color:var(--accent);font-weight:700;font-size:13px}
+
+    /* PRINCIPLES */
+    .principles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin:20px 0}
+    .principle-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:18px;transition:border-color 0.2s}
+    .principle-card:hover{border-color:rgba(192,132,252,0.3)}
+    .pc-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);margin-bottom:4px}
+    .pc-title{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px}
+    .pc-desc{font-size:12px;color:var(--text-dim);line-height:1.7}
+    .pc-example{font-size:11px;color:var(--accent2);margin-top:8px;font-style:italic}
+
+    /* QUIZ */
+    .quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+    .quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin-bottom:16px}
+    .quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+    .quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+    .quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:flex-start;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+    .quiz-opt:hover{border-color:var(--accent);background:var(--surface2)}
+    .quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+    .quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+    .opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+    .quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+    .quiz-feedback.show{display:block}
+    .quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+    .quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+
+    .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+    .btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+    .btn-primary{background:var(--accent);color:var(--bg)}
+    .btn-primary:hover{box-shadow:0 0 20px rgba(192,132,252,0.35);transform:translateY(-1px)}
+    .btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+    .btn-secondary:hover{border-color:var(--accent);color:var(--text)}
+    .mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+    .mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    #home-page{display:block}
+
+    /* PREP CHECKLIST */
+    .checklist{display:flex;flex-direction:column;gap:10px;margin:16px 0}
+    .checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text-dim);line-height:1.6;cursor:pointer;transition:all 0.2s}
+    .checklist-item:hover{border-color:rgba(192,132,252,0.3)}
+    .checklist-item.checked{border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.03)}
+    .checklist-item.checked .ci-box{background:var(--green);border-color:var(--green);color:var(--bg)}
+    .ci-box{width:18px;height:18px;border-radius:4px;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s;margin-top:1px}
+
+    /* BANK */
+    .question-bank{display:flex;flex-direction:column;gap:8px}
+    .bank-q{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+    .bank-q-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px}
+    .bank-q-header:hover{background:var(--surface2)}
+    .bank-q-text{font-size:13px;font-weight:700;color:var(--text);flex:1}
+    .bank-q-tags{display:flex;gap:6px;flex-shrink:0}
+    .bank-q-toggle{color:var(--accent);font-family:'Space Mono',monospace;font-size:16px;transition:transform 0.2s;flex-shrink:0}
+    .bank-q-toggle.open{transform:rotate(45deg)}
+    .bank-q-answer{display:none;padding:0 18px 16px;color:var(--text-dim);font-size:13px;line-height:1.85;border-top:1px solid var(--border)}
+    .bank-q-answer.open{display:block}
+    .bank-q-answer .star-s{color:var(--accent);font-weight:700}
+    .bank-q-answer .star-t{color:var(--accent2);font-weight:700}
+    .bank-q-answer .star-a{color:var(--accent3);font-weight:700}
+    .bank-q-answer .star-r{color:var(--green);font-weight:700}
+  </style>
 </head>
 <body>
 <header>
-  <div class="logo">BEHAV<span>·</span>LEAD <span>// PREP</span></div>
+  <div class="logo">
+    <span class="logo-b">Behavioral &amp; Leadership</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
   <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
+
 <div class="app">
   <nav class="sidebar">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">Behavioral</div>
-    <div class="nav-item" onclick="showLesson('star')" id="nav-star"><span>⭐</span> STAR Method <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('tell-me')" id="nav-tell-me"><span>🎤</span> Tell Me About Yourself <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('tradeoff')" id="nav-tradeoff"><span>⚖️</span> Trade-offs & Conflict <span class="done-dot"></span></div>
-    <div class="nav-section-title">Leadership</div>
-    <div class="nav-item" onclick="showLesson('staff-scope')" id="nav-staff-scope"><span>👤</span> Staff/Principal Scope <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('mentoring')" id="nav-mentoring"><span>🧑‍🏫</span> Mentoring & Influence <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">🎯 Core Framework</div>
+    <div class="nav-item" onclick="showLesson('star-method')" id="nav-star-method"><span class="icon">⭐</span>The STAR Method<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('story-bank')" id="nav-story-bank"><span class="icon">🏦</span>Build Your Story Bank<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('amazon-lp')" id="nav-amazon-lp"><span class="icon">📦</span>Amazon Leadership Principles<span class="done-dot"></span></div>
+    <div class="nav-section-title">💬 Core Questions</div>
+    <div class="nav-item" onclick="showLesson('tell-me-about-yourself')" id="nav-tell-me-about-yourself"><span class="icon">🙋</span>Tell Me About Yourself<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('strengths-weaknesses')" id="nav-strengths-weaknesses"><span class="icon">💪</span>Strengths & Weaknesses<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('why-company')" id="nav-why-company"><span class="icon">🏢</span>Why This Company / Role<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('conflict-resolution')" id="nav-conflict-resolution"><span class="icon">🤝</span>Conflict & Disagreement<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('failure-learning')" id="nav-failure-learning"><span class="icon">📉</span>Failure & Learning<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('leadership-influence')" id="nav-leadership-influence"><span class="icon">👑</span>Leadership & Influence<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ambiguity-pressure')" id="nav-ambiguity-pressure"><span class="icon">🌫️</span>Ambiguity & Pressure<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('impact-ownership')" id="nav-impact-ownership"><span class="icon">🎯</span>Impact & Ownership<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('collaboration-cross')" id="nav-collaboration-cross"><span class="icon">🔀</span>Cross-team Collaboration<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('growth-curiosity')" id="nav-growth-curiosity"><span class="icon">📈</span>Growth & Learning<span class="done-dot"></span></div>
+    <div class="nav-section-title">🧠 Deep Strategy</div>
+    <div class="nav-item" onclick="showLesson('senior-questions')" id="nav-senior-questions"><span class="icon">🎖️</span>Senior / Staff Level<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('questions-to-ask')" id="nav-questions-to-ask"><span class="icon">❓</span>Questions to Ask Them<span class="done-dot"></span></div>
+    <div class="nav-section-title">Final Prep</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
   </nav>
-  <main>
+
+  <main id="mainContent">
+    <!-- HOME -->
     <div id="home-page">
       <div class="hero">
-        <h1>Master <span class="highlight">Behavioral & Leadership</span></h1>
-        <p class="hero-sub">STAR method, tell me about yourself, trade-offs, Staff/Principal scope, mentoring, and influence.</p>
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl">Behavioral &<br>Leadership</span> Interviews</h1>
+        <p class="hero-sub">The STAR method, story bank building, Amazon Leadership Principles, conflict resolution, failure stories, and every behavioral question you'll face — with real example answers and coaching on what interviewers actually look for.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Example Questions</div></div>
+          <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Sample Answers</div></div>
+          <div class="stat"><div class="stat-num">14</div><div class="stat-label">LP Deep Dives</div></div>
+        </div>
       </div>
+
+      <div class="section-header"><span class="section-badge sb-star">⭐ CORE FRAMEWORK</span><span class="section-badge-title">Master the Method First</span></div>
       <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('star')"><span class="card-emoji">⭐</span><div class="card-title">STAR Method</div><div class="card-desc">Situation, Task, Action, Result</div></div>
-        <div class="topic-card" onclick="showLesson('tell-me')"><span class="card-emoji">🎤</span><div class="card-title">Tell Me About Yourself</div><div class="card-desc">Opening pitch</div></div>
-        <div class="topic-card" onclick="showLesson('tradeoff')"><span class="card-emoji">⚖️</span><div class="card-title">Trade-offs & Conflict</div><div class="card-desc">Disagreement, failure, priorities</div></div>
-        <div class="topic-card" onclick="showLesson('staff-scope')"><span class="card-emoji">👤</span><div class="card-title">Staff/Principal Scope</div><div class="card-desc">What the role means</div></div>
-        <div class="topic-card" onclick="showLesson('mentoring')"><span class="card-emoji">🧑‍🏫</span><div class="card-title">Mentoring & Influence</div><div class="card-desc">Without authority</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+        <div class="topic-card cv" onclick="showLesson('star-method')"><span class="card-emoji">⭐</span><div class="card-title">The STAR Method</div><div class="card-desc">How to structure every behavioral answer. Situation, Task, Action, Result — with timing and common mistakes.</div><div class="card-tag-row"><span class="tag key">START HERE</span><span class="tag hot">ALWAYS USED</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('story-bank')"><span class="card-emoji">🏦</span><div class="card-title">Build Your Story Bank</div><div class="card-desc">How to prepare 8–10 versatile stories that cover all behavioral categories. Never get caught off guard.</div><div class="card-tag-row"><span class="tag key">MUST DO</span></div></div>
+        <div class="topic-card co" onclick="showLesson('amazon-lp')"><span class="card-emoji">📦</span><div class="card-title">Amazon Leadership Principles</div><div class="card-desc">All 16 LPs explained with example questions and what bar-raiser interviewers are really evaluating.</div><div class="card-tag-row"><span class="tag amz">AMAZON</span><span class="tag hot">HOT TOPIC</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-lead">💬 CORE QUESTIONS</span><span class="section-badge-title">The Questions You Will Definitely Get</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cv" onclick="showLesson('tell-me-about-yourself')"><span class="card-emoji">🙋</span><div class="card-title">Tell Me About Yourself</div><div class="card-desc">The most asked question. A clear, compelling 2-minute narrative formula that sets the tone.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cp" onclick="showLesson('strengths-weaknesses')"><span class="card-emoji">💪</span><div class="card-title">Strengths & Weaknesses</div><div class="card-desc">How to be genuine without underselling yourself or raising red flags. Real formulas that work.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('why-company')"><span class="card-emoji">🏢</span><div class="card-title">Why This Company / Role</div><div class="card-desc">How to show genuine motivation without sounding like you just read the careers page.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cp" onclick="showLesson('conflict-resolution')"><span class="card-emoji">🤝</span><div class="card-title">Conflict & Disagreement</div><div class="card-desc">"Tell me about a time you disagreed." Show maturity, respect, and principled thinking.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag ldr">LEADERSHIP</span></div></div>
+        <div class="topic-card co" onclick="showLesson('failure-learning')"><span class="card-emoji">📉</span><div class="card-title">Failure & Learning</div><div class="card-desc">The hardest question for many. How to own mistakes, show growth, and actually impress.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('leadership-influence')"><span class="card-emoji">👑</span><div class="card-title">Leadership & Influence</div><div class="card-desc">Leading without authority, motivating others, driving outcomes. For ICs and managers.</div><div class="card-tag-row"><span class="tag ldr">LEADERSHIP</span><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cp" onclick="showLesson('ambiguity-pressure')"><span class="card-emoji">🌫️</span><div class="card-title">Ambiguity & Pressure</div><div class="card-desc">Working with incomplete information, tight deadlines, competing priorities.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card co" onclick="showLesson('impact-ownership')"><span class="card-emoji">🎯</span><div class="card-title">Impact & Ownership</div><div class="card-desc">Going above and beyond. Taking ownership without being asked. Quantifying your impact.</div><div class="card-tag-row"><span class="tag amz">OWNERSHIP</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('collaboration-cross')"><span class="card-emoji">🔀</span><div class="card-title">Cross-team Collaboration</div><div class="card-desc">Working across org boundaries, aligning stakeholders, getting things done without authority.</div><div class="card-tag-row"><span class="tag ldr">LEADERSHIP</span></div></div>
+        <div class="topic-card cp" onclick="showLesson('growth-curiosity')"><span class="card-emoji">📈</span><div class="card-title">Growth & Learning</div><div class="card-desc">How you learn new skills, stay current, take feedback, and push outside your comfort zone.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge sb-exec">🎖️ SENIOR LEVEL</span><span class="section-badge-title">Staff / Senior / Lead Questions</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cb" onclick="showLesson('senior-questions')"><span class="card-emoji">🎖️</span><div class="card-title">Senior / Staff Level</div><div class="card-desc">Strategy, systems thinking, org influence, hiring bar, mentoring. What senior means behaviorally.</div><div class="card-tag-row"><span class="tag ldr">SENIOR</span><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cb" onclick="showLesson('questions-to-ask')"><span class="card-emoji">❓</span><div class="card-title">Questions to Ask Them</div><div class="card-desc">Smart questions that signal seniority, genuine interest, and help you evaluate the role.</div><div class="card-tag-row"><span class="tag key">END OF INTERVIEW</span></div></div>
       </div>
     </div>
-    <div id="lesson-star" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">⭐ STAR Method</div>
-      <div class="lesson-subtitle">Situation, Task, Action, Result.</div>
-      <div class="content-section">
-        <div class="section-title">The four parts</div>
-        <div class="prose"><strong>Situation:</strong> Set the scene in one or two sentences (team, project, constraint). <strong>Task:</strong> Your specific role and the goal you were responsible for. <strong>Action:</strong> What you did step by step; emphasize your ownership and decisions, not the team's. Use "I" not "we" where you led. <strong>Result:</strong> Measurable outcome (metrics, impact) and one takeaway or lesson. Keep the full answer to 2–3 minutes.</div>
+
+    <!-- STAR METHOD -->
+    <div id="lesson-star-method" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-star">// CORE FRAMEWORK</div>
+        <div class="lesson-title">⭐ The STAR Method</div>
+        <div class="lesson-subtitle">The universal structure for every behavioral answer. Master this and you'll be ready for any question.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Preparation</div>
-        <div class="prose">Prepare 5–7 stories that cover leadership, conflict, failure, trade-off, and technical impact. Each story should be adaptable to different questions (e.g. "Tell me about a time you disagreed" or "Describe a technical decision"). Practice out loud and trim to the key points.</div>
+        <div class="section-title">What STAR Means</div>
+        <div class="story-card">
+          <div class="story-header">
+            <span class="story-label">FRAMEWORK</span>
+            <span class="story-q">The four components of every strong behavioral answer</span>
+          </div>
+          <div class="star-grid">
+            <div class="star-part">
+              <div class="star-letter sl-s">S</div>
+              <div class="star-word">Situation</div>
+              <div class="star-desc">Set the scene briefly. What was happening? What was the context? Keep it tight — 2–3 sentences max. The interviewer needs just enough context to follow the story.</div>
+            </div>
+            <div class="star-part">
+              <div class="star-letter sl-t">T</div>
+              <div class="star-word">Task</div>
+              <div class="star-desc">What was YOUR specific responsibility? What were you trying to achieve? Make clear what was expected of you personally — not the team, not your manager. Your role.</div>
+            </div>
+            <div class="star-part">
+              <div class="star-letter sl-a">A</div>
+              <div class="star-word">Action</div>
+              <div class="star-desc">What did YOU do? This is the most important part — spend 60% of your time here. Be specific about your own decisions and actions. Use "I", not "we". Show your thinking process.</div>
+            </div>
+            <div class="star-part">
+              <div class="star-letter sl-r">R</div>
+              <div class="star-word">Result</div>
+              <div class="star-desc">What happened? Quantify where possible — numbers, percentages, time saved, revenue impact. Also include what you learned. End with impact, not just completion.</div>
+            </div>
+          </div>
+          <div class="star-tips">
+            <div class="star-tips-label">// PRO TIPS</div>
+            <div class="star-tip">Spend ~10% on S, ~10% on T, ~60% on A, ~20% on R</div>
+            <div class="star-tip">Always use "I" not "we" in the Action — own your contribution</div>
+            <div class="star-tip">Quantify results whenever possible — "reduced latency by 40%" beats "improved performance"</div>
+            <div class="star-tip">Prepare a "what I learned" addendum even when not asked — it shows growth mindset</div>
+            <div class="star-tip">Practice out loud — STAR answers feel unnatural until you've said them 10+ times</div>
+          </div>
+        </div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How long should a STAR answer be?</div>
-        <div class="interview-a">Aim for 2–3 minutes. Situation and Task: 20–30 seconds. Action: most of the time, with clear steps. Result: 20–30 seconds with numbers and a brief lesson. If the interviewer wants more, they will ask follow-ups.</div>
+      <div class="content-section">
+        <div class="section-title">Timing & Pacing</div>
+        <div class="cheat-table" style="font-size:13px">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Total Length</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">When to Use</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Risk</th></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">Under 60 seconds</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Too short — feels underprepared</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--red)">Red flag — no substance</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">90 seconds</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Simple, clear questions</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--green)">Good</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">2–3 minutes</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Complex situations — senior roles</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--green)">Ideal</td></tr>
+            <tr><td style="padding:10px 14px;color:var(--accent);font-weight:700">Over 4 minutes</td><td style="padding:10px 14px;color:var(--text-dim)">Almost never</td><td style="padding:10px 14px;color:var(--red)">Red flag — rambling</td></tr>
+          </table>
+        </div>
+        <div class="warn-box"><strong>Most common STAR mistakes:</strong> Too much Situation (the backstory isn't the point). Saying "we" throughout (they're evaluating YOU). Vague results ("things improved"). Forgetting to conclude (tail off without landing). Not being honest about your specific contribution if others were involved.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('star')">✓ Mark as done</button>
+      <div class="content-section">
+        <div class="section-title">What Interviewers Are Really Evaluating</div>
+        <div class="prose">Behavioral interviews are based on the premise that <strong>past behavior predicts future behavior</strong>. The interviewer isn't just collecting a story — they're evaluating three things simultaneously:<br><br>
+          <strong class="hl">1. Competency:</strong> Can you do the job? Do you have the skills this role requires?<br><br>
+          <strong class="h2">2. Values alignment:</strong> Do you operate in the way this company expects? (Amazon LP fit, Google's collaborative culture, startup bias-for-action etc.)<br><br>
+          <strong class="h3">3. Self-awareness:</strong> Do you know why you made the choices you did? Do you reflect and learn? Can you identify what went wrong and what you'd do differently?<br><br>
+          The best answers demonstrate all three simultaneously.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">You're answering a behavioral question. Which component should you spend the most time on?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'star','wrong')"><span class="opt-letter">A</span>Situation — the interviewer needs full context</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'star','wrong')"><span class="opt-letter">B</span>Task — your responsibilities need to be crystal clear</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'star','correct')"><span class="opt-letter">C</span>Action — this is what they're actually evaluating ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'star','wrong')"><span class="opt-letter">D</span>Result — outcomes are what matter most</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-star-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('star-method')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('story-bank')">Next: Story Bank →</button>
+      </div>
     </div>
-    <div id="lesson-tell-me" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🎤 Tell Me About Yourself</div>
-      <div class="lesson-subtitle">Opening pitch for Staff/Principal.</div>
-      <div class="content-section">
-        <div class="section-title">Structure (1–2 minutes)</div>
-        <div class="prose">(1) <strong>Who you are:</strong> Current role and years of experience. (2) <strong>Core strength:</strong> One or two technical areas (e.g. distributed systems, ML, platform). (3) <strong>Recent impact:</strong> One or two concrete outcomes with numbers (latency, cost, scale). (4) <strong>Technical leadership:</strong> How you lead (architecture, mentoring, cross-team). (5) <strong>Why this role:</strong> Brief, genuine reason (e.g. scale, problem space, team).</div>
+
+    <!-- STORY BANK -->
+    <div id="lesson-story-bank" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-star">// CORE FRAMEWORK</div>
+        <div class="lesson-title">🏦 Build Your Story Bank</div>
+        <div class="lesson-subtitle">Prepare 8–10 versatile stories before your interview. Done right, you can answer almost any behavioral question with confidence.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Example</div>
-        <div class="prose">"I'm a Staff Engineer with 10+ years in backend and data. I focus on scalable systems and ML infrastructure. Recently I led the recommendation engine that got p99 under 100ms and cut API cost by 80%. I drive architecture and mentor senior engineers. I'm excited about this role because of the scale and the chance to work on [specific area]."</div>
+        <div class="section-title">The 8 Essential Story Types</div>
+        <div class="principles-grid">
+          <div class="principle-card">
+            <div class="pc-num">STORY 01</div>
+            <div class="pc-title">🏆 Biggest Impact / Achievement</div>
+            <div class="pc-desc">Your proudest professional moment. Quantifiable result. Demonstrates what you're capable of at your best. Covers: accomplishment, ownership, results-orientation.</div>
+            <div class="pc-example">Covers: "Tell me about a project you're proud of" / "What's your biggest achievement?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 02</div>
+            <div class="pc-title">📉 Failure / Mistake</div>
+            <div class="pc-desc">A real failure — not a humble brag. Shows accountability, learning, maturity. The goal: demonstrate you can own mistakes and grow from them.</div>
+            <div class="pc-example">Covers: "Tell me about a failure" / "Biggest mistake" / "What would you do differently?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 03</div>
+            <div class="pc-title">🤝 Conflict / Disagreement</div>
+            <div class="pc-desc">A time you disagreed with someone — manager, peer, stakeholder. Shows you can navigate difficult conversations respectfully and constructively.</div>
+            <div class="pc-example">Covers: "Tell me about a disagreement" / "How do you handle conflict?" / "Pushback story"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 04</div>
+            <div class="pc-title">👑 Leadership Without Authority</div>
+            <div class="pc-desc">A time you drove something forward without having formal authority. Shows influence, communication, stakeholder management.</div>
+            <div class="pc-example">Covers: "Led without a title" / "Influenced others" / "Drove change" questions</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 05</div>
+            <div class="pc-title">⏰ Tight Deadline / Pressure</div>
+            <div class="pc-desc">A time you had to deliver under significant time or resource pressure. Shows prioritization, resilience, creative problem-solving.</div>
+            <div class="pc-example">Covers: "Deadline pressure" / "Competing priorities" / "Ambiguous situation"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 06</div>
+            <div class="pc-title">🔀 Cross-functional Collaboration</div>
+            <div class="pc-desc">A time you worked across teams, functions, or geographies to achieve something. Shows communication, empathy, organizational navigation.</div>
+            <div class="pc-example">Covers: "Work across teams" / "Align stakeholders" / "Build relationships"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 07</div>
+            <div class="pc-title">🌱 Learning Something New Fast</div>
+            <div class="pc-desc">A time you were thrown into something unfamiliar and had to learn quickly. Shows intellectual curiosity, adaptability, growth mindset.</div>
+            <div class="pc-example">Covers: "New technology" / "Outside your comfort zone" / "Dive deep" / "Steep learning curve"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">STORY 08</div>
+            <div class="pc-title">🔥 Going Beyond Your Role</div>
+            <div class="pc-desc">A time you saw a problem that wasn't your job and fixed it anyway. Shows ownership, proactiveness, initiative, and organizational awareness.</div>
+            <div class="pc-example">Covers: "Ownership" / "Initiative" / "Above and beyond" / "Bias for action"</div>
+          </div>
+        </div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Should I mention personal hobbies in "Tell me about yourself"?</div>
-        <div class="interview-a">Keep the opening pitch professional and role-focused (1–2 min). If the interviewer asks what you do outside work or you have a short, relevant hook (e.g. open source), one line is fine. Do not lead with hobbies; lead with impact and fit for the role.</div>
+      <div class="content-section">
+        <div class="section-title">Story Preparation Template</div>
+        <div class="info-box"><strong>For each story, prepare:</strong><br><br>
+          <strong>1. Headline:</strong> One sentence summary — "The time I rebuilt our CI/CD pipeline after a production outage affected 200K users."<br><br>
+          <strong>2. STAR structure written out:</strong> Not a script — bullet points for each section. Know the key beats.<br><br>
+          <strong>3. Quantified results:</strong> Find the number. Time saved, % improvement, revenue, users impacted, cost reduced.<br><br>
+          <strong>4. What you learned:</strong> Always have a reflection ready even if not asked.<br><br>
+          <strong>5. Tags:</strong> Which LP / competency does this cover? One story should cover 3–5 possible questions.
+        </div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('tell-me')">✓ Mark as done</button>
+      <div class="content-section">
+        <div class="section-title">Pre-Interview Checklist</div>
+        <div class="checklist" id="prepChecklist">
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I have 8+ distinct stories prepared and can recall them easily</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>Every story has at least one quantified result (%, $, time, users)</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I have a failure story that's honest and shows real growth</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I have a conflict story that shows I can disagree respectfully</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I've practiced "Tell me about yourself" out loud at least 5 times</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I've researched the company's values and mapped my stories to them</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I have 3–5 smart questions ready to ask the interviewer</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-box">✓</div>I know why I want THIS specific role at THIS specific company</div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('star-method')">← STAR Method</button>
+        <button class="mark-done-btn" onclick="markDone('story-bank')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('amazon-lp')">Next: Amazon LPs →</button>
+      </div>
     </div>
-    <div id="lesson-tradeoff" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">⚖️ Trade-offs & Conflict</div>
-      <div class="lesson-subtitle">Trade-off, disagreement, failure, priorities.</div>
-      <div class="content-section">
-        <div class="section-title">Trade-off and disagreement</div>
-        <div class="prose"><strong>Trade-off:</strong> Describe the situation, the options you had, the decision you made, the outcome, and what you learned. Show you weigh pros/cons and align with goals. <strong>Disagreement:</strong> Stay factual; present data or constraints; propose a compromise or path forward; say how you followed through and what the result was. Avoid blaming; focus on resolution.</div>
+
+    <!-- AMAZON LP -->
+    <div id="lesson-amazon-lp" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-hot">// AMAZON PREP</div>
+        <div class="lesson-title">📦 Amazon Leadership Principles</div>
+        <div class="lesson-subtitle">Amazon's 16 LPs are the backbone of their entire interview process. Every question maps to one or more. Know them deeply.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Failure and priorities</div>
-        <div class="prose"><strong>Failure:</strong> Own your part, explain what you changed (process, design, communication), and what you learned. Interviewers want to see accountability and growth. <strong>Priorities:</strong> How you align with stakeholders, say no with a clear rationale, and balance urgent vs important. Give a concrete example.</div>
+        <div class="section-title">All 16 Leadership Principles</div>
+        <div class="principles-grid">
+          <div class="principle-card">
+            <div class="pc-num">LP 01</div>
+            <div class="pc-title">Customer Obsession</div>
+            <div class="pc-desc">Leaders start with the customer and work backwards. They work vigorously to earn and keep customer trust. Even when the customer doesn't ask, they anticipate needs.</div>
+            <div class="pc-example">"Tell me about a time you went above and beyond for a customer (internal or external)."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 02</div>
+            <div class="pc-title">Ownership</div>
+            <div class="pc-desc">Think and act like an owner. Never say "that's not my job." Act on behalf of the entire company, not just your team. Long-term thinking.</div>
+            <div class="pc-example">"Tell me about a time you took ownership of something outside your role."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 03</div>
+            <div class="pc-title">Invent and Simplify</div>
+            <div class="pc-desc">Expect and require innovation from themselves and their teams. Find ways to simplify. Externally aware. Not constrained by "not invented here."</div>
+            <div class="pc-example">"Tell me about a time you simplified a complex process or invented a new approach."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 04</div>
+            <div class="pc-title">Are Right, A Lot</div>
+            <div class="pc-desc">Strong judgment. Seek diverse perspectives. Work to disconfirm beliefs. Update views when presented with new information.</div>
+            <div class="pc-example">"Tell me about a time you had to make a decision with limited data" / "When were you wrong?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 05</div>
+            <div class="pc-title">Learn and Be Curious</div>
+            <div class="pc-desc">Never stop learning. Explore new possibilities. Intellectual curiosity in all areas.</div>
+            <div class="pc-example">"Tell me about a time you learned something completely new" / "How do you stay current?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 06</div>
+            <div class="pc-title">Hire and Develop the Best</div>
+            <div class="pc-desc">Raise the performance bar with every hire. Recognize exceptional talent. Develop leaders. Coaches and mentors. Willing to move talent across the org.</div>
+            <div class="pc-example">"Tell me about someone you mentored or developed." / "How do you raise the bar in hiring?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 07</div>
+            <div class="pc-title">Insist on the Highest Standards</div>
+            <div class="pc-desc">Relentlessly high standards — many think too high. Continuously raise the bar. Do not accept mediocre work. Problems get fixed permanently.</div>
+            <div class="pc-example">"Tell me about a time you refused to cut corners" / "When did you raise the quality bar?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 08</div>
+            <div class="pc-title">Think Big</div>
+            <div class="pc-desc">Think differently, look around corners, communicate a bold direction. Thinking small is a self-fulfilling prophecy.</div>
+            <div class="pc-example">"Tell me about your most ambitious goal" / "When did you propose something others thought was impossible?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 09</div>
+            <div class="pc-title">Bias for Action</div>
+            <div class="pc-desc">Speed matters. Many decisions are reversible — don't over-analyze. Calculated risk taking. Default to doing.</div>
+            <div class="pc-example">"Tell me about a time you had to move fast with incomplete information."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 10</div>
+            <div class="pc-title">Frugality</div>
+            <div class="pc-desc">Accomplish more with less. Constraints breed resourcefulness and invention. No points for headcount, budget size, or fixed cost.</div>
+            <div class="pc-example">"Tell me about a time you achieved results with limited resources."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 11</div>
+            <div class="pc-title">Earn Trust</div>
+            <div class="pc-desc">Listen attentively. Speak candidly. Treat people with respect. Self-critical even when embarrassing. Benchmark themselves against the best.</div>
+            <div class="pc-example">"Tell me about a time you had to earn trust with a difficult stakeholder."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 12</div>
+            <div class="pc-title">Dive Deep</div>
+            <div class="pc-desc">Operate at all levels. Stay connected to details. Audit frequently. Skeptical when metrics differ from anecdote.</div>
+            <div class="pc-example">"Tell me about a time you dug into the details and found something others missed."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 13</div>
+            <div class="pc-title">Have Backbone; Disagree and Commit</div>
+            <div class="pc-desc">Challenge decisions when you disagree, even when uncomfortable. Once a decision is made, commit wholly. Don't capitulate just to make peace.</div>
+            <div class="pc-example">"Tell me about a time you disagreed with your manager and what you did."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 14</div>
+            <div class="pc-title">Deliver Results</div>
+            <div class="pc-desc">Focus on the key inputs. Deliver on time and quality despite setbacks. Rise to the occasion.</div>
+            <div class="pc-example">"Tell me about a time you delivered a project against significant obstacles."</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 15</div>
+            <div class="pc-title">Strive to be Earth's Best Employer</div>
+            <div class="pc-desc">Safe, productive, diverse, just, empathetic work environment. Leaders listen and act on feedback. Create conditions for success.</div>
+            <div class="pc-example">"How have you created an inclusive environment?" / "How do you care for your team's wellbeing?"</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">LP 16</div>
+            <div class="pc-title">Success and Scale Bring Broad Responsibility</div>
+            <div class="pc-desc">Approach impact on the world with humility and care. Consider community and the planet in every decision. Do better every day.</div>
+            <div class="pc-example">"How have you considered broader societal impact in your work?" / "Ethical dilemma question"</div>
+          </div>
+        </div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How do you answer "Tell me about a time you failed"?</div>
-        <div class="interview-a">Pick a real failure where you had clear ownership. Briefly describe what went wrong, what you did to fix it (and prevent recurrence), and what you learned. Keep the focus on accountability and improvement, not on blaming others or the system.</div>
+      <div class="content-section">
+        <div class="section-title">Amazon Interview Strategy</div>
+        <div class="success-box"><strong>How Amazon bar-raiser interviews work:</strong> Each interviewer is assigned 2–4 LPs to evaluate. They will ask 3–5 behavioral questions per LP, drilling down with follow-up questions ("What exactly did you do?" "What was the data?"). They want to rule out coached, generic answers. Have SPECIFIC, REAL stories. Use actual numbers. Know what YOU specifically did vs the team.</div>
+        <div class="warn-box"><strong>Amazon red flags:</strong> Generic answers with no specific details. Saying "we" without clarifying your role. Vague results ("it went well"). Not knowing the data ("I think it improved by a lot"). Stories that are all about individual heroics with no mention of collaboration. Inability to show a real failure or mistake.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('tradeoff')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('story-bank')">← Story Bank</button>
+        <button class="mark-done-btn" onclick="markDone('amazon-lp')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('tell-me-about-yourself')">Next: Tell Me About Yourself →</button>
+      </div>
     </div>
-    <div id="lesson-staff-scope" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">👤 Staff/Principal Scope</div>
-      <div class="lesson-subtitle">What the role means.</div>
-      <div class="content-section">
-        <div class="section-title">Scope of impact</div>
-        <div class="prose">Staff/Principal engineers have impact <strong>beyond a single team</strong>: they own the hardest technical problems, set architecture and quality direction, and mentor others. They are force multipliers: their decisions and standards affect many teams. They align technical strategy with business goals and often drive cross-team initiatives.</div>
+
+    <!-- TELL ME ABOUT YOURSELF -->
+    <div id="lesson-tell-me-about-yourself" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🙋 Tell Me About Yourself</div>
+        <div class="lesson-subtitle">The most asked question in every interview. It sets the tone for everything that follows. Get it right.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">What interviewers look for</div>
-        <div class="prose">Examples of leading without direct authority, making trade-offs that affect multiple teams, raising the bar (hiring, design review, standards), and owning ambiguous problems from definition to outcome. Be ready to describe scope in terms of teams affected, systems owned, and business impact.</div>
+        <div class="section-title">The Formula: Present → Past → Future</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 THE FORMULA</div>
+          <div class="analogy-text"><strong>1. Present:</strong> Who you are now — your current role, what you do, the scope of your work (2–3 sentences).<br><br><strong>2. Past:</strong> How you got here — the key experiences and decisions that are most relevant to this role (2–3 sentences).<br><br><strong>3. Future:</strong> Why you're here — what you're looking for next, and why this role/company excites you specifically (1–2 sentences).<br><br>Total: 90 seconds. Practiced, not memorized. Tailored to the specific role.</div>
+        </div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How is Staff/Principal different from Senior?</div>
-        <div class="interview-a">Senior usually means strong individual impact and some mentoring within a team. Staff/Principal implies impact across teams, ownership of technical direction or critical systems, and influence through design, standards, and mentoring. The bar is scope and multiplier effect, not just depth.</div>
+      <div class="content-section">
+        <div class="section-title">Example Answer (Software Engineer, 5 YOE)</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">Full 90-second answer — Senior SWE at a product company</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">PRESENT</span>
+              <div class="ea-text">I'm currently a senior software engineer at [Company], where I lead backend development for the payments platform. I own the architecture for our transaction processing system that handles about 2 million transactions per day, and I collaborate closely with product and data teams to shape technical direction.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag task">PAST</span>
+              <div class="ea-text">Before this, I was at a fintech startup where I built our fraud detection service from scratch — that was where I developed my deep interest in distributed systems and real-time data pipelines. I chose this path because I wanted to work on infrastructure that directly impacts financial safety at scale.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">FUTURE</span>
+              <div class="ea-text">I'm now looking for a role where I can take that expertise further — specifically in a company operating at larger scale with more complex infrastructure challenges. What drew me to [Company] is your approach to [specific technical thing you researched], and I'm excited about the opportunity to contribute to that work.</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('staff-scope')">✓ Mark as done</button>
+      <div class="content-section">
+        <div class="section-title">What to Avoid</div>
+        <div class="warn-box"><strong>Never do this:</strong> Reciting your CV chronologically from college. Saying "I was born in... I went to school at..." Starting with "So..." and rambling. Generic claims ("I'm a hard worker", "I'm passionate about technology"). Making it about your personal life unless directly relevant. Going longer than 2 minutes without being asked follow-ups.</div>
+        <div class="success-box"><strong>What makes it excellent:</strong> Tailored to THIS role — not a generic answer you use everywhere. Includes a compelling thread — there's a logic to your story. Ends with genuine, specific enthusiasm for THIS company. Sets up follow-up questions you're well-prepared to answer.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('amazon-lp')">← Amazon LPs</button>
+        <button class="mark-done-btn" onclick="markDone('tell-me-about-yourself')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('strengths-weaknesses')">Next: Strengths & Weaknesses →</button>
+      </div>
     </div>
-    <div id="lesson-mentoring" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🧑‍🏫 Mentoring & Influence</div>
-      <div class="lesson-subtitle">Without authority.</div>
-      <div class="content-section">
-        <div class="section-title">Mentoring</div>
-        <div class="prose">Give stretch assignments that are achievable with support. Do thorough but constructive code and design reviews. Pair on hard problems. Create visibility: internal talks, docs, RFCs so others can learn. Share context and "why" so mentees can make good decisions on their own. Avoid doing the work for them; unblock and advise.</div>
+
+    <!-- STRENGTHS & WEAKNESSES -->
+    <div id="lesson-strengths-weaknesses" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">💪 Strengths & Weaknesses</div>
+        <div class="lesson-subtitle">The question that trips up even experienced candidates. How to be genuine, strategic, and self-aware — all at once.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Influence without authority</div>
-        <div class="prose">Build trust with data and delivered results. Propose clear, actionable solutions (not just criticism). Run working sessions to align on design or priorities. Follow through on commitments so people rely on you. Listen first; adapt your message to your audience. Document decisions and rationale so they stick.</div>
+        <div class="section-title">Strengths — The Right Approach</div>
+        <div class="prose">Don't say "I'm a hard worker" or "I'm very dedicated." These are table stakes and say nothing. A great strength answer has three parts:<br><br>
+          <strong>1. Name the strength</strong> — specifically, something relevant to the role<br>
+          <strong>2. Show evidence</strong> — a concrete example from your work<br>
+          <strong>3. Connect to impact</strong> — how this strength creates value<br><br>
+          Best strengths to discuss: something you're genuinely excellent at, something directly relevant to the role, and ideally something that's actually somewhat rare (not "I communicate well" but "I can translate complex technical constraints into business decisions for non-technical stakeholders").</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE STRENGTH</span>
+            <span class="ea-q">Strong answer for "What's your greatest strength?"</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">STRENGTH</span>
+              <div class="ea-text">My greatest strength is systems thinking — the ability to see how individual technical decisions ripple through to product, infrastructure, and team dynamics.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">EVIDENCE</span>
+              <div class="ea-text">For example, when our team was debating whether to adopt microservices, I built a decision matrix that mapped each architectural option to our team size, deployment frequency, and 3-year growth trajectory. That helped us avoid a premature migration that would've cost ~6 months of engineering time.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">IMPACT</span>
+              <div class="ea-text">This strength has consistently let me make architectural decisions that are defensible long-term, not just locally optimal — which is especially valuable at the senior level where the cost of wrong decisions compounds.</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How do you influence a team that does not report to you?</div>
-        <div class="interview-a">Build credibility by delivering and helping (e.g. unblocking, clear designs). Propose options with trade-offs so the team can decide. Use data and examples. Run inclusive discussions (working sessions, RFCs) and document outcomes. Consistency and follow-through matter more than one-off persuasion.</div>
+      <div class="content-section">
+        <div class="section-title">Weaknesses — The Right Approach</div>
+        <div class="prose">This is where many candidates go wrong in two different ways:<br><br>
+          <strong class="hl">❌ The humble brag weakness:</strong> "I work too hard", "I'm a perfectionist", "I care too much about quality." Interviewers roll their eyes. It signals low self-awareness.<br><br>
+          <strong class="hl">❌ The actual disqualifying weakness:</strong> "I struggle with deadlines" for a fast-paced role. "I get frustrated with unclear requirements" when the role has constant ambiguity. Don't shoot yourself in the foot.<br><br>
+          <strong class="h4">✅ The right formula:</strong> Real weakness + specific context + concrete steps you're taking to address it + evidence of improvement.</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE WEAKNESS</span>
+            <span class="ea-q">Strong answer for "What's your greatest weakness?"</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">WEAKNESS</span>
+              <div class="ea-text">I've historically been reluctant to delegate. My instinct is to own the entire solution myself because I worry about quality if I hand things off.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag task">CONTEXT</span>
+              <div class="ea-text">This became a real problem last year when I was leading a team of 4 engineers. I was becoming a bottleneck — reviewing every PR in detail, often rewriting code I should have been coaching on instead.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTIONS</span>
+              <div class="ea-text">I started being deliberate about it — I set a rule for myself: I only review architecture and critical path code myself, and I document my standards so others can apply them. I started having weekly 1:1s focused on code review skills, not just output.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">PROGRESS</span>
+              <div class="ea-text">Over the past 6 months, our team velocity improved meaningfully, and two junior engineers grew to the point where they're now leading their own features. I still monitor myself on this, but I've improved significantly.</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('mentoring')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('tell-me-about-yourself')">← Tell Me About Yourself</button>
+        <button class="mark-done-btn" onclick="markDone('strengths-weaknesses')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('why-company')">Next: Why This Company →</button>
+      </div>
     </div>
+
+    <!-- WHY COMPANY -->
+    <div id="lesson-why-company" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🏢 Why This Company / Role</div>
+        <div class="lesson-subtitle">Interviewers can immediately tell the difference between genuine enthusiasm and a rehearsed answer. Here's how to be genuinely compelling.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">The 3-Layer Answer</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 STRUCTURE</div>
+          <div class="analogy-text"><strong>Layer 1 — The Company:</strong> Something specific about what the company does, how they do it, or the problem they're solving that genuinely excites you. Not "you're a great company" but "the way you approached [X] was interesting to me because..."<br><br><strong>Layer 2 — The Role:</strong> How this specific role aligns with where you want to grow. What skills will you develop? What problems will you work on? Why is this the right next step for your career?<br><br><strong>Layer 3 — The Match:</strong> Why are YOU right for this? Bridge your background to their needs.</div>
+        </div>
+        <div class="warn-box"><strong>What NOT to say:</strong> "You offer great compensation." "You have good work-life balance." "It's a prestigious company." These are reasons to take an offer, not reasons you're excited. "I've always wanted to work here" with nothing substantive behind it. Generic praise: "Your culture is amazing" — amazing how?</div>
+        <div class="success-box"><strong>How to prepare this properly:</strong> Read 3–5 recent company blog posts or engineering blogs. Look at what the team ships (GitHub, changelog, product releases). Read recent news. Talk to someone who works there if possible. Find one or two things that genuinely interest you — even if small. That specificity is gold.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Why do you want to leave your current role?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Focus on what you're moving TOWARD, not what you're escaping. Negative framing about your current employer is a red flag. "I've learned a lot and accomplished X, and I'm now looking for a role where I can [grow in specific direction]. Your company's work on [Y] aligns with exactly where I want to go." If your current company has real issues, you can acknowledge "limited growth opportunity" briefly but don't dwell.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Where do you see yourself in 5 years?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">They want to know: Will you stay? Are you ambitious in a way that aligns with this role? Are your goals realistic? Formula: describe a direction (not a specific title), connect it to this role, and show it's grounded. "In 5 years I'd like to be working on [X type of problems] with greater scope — ideally having grown into a senior/staff/lead role where I'm contributing to technical direction and mentoring others. This role seems like a strong foundation for that path because..."</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"What do you know about our company?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">This is a research test disguised as a question. Mention: their main product/service and how they make money, one recent development (product launch, company news, engineering blog post), why their approach is interesting. Keep it to 3–4 focused sentences. Don't recite their Wikipedia page. End with a question or connection to your own experience to show genuine curiosity.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('strengths-weaknesses')">← Strengths & Weaknesses</button>
+        <button class="mark-done-btn" onclick="markDone('why-company')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('conflict-resolution')">Next: Conflict →</button>
+      </div>
+    </div>
+
+    <!-- CONFLICT -->
+    <div id="lesson-conflict-resolution" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🤝 Conflict & Disagreement</div>
+        <div class="lesson-subtitle">One of the most revealing behavioral questions. How you handle conflict shows your maturity, values, and communication skills all at once.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">What Interviewers Are Really Looking For</div>
+        <div class="prose">When they ask "tell me about a time you disagreed with someone," they are not looking for a story where you were right and the other person came around. They're evaluating:<br><br>
+          <strong>Can you disagree without being disagreeable?</strong> Do you stay professional and respectful under pressure?<br><br>
+          <strong>Do you argue with data or with emotion?</strong> Can you make a principled case for your position?<br><br>
+          <strong>Can you commit after losing an argument?</strong> Do you sabotage or genuinely support decisions you disagreed with?<br><br>
+          <strong>Do you understand the other person's perspective?</strong> Or are you just waiting for your turn to talk?</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Example Answer</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about a time you disagreed with your manager / a peer."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">About 18 months ago, our team was under pressure to ship a major feature. My manager wanted to skip writing integration tests for the new payment module to hit the deadline. I disagreed — our payment processing service had already had two incidents that quarter, and I felt we were taking on unacceptable risk.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag task">TASK</span>
+              <div class="ea-text">I needed to either convince my manager to change course, or find a way to de-risk the launch without slipping the deadline — while maintaining a constructive working relationship.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTION</span>
+              <div class="ea-text">Rather than pushing back in the moment, I prepared my case. I pulled the incident data from the previous two quarters and estimated the engineering cost of those incidents — about 3 engineer-weeks of firefighting. I then estimated that writing core integration tests would take 2 days. I brought this to my manager in a 1:1 with a concrete proposal: write tests for the three highest-risk code paths only, defer the rest to the following sprint. I framed it as a business risk question, not a technical preference.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">RESULT</span>
+              <div class="ea-text">My manager agreed to the targeted testing approach. We shipped on time, caught a critical edge case in one of those tests that would have been a production incident, and avoided what I estimated would've been a 2-day outage. The experience also established a pattern on our team of using incident data to inform risk tradeoffs — something my manager has referenced in planning discussions since.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you disagreed with a decision that was made."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show the disagreement was principled (you had a real reason, not just preference). Show you raised it through the right channels (directly with the decision-maker, with data, privately before publicly). If the decision stood: show you committed fully and didn't undermine. Key quote to internalize: "Disagree and commit." Your job ends at the decision point — after that, you execute as if you agreed.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"How do you handle a difficult coworker or stakeholder?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">First, understand: what is their actual concern? Most "difficult" people have a legitimate concern that isn't being heard. Show empathy — try to understand their perspective first, not just defend yours. Use specific communication approaches: direct 1:1 conversation before escalation, seeking to understand their priorities, finding common ground. Never badmouth the person. Frame any escalation as a last resort, not a first instinct.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('why-company')">← Why Company</button>
+        <button class="mark-done-btn" onclick="markDone('conflict-resolution')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('failure-learning')">Next: Failure & Learning →</button>
+      </div>
+    </div>
+
+    <!-- FAILURE -->
+    <div id="lesson-failure-learning" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">📉 Failure & Learning</div>
+        <div class="lesson-subtitle">The question that separates self-aware candidates from everyone else. A great failure story can be the most impressive thing you say in the entire interview.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Why This Question Matters So Much</div>
+        <div class="prose">No candidate with 5+ years of experience has never failed. The interviewer knows this. What they're evaluating is not whether you've failed — <strong>it's how you relate to failure</strong>.<br><br>
+          A candidate who can't produce a real failure story signals: low self-awareness, defensiveness, fear of vulnerability, or unwillingness to take risks. None of these are good.<br><br>
+          A candidate who can describe a significant failure with clarity, ownership, and genuine insight into what they learned signals: maturity, self-awareness, intellectual honesty, and psychological safety — all highly valued attributes.</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 THE FORMULA</div>
+          <div class="analogy-text"><strong>The 5 elements of a perfect failure story:</strong><br><br>
+            1. <strong>Real stake:</strong> The failure should have actually mattered — real impact, not a trivial mistake<br>
+            2. <strong>Your contribution:</strong> Clear ownership of your role in causing it — not blame-shifting<br>
+            3. <strong>What happened:</strong> Honest account of the events and decisions<br>
+            4. <strong>What you learned:</strong> Specific insight, not generic ("I learned to communicate better")<br>
+            5. <strong>How it changed you:</strong> Evidence that this lesson actually changed your behavior</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Example Answer</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about your biggest professional failure."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">In my second year at [Company], I was leading the migration of our core user database from PostgreSQL to a distributed architecture. I was confident in the technical approach and communicated to stakeholders we'd be ready to cut over by a specific date.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag task">THE FAILURE</span>
+              <div class="ea-text">I underestimated the complexity of the data consistency verification phase by about 3 weeks. When we approached the cut-over date, I had to tell the VP of Engineering that we'd miss it — with two weeks' notice. The feature launch that depended on this migration also slipped, causing meaningful business impact.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">MY ROLE</span>
+              <div class="ea-text">Looking back, I made two critical mistakes. First, I gave estimates without surfacing my assumptions — I assumed we'd have 100% data fidelity but hadn't scoped the verification work properly. Second, I waited until I was certain we'd miss before raising the flag. I should have flagged risk as soon as I had doubts, not after it was confirmed.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">LEARNING</span>
+              <div class="ea-text">This fundamentally changed how I estimate and communicate risk. I now always break large milestones into weekly check-ins with clear go/no-go criteria. I've adopted a rule: if I have more than 20% uncertainty about a deadline, I surface it immediately with a range estimate, not a single date. In the 18 months since, I've led three major migrations and communicated accurate timelines on all three.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="warn-box"><strong>Failure answer mistakes:</strong> Picking something so small it doesn't qualify as a real failure. Blaming external factors ("the requirements kept changing") without owning your piece. Listing a failure but no insight into why. Generic learning ("I learned to communicate better"). Not showing how the learning changed your actual behavior after.</div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('conflict-resolution')">← Conflict</button>
+        <button class="mark-done-btn" onclick="markDone('failure-learning')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('leadership-influence')">Next: Leadership →</button>
+      </div>
+    </div>
+
+    <!-- LEADERSHIP -->
+    <div id="lesson-leadership-influence" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">👑 Leadership & Influence</div>
+        <div class="lesson-subtitle">Leadership isn't about having a title. It's about driving outcomes, developing others, and creating clarity in ambiguous situations.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Leadership Without Authority</div>
+        <div class="prose">Most behavioral leadership questions — especially for senior ICs — are about <strong>influencing without formal authority</strong>. Getting other teams to prioritize your work. Getting stakeholders to agree to a direction. Driving a cross-team initiative without being the manager.</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about a time you led a project without being the manager."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">Our platform had an observability gap — engineers across 4 different teams were spending ~20% of their time debugging production issues that should've been catchable in monitoring. No single team owned the problem, and it had been discussed in retrospectives for 6 months with no action.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag task">TASK</span>
+              <div class="ea-text">I decided to drive this forward even though it wasn't in my roadmap. I had no authority over the other teams, no budget, and no management backing — just conviction that this was worth solving.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTION</span>
+              <div class="ea-text">I started by quantifying the problem — I pulled data from our incident tracker and calculated we'd lost roughly 800 engineer-hours to these issues in the prior quarter across teams. That gave me a business case that made the problem feel urgent, not theoretical. I then scheduled 30-minute chats with tech leads from each team — not to pitch a solution, but to understand their pain points. Once I understood the actual blockers (inconsistent logging format was the root cause), I proposed a minimal shared schema standard and volunteered to write the RFC, the initial libraries, and the migration docs. I made it easy for each team to say yes by reducing their required effort to near zero.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">RESULT</span>
+              <div class="ea-text">Within 6 weeks, all 4 teams had adopted the standard. In the following quarter, mean time to resolution on incidents dropped from 4.2 hours to 1.1 hours. The work was eventually formalized and I was asked to present it at our engineering all-hands. What started as a side project became a company standard used by 8 teams.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you mentored or developed someone."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show that you invest in people deliberately, not accidentally. Specific: what was their gap? What approach did you take? What changed for them? Quantify if possible: promoted, led their first feature, grew from L3 to L4, took ownership of X. This demonstrates leadership multiplier — you make others better, not just yourself.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you motivated a team through a difficult period."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show empathy first — you understood why it was hard. Then show what concrete actions you took (not just morale speeches). Example: created a weekly wins email to highlight progress during a grinding migration. Advocated to cut scope to protect team health. Created a shared celebration ritual for milestones. Shield the team from pressure above while maintaining momentum.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('failure-learning')">← Failure</button>
+        <button class="mark-done-btn" onclick="markDone('leadership-influence')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ambiguity-pressure')">Next: Ambiguity →</button>
+      </div>
+    </div>
+
+    <!-- AMBIGUITY -->
+    <div id="lesson-ambiguity-pressure" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🌫️ Ambiguity & Pressure</div>
+        <div class="lesson-subtitle">Operating with incomplete information, competing priorities, and tight deadlines. This separates senior performers from junior ones.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">What Ambiguity Tolerance Looks Like</div>
+        <div class="prose">Senior roles operate in constant ambiguity. The ability to move forward confidently with incomplete information — while managing the risks of doing so — is a key differentiator between senior and junior engineers/PMs/leaders.<br><br>
+          What they're looking for:<br>
+          <strong>Do you break down the ambiguity</strong> rather than waiting for clarity that may never come?<br>
+          <strong>Do you make your assumptions explicit</strong> so they can be corrected?<br>
+          <strong>Do you make reversible decisions</strong> when you can't be certain?<br>
+          <strong>Do you escalate efficiently</strong> — getting the minimum information needed?</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about a time you had to make a decision with limited information."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">We had a production alert at 2am — our checkout conversion rate had dropped 18% in the past hour. I was the on-call engineer with no immediate access to product or business stakeholders. No clear error in the logs — the service was technically healthy but users were dropping off.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTION</span>
+              <div class="ea-text">I had to act with incomplete information. I started by ruling out our infrastructure — no anomalies. I then checked our third-party dependencies and found our payment processor's status page showed a partial degradation in one region that wasn't yet officially acknowledged. I made a judgment call: roll back our last deployment (deployed 4 hours prior, best available hypothesis) and document my assumption explicitly. I sent a brief incident update: "Rolling back as a precautionary measure; suspected third-party degradation. Monitoring. Will update in 15 min."</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">RESULT</span>
+              <div class="ea-text">Conversion recovered to baseline within 8 minutes of the rollback. The root cause turned out to be an interaction between our new checkout code and the processor's partial degradation — the rollback was the right call. The incident review praised the explicit assumption documentation, which made the post-mortem analysis much faster.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you had to prioritize competing demands."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show your framework. How do you decide what to work on? Impact vs effort matrix? Dependencies? Alignment to company goals? Show you don't just pick randomly or defer to whoever shouts loudest. Demonstrate stakeholder communication: you told the people whose work was deprioritized why, and what the timeline would be. Never ghost a stakeholder — even a "not now, here's why" is better than silence.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"How do you handle working on something where the requirements keep changing?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show you embrace adaptability without being rudderless. Good answers: break work into smaller deliverables so pivots are cheap. Separate the invariant core from the variable surface (some things won't change; build those first). Explicitly surface the cost of changes to stakeholders so they can make informed decisions. Ask early what's most likely to change, and what would be catastrophic to change late — then architect around that.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('leadership-influence')">← Leadership</button>
+        <button class="mark-done-btn" onclick="markDone('ambiguity-pressure')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('impact-ownership')">Next: Impact & Ownership →</button>
+      </div>
+    </div>
+
+    <!-- IMPACT & OWNERSHIP -->
+    <div id="lesson-impact-ownership" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🎯 Impact & Ownership</div>
+        <div class="lesson-subtitle">Taking initiative, going beyond your job description, and quantifying the difference you made.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Quantifying Impact</div>
+        <div class="prose">The single most common weakness in behavioral answers is vague results. "Improved performance" means nothing. "Reduced page load time from 4.2s to 1.1s, increasing checkout conversion by 12%, worth approximately $800K ARR" — that tells a story.<br><br>
+          <strong>How to find your numbers:</strong><br>
+          — Time saved: how many hours per week/month, across how many people?<br>
+          — Revenue: what was the conversion rate improvement, what was the revenue at stake?<br>
+          — Reliability: P99 latency before/after, error rate before/after, incidents avoided<br>
+          — Scale: number of users affected, transactions per second, data volume<br>
+          — Team impact: how many engineers unblocked, velocity change, hiring bar raised<br><br>
+          If you don't know the exact number, estimate and say so: "I estimate we saved roughly X based on Y assumption."</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about a time you went above and beyond your role."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">Our mobile app had a persistent crash rate of ~0.8% that no one was prioritizing — it was "known" but not in anyone's roadmap. I was a backend engineer, so mobile crashes were technically not my responsibility at all.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTION</span>
+              <div class="ea-text">I spent a Friday afternoon digging into our crash reporting tool. I traced most crashes to a race condition in how the app was handling our API's pagination response on slow connections. I wrote up a 1-page analysis with a proposed API fix on the backend side that would eliminate the race condition. I sent it to the mobile team lead and offered to implement the backend changes. They were skeptical but agreed to test it.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">RESULT</span>
+              <div class="ea-text">The fix reduced crash rate from 0.8% to 0.06% — a 92% reduction. App Store rating improved from 3.8 to 4.2 stars over the following 6 weeks. My manager used this as an example in my performance review of "acting like an owner, not a job description." It also established a better working relationship between the backend and mobile teams.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ambiguity-pressure')">← Ambiguity</button>
+        <button class="mark-done-btn" onclick="markDone('impact-ownership')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('collaboration-cross')">Next: Collaboration →</button>
+      </div>
+    </div>
+
+    <!-- COLLABORATION -->
+    <div id="lesson-collaboration-cross" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">🔀 Cross-team Collaboration</div>
+        <div class="lesson-subtitle">Getting things done across org boundaries. Aligning stakeholders with different priorities. The skill that unlocks senior-level impact.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">The Core Challenge</div>
+        <div class="prose">Every company has silos. Every team has their own roadmap, their own metrics, their own pressures. Getting people to work together across these boundaries is genuinely hard — and it's one of the most valued skills at senior levels.<br><br>
+          What interviewers want to see: <strong>how do you align people who don't report to you?</strong> How do you handle a team that deprioritizes your work? How do you build relationships across functions?</div>
+        <div class="example-answer">
+          <div class="ea-header">
+            <span class="ea-label">EXAMPLE</span>
+            <span class="ea-q">"Tell me about a time you had to work with a difficult cross-functional team."</span>
+          </div>
+          <div class="ea-body">
+            <div class="ea-section">
+              <span class="ea-tag sit">SITUATION</span>
+              <div class="ea-text">We needed the security team to review and approve a major infrastructure change before we could launch. They had a 6-week backlog and our launch was in 3 weeks. Their standard response was "submit a ticket and wait."</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag act">ACTION</span>
+              <div class="ea-text">Rather than escalating to management (which would create resentment), I reached out directly to the security team lead — not to complain, but to understand their situation. I learned they were under-resourced and that most of their backlog was from incomplete submissions. I offered to work with their guidelines to make our submission as complete as possible upfront, reducing their review time. I also offered to do a joint sync — 30 minutes with their engineer to walk through our architecture directly rather than doing async review. I prepared a security-focused architecture doc that addressed every question I anticipated they'd have.</div>
+            </div>
+            <div class="ea-section">
+              <span class="ea-tag res">RESULT</span>
+              <div class="ea-text">They completed the review in 4 days instead of 6 weeks. The security engineer told me it was the most complete submission they'd ever received. We launched on time. I now have a direct relationship with the security team, which has accelerated every compliance review since. The lesson: understand the other team's constraints before assuming they're being obstructive.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('impact-ownership')">← Impact</button>
+        <button class="mark-done-btn" onclick="markDone('collaboration-cross')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('growth-curiosity')">Next: Growth →</button>
+      </div>
+    </div>
+
+    <!-- GROWTH -->
+    <div id="lesson-growth-curiosity" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-lead">// CORE QUESTIONS</div>
+        <div class="lesson-title">📈 Growth & Learning</div>
+        <div class="lesson-subtitle">Growth mindset in action. How you learn, how you take feedback, and how you push beyond your comfort zone.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you had to learn a new skill quickly."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show your learning process, not just the outcome. How did you approach an unfamiliar domain? What resources did you use? How did you validate your understanding? Strong answers show: intentional learning strategy, being comfortable with being a beginner, applying the skill quickly and imperfectly before mastering it. Include: how long it took, what you delivered with the new skill, and ideally how you then shared that knowledge with others.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you received critical feedback. How did you react?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show that you can receive feedback without becoming defensive. The ideal arc: received feedback → initial reaction (it's okay to admit your first reaction was defensive, that's honest) → reflection → changed behavior → outcome. Never claim you have no emotional reaction to criticism — that's not credible. Show you process it thoughtfully and act on it. Bonus: if you proactively sought feedback — that's even better than receiving it.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"How do you stay current with technology / your field?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Be specific — not "I read tech blogs." Name the resources. Show judgment: you don't just consume, you evaluate and apply. Show that learning flows into your work: "I read about X, built a POC, and we ended up adopting it." Great answers also include learning from peers, open source contributions, conferences, and teaching others. Teaching is the strongest form of learning.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Describe a time you stepped out of your comfort zone."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show that you actively seek discomfort as a growth mechanism, not just that you tolerate it when forced. Best stories: you chose to take on something you weren't qualified for yet, knew you'd fail initially, and did it anyway because the growth was worth it. Include the initial discomfort — the vulnerability makes it credible. Show what changed as a result. Candidates who only operate in their areas of strength are plateaued — interviewers know this.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('collaboration-cross')">← Collaboration</button>
+        <button class="mark-done-btn" onclick="markDone('growth-curiosity')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('senior-questions')">Next: Senior Level →</button>
+      </div>
+    </div>
+
+    <!-- SENIOR -->
+    <div id="lesson-senior-questions" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-exec">// SENIOR LEVEL</div>
+        <div class="lesson-title">🎖️ Senior / Staff Level Questions</div>
+        <div class="lesson-subtitle">At senior and staff levels, the bar shifts from "can you execute?" to "can you drive organizational outcomes and raise the collective bar?"</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">What "Senior" Means Behaviorally</div>
+        <div class="cheat-table">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Dimension</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Mid-level</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Senior / Staff</th></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">Scope</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Feature / component</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">System / org / strategy</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">Ambiguity</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Needs clear requirements</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Creates clarity for others</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">Influence</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Within team</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Across org / externally</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">Multiplier</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Individual output</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Makes team 2× more effective</td></tr>
+            <tr><td style="padding:10px 14px;color:var(--accent);font-weight:700">Decision-making</td><td style="padding:10px 14px;color:var(--text-dim)">Asks for decision guidance</td><td style="padding:10px 14px;color:var(--text-dim)">Drives decisions with data</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Senior-Level Question Bank</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you shaped the technical direction of a team or org."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show: you identified a technical problem or opportunity beyond your immediate scope. You did the work to make a case (data, prototypes, RFCs). You influenced decision-makers and peers. The direction changed as a result. At staff level: this should be multi-team or org-wide. Show the thought process, not just the outcome — how did you build consensus? What tradeoffs did you navigate? How did you handle pushback?</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"How have you raised the technical bar on your team?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Concrete examples matter here: started a code review standard, introduced a design doc practice, created an oncall runbook, set up a learning club, wrote testing guidelines. Show systematic change, not one-off acts. Ideally: show that after you left or moved on, the practice continued — that means it was institutionalized, not just personal.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"Tell me about a time you had to make a difficult tradeoff between short-term and long-term."</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show you understand that technical debt, scope, and quality are all in tension with business pressure. Strong answers don't pretend there's always a clean answer — they show you made the tradeoff deliberately, communicated the cost, created a plan to address it, and followed through. Avoid: stories where you always chose the "right" long-term solution. Sometimes the short-term was the right call — show you understand why.</div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">"How do you approach hiring? What are you looking for?"</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">Show you have a philosophy, not just a process. What attributes predict success at your company that aren't obvious? How do you look past polish and nerves to find real signal? Discuss: your approach to evaluating culture add vs culture fit, how you look for learning agility, how you give feedback after interviews. At senior levels: show you take hiring seriously as a force multiplier, not as a chore.</div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('growth-curiosity')">← Growth</button>
+        <button class="mark-done-btn" onclick="markDone('senior-questions')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('questions-to-ask')">Next: Questions to Ask →</button>
+      </div>
+    </div>
+
+    <!-- QUESTIONS TO ASK -->
+    <div id="lesson-questions-to-ask" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-exec">// SENIOR LEVEL</div>
+        <div class="lesson-title">❓ Questions to Ask Them</div>
+        <div class="lesson-subtitle">The questions you ask at the end of an interview reveal as much about you as your answers. Ask smart questions. Get real signal.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Questions That Make You Stand Out</div>
+        <div class="question-bank">
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">About the Team & Work</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">
+              "What does success look like for someone in this role after 6 months? After 12?"<br><br>
+              "What's the hardest part of this role that I wouldn't find out until I started?"<br><br>
+              "What are the biggest technical or organizational challenges the team is working through right now?"<br><br>
+              "How does the team make architectural decisions? Who has the final say?"<br><br>
+              "What does on-call look like? How often do incidents happen, and how are they handled?"
+            </div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">About the Manager & Culture</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">
+              "How do you typically give feedback to your reports? How do you prefer to receive it?"<br><br>
+              "What does the best version of your team look like 2 years from now?"<br><br>
+              "How has the team changed in the last year? What drove those changes?"<br><br>
+              "What are the things you wish you'd known before joining this team?"<br><br>
+              "How does this team celebrate wins and process failures?"
+            </div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">About Growth & Career</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">
+              "What do the most successful engineers at this level here have in common?"<br><br>
+              "Can you tell me about someone who joined this team at this level and has grown significantly? What did that path look like?"<br><br>
+              "Where do the people who leave this team typically go? What do they go on to do?"<br><br>
+              "What would I need to do in year one to be considered for promotion into [next level]?"
+            </div>
+          </div>
+          <div class="bank-q">
+            <div class="bank-q-header" onclick="toggleBank(this)">
+              <span class="bank-q-text">Questions to AVOID</span>
+              <span class="bank-q-toggle">+</span>
+            </div>
+            <div class="bank-q-answer">
+              ❌ "What's the salary?" — save for offer stage<br><br>
+              ❌ "How many vacation days do you have?" — signals you're thinking about time off before you've even started<br><br>
+              ❌ Questions you could easily Google — shows you didn't prepare<br><br>
+              ❌ "What does your company do?" — you should already know this<br><br>
+              ❌ "Is there anything I said today that concerns you?" — too aggressive and puts them on the spot; better to ask "Is there anything you'd like me to elaborate on?" if you want to address gaps.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="info-box"><strong>The real purpose of your questions:</strong> You're not just gathering information — you're showing that you think at a level where these questions matter to you. Questions about team culture, decision-making process, and success metrics signal someone who has been in the trenches and knows what actually matters. Ask 2–3 genuine questions. Don't ask all of them — that feels like a checklist.</div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('senior-questions')">← Senior Questions</button>
+        <button class="mark-done-btn" onclick="markDone('questions-to-ask')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- CHEATSHEET -->
     <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 Behavioral & Leadership cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for interviews.</div>
-      <div class="content-section">
-        <div class="section-title">STAR</div>
-        <div class="prose">Situation (context) → Task (your goal) → Action (what you did, "I" not "we") → Result (metrics + lesson). 2–3 min. Prepare 5–7 stories covering leadership, conflict, failure, trade-off, impact.</div>
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-star">// FINAL PREP</div>
+        <div class="lesson-title">📋 Full Cheatsheet</div>
+        <div class="lesson-subtitle">Everything on one page. Review the night before. Walk in confident.</div>
       </div>
       <div class="content-section">
-        <div class="section-title">Tell me about yourself</div>
-        <div class="prose">Who you are → core strength → recent impact (numbers) → technical leadership → why this role. 1–2 min, professional and role-focused.</div>
+        <div class="section-title">STAR Quick Reference</div>
+        <table class="cheat-table">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Letter</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Time %</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Key Rule</th></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">S — Situation</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">10%</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">2–3 sentences. Context only, no filler.</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent2);font-weight:700">T — Task</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">10%</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">YOUR responsibility specifically.</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent3);font-weight:700">A — Action</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">60%</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Say "I", not "we". Be specific. Show your reasoning.</td></tr>
+            <tr><td style="padding:10px 14px;color:var(--green);font-weight:700">R — Result</td><td style="padding:10px 14px;color:var(--text-dim)">20%</td><td style="padding:10px 14px;color:var(--text-dim)">Numbers always. Plus what you learned.</td></tr>
+          </table>
+        </table>
       </div>
       <div class="content-section">
-        <div class="section-title">Staff/Principal and influence</div>
-        <div class="prose">Impact beyond one team; own hard problems; set direction; mentor. Influence: trust, data, clear proposals, working sessions, follow-through.</div>
+        <div class="section-title">The 8 Story Types You Must Have Ready</div>
+        <table class="cheat-table">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Story Type</th><th style="text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)">Covers These Questions</th></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">🏆 Biggest Achievement</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Proud of, accomplishment, results-driven, deliver results</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">📉 Real Failure</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Failure, mistake, what would you do differently, regret</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">🤝 Conflict / Disagreement</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Disagree with manager/peer, difficult colleague, backbone</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">👑 Lead Without Authority</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Leadership, influence, drive change, earn trust</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">⏰ Deadline / Pressure</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Tight deadline, ambiguity, competing priorities, pressure</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">🔀 Cross-team Work</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">Collaboration, stakeholders, alignment, earn trust</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:700">🌱 Fast Learning</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim)">New skill, outside comfort zone, curiosity, dive deep</td></tr>
+            <tr><td style="padding:10px 14px;color:var(--accent);font-weight:700">🔥 Above & Beyond</td><td style="padding:10px 14px;color:var(--text-dim)">Ownership, initiative, bias for action, go beyond role</td></tr>
+          </table>
+        </table>
       </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+      <div class="content-section">
+        <div class="section-title">Universal Principles</div>
+        <div class="success-box">
+          <strong>Always say "I", not "we"</strong> — Own your contribution explicitly.<br><br>
+          <strong>Quantify results</strong> — Numbers make stories credible and memorable.<br><br>
+          <strong>Show the thinking, not just the doing</strong> — "I decided to X because Y" beats "I did X."<br><br>
+          <strong>Real failures > humble brags</strong> — Genuine accountability is rare and impressive.<br><br>
+          <strong>Specific > general</strong> — "Our API latency dropped from 820ms to 140ms" beats "performance improved."<br><br>
+          <strong>Prepare to go deeper</strong> — Interviewers will follow up: "What exactly did you do?" "What was the data?" "What would you do differently?" Have the details ready.<br><br>
+          <strong>Match your stories to their values</strong> — Research the company's leadership principles / cultural values and pick stories that demonstrate them.
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Red Flags to Avoid</div>
+        <div class="warn-box">
+          ❌ Generic answers — "I'm a team player" with no evidence<br>
+          ❌ "We" throughout — interviewer can't tell what YOU did<br>
+          ❌ No failures or fake failures — signals lack of self-awareness<br>
+          ❌ Blaming others — for failures, conflicts, or missed goals<br>
+          ❌ Vague results — "things improved", "team was happy"<br>
+          ❌ Unprepared "why this company" — signals you're spray-and-praying<br>
+          ❌ No questions to ask — signals lack of curiosity or research<br>
+          ❌ Rambling past 3 minutes — signals inability to communicate concisely
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('questions-to-ask')">← Questions to Ask</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
     </div>
+
   </main>
 </div>
+
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done-behav') || '[]')), xp: parseInt(localStorage.getItem('xp-behav') || '0'), totalTopics: 6 };
-function showPage(p) { document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); if (p === 'home') document.getElementById('nav-home').classList.add('active'); document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; }
-function showLesson(id) { document.getElementById('home-page').style.display = 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); const L = document.getElementById('lesson-' + id); const N = document.getElementById('nav-' + id); if (L) L.classList.add('active'); if (N) N.classList.add('active'); window.scrollTo(0, 0); }
-function markDone(id) { if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-behav', JSON.stringify([...state.completed])); localStorage.setItem('xp-behav', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; } document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; }
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+  const TOPICS=['star-method','story-bank','amazon-lp','tell-me-about-yourself','strengths-weaknesses','why-company','conflict-resolution','failure-learning','leadership-influence','ambiguity-pressure','impact-ownership','collaboration-cross','growth-curiosity','senior-questions','questions-to-ask','cheatsheet'];
+  const state={
+    completed:new Set(JSON.parse(localStorage.getItem('bl-done')||'[]')),
+    xp:parseInt(localStorage.getItem('bl-xp')||'0'),
+    totalTopics:TOPICS.length
+  };
+
+  function showPage(p){
+    document.getElementById('home-page').style.display=(p==='home')?'block':'none';
+    document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+    if(p==='home') document.getElementById('nav-home').classList.add('active');
+    updateXP();
+  }
+
+  function showLesson(id){
+    document.getElementById('home-page').style.display='none';
+    document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+    const l=document.getElementById('lesson-'+id);
+    if(l) l.classList.add('active');
+    const n=document.getElementById('nav-'+id);
+    if(n) n.classList.add('active');
+    document.querySelector('main').scrollTo(0,0);
+    window.scrollTo(0,0);
+  }
+
+  function checkQuiz(btn,id,result){
+    const opts=btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+    opts.forEach(o=>o.style.pointerEvents='none');
+    const fb=document.getElementById('quiz-'+id+'-fb');
+    if(result==='correct'){
+      btn.classList.add('correct');
+      fb.className='quiz-feedback show right';
+      fb.textContent='✅ Correct! The Action section is where the real evaluation happens.';
+      addXP(20);
+    } else {
+      btn.classList.add('wrong');
+      fb.className='quiz-feedback show wrong';
+      fb.textContent='❌ Not quite — the Action section (60% of your time) is what interviewers are really evaluating.';
+      opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');});
+    }
+  }
+
+  function toggleBank(header){
+    const toggle=header.querySelector('.bank-q-toggle');
+    const answer=header.nextElementSibling;
+    toggle.classList.toggle('open');
+    answer.classList.toggle('open');
+  }
+
+  function toggleCheck(item){
+    item.classList.toggle('checked');
+  }
+
+  function markDone(id){
+    if(!state.completed.has(id)){
+      state.completed.add(id);
+      addXP(50);
+      localStorage.setItem('bl-done',JSON.stringify([...state.completed]));
+      const n=document.getElementById('nav-'+id);
+      if(n) n.classList.add('completed');
+      const btn=event.target;
+      btn.textContent='✓ Done!';
+    }
+    updateProgress();
+  }
+
+  function addXP(a){state.xp+=a;localStorage.setItem('bl-xp',state.xp.toString());updateXP();}
+  function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress();}
+  function updateProgress(){
+    document.getElementById('globalProgress').style.width=(state.completed.size/state.totalTopics*100)+'%';
+  }
+  function copyCode(btn){
+    const pre=btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000);});
+  }
+  function init(){
+    state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');});
+    updateProgress();updateXP();
+  }
+  init();
 </script>
 </body>
 </html>

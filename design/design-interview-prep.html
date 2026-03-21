@@ -1,192 +1,1782 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design (SOLID, Patterns, OOD) — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e; --accent: #f6c90e; --accent3: #7c5cfc; --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d; --card-radius: 12px; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(246,201,14,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(246,201,14,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 24px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
-  nav.sidebar { border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(246,201,14,0.05); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
-  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(246,201,14,0.1); color: var(--accent); border: 1px solid rgba(246,201,14,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) { .app { grid-template-columns: 1fr; } nav.sidebar { display: none; } }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOLID & Design Patterns — Interview Mastery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#080910;--surface:#0d0e15;--surface2:#12131c;--border:#1c1e2d;
+      --s:#e84393;--o:#f59e0b;--l:#10b981;--i:#3b82f6;--d:#a855f7;
+      --accent:#e84393;--accent2:#f59e0b;--accent3:#10b981;--accent4:#3b82f6;--accent5:#a855f7;
+      --text:#f0eeff;--text-dim:#7878aa;--text-dimmer:#252535;
+      --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(232,67,147,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.02) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 5% 20%,rgba(232,67,147,0.05) 0%,transparent 45%),radial-gradient(ellipse at 95% 80%,rgba(59,130,246,0.05) 0%,transparent 45%),radial-gradient(ellipse at 50% 50%,rgba(168,85,247,0.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+    header{position:sticky;top:0;z-index:100;background:rgba(8,9,16,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:6px}
+    .ls{color:var(--s)}.lo{color:var(--o)}.ll{color:var(--l)}.li{color:var(--i)}.ld{color:var(--d)}
+    .logo span{color:var(--text-dim)}
+    .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--s),var(--o),var(--l),var(--i),var(--d));transition:width 0.5s ease;width:0%}
+    .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+
+    .app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+    nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+    .nav-item:hover{color:var(--text);background:var(--surface)}
+    .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(232,67,147,0.05)}
+    .nav-item .icon{font-size:15px;width:20px;text-align:center}
+    .nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+    .nav-item.completed .done-dot{display:block}
+    main{overflow-y:auto}
+
+    /* HERO */
+    .hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+    .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px}
+    .hero h1{font-size:clamp(32px,4.5vw,58px);font-weight:800;line-height:1.06;margin-bottom:16px}
+    .hero h1 .hl-solid{background:linear-gradient(135deg,var(--s),var(--o),var(--l),var(--i),var(--d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero h1 .hl-dp{background:linear-gradient(135deg,var(--i),var(--d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+    .stat-row{display:flex;gap:28px;flex-wrap:wrap}
+    .stat{display:flex;flex-direction:column;gap:4px}
+    .stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--accent)}
+    .stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+
+    /* SOLID LETTERS HEADER */
+    .solid-banner{display:flex;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+    .solid-letter{flex:1;padding:20px 24px;background:var(--bg);text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+    .solid-letter::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+    .solid-letter:hover::before{opacity:1}
+    .sl-s::before{background:radial-gradient(circle at 50% 100%,rgba(232,67,147,0.15),transparent 70%)}
+    .sl-o::before{background:radial-gradient(circle at 50% 100%,rgba(245,158,11,0.15),transparent 70%)}
+    .sl-l::before{background:radial-gradient(circle at 50% 100%,rgba(16,185,129,0.15),transparent 70%)}
+    .sl-i::before{background:radial-gradient(circle at 50% 100%,rgba(59,130,246,0.15),transparent 70%)}
+    .sl-d::before{background:radial-gradient(circle at 50% 100%,rgba(168,85,247,0.15),transparent 70%)}
+    .solid-letter:hover{background:var(--surface)}
+    .letter-char{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;margin-bottom:4px}
+    .sl-s .letter-char{color:var(--s)}
+    .sl-o .letter-char{color:var(--o)}
+    .sl-l .letter-char{color:var(--l)}
+    .sl-i .letter-char{color:var(--i)}
+    .sl-d .letter-char{color:var(--d)}
+    .letter-word{font-size:11px;font-weight:700;margin-bottom:4px;color:var(--text)}
+    .letter-desc{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:0.5px}
+
+    /* GRID */
+    .section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+    .section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+    .section-badge.solid{background:rgba(232,67,147,0.12);color:var(--s);border:1px solid rgba(232,67,147,0.3)}
+    .section-badge.creational{background:rgba(16,185,129,0.12);color:var(--l);border:1px solid rgba(16,185,129,0.3)}
+    .section-badge.structural{background:rgba(59,130,246,0.12);color:var(--i);border:1px solid rgba(59,130,246,0.3)}
+    .section-badge.behavioral{background:rgba(168,85,247,0.12);color:var(--d);border:1px solid rgba(168,85,247,0.3)}
+    .section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:1px;background:var(--border)}
+    .topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+    .topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+    .topic-card:hover{background:var(--surface)}
+    .topic-card:hover::before{opacity:1}
+    .cs::before{background:radial-gradient(circle at 0% 0%,rgba(232,67,147,0.1),transparent 60%)}
+    .co::before{background:radial-gradient(circle at 0% 0%,rgba(245,158,11,0.1),transparent 60%)}
+    .cl::before{background:radial-gradient(circle at 0% 0%,rgba(16,185,129,0.1),transparent 60%)}
+    .ci::before{background:radial-gradient(circle at 0% 0%,rgba(59,130,246,0.1),transparent 60%)}
+    .cd::before{background:radial-gradient(circle at 0% 0%,rgba(168,85,247,0.1),transparent 60%)}
+    .card-emoji{font-size:28px;margin-bottom:10px;display:block}
+    .card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+    .card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+    .card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+    .tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+    .tag.hot{background:rgba(248,113,113,0.1);color:var(--red);border-color:rgba(248,113,113,0.2)}
+    .tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+    .tag.solid{background:rgba(232,67,147,0.1);color:var(--s);border-color:rgba(232,67,147,0.2)}
+    .tag.cr{background:rgba(16,185,129,0.1);color:var(--l);border-color:rgba(16,185,129,0.2)}
+    .tag.st{background:rgba(59,130,246,0.1);color:var(--i);border-color:rgba(59,130,246,0.2)}
+    .tag.bh{background:rgba(168,85,247,0.1);color:var(--d);border-color:rgba(168,85,247,0.2)}
+
+    /* LESSON */
+    .lesson-page{display:none;padding:40px 48px;max-width:940px}
+    .lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+    .lesson-breadcrumb:hover{color:var(--accent)}
+    .lesson-breadcrumb::before{content:'← '}
+    .lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+    .lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+    .e-solid{color:var(--s)}.e-cr{color:var(--l)}.e-st{color:var(--i)}.e-bh{color:var(--d)}
+    .lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+    .lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+
+    .content-section{margin-bottom:44px}
+    .section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .section-title::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px;flex-shrink:0}
+    .prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+    .prose strong{color:var(--text);font-weight:700}
+    .prose .hl{color:var(--accent)}.prose .hlo{color:var(--o)}.prose .hll{color:var(--l)}.prose .hli{color:var(--i)}.prose .hld{color:var(--d)}
+
+    /* PRINCIPLE BADGE */
+    .principle-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;margin-bottom:16px;font-weight:700;font-size:14px}
+    .pb-s{background:rgba(232,67,147,0.1);border:1px solid rgba(232,67,147,0.3);color:var(--s)}
+    .pb-o{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--o)}
+    .pb-l{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--l)}
+    .pb-i{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--i)}
+    .pb-d{background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);color:var(--d)}
+
+    /* CODE */
+    .code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+    .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+    .code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;color:var(--accent)}
+    .copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+    .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+    pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#c5d0f0;font-family:'JetBrains Mono',monospace}
+    .kw{color:#e879f9}.fn{color:#93c5fd}.st{color:#86efac}.nm{color:#fbbf24}.cm{color:#353555;font-style:italic}.op{color:#f0883e}.id{color:#f87171}.cls{color:#34d399}
+
+    /* BOXES */
+    .analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+    .analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+    .analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+    .info-box{background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.15);border-left:3px solid var(--i);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .info-box strong{color:var(--i)}
+    .warn-box{background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .warn-box strong{color:var(--red)}
+    .success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+    .success-box strong{color:var(--green)}
+
+    /* TABLE */
+    .cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+    .cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+    .cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+    .cheat-table tr:last-child td{border-bottom:none}
+    .cheat-table td:first-child{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px}
+
+    /* PATTERN DIAGRAM */
+    .diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:22px 20px;margin:20px 0;overflow-x:auto}
+    .arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+    .arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center}
+    .ab-s{border-color:rgba(232,67,147,0.5);color:var(--s);background:rgba(232,67,147,0.06)}
+    .ab-o{border-color:rgba(245,158,11,0.5);color:var(--o);background:rgba(245,158,11,0.06)}
+    .ab-l{border-color:rgba(16,185,129,0.5);color:var(--l);background:rgba(16,185,129,0.06)}
+    .ab-i{border-color:rgba(59,130,246,0.5);color:var(--i);background:rgba(59,130,246,0.07)}
+    .ab-d{border-color:rgba(168,85,247,0.5);color:var(--d);background:rgba(168,85,247,0.06)}
+    .ab-n{border-color:var(--border);color:var(--text-dim);background:var(--surface2)}
+    .arch-arrow{color:var(--text-dimmer);font-size:18px}
+    .arch-dashed{color:var(--text-dimmer);font-size:12px;font-family:'Space Mono',monospace}
+
+    /* INTERVIEW */
+    .interview-box{background:rgba(168,85,247,0.04);border:1px solid rgba(168,85,247,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+    .interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--d);margin-bottom:14px}
+    .interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0}
+    .interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--d);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+    .interview-q.open::after{transform:rotate(45deg)}
+    .interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+    .interview-a.open{display:block}
+
+    /* QUIZ */
+    .quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+    .quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--o);margin-bottom:16px}
+    .quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+    .quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+    .quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+    .quiz-opt:hover{border-color:var(--d);background:var(--surface2)}
+    .quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+    .quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+    .opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+    .quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+    .quiz-feedback.show{display:block}
+    .quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+    .quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+
+    .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+    .btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+    .btn-primary{background:var(--accent);color:var(--bg)}
+    .btn-primary:hover{box-shadow:0 0 20px rgba(232,67,147,0.35);transform:translateY(-1px)}
+    .btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+    .btn-secondary:hover{border-color:var(--accent);color:var(--text)}
+    .mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+    .mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    #home-page{display:block}
+  </style>
 </head>
 <body>
 <header>
-  <div class="logo">DESIGN<span>·</span>OOD <span>// PREP</span></div>
+  <div class="logo">
+    <span class="ls">S</span><span class="lo">O</span><span class="ll">L</span><span class="li">I</span><span class="ld">D</span>
+    <span>+</span>
+    <span style="color:var(--i)">DESIGN PATTERNS</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
   <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
+
 <div class="app">
   <nav class="sidebar">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">SOLID</div>
-    <div class="nav-item" onclick="showLesson('solid')" id="nav-solid"><span>🔧</span> SOLID Principles <span class="done-dot"></span></div>
-    <div class="nav-section-title">Patterns</div>
-    <div class="nav-item" onclick="showLesson('creational')" id="nav-creational"><span>🏭</span> Creational <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('structural')" id="nav-structural"><span>🧱</span> Structural <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('behavioral')" id="nav-behavioral"><span>🔄</span> Behavioral <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('ood')" id="nav-ood"><span>📐</span> Object-Oriented Design <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">🔷 SOLID Principles</div>
+    <div class="nav-item" onclick="showLesson('srp')" id="nav-srp"><span class="icon" style="color:var(--s)">S</span>Single Responsibility<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('ocp')" id="nav-ocp"><span class="icon" style="color:var(--o)">O</span>Open/Closed<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('lsp')" id="nav-lsp"><span class="icon" style="color:var(--l)">L</span>Liskov Substitution<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('isp')" id="nav-isp"><span class="icon" style="color:var(--i)">I</span>Interface Segregation<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('dip')" id="nav-dip"><span class="icon" style="color:var(--d)">D</span>Dependency Inversion<span class="done-dot"></span></div>
+    <div class="nav-section-title">🟢 Creational Patterns</div>
+    <div class="nav-item" onclick="showLesson('singleton')" id="nav-singleton"><span class="icon">1️⃣</span>Singleton<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('factory')" id="nav-factory"><span class="icon">🏭</span>Factory Method<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('abstract-factory')" id="nav-abstract-factory"><span class="icon">🏗️</span>Abstract Factory<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('builder')" id="nav-builder"><span class="icon">🧱</span>Builder<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('prototype-pattern')" id="nav-prototype-pattern"><span class="icon">🧬</span>Prototype<span class="done-dot"></span></div>
+    <div class="nav-section-title">🔵 Structural Patterns</div>
+    <div class="nav-item" onclick="showLesson('adapter')" id="nav-adapter"><span class="icon">🔌</span>Adapter<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('decorator')" id="nav-decorator"><span class="icon">🎁</span>Decorator<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('facade')" id="nav-facade"><span class="icon">🪟</span>Facade<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('proxy-pattern')" id="nav-proxy-pattern"><span class="icon">🛡️</span>Proxy<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('composite')" id="nav-composite"><span class="icon">🌳</span>Composite<span class="done-dot"></span></div>
+    <div class="nav-section-title">🟣 Behavioral Patterns</div>
+    <div class="nav-item" onclick="showLesson('observer')" id="nav-observer"><span class="icon">👁️</span>Observer<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('strategy')" id="nav-strategy"><span class="icon">♟️</span>Strategy<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('command')" id="nav-command"><span class="icon">📟</span>Command<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('template-method')" id="nav-template-method"><span class="icon">📋</span>Template Method<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('iterator')" id="nav-iterator"><span class="icon">🔄</span>Iterator<span class="done-dot"></span></div>
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
   </nav>
-  <main>
+
+  <main id="mainContent">
+    <!-- HOME -->
     <div id="home-page">
       <div class="hero">
-        <h1>Master <span class="highlight">Design & OOD</span></h1>
-        <p class="hero-sub">SOLID principles, Creational/Structural/Behavioral patterns, and Object-Oriented Design for interviews.</p>
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-solid">SOLID</span> &<br><span class="hl-dp">Design Patterns</span></h1>
+        <p class="hero-sub">The 5 SOLID principles + 15 most common design patterns — with real code examples, analogies, and the interview questions you'll actually be asked. Built for developers who want to understand, not memorize.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">20</div><div class="stat-label">Topics</div></div>
+          <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Interview Qs</div></div>
+          <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">15</div><div class="stat-label">Quizzes</div></div>
+        </div>
       </div>
+
+      <!-- SOLID BANNER -->
+      <div class="solid-banner">
+        <div class="solid-letter sl-s" onclick="showLesson('srp')">
+          <div class="letter-char">S</div>
+          <div class="letter-word">Single Responsibility</div>
+          <div class="letter-desc">One reason to change</div>
+        </div>
+        <div class="solid-letter sl-o" onclick="showLesson('ocp')">
+          <div class="letter-char">O</div>
+          <div class="letter-word">Open / Closed</div>
+          <div class="letter-desc">Open to extend, closed to modify</div>
+        </div>
+        <div class="solid-letter sl-l" onclick="showLesson('lsp')">
+          <div class="letter-char">L</div>
+          <div class="letter-word">Liskov Substitution</div>
+          <div class="letter-desc">Subtypes must be substitutable</div>
+        </div>
+        <div class="solid-letter sl-i" onclick="showLesson('isp')">
+          <div class="letter-char">I</div>
+          <div class="letter-word">Interface Segregation</div>
+          <div class="letter-desc">No forced unused methods</div>
+        </div>
+        <div class="solid-letter sl-d" onclick="showLesson('dip')">
+          <div class="letter-char">D</div>
+          <div class="letter-word">Dependency Inversion</div>
+          <div class="letter-desc">Depend on abstractions</div>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-badge creational">🟢 CREATIONAL</span><span class="section-badge-title">Object Creation Patterns</span></div>
       <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('solid')"><span class="card-emoji">🔧</span><div class="card-title">SOLID</div><div class="card-desc">SRP, OCP, LSP, ISP, DIP</div></div>
-        <div class="topic-card" onclick="showLesson('creational')"><span class="card-emoji">🏭</span><div class="card-title">Creational</div><div class="card-desc">Singleton, Factory, Builder</div></div>
-        <div class="topic-card" onclick="showLesson('structural')"><span class="card-emoji">🧱</span><div class="card-title">Structural</div><div class="card-desc">Adapter, Decorator, Proxy</div></div>
-        <div class="topic-card" onclick="showLesson('behavioral')"><span class="card-emoji">🔄</span><div class="card-title">Behavioral</div><div class="card-desc">Observer, Strategy, Command</div></div>
-        <div class="topic-card" onclick="showLesson('ood')"><span class="card-emoji">📐</span><div class="card-title">OOD</div><div class="card-desc">Classes, relationships, design</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Quick reference</div></div>
+        <div class="topic-card cl" onclick="showLesson('singleton')"><span class="card-emoji">1️⃣</span><div class="card-title">Singleton</div><div class="card-desc">Ensure only one instance exists. Thread safety, lazy initialization, anti-pattern debate.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag cr">CREATIONAL</span></div></div>
+        <div class="topic-card cl" onclick="showLesson('factory')"><span class="card-emoji">🏭</span><div class="card-title">Factory Method</div><div class="card-desc">Let subclasses decide which object to create. Decouple creation from usage.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cl" onclick="showLesson('abstract-factory')"><span class="card-emoji">🏗️</span><div class="card-title">Abstract Factory</div><div class="card-desc">Create families of related objects without concrete classes. UI toolkit example.</div><div class="card-tag-row"><span class="tag cr">CREATIONAL</span></div></div>
+        <div class="topic-card cl" onclick="showLesson('builder')"><span class="card-emoji">🧱</span><div class="card-title">Builder</div><div class="card-desc">Construct complex objects step by step. Fluent interfaces. Avoid telescoping constructors.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cl" onclick="showLesson('prototype-pattern')"><span class="card-emoji">🧬</span><div class="card-title">Prototype</div><div class="card-desc">Clone objects instead of creating from scratch. Deep vs shallow copy.</div><div class="card-tag-row"><span class="tag cr">CREATIONAL</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge structural">🔵 STRUCTURAL</span><span class="section-badge-title">Object Composition Patterns</span></div>
+      <div class="topics-grid">
+        <div class="topic-card ci" onclick="showLesson('adapter')"><span class="card-emoji">🔌</span><div class="card-title">Adapter</div><div class="card-desc">Make incompatible interfaces work together. The "translator" pattern.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag st">STRUCTURAL</span></div></div>
+        <div class="topic-card ci" onclick="showLesson('decorator')"><span class="card-emoji">🎁</span><div class="card-title">Decorator</div><div class="card-desc">Add behavior to objects dynamically without modifying them. Wrap and extend.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card ci" onclick="showLesson('facade')"><span class="card-emoji">🪟</span><div class="card-title">Facade</div><div class="card-desc">Simplified interface to a complex subsystem. Hide complexity behind one object.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card ci" onclick="showLesson('proxy-pattern')"><span class="card-emoji">🛡️</span><div class="card-title">Proxy</div><div class="card-desc">Control access to an object — lazy loading, caching, logging, access control.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card ci" onclick="showLesson('composite')"><span class="card-emoji">🌳</span><div class="card-title">Composite</div><div class="card-desc">Treat individual objects and groups of objects uniformly. Tree structures.</div><div class="card-tag-row"><span class="tag st">STRUCTURAL</span></div></div>
+      </div>
+
+      <div class="section-header"><span class="section-badge behavioral">🟣 BEHAVIORAL</span><span class="section-badge-title">Communication Between Objects</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cd" onclick="showLesson('observer')"><span class="card-emoji">👁️</span><div class="card-title">Observer</div><div class="card-desc">Subscribe/notify pattern. Event systems, reactive programming foundation.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('strategy')"><span class="card-emoji">♟️</span><div class="card-title">Strategy</div><div class="card-desc">Define a family of algorithms, encapsulate each, make them interchangeable at runtime.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('command')"><span class="card-emoji">📟</span><div class="card-title">Command</div><div class="card-desc">Encapsulate requests as objects. Undo/redo, queuing, logging, macros.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('template-method')"><span class="card-emoji">📋</span><div class="card-title">Template Method</div><div class="card-desc">Define skeleton of algorithm in base class, let subclasses fill in the steps.</div><div class="card-tag-row"><span class="tag bh">BEHAVIORAL</span></div></div>
+        <div class="topic-card cd" onclick="showLesson('iterator')"><span class="card-emoji">🔄</span><div class="card-title">Iterator</div><div class="card-desc">Traverse a collection without exposing its underlying structure.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
       </div>
     </div>
-    <div id="lesson-solid" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔧 SOLID Principles</div>
-      <div class="lesson-subtitle">SRP, OCP, LSP, ISP, DIP.</div>
+
+    <!-- ===== SRP ===== -->
+    <div id="lesson-srp" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// SOLID PRINCIPLES</div>
+        <div class="principle-badge pb-s">S — Single Responsibility Principle</div>
+        <div class="lesson-title">A class should have only<br>one reason to change.</div>
+        <div class="lesson-subtitle">The most fundamental principle. Every class, module, or function should do exactly one thing — and do it well.</div>
+      </div>
       <div class="content-section">
-        <div class="section-title">The five principles</div>
-        <div class="prose"><strong>SRP (Single Responsibility):</strong> A class should have one reason to change; one responsibility. <strong>OCP (Open/Closed):</strong> Open for extension (new behavior via new code), closed for modification (avoid changing existing code). Use abstractions and composition. <strong>LSP (Liskov Substitution):</strong> Subtypes must be substitutable for their base type without breaking callers. <strong>ISP (Interface Segregation):</strong> Prefer many specific interfaces over one fat interface so clients do not depend on methods they do not use. <strong>DIP (Dependency Inversion):</strong> Depend on abstractions (interfaces) not concretions; high-level modules should not depend on low-level details.</div>
+        <div class="section-title">The Problem Without SRP</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT — VIOLATION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ BAD — UserService does TOO MUCH</span>
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="cm">// Responsibility 1: Business logic</span>
+  <span class="fn">createUser</span>(data: UserDto): User { ... }
+  <span class="fn">validateEmail</span>(email: <span class="kw">string</span>): <span class="kw">boolean</span> { ... }
+
+  <span class="cm">// Responsibility 2: Persistence (should be repository)</span>
+  <span class="fn">saveToDatabase</span>(user: User): <span class="kw">void</span> { ... }
+  <span class="fn">getUserById</span>(id: <span class="nm">number</span>): User { ... }
+
+  <span class="cm">// Responsibility 3: Notifications (should be separate)</span>
+  <span class="fn">sendWelcomeEmail</span>(user: User): <span class="kw">void</span> { ... }
+  <span class="fn">sendSmsVerification</span>(phone: <span class="kw">string</span>): <span class="kw">void</span> { ... }
+
+  <span class="cm">// Responsibility 4: Logging (cross-cutting concern)</span>
+  <span class="fn">logUserAction</span>(action: <span class="kw">string</span>): <span class="kw">void</span> { ... }
+}
+<span class="cm">// Problem: changing the email provider forces touching UserService!</span>
+<span class="cm">// Testing requires mocking 4 different concerns!</span></pre>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT — SOLID</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ✅ GOOD — each class has one job</span>
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="kw">constructor</span>(
+    <span class="kw">private</span> repo: <span class="cls">UserRepository</span>,
+    <span class="kw">private</span> notifier: <span class="cls">UserNotifier</span>
+  ) {}
+
+  <span class="kw">async</span> <span class="fn">createUser</span>(data: <span class="cls">UserDto</span>): Promise&lt;<span class="cls">User</span>&gt; {
+    <span class="kw">const</span> user = <span class="kw">new</span> <span class="cls">User</span>(data); <span class="cm">// business logic only</span>
+    <span class="kw">await</span> <span class="kw">this</span>.repo.<span class="fn">save</span>(user);
+    <span class="kw">await</span> <span class="kw">this</span>.notifier.<span class="fn">sendWelcome</span>(user);
+    <span class="kw">return</span> user;
+  }
+}
+
+<span class="kw">class</span> <span class="cls">UserRepository</span> {       <span class="cm">// Only: persistence</span>
+  <span class="fn">save</span>(user: <span class="cls">User</span>) { ... }
+  <span class="fn">findById</span>(id: <span class="nm">number</span>) { ... }
+}
+
+<span class="kw">class</span> <span class="cls">UserNotifier</span> {          <span class="cm">// Only: notifications</span>
+  <span class="fn">sendWelcome</span>(user: <span class="cls">User</span>) { ... }
+}
+
+<span class="cm">// Now: change email provider → only touch UserNotifier</span>
+<span class="cm">// Testing each class is isolated and simple</span></pre>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label">💡 ANALOGY</div>
+        <div class="analogy-text">A <strong>chef</strong> should cook. A <strong>waiter</strong> should serve. A <strong>cashier</strong> should handle billing. If your chef also does billing and drives the delivery van, every time the billing system changes you have to retrain your chef. SRP says: keep roles separated so changes in one area don't ripple through unrelated code.</div>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: What does Open for extension, closed for modification mean?</div>
-        <div class="interview-a">You add new behavior by adding new code (e.g. new class, new implementation of an interface), not by editing existing classes. Achieve it with polymorphism, strategy-style injection, and stable interfaces so existing callers keep working.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Single Responsibility Principle?</div>
+        <div class="interview-a">SRP states that a class should have only one reason to change — meaning it should have only one job or responsibility. If a class handles both database persistence and email sending, changes to the email provider force you to modify the same class that handles DB logic. This creates tight coupling, harder testing, and unpredictable side effects. SRP leads to smaller, focused classes that are easier to test, reuse, and change independently.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you identify SRP violations?</div>
+        <div class="interview-a">Signs of SRP violation: (1) The class name contains "And" or "Manager" covering multiple concerns, (2) The class has methods from completely different domains (save to DB AND send email), (3) The class has many private helper methods for different concerns, (4) When you describe what the class does you need to use "and" repeatedly, (5) Changes to unrelated features require modifying this class. If the class is hard to unit test because it requires mocking many different dependencies, it likely violates SRP.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('solid')">✓ Mark as done</button>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">Which of these is a clear SRP violation?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'srp','wrong')"><span class="opt-letter">A</span>A UserRepository that handles only DB operations for users</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'srp','wrong')"><span class="opt-letter">B</span>An EmailService that sends emails</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'srp','correct')"><span class="opt-letter">C</span>A ReportGenerator that generates, formats, AND emails reports ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'srp','wrong')"><span class="opt-letter">D</span>A User class with name, email, and age properties</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-srp-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('srp')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('ocp')">Next: Open/Closed →</button>
+      </div>
     </div>
-    <div id="lesson-creational" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🏭 Creational Patterns</div>
-      <div class="lesson-subtitle">Singleton, Factory, Abstract Factory, Builder, Prototype.</div>
+
+    <!-- ===== OCP ===== -->
+    <div id="lesson-ocp" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// SOLID PRINCIPLES</div>
+        <div class="principle-badge pb-o">O — Open/Closed Principle</div>
+        <div class="lesson-title">Open for extension,<br>closed for modification.</div>
+        <div class="lesson-subtitle">Add new behavior by adding new code — not by changing existing, tested code.</div>
+      </div>
       <div class="content-section">
-        <div class="section-title">Patterns</div>
-        <div class="prose"><strong>Singleton:</strong> Ensure one instance globally (or per scope); control creation and access. <strong>Factory Method:</strong> Delegate object creation to a method (or subclass); encapsulate which concrete type is created. <strong>Abstract Factory:</strong> Create families of related objects (e.g. UI widgets for one theme) without coupling to concrete classes. <strong>Builder:</strong> Step-by-step construction; same build process can produce different representations; fluent API. <strong>Prototype:</strong> Copy an existing instance instead of creating from scratch; useful when creation is expensive or when you need a clone.</div>
+        <div class="section-title">The Problem Without OCP</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ BAD — every new payment method = modify existing class</span>
+<span class="kw">class</span> <span class="cls">PaymentProcessor</span> {
+  <span class="fn">process</span>(type: <span class="kw">string</span>, amount: <span class="kw">number</span>) {
+    <span class="kw">if</span> (type === <span class="st">'credit'</span>) {
+      <span class="cm">// credit card logic</span>
+    } <span class="kw">else if</span> (type === <span class="st">'paypal'</span>) {
+      <span class="cm">// paypal logic</span>
+    } <span class="kw">else if</span> (type === <span class="st">'crypto'</span>) {  <span class="cm">// ← modifying existing code!</span>
+      <span class="cm">// crypto logic</span>
+    }
+    <span class="cm">// Every new method = edit this file = risk breaking existing methods</span>
+  }
+}
+
+<span class="cm">// ✅ GOOD — extend by adding new class, never modify existing</span>
+<span class="kw">interface</span> <span class="cls">PaymentMethod</span> {
+  <span class="fn">process</span>(amount: <span class="kw">number</span>): Promise&lt;<span class="kw">void</span>&gt;;
+}
+
+<span class="kw">class</span> <span class="cls">CreditCardPayment</span> <span class="kw">implements</span> <span class="cls">PaymentMethod</span> {
+  <span class="kw">async</span> <span class="fn">process</span>(amount: <span class="kw">number</span>) { <span class="cm">/* credit logic */</span> }
+}
+
+<span class="kw">class</span> <span class="cls">PayPalPayment</span> <span class="kw">implements</span> <span class="cls">PaymentMethod</span> {
+  <span class="kw">async</span> <span class="fn">process</span>(amount: <span class="kw">number</span>) { <span class="cm">/* paypal logic */</span> }
+}
+
+<span class="cm">// Adding crypto? Just add a new class — ZERO existing code changes!</span>
+<span class="kw">class</span> <span class="cls">CryptoPayment</span> <span class="kw">implements</span> <span class="cls">PaymentMethod</span> {
+  <span class="kw">async</span> <span class="fn">process</span>(amount: <span class="kw">number</span>) { <span class="cm">/* crypto logic */</span> }
+}
+
+<span class="kw">class</span> <span class="cls">PaymentProcessor</span> {
+  <span class="fn">process</span>(method: <span class="cls">PaymentMethod</span>, amount: <span class="kw">number</span>) {
+    <span class="kw">return</span> method.<span class="fn">process</span>(amount); <span class="cm">// works for any method!</span>
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label">💡 ANALOGY</div>
+        <div class="analogy-text">A <strong>power strip</strong> is closed for modification (you can't change its wiring) but open for extension (you can plug in any device). You don't need to rewire the strip every time you want to add a new appliance. Similarly, your core classes should be "wired" once and new behavior added by plugging in new implementations.</div>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: When would you use Builder instead of a constructor with many params?</div>
-        <div class="interview-a">When you have many optional parameters or when construction is complex and you want a clear, readable API. Builder avoids telescoping constructors and makes the intent of each step explicit. Good for config objects, DTOs, and immutable objects with many fields.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Open/Closed Principle?</div>
+        <div class="interview-a">OCP states that software entities should be open for extension but closed for modification. When requirements change or new features are needed, you should add new code rather than modifying existing, working code. This reduces the risk of introducing bugs in code that already works. OCP is typically achieved through polymorphism, interfaces, and abstract classes — new behavior is added by implementing a new class that satisfies an existing interface.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does OCP relate to the Strategy pattern?</div>
+        <div class="interview-a">They're closely related. The Strategy pattern is a practical implementation of OCP. Instead of if/else chains that grow with every new algorithm variant, you define an interface and implement each variant as a separate strategy class. The context class (PaymentProcessor) depends on the interface, making it closed for modification. Adding a new strategy (CryptoPayment) extends behavior without touching existing code. OCP is the principle; Strategy is one design pattern that achieves it.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('creational')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('srp')">← SRP</button>
+        <button class="mark-done-btn" onclick="markDone('ocp')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('lsp')">Next: Liskov →</button>
+      </div>
     </div>
-    <div id="lesson-structural" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🧱 Structural Patterns</div>
-      <div class="lesson-subtitle">Adapter, Decorator, Proxy, Facade, Composite.</div>
+
+    <!-- ===== LSP ===== -->
+    <div id="lesson-lsp" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// SOLID PRINCIPLES</div>
+        <div class="principle-badge pb-l">L — Liskov Substitution Principle</div>
+        <div class="lesson-title">Subtypes must be substitutable<br>for their base types.</div>
+        <div class="lesson-subtitle">If S is a subtype of T, objects of type T can be replaced with objects of type S without breaking the program.</div>
+      </div>
       <div class="content-section">
-        <div class="section-title">Key structural patterns</div>
-        <div class="prose"><strong>Adapter:</strong> Wrap an existing class so it matches another interface the client expects; integrate legacy or third-party code. <strong>Decorator:</strong> Wrap an object to add behavior dynamically; same interface, additional responsibility (e.g. logging, caching). <strong>Proxy:</strong> Stand-in that controls access: lazy init, access control, logging, remote proxy. <strong>Facade:</strong> Single interface to a set of interfaces in a subsystem; simplify usage. <strong>Composite:</strong> Build tree structures; treat leaf and composite nodes uniformly so clients can work with the tree without branching.</div>
+        <div class="section-title">The Classic Violation — Square extends Rectangle</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ FAMOUS LSP VIOLATION</span>
+<span class="kw">class</span> <span class="cls">Rectangle</span> {
+  <span class="fn">setWidth</span>(w: <span class="kw">number</span>)  { <span class="kw">this</span>.width = w; }
+  <span class="fn">setHeight</span>(h: <span class="kw">number</span>) { <span class="kw">this</span>.height = h; }
+  <span class="fn">area</span>() { <span class="kw">return</span> <span class="kw">this</span>.width * <span class="kw">this</span>.height; }
+}
+
+<span class="kw">class</span> <span class="cls">Square</span> <span class="kw">extends</span> <span class="cls">Rectangle</span> {
+  <span class="fn">setWidth</span>(w: <span class="kw">number</span>)  { <span class="kw">this</span>.width = w; <span class="kw">this</span>.height = w; }  <span class="cm">// BOTH!</span>
+  <span class="fn">setHeight</span>(h: <span class="kw">number</span>) { <span class="kw">this</span>.height = h; <span class="kw">this</span>.width = h; }  <span class="cm">// BOTH!</span>
+}
+
+<span class="cm">// Code that works with Rectangle breaks with Square:</span>
+<span class="kw">function</span> <span class="fn">doubleWidth</span>(rect: <span class="cls">Rectangle</span>) {
+  rect.<span class="fn">setWidth</span>(<span class="nm">10</span>);
+  rect.<span class="fn">setHeight</span>(<span class="nm">5</span>);
+  console.<span class="fn">log</span>(rect.<span class="fn">area</span>()); <span class="cm">// Rectangle: 50 ✅  Square: 25 ❌ !</span>
+}
+<span class="cm">// Square CANNOT be substituted for Rectangle — LSP violated!</span>
+<span class="cm">// A square IS-A rectangle mathematically but NOT in OOP behavior.</span>
+
+<span class="cm">// ✅ FIX: Don't force inheritance. Use separate classes or interface:</span>
+<span class="kw">interface</span> <span class="cls">Shape</span> { <span class="fn">area</span>(): <span class="kw">number</span>; }
+<span class="kw">class</span> <span class="cls">Rectangle</span> <span class="kw">implements</span> <span class="cls">Shape</span> { ... }
+<span class="kw">class</span> <span class="cls">Square</span> <span class="kw">implements</span> <span class="cls">Shape</span> { ... }  <span class="cm">// no inheritance!</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">LSP Rules</div>
+        <div class="prose">
+          A subclass must: <br><br>
+          ✅ <strong>Not strengthen preconditions</strong> — if base accepts any string, subclass cannot require non-empty string<br>
+          ✅ <strong>Not weaken postconditions</strong> — if base returns positive numbers, subclass cannot return negatives<br>
+          ✅ <strong>Not throw new exceptions</strong> — if base doesn't throw, subclass cannot throw<br>
+          ✅ <strong>Not break invariants</strong> — if base guarantees balance ≥ 0, subclass must too<br><br>
+          <strong>Rule of thumb:</strong> If you have an <code>if instanceof</code> check to handle a subclass differently, LSP is violated.
+        </div>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: Adapter vs Decorator — what is the difference?</div>
-        <div class="interview-a">Adapter changes the interface of an object so it can be used where a different interface is expected; the goal is compatibility. Decorator keeps the same interface and adds behavior (e.g. logging, caching); the goal is to extend functionality transparently.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is LSP and give a real-world violation example?</div>
+        <div class="interview-a">LSP says subclasses must be usable wherever their parent class is used, without breaking behavior. Classic violation: Square extends Rectangle. Mathematically a square IS a rectangle, but behaviorally it isn't — setting width on a rectangle doesn't change height, but must for a square. Code written against Rectangle breaks when given a Square. Real-world: a ReadOnlyList extending List and throwing UnsupportedOperationException on add() — LSP violated. Fix: use interfaces that accurately represent capabilities instead of forcing inheritance.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('structural')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('ocp')">← OCP</button>
+        <button class="mark-done-btn" onclick="markDone('lsp')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('isp')">Next: ISP →</button>
+      </div>
     </div>
-    <div id="lesson-behavioral" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🔄 Behavioral Patterns</div>
-      <div class="lesson-subtitle">Observer, Strategy, Command, State.</div>
+
+    <!-- ===== ISP ===== -->
+    <div id="lesson-isp" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// SOLID PRINCIPLES</div>
+        <div class="principle-badge pb-i">I — Interface Segregation Principle</div>
+        <div class="lesson-title">No client should be forced to depend<br>on methods it does not use.</div>
+        <div class="lesson-subtitle">Prefer many small, specific interfaces over one large, general-purpose interface.</div>
+      </div>
       <div class="content-section">
-        <div class="section-title">Key behavioral patterns</div>
-        <div class="prose"><strong>Observer:</strong> One-to-many dependency; when the subject changes, observers are notified. Used in event systems, reactive UIs. <strong>Strategy:</strong> Encapsulate algorithms; make them interchangeable so the client can switch behavior (e.g. sort strategy, payment method). <strong>Command:</strong> Encapsulate a request as an object; supports undo, queueing, logging. <strong>State:</strong> Object behavior changes with internal state; avoid large switch/if on state. Iterator, Template Method (skeleton in base class, steps overridden), and Chain of Responsibility are also common.</div>
+        <div class="section-title">Fat Interface Problem</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ FAT INTERFACE — forces all implementors to implement everything</span>
+<span class="kw">interface</span> <span class="cls">Worker</span> {
+  <span class="fn">work</span>(): <span class="kw">void</span>;
+  <span class="fn">eat</span>(): <span class="kw">void</span>;
+  <span class="fn">sleep</span>(): <span class="kw">void</span>;
+}
+
+<span class="kw">class</span> <span class="cls">HumanWorker</span> <span class="kw">implements</span> <span class="cls">Worker</span> {
+  <span class="fn">work</span>()  { console.<span class="fn">log</span>(<span class="st">"working"</span>); }
+  <span class="fn">eat</span>()   { console.<span class="fn">log</span>(<span class="st">"eating"</span>); }
+  <span class="fn">sleep</span>() { console.<span class="fn">log</span>(<span class="st">"sleeping"</span>); }
+}
+
+<span class="kw">class</span> <span class="cls">RobotWorker</span> <span class="kw">implements</span> <span class="cls">Worker</span> {
+  <span class="fn">work</span>()  { console.<span class="fn">log</span>(<span class="st">"working"</span>); }
+  <span class="fn">eat</span>()   { <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">"Robots don't eat!"</span>); }  <span class="cm">// ← forced garbage!</span>
+  <span class="fn">sleep</span>() { <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">"Robots don't sleep!"</span>); } <span class="cm">// ← LSP violation too!</span>
+}
+
+<span class="cm">// ✅ SEGREGATED — clients only depend on what they need</span>
+<span class="kw">interface</span> <span class="cls">Workable</span>  { <span class="fn">work</span>(): <span class="kw">void</span>; }
+<span class="kw">interface</span> <span class="cls">Feedable</span>  { <span class="fn">eat</span>(): <span class="kw">void</span>; }
+<span class="kw">interface</span> <span class="cls">Sleepable</span> { <span class="fn">sleep</span>(): <span class="kw">void</span>; }
+
+<span class="kw">class</span> <span class="cls">HumanWorker</span> <span class="kw">implements</span> <span class="cls">Workable</span>, <span class="cls">Feedable</span>, <span class="cls">Sleepable</span> { ... }
+<span class="kw">class</span> <span class="cls">RobotWorker</span> <span class="kw">implements</span> <span class="cls">Workable</span> { ... }  <span class="cm">// ← only what it needs!</span>
+
+<span class="cm">// Functions depend only on what they use:</span>
+<span class="kw">function</span> <span class="fn">feedWorker</span>(w: <span class="cls">Feedable</span>) { w.<span class="fn">eat</span>(); }    <span class="cm">// humans only</span>
+<span class="kw">function</span> <span class="fn">assignWork</span>(w: <span class="cls">Workable</span>) { w.<span class="fn">work</span>(); }   <span class="cm">// humans AND robots</span></pre>
+        </div>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: When do you use Strategy pattern?</div>
-        <div class="interview-a">When you have multiple algorithms or behaviors that are interchangeable and you want to avoid conditionals (e.g. different sort strategies, payment methods, compression algorithms). The client depends on an abstraction and receives the concrete strategy via injection or config.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Interface Segregation and how does it differ from SRP?</div>
+        <div class="interview-a">ISP focuses on INTERFACES — don't force implementors to depend on methods they don't use. Create smaller, more specific interfaces. SRP focuses on CLASSES — a class should have one reason to change. They're complementary: ISP prevents bloated interfaces that force unneeded implementations; SRP prevents classes from having too many responsibilities. ISP violation sign: implementing a method with throw new UnsupportedOperationException() — you're being forced to implement something you don't need.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('behavioral')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('lsp')">← LSP</button>
+        <button class="mark-done-btn" onclick="markDone('isp')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('dip')">Next: DIP →</button>
+      </div>
     </div>
-    <div id="lesson-ood" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📐 Object-Oriented Design</div>
-      <div class="lesson-subtitle">Classes, relationships, design process.</div>
+
+    <!-- ===== DIP ===== -->
+    <div id="lesson-dip" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// SOLID PRINCIPLES</div>
+        <div class="principle-badge pb-d">D — Dependency Inversion Principle</div>
+        <div class="lesson-title">Depend on abstractions,<br>not on concretions.</div>
+        <div class="lesson-subtitle">High-level modules should not depend on low-level modules. Both should depend on abstractions (interfaces).</div>
+      </div>
       <div class="content-section">
-        <div class="section-title">Design process</div>
-        <div class="prose">(1) <strong>Clarify requirements:</strong> Scope, constraints, who uses the system. (2) <strong>Identify main entities:</strong> Nouns often become classes (e.g. Vehicle, ParkingSpot, Elevator). (3) <strong>Relationships:</strong> Has-a (composition, aggregation), is-a (inheritance). (4) <strong>Key methods:</strong> What each entity does; public API. (5) <strong>Design for change:</strong> Apply SOLID; use patterns where they fit (e.g. State for elevator, Strategy for pricing). Consider edge cases and concurrency (e.g. two cars for one spot).</div>
+        <div class="section-title">The Problem & Solution</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ BAD — high-level depends on low-level concrete class</span>
+<span class="kw">class</span> <span class="cls">MySQLDatabase</span> {
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) { <span class="cm">/* MySQL specific */</span> }
+}
+
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="kw">private</span> db = <span class="kw">new</span> <span class="cls">MySQLDatabase</span>();  <span class="cm">// ← TIGHTLY COUPLED!</span>
+  <span class="cm">// Switching to PostgreSQL = rewrite UserService!</span>
+  <span class="cm">// Testing = must have MySQL running!</span>
+}
+
+<span class="cm">// ✅ GOOD — both depend on abstraction</span>
+<span class="kw">interface</span> <span class="cls">Database</span> {            <span class="cm">// ← the abstraction</span>
+  <span class="fn">query</span>(sql: <span class="kw">string</span>): <span class="kw">any</span>[];
+}
+
+<span class="kw">class</span> <span class="cls">MySQLDatabase</span> <span class="kw">implements</span> <span class="cls">Database</span> {
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) { <span class="cm">/* MySQL */</span> }
+}
+
+<span class="kw">class</span> <span class="cls">PostgresDatabase</span> <span class="kw">implements</span> <span class="cls">Database</span> {
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) { <span class="cm">/* Postgres */</span> }
+}
+
+<span class="kw">class</span> <span class="cls">InMemoryDatabase</span> <span class="kw">implements</span> <span class="cls">Database</span> { <span class="cm">// for testing!</span>
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) { <span class="kw">return</span> []; }
+}
+
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="cls">Database</span>) {}  <span class="cm">// ← depends on interface</span>
+  <span class="cm">// Swap DB? Just inject different implementation. Zero code change.</span>
+  <span class="cm">// Testing? Inject InMemoryDatabase. No real DB needed.</span>
+}</pre>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label">💡 ANALOGY</div>
+        <div class="analogy-text">A <strong>lamp</strong> doesn't depend on a specific power plant. It depends on the <strong>electrical socket standard</strong> (abstraction). The power plant (coal, solar, nuclear) implements that standard. You can switch from coal to solar without changing your lamp. DIP says your high-level code (lamp) should depend on the interface (socket), not the implementation (power plant).</div>
+      </div>
+      <div class="info-box"><strong>DIP vs Dependency Injection:</strong> DIP is a PRINCIPLE about depending on abstractions. Dependency Injection (DI) is a TECHNIQUE/PATTERN to achieve it — passing dependencies through constructors or setters rather than creating them inside. DI frameworks (Spring, NestJS, .NET DI) automate the wiring.</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is DIP and how does it enable testing?</div>
+        <div class="interview-a">DIP says high-level modules (business logic) should not depend on low-level modules (DB, email sender, HTTP client). Both should depend on interfaces. This enables testing by substituting real implementations with test doubles (mocks, stubs, fakes). Without DIP: testing UserService requires a real database. With DIP: inject InMemoryDatabase in tests — fast, isolated, no infrastructure needed. This is the foundation of testable design.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the relationship between all 5 SOLID principles?</div>
+        <div class="interview-a">They reinforce each other: SRP keeps classes focused so they have fewer dependencies. OCP (extend, don't modify) relies on the abstractions that DIP establishes. LSP ensures substitutability so OCP actually works — you can swap implementations safely. ISP creates precise interfaces that DIP depends on — if interfaces are too fat, high-level code depends on things it doesn't need. Together they guide toward loosely coupled, highly cohesive, testable code.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('isp')">← ISP</button>
+        <button class="mark-done-btn" onclick="markDone('dip')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('singleton')">Next: Singleton Pattern →</button>
+      </div>
+    </div>
+
+    <!-- ===== SINGLETON ===== -->
+    <div id="lesson-singleton" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-cr">// CREATIONAL PATTERNS</div>
+        <div class="lesson-title">1️⃣ Singleton Pattern</div>
+        <div class="lesson-subtitle">Ensure a class has exactly one instance and provide global access to it.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Thread-safe Singleton (TypeScript/JS — single thread, simpler)</span>
+<span class="kw">class</span> <span class="cls">ConfigManager</span> {
+  <span class="kw">private static</span> instance: <span class="cls">ConfigManager</span> | <span class="kw">null</span> = <span class="kw">null</span>;
+  <span class="kw">private</span> config: Record&lt;<span class="kw">string</span>, <span class="kw">any</span>&gt; = {};
+
+  <span class="kw">private constructor</span>() {          <span class="cm">// ← private! prevents new ConfigManager()</span>
+    <span class="kw">this</span>.config = <span class="fn">loadFromEnv</span>();
+  }
+
+  <span class="kw">static</span> <span class="fn">getInstance</span>(): <span class="cls">ConfigManager</span> {
+    <span class="kw">if</span> (!<span class="cls">ConfigManager</span>.instance) {
+      <span class="cls">ConfigManager</span>.instance = <span class="kw">new</span> <span class="cls">ConfigManager</span>();
+    }
+    <span class="kw">return</span> <span class="cls">ConfigManager</span>.instance;
+  }
+
+  <span class="fn">get</span>(key: <span class="kw">string</span>) { <span class="kw">return</span> <span class="kw">this</span>.config[key]; }
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">const</span> config1 = <span class="cls">ConfigManager</span>.<span class="fn">getInstance</span>();
+<span class="kw">const</span> config2 = <span class="cls">ConfigManager</span>.<span class="fn">getInstance</span>();
+console.<span class="fn">log</span>(config1 === config2); <span class="cm">// true — same instance!</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">When to Use & When to Avoid</div>
+        <div class="success-box"><strong>✅ Good uses:</strong> Configuration manager, logger, connection pool, thread pool, caches that should be shared app-wide, registry of objects.</div>
+        <div class="warn-box"><strong>⚠️ Singleton is often considered an anti-pattern because:</strong> Hidden global state makes code hard to reason about. Tight coupling — dependencies not visible in constructors. Hard to test — can't inject a test double, state persists between tests. Violates SRP (manages its own lifecycle + its job). Prefer using Dependency Injection to manage single instances instead.</div>
       </div>
       <div class="interview-box">
-        <div class="interview-q">Q: How do you approach designing a parking lot?</div>
-        <div class="interview-a">Clarify: types of vehicles, spot types, pricing, entry/exit flow. Entities: ParkingLot, Level, ParkingSpot, Vehicle (or Car, Bike), Ticket. Relationships: Lot has Levels, Level has Spots, Spot can hold Vehicle, Ticket links Vehicle to Spot and time. Methods: findAvailableSpot(), park(), unpark(), calculateFee(). Consider thread safety if multiple entries at once.</div>
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Singleton pattern and why is it controversial?</div>
+        <div class="interview-a">Singleton ensures only one instance of a class exists and provides global access. It's controversial because: (1) It's essentially a global variable — global state makes code hard to understand and debug, (2) Creates tight coupling — classes that use the singleton are hard to test in isolation (can't inject a mock), (3) Thread safety issues in multi-threaded environments, (4) Hides dependencies — not visible in function signatures or constructors, (5) State persists between test cases. Modern approach: manage single instances via DI containers instead of the Singleton pattern.</div>
       </div>
-      <button class="mark-done-btn" onclick="markDone('ood')">✓ Mark as done</button>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('dip')">← DIP</button>
+        <button class="mark-done-btn" onclick="markDone('singleton')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('factory')">Next: Factory →</button>
+      </div>
     </div>
+
+    <!-- ===== FACTORY ===== -->
+    <div id="lesson-factory" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-cr">// CREATIONAL PATTERNS</div>
+        <div class="lesson-title">🏭 Factory Method Pattern</div>
+        <div class="lesson-subtitle">Define an interface for creating an object, but let subclasses decide which class to instantiate. Decouple object creation from usage.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-i">Creator<br><small>createProduct()</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-l" style="font-size:10px">Product<br><small>«interface»</small></div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-left:16px">
+              <div class="arch-box ab-s" style="font-size:10px">ConcreteProductA</div>
+              <div class="arch-box ab-o" style="font-size:10px">ConcreteProductB</div>
+            </div>
+          </div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Product interface</span>
+<span class="kw">interface</span> <span class="cls">Notification</span> {
+  <span class="fn">send</span>(message: <span class="kw">string</span>): <span class="kw">void</span>;
+}
+
+<span class="cm">// Concrete products</span>
+<span class="kw">class</span> <span class="cls">EmailNotification</span> <span class="kw">implements</span> <span class="cls">Notification</span> {
+  <span class="fn">send</span>(msg: <span class="kw">string</span>) { console.<span class="fn">log</span>(<span class="st">`Email: ${msg}`</span>); }
+}
+<span class="kw">class</span> <span class="cls">SMSNotification</span> <span class="kw">implements</span> <span class="cls">Notification</span> {
+  <span class="fn">send</span>(msg: <span class="kw">string</span>) { console.<span class="fn">log</span>(<span class="st">`SMS: ${msg}`</span>); }
+}
+<span class="kw">class</span> <span class="cls">PushNotification</span> <span class="kw">implements</span> <span class="cls">Notification</span> {
+  <span class="fn">send</span>(msg: <span class="kw">string</span>) { console.<span class="fn">log</span>(<span class="st">`Push: ${msg}`</span>); }
+}
+
+<span class="cm">// Factory — centralizes creation logic</span>
+<span class="kw">class</span> <span class="cls">NotificationFactory</span> {
+  <span class="kw">static</span> <span class="fn">create</span>(type: <span class="st">'email'</span> | <span class="st">'sms'</span> | <span class="st">'push'</span>): <span class="cls">Notification</span> {
+    <span class="kw">switch</span>(type) {
+      <span class="kw">case</span> <span class="st">'email'</span>: <span class="kw">return new</span> <span class="cls">EmailNotification</span>();
+      <span class="kw">case</span> <span class="st">'sms'</span>:   <span class="kw">return new</span> <span class="cls">SMSNotification</span>();
+      <span class="kw">case</span> <span class="st">'push'</span>:  <span class="kw">return new</span> <span class="cls">PushNotification</span>();
+    }
+  }
+}
+
+<span class="cm">// Client code doesn't know or care which class was created</span>
+<span class="kw">const</span> notif = <span class="cls">NotificationFactory</span>.<span class="fn">create</span>(<span class="st">'email'</span>);
+notif.<span class="fn">send</span>(<span class="st">"Hello!"</span>); <span class="cm">// works for any notification type</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What problem does the Factory Method pattern solve?</div>
+        <div class="interview-a">Factory Method decouples object creation from usage. Without it, client code creates objects directly (new EmailNotification()) — tightly coupled. Changing the concrete class (or its constructor) requires changing all client code. With Factory, client code uses an interface (Notification) and the factory handles creation. Benefits: (1) Swap implementations without touching client code, (2) Centralize complex creation logic, (3) Easy to mock for testing (inject a factory that returns test doubles), (4) Follows OCP — add new notification types by adding new classes, not modifying factory heavily.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Factory Method vs Abstract Factory vs Builder?</div>
+        <div class="interview-a">Factory Method: one factory method creates one product type. Simple, one level of abstraction. Abstract Factory: creates FAMILIES of related products (e.g., WindowsButton + WindowsCheckbox vs MacButton + MacCheckbox). One factory, many related products. Builder: constructs complex objects step by step, allowing different configurations. Used when an object has many optional parts (QueryBuilder, AlertDialog with optional title, message, buttons). Use Factory Method for simple creation, Abstract Factory for product families, Builder for complex configuration.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('singleton')">← Singleton</button>
+        <button class="mark-done-btn" onclick="markDone('factory')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('builder')">Next: Builder →</button>
+      </div>
+    </div>
+
+    <!-- ===== ABSTRACT FACTORY ===== -->
+    <div id="lesson-abstract-factory" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-cr">// CREATIONAL PATTERNS</div>
+        <div class="lesson-title">🏗️ Abstract Factory Pattern</div>
+        <div class="lesson-subtitle">Provide an interface for creating families of related objects without specifying concrete classes.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation — UI Toolkit Example</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Abstract products</span>
+<span class="kw">interface</span> <span class="cls">Button</span>   { <span class="fn">render</span>(): <span class="kw">void</span>; }
+<span class="kw">interface</span> <span class="cls">Checkbox</span> { <span class="fn">check</span>(): <span class="kw">void</span>; }
+
+<span class="cm">// Abstract factory — interface for creating product family</span>
+<span class="kw">interface</span> <span class="cls">UIFactory</span> {
+  <span class="fn">createButton</span>(): <span class="cls">Button</span>;
+  <span class="fn">createCheckbox</span>(): <span class="cls">Checkbox</span>;
+}
+
+<span class="cm">// Windows family</span>
+<span class="kw">class</span> <span class="cls">WindowsButton</span>   { <span class="fn">render</span>() { console.<span class="fn">log</span>(<span class="st">"Windows button"</span>); } }
+<span class="kw">class</span> <span class="cls">WindowsCheckbox</span> { <span class="fn">check</span>()  { console.<span class="fn">log</span>(<span class="st">"Windows checkbox"</span>); } }
+<span class="kw">class</span> <span class="cls">WindowsUIFactory</span> <span class="kw">implements</span> <span class="cls">UIFactory</span> {
+  <span class="fn">createButton</span>()   { <span class="kw">return new</span> <span class="cls">WindowsButton</span>(); }
+  <span class="fn">createCheckbox</span>() { <span class="kw">return new</span> <span class="cls">WindowsCheckbox</span>(); }
+}
+
+<span class="cm">// Mac family</span>
+<span class="kw">class</span> <span class="cls">MacButton</span>   { <span class="fn">render</span>() { console.<span class="fn">log</span>(<span class="st">"Mac button"</span>); } }
+<span class="kw">class</span> <span class="cls">MacCheckbox</span> { <span class="fn">check</span>()  { console.<span class="fn">log</span>(<span class="st">"Mac checkbox"</span>); } }
+<span class="kw">class</span> <span class="cls">MacUIFactory</span> <span class="kw">implements</span> <span class="cls">UIFactory</span> {
+  <span class="fn">createButton</span>()   { <span class="kw">return new</span> <span class="cls">MacButton</span>(); }
+  <span class="fn">createCheckbox</span>() { <span class="kw">return new</span> <span class="cls">MacCheckbox</span>(); }
+}
+
+<span class="cm">// Client — works with any factory, always gets consistent family</span>
+<span class="kw">class</span> <span class="cls">Application</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> factory: <span class="cls">UIFactory</span>) {}
+  <span class="fn">build</span>() {
+    <span class="kw">const</span> btn = <span class="kw">this</span>.factory.<span class="fn">createButton</span>();   <span class="cm">// always compatible pair</span>
+    <span class="kw">const</span> chk = <span class="kw">this</span>.factory.<span class="fn">createCheckbox</span>();
+    btn.<span class="fn">render</span>(); chk.<span class="fn">check</span>();
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use Abstract Factory vs Factory Method?</div>
+        <div class="interview-a">Use Abstract Factory when you have families of related products that must be used together. UI toolkit (Windows button + Windows checkbox must match), database access layer (connection + command + transaction must be for the same DB), cross-platform widgets. Use Factory Method when you only create one type of product and need flexibility in which concrete type. Abstract Factory is essentially a set of Factory Methods working together to ensure product family consistency.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('factory')">← Factory Method</button>
+        <button class="mark-done-btn" onclick="markDone('abstract-factory')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('builder')">Next: Builder →</button>
+      </div>
+    </div>
+
+    <!-- ===== BUILDER ===== -->
+    <div id="lesson-builder" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-cr">// CREATIONAL PATTERNS</div>
+        <div class="lesson-title">🧱 Builder Pattern</div>
+        <div class="lesson-subtitle">Construct complex objects step by step. Eliminates telescoping constructors and makes optional configuration clean.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">The Telescoping Constructor Problem</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// ❌ TELESCOPING CONSTRUCTOR — unreadable!</span>
+<span class="kw">new</span> <span class="cls">HttpRequest</span>(url, <span class="st">'POST'</span>, headers, body, timeout, retries, cache, auth);
+<span class="cm">// What's the 6th parameter?? You have to count.</span>
+
+<span class="cm">// ✅ BUILDER — readable, fluent, optional steps</span>
+<span class="kw">class</span> <span class="cls">HttpRequestBuilder</span> {
+  <span class="kw">private</span> request: Partial&lt;<span class="cls">HttpRequest</span>&gt; = { method: <span class="st">'GET'</span>, timeout: <span class="nm">5000</span> };
+
+  <span class="fn">url</span>(url: <span class="kw">string</span>)               { <span class="kw">this</span>.request.url = url; <span class="kw">return this</span>; }
+  <span class="fn">method</span>(m: <span class="kw">string</span>)              { <span class="kw">this</span>.request.method = m; <span class="kw">return this</span>; }
+  <span class="fn">header</span>(k: <span class="kw">string</span>, v: <span class="kw">string</span>)  { <span class="kw">this</span>.request.headers[k] = v; <span class="kw">return this</span>; }
+  <span class="fn">body</span>(b: <span class="kw">any</span>)                   { <span class="kw">this</span>.request.body = b; <span class="kw">return this</span>; }
+  <span class="fn">timeout</span>(ms: <span class="kw">number</span>)           { <span class="kw">this</span>.request.timeout = ms; <span class="kw">return this</span>; }
+  <span class="fn">withAuth</span>(token: <span class="kw">string</span>)       {
+    <span class="kw">this</span>.request.headers[<span class="st">'Authorization'</span>] = <span class="st">`Bearer ${token}`</span>;
+    <span class="kw">return this</span>;
+  }
+
+  <span class="fn">build</span>(): <span class="cls">HttpRequest</span> {
+    <span class="kw">if</span> (!<span class="kw">this</span>.request.url) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">"URL is required"</span>);
+    <span class="kw">return new</span> <span class="cls">HttpRequest</span>(<span class="kw">this</span>.request);
+  }
+}
+
+<span class="cm">// Usage — self-documenting!</span>
+<span class="kw">const</span> req = <span class="kw">new</span> <span class="cls">HttpRequestBuilder</span>()
+  .<span class="fn">url</span>(<span class="st">'https://api.example.com/users'</span>)
+  .<span class="fn">method</span>(<span class="st">'POST'</span>)
+  .<span class="fn">header</span>(<span class="st">'Content-Type'</span>, <span class="st">'application/json'</span>)
+  .<span class="fn">body</span>({ name: <span class="st">'Hany'</span> })
+  .<span class="fn">timeout</span>(<span class="nm">3000</span>)
+  .<span class="fn">withAuth</span>(token)
+  .<span class="fn">build</span>();</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What problem does the Builder pattern solve?</div>
+        <div class="interview-a">Builder solves the "telescoping constructor" problem — constructors with many parameters (especially optional ones) become unreadable and error-prone (easy to mix up argument order). Builder provides a fluent API where each step is named and optional, making code self-documenting. Also useful when: object construction involves multiple steps that must happen in order, you want to validate the object before finalizing, or you need to create different representations of the same complex object (same builder, different directors).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('abstract-factory')">← Abstract Factory</button>
+        <button class="mark-done-btn" onclick="markDone('builder')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('prototype-pattern')">Next: Prototype →</button>
+      </div>
+    </div>
+
+    <!-- ===== PROTOTYPE ===== -->
+    <div id="lesson-prototype-pattern" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-cr">// CREATIONAL PATTERNS</div>
+        <div class="lesson-title">🧬 Prototype Pattern</div>
+        <div class="lesson-subtitle">Create new objects by copying (cloning) existing ones. Avoids expensive initialization when you need many similar objects.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">interface</span> <span class="cls">Cloneable</span>&lt;T&gt; { <span class="fn">clone</span>(): T; }
+
+<span class="kw">class</span> <span class="cls">GameCharacter</span> <span class="kw">implements</span> <span class="cls">Cloneable</span>&lt;<span class="cls">GameCharacter</span>&gt; {
+  <span class="kw">constructor</span>(
+    <span class="kw">public</span> name: <span class="kw">string</span>,
+    <span class="kw">public</span> health: <span class="kw">number</span>,
+    <span class="kw">public</span> skills: <span class="kw">string</span>[],
+    <span class="kw">public</span> equipment: { weapon: <span class="kw">string</span>; armor: <span class="kw">string</span> }
+  ) {}
+
+  <span class="fn">clone</span>(): <span class="cls">GameCharacter</span> {
+    <span class="cm">// Deep clone — copy nested objects too!</span>
+    <span class="kw">return new</span> <span class="cls">GameCharacter</span>(
+      <span class="kw">this</span>.name,
+      <span class="kw">this</span>.health,
+      [...<span class="kw">this</span>.skills],                   <span class="cm">// deep copy array</span>
+      { ...<span class="kw">this</span>.equipment }              <span class="cm">// deep copy object</span>
+    );
+  }
+}
+
+<span class="cm">// Instead of expensive re-initialization, clone a template:</span>
+<span class="kw">const</span> warriorTemplate = <span class="kw">new</span> <span class="cls">GameCharacter</span>(
+  <span class="st">"Warrior"</span>, <span class="nm">100</span>, [<span class="st">"slash"</span>, <span class="st">"block"</span>], { weapon: <span class="st">"sword"</span>, armor: <span class="st">"plate"</span> }
+);
+
+<span class="cm">// Create 1000 warriors instantly — clone, don't rebuild</span>
+<span class="kw">const</span> warriors = Array.<span class="fn">from</span>({ length: <span class="nm">1000</span> }, () => warriorTemplate.<span class="fn">clone</span>());</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between deep copy and shallow copy?</div>
+        <div class="interview-a">Shallow copy: creates a new object but copies only the top-level properties — nested objects are still shared references. Modifying a nested object in the copy changes the original. Deep copy: recursively copies all nested objects — the copy is completely independent. For Prototype pattern, deep copy is almost always what you want. In JavaScript: shallow = Object.assign({}, obj) or spread {...obj}. Deep = structuredClone(obj) (modern), JSON.parse(JSON.stringify(obj)) (loses functions/dates), or manual recursive cloning.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('builder')">← Builder</button>
+        <button class="mark-done-btn" onclick="markDone('prototype-pattern')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('adapter')">Next: Adapter →</button>
+      </div>
+    </div>
+
+    <!-- ===== ADAPTER ===== -->
+    <div id="lesson-adapter" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-st">// STRUCTURAL PATTERNS</div>
+        <div class="lesson-title">🔌 Adapter Pattern</div>
+        <div class="lesson-subtitle">Convert the interface of a class into another interface clients expect. Make incompatible interfaces work together.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-i">Client<br><small>uses Target</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-l">«Target»<br><small>request()</small></div>
+            <div class="arch-arrow">implements ↓</div>
+            <div class="arch-box ab-s">Adapter<br><small>wraps Adaptee</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab-o">Adaptee<br><small>specificRequest()</small></div>
+          </div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Existing code expects this interface</span>
+<span class="kw">interface</span> <span class="cls">Logger</span> {
+  <span class="fn">log</span>(message: <span class="kw">string</span>): <span class="kw">void</span>;
+  <span class="fn">error</span>(message: <span class="kw">string</span>): <span class="kw">void</span>;
+}
+
+<span class="cm">// Third-party library with incompatible interface</span>
+<span class="kw">class</span> <span class="cls">ThirdPartyLogger</span> {
+  <span class="fn">writeInfo</span>(msg: <span class="kw">string</span>, meta: <span class="kw">object</span>) { ... }
+  <span class="fn">writeError</span>(msg: <span class="kw">string</span>, err: <span class="cls">Error</span>) { ... }
+}
+
+<span class="cm">// Adapter — bridges the gap without touching either class</span>
+<span class="kw">class</span> <span class="cls">LoggerAdapter</span> <span class="kw">implements</span> <span class="cls">Logger</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> thirdParty: <span class="cls">ThirdPartyLogger</span>) {}
+
+  <span class="fn">log</span>(message: <span class="kw">string</span>) {
+    <span class="kw">this</span>.thirdParty.<span class="fn">writeInfo</span>(message, { timestamp: <span class="kw">new</span> <span class="cls">Date</span>() });
+  }
+
+  <span class="fn">error</span>(message: <span class="kw">string</span>) {
+    <span class="kw">this</span>.thirdParty.<span class="fn">writeError</span>(message, <span class="kw">new</span> <span class="cls">Error</span>(message));
+  }
+}
+
+<span class="cm">// Client code unchanged — just inject the adapter</span>
+<span class="kw">const</span> logger: <span class="cls">Logger</span> = <span class="kw">new</span> <span class="cls">LoggerAdapter</span>(<span class="kw">new</span> <span class="cls">ThirdPartyLogger</span>());
+logger.<span class="fn">log</span>(<span class="st">"Application started"</span>);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Adapter pattern and when do you use it?</div>
+        <div class="interview-a">Adapter allows objects with incompatible interfaces to collaborate. Use when: integrating a third-party library with a different API, migrating legacy code gradually (adapter wraps old code, new code uses new interface), working with multiple implementations of similar functionality that have different interfaces. Real examples: adapting a payment provider API to your payment interface, wrapping a REST API client to match your repository interface, adapting old callback-based code to return Promises.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('prototype-pattern')">← Prototype</button>
+        <button class="mark-done-btn" onclick="markDone('adapter')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('decorator')">Next: Decorator →</button>
+      </div>
+    </div>
+
+    <!-- ===== DECORATOR ===== -->
+    <div id="lesson-decorator" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-st">// STRUCTURAL PATTERNS</div>
+        <div class="lesson-title">🎁 Decorator Pattern</div>
+        <div class="lesson-subtitle">Attach new behaviors to objects by wrapping them. An alternative to subclassing for extending functionality.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">interface</span> <span class="cls">Coffee</span> {
+  <span class="fn">cost</span>(): <span class="kw">number</span>;
+  <span class="fn">description</span>(): <span class="kw">string</span>;
+}
+
+<span class="cm">// Concrete component</span>
+<span class="kw">class</span> <span class="cls">SimpleCoffee</span> <span class="kw">implements</span> <span class="cls">Coffee</span> {
+  <span class="fn">cost</span>() { <span class="kw">return</span> <span class="nm">1.00</span>; }
+  <span class="fn">description</span>() { <span class="kw">return</span> <span class="st">"Simple coffee"</span>; }
+}
+
+<span class="cm">// Base decorator — same interface, wraps another Coffee</span>
+<span class="kw">abstract class</span> <span class="cls">CoffeeDecorator</span> <span class="kw">implements</span> <span class="cls">Coffee</span> {
+  <span class="kw">constructor</span>(<span class="kw">protected</span> coffee: <span class="cls">Coffee</span>) {}
+  <span class="fn">cost</span>() { <span class="kw">return</span> <span class="kw">this</span>.coffee.<span class="fn">cost</span>(); }
+  <span class="fn">description</span>() { <span class="kw">return</span> <span class="kw">this</span>.coffee.<span class="fn">description</span>(); }
+}
+
+<span class="cm">// Concrete decorators — add behavior by wrapping</span>
+<span class="kw">class</span> <span class="cls">MilkDecorator</span> <span class="kw">extends</span> <span class="cls">CoffeeDecorator</span> {
+  <span class="fn">cost</span>()        { <span class="kw">return</span> <span class="kw">super</span>.<span class="fn">cost</span>() + <span class="nm">0.25</span>; }
+  <span class="fn">description</span>() { <span class="kw">return</span> <span class="kw">super</span>.<span class="fn">description</span>() + <span class="st">", milk"</span>; }
+}
+<span class="kw">class</span> <span class="cls">SugarDecorator</span> <span class="kw">extends</span> <span class="cls">CoffeeDecorator</span> {
+  <span class="fn">cost</span>()        { <span class="kw">return</span> <span class="kw">super</span>.<span class="fn">cost</span>() + <span class="nm">0.10</span>; }
+  <span class="fn">description</span>() { <span class="kw">return</span> <span class="kw">super</span>.<span class="fn">description</span>() + <span class="st">", sugar"</span>; }
+}
+
+<span class="cm">// Compose at runtime — mix and match decorators!</span>
+<span class="kw">let</span> myCoffee: <span class="cls">Coffee</span> = <span class="kw">new</span> <span class="cls">SimpleCoffee</span>();
+myCoffee = <span class="kw">new</span> <span class="cls">MilkDecorator</span>(myCoffee);
+myCoffee = <span class="kw">new</span> <span class="cls">SugarDecorator</span>(myCoffee);
+myCoffee = <span class="kw">new</span> <span class="cls">MilkDecorator</span>(myCoffee);  <span class="cm">// double milk!</span>
+
+console.<span class="fn">log</span>(myCoffee.<span class="fn">description</span>()); <span class="cm">// "Simple coffee, milk, sugar, milk"</span>
+console.<span class="fn">log</span>(myCoffee.<span class="fn">cost</span>());        <span class="cm">// 1.60</span></pre>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label">💡 ANALOGY</div>
+        <div class="analogy-text">Think of <strong>clothing layers</strong>. You start with a base outfit. You add a jacket (decorator) for warmth. Add a rain jacket over it for waterproofing. Each layer adds behavior while the person underneath stays unchanged. You can mix and match layers without changing the person or creating a separate subclass for every combination (RaincoatPerson, JacketPerson, RaincoatAndJacketPerson...).</div>
+      </div>
+      <div class="info-box"><strong>Real-world examples:</strong> Node.js streams (pipe chains), Java I/O (BufferedReader wraps FileReader), Python decorators (@cache, @property), middleware stacks in Express/Koa, React higher-order components.</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Decorator vs inheritance — when do you choose Decorator?</div>
+        <div class="interview-a">Inheritance creates a fixed hierarchy at compile time — you can't add behavior dynamically. Decorator allows dynamic composition at runtime. Problem: if you have 3 features (A, B, C) and need every combination, inheritance requires 7 subclasses (A, B, C, AB, AC, BC, ABC). With decorators: 3 decorator classes, compose any combination at runtime. Use Decorator when: you need to add behavior without modifying existing classes (OCP), behaviors should be composable in any combination, you need to add/remove behaviors at runtime.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('adapter')">← Adapter</button>
+        <button class="mark-done-btn" onclick="markDone('decorator')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('facade')">Next: Facade →</button>
+      </div>
+    </div>
+
+    <!-- ===== FACADE ===== -->
+    <div id="lesson-facade" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-st">// STRUCTURAL PATTERNS</div>
+        <div class="lesson-title">🪟 Facade Pattern</div>
+        <div class="lesson-subtitle">Provide a simplified interface to a complex subsystem. Hide complexity behind a simple, clean API.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Complex subsystem — many classes with complex interactions</span>
+<span class="kw">class</span> <span class="cls">VideoDecoder</span>  { <span class="fn">decode</span>(file: <span class="kw">string</span>) { ... } }
+<span class="kw">class</span> <span class="cls">AudioMixer</span>    { <span class="fn">mix</span>(audio: <span class="kw">any</span>) { ... } }
+<span class="kw">class</span> <span class="cls">BitrateReader</span>  { <span class="fn">read</span>(file: <span class="kw">string</span>) { ... } }
+<span class="kw">class</span> <span class="cls">CodecFactory</span>   { <span class="fn">extract</span>(video: <span class="kw">any</span>) { ... } }
+
+<span class="cm">// ❌ Without facade — client must know all the details</span>
+<span class="kw">const</span> decoder = <span class="kw">new</span> <span class="cls">VideoDecoder</span>();
+<span class="kw">const</span> codec = <span class="kw">new</span> <span class="cls">CodecFactory</span>().<span class="fn">extract</span>(decoder.<span class="fn">decode</span>(file));
+<span class="kw">const</span> bitrate = <span class="kw">new</span> <span class="cls">BitrateReader</span>().<span class="fn">read</span>(file);
+<span class="kw">const</span> audio = <span class="kw">new</span> <span class="cls">AudioMixer</span>().<span class="fn">mix</span>(codec, bitrate);
+<span class="cm">// Client must know AND correctly sequence 4 subsystems</span>
+
+<span class="cm">// ✅ WITH FACADE — simple interface, complexity hidden</span>
+<span class="kw">class</span> <span class="cls">VideoConverterFacade</span> {
+  <span class="kw">private</span> decoder = <span class="kw">new</span> <span class="cls">VideoDecoder</span>();
+  <span class="kw">private</span> mixer   = <span class="kw">new</span> <span class="cls">AudioMixer</span>();
+  <span class="kw">private</span> reader  = <span class="kw">new</span> <span class="cls">BitrateReader</span>();
+  <span class="kw">private</span> factory = <span class="kw">new</span> <span class="cls">CodecFactory</span>();
+
+  <span class="fn">convert</span>(filename: <span class="kw">string</span>, format: <span class="kw">string</span>): <span class="kw">string</span> {
+    <span class="cm">// Orchestrates all subsystems internally</span>
+    <span class="kw">const</span> video   = <span class="kw">this</span>.decoder.<span class="fn">decode</span>(filename);
+    <span class="kw">const</span> codec   = <span class="kw">this</span>.factory.<span class="fn">extract</span>(video);
+    <span class="kw">const</span> bitrate = <span class="kw">this</span>.reader.<span class="fn">read</span>(filename);
+    <span class="kw">return</span> <span class="kw">this</span>.mixer.<span class="fn">mix</span>(codec, bitrate, format);
+  }
+}
+
+<span class="cm">// Client — one method, done.</span>
+<span class="kw">const</span> converter = <span class="kw">new</span> <span class="cls">VideoConverterFacade</span>();
+<span class="kw">const</span> mp4 = converter.<span class="fn">convert</span>(<span class="st">"movie.avi"</span>, <span class="st">"mp4"</span>);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Facade pattern and give a real-world example?</div>
+        <div class="interview-a">Facade provides a simplified interface to a complex subsystem. Real examples: (1) A startup() method on a Computer that internally starts CPU, memory, hard drive in the right order — client just calls computer.startup(), (2) A payment API facade that internally handles authentication, fraud detection, currency conversion, bank communication, (3) An ORM like ActiveRecord — hides complex SQL behind simple model.save(), (4) The new keyword in many frameworks that wires together many objects internally. The facade doesn't prevent access to subsystems — it just provides a simpler entry point.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('decorator')">← Decorator</button>
+        <button class="mark-done-btn" onclick="markDone('facade')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('proxy-pattern')">Next: Proxy →</button>
+      </div>
+    </div>
+
+    <!-- ===== PROXY ===== -->
+    <div id="lesson-proxy-pattern" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-st">// STRUCTURAL PATTERNS</div>
+        <div class="lesson-title">🛡️ Proxy Pattern</div>
+        <div class="lesson-subtitle">Control access to an object. Add lazy loading, caching, logging, or access control without changing the real object.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Types & Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">interface</span> <span class="cls">DatabaseService</span> {
+  <span class="fn">query</span>(sql: <span class="kw">string</span>): <span class="kw">any</span>[];
+}
+
+<span class="cm">// Real object — expensive</span>
+<span class="kw">class</span> <span class="cls">RealDatabaseService</span> <span class="kw">implements</span> <span class="cls">DatabaseService</span> {
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) {
+    console.<span class="fn">log</span>(<span class="st">"Hitting database..."</span>);
+    <span class="kw">return</span> [<span class="cm">/* expensive DB call */</span>];
+  }
+}
+
+<span class="cm">// Caching Proxy — transparent to client</span>
+<span class="kw">class</span> <span class="cls">CachingProxy</span> <span class="kw">implements</span> <span class="cls">DatabaseService</span> {
+  <span class="kw">private</span> cache = <span class="kw">new</span> Map&lt;<span class="kw">string</span>, <span class="kw">any</span>[]&gt;();
+  <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="cls">DatabaseService</span>) {}
+
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) {
+    <span class="kw">if</span> (<span class="kw">this</span>.cache.<span class="fn">has</span>(sql)) {
+      console.<span class="fn">log</span>(<span class="st">"Cache hit!"</span>);
+      <span class="kw">return</span> <span class="kw">this</span>.cache.<span class="fn">get</span>(sql)!;
+    }
+    <span class="kw">const</span> result = <span class="kw">this</span>.db.<span class="fn">query</span>(sql);
+    <span class="kw">this</span>.cache.<span class="fn">set</span>(sql, result);
+    <span class="kw">return</span> result;
+  }
+}
+
+<span class="cm">// Access Control Proxy</span>
+<span class="kw">class</span> <span class="cls">AuthProxy</span> <span class="kw">implements</span> <span class="cls">DatabaseService</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="cls">DatabaseService</span>, <span class="kw">private</span> user: <span class="cls">User</span>) {}
+
+  <span class="fn">query</span>(sql: <span class="kw">string</span>) {
+    <span class="kw">if</span> (!<span class="kw">this</span>.user.hasPermission(<span class="st">'READ'</span>))
+      <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="st">"Access denied"</span>);
+    <span class="kw">return</span> <span class="kw">this</span>.db.<span class="fn">query</span>(sql);
+  }
+}
+
+<span class="cm">// Client uses proxy transparently — same interface!</span>
+<span class="kw">const</span> db: <span class="cls">DatabaseService</span> = <span class="kw">new</span> <span class="cls">CachingProxy</span>(<span class="kw">new</span> <span class="cls">RealDatabaseService</span>());</pre>
+        </div>
+      </div>
+      <div class="info-box"><strong>Proxy types:</strong> Virtual Proxy (lazy initialization — create expensive object only when needed), Caching Proxy (store results, avoid repeated work), Protection Proxy (access control), Remote Proxy (represent object in another address space), Logging Proxy (log all calls transparently).</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Proxy, Decorator, and Adapter?</div>
+        <div class="interview-a">All three wrap an object, but for different purposes. Proxy: controls ACCESS to the real object (lazy init, caching, auth, logging) — has the same interface, client may not know it's a proxy. Decorator: ADDS new behavior to an object — stackable, composable, client knows it's decorated. Adapter: TRANSLATES one interface to another — bridges incompatible interfaces, changes the API. Memory aid: Proxy = control, Decorator = enhance, Adapter = translate.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('facade')">← Facade</button>
+        <button class="mark-done-btn" onclick="markDone('proxy-pattern')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('composite')">Next: Composite →</button>
+      </div>
+    </div>
+
+    <!-- ===== COMPOSITE ===== -->
+    <div id="lesson-composite" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-st">// STRUCTURAL PATTERNS</div>
+        <div class="lesson-title">🌳 Composite Pattern</div>
+        <div class="lesson-subtitle">Compose objects into tree structures. Treat individual objects and compositions uniformly.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation — File System Example</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Common interface for both files and folders</span>
+<span class="kw">interface</span> <span class="cls">FileSystemItem</span> {
+  <span class="fn">getName</span>(): <span class="kw">string</span>;
+  <span class="fn">getSize</span>(): <span class="kw">number</span>;
+  <span class="fn">print</span>(indent?: <span class="kw">string</span>): <span class="kw">void</span>;
+}
+
+<span class="cm">// Leaf — no children</span>
+<span class="kw">class</span> <span class="cls">File</span> <span class="kw">implements</span> <span class="cls">FileSystemItem</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> name: <span class="kw">string</span>, <span class="kw">private</span> size: <span class="kw">number</span>) {}
+  <span class="fn">getName</span>() { <span class="kw">return</span> <span class="kw">this</span>.name; }
+  <span class="fn">getSize</span>() { <span class="kw">return</span> <span class="kw">this</span>.size; }
+  <span class="fn">print</span>(indent = <span class="st">""</span>) { console.<span class="fn">log</span>(<span class="st">`${indent}📄 ${this.name} (${this.size}KB)`</span>); }
+}
+
+<span class="cm">// Composite — has children, delegates to them</span>
+<span class="kw">class</span> <span class="cls">Folder</span> <span class="kw">implements</span> <span class="cls">FileSystemItem</span> {
+  <span class="kw">private</span> children: <span class="cls">FileSystemItem</span>[] = [];
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> name: <span class="kw">string</span>) {}
+  <span class="fn">getName</span>() { <span class="kw">return</span> <span class="kw">this</span>.name; }
+  <span class="fn">add</span>(item: <span class="cls">FileSystemItem</span>) { <span class="kw">this</span>.children.<span class="fn">push</span>(item); }
+
+  <span class="fn">getSize</span>() {                 <span class="cm">// delegates to all children</span>
+    <span class="kw">return this</span>.children.<span class="fn">reduce</span>((sum, child) => sum + child.<span class="fn">getSize</span>(), <span class="nm">0</span>);
+  }
+  <span class="fn">print</span>(indent = <span class="st">""</span>) {
+    console.<span class="fn">log</span>(<span class="st">`${indent}📁 ${this.name}/`</span>);
+    <span class="kw">this</span>.children.<span class="fn">forEach</span>(c => c.<span class="fn">print</span>(indent + <span class="st">"  "</span>));
+  }
+}
+
+<span class="cm">// Build tree — treat files and folders identically</span>
+<span class="kw">const</span> root = <span class="kw">new</span> <span class="cls">Folder</span>(<span class="st">"root"</span>);
+<span class="kw">const</span> src  = <span class="kw">new</span> <span class="cls">Folder</span>(<span class="st">"src"</span>);
+src.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">File</span>(<span class="st">"main.ts"</span>, <span class="nm">12</span>));
+src.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">File</span>(<span class="st">"utils.ts"</span>, <span class="nm">5</span>));
+root.<span class="fn">add</span>(src);
+root.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">File</span>(<span class="st">"README.md"</span>, <span class="nm">2</span>));
+
+root.<span class="fn">print</span>();          <span class="cm">// recursively prints tree</span>
+root.<span class="fn">getSize</span>();        <span class="cm">// 19 — recursively sums all files</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Composite pattern and what problem does it solve?</div>
+        <div class="interview-a">Composite lets you treat individual objects and groups of objects uniformly through a common interface. It solves the problem of tree structures where you'd otherwise have to distinguish between leaf nodes and containers with if isinstance checks. Real examples: file systems (files and folders), UI component trees (widgets containing other widgets), organizational charts (employees and managers), menus (items and submenus), HTML DOM. Key insight: both leaf and composite implement the same interface, so recursive operations work uniformly.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('proxy-pattern')">← Proxy</button>
+        <button class="mark-done-btn" onclick="markDone('composite')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('observer')">Next: Observer →</button>
+      </div>
+    </div>
+
+    <!-- ===== OBSERVER ===== -->
+    <div id="lesson-observer" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-bh">// BEHAVIORAL PATTERNS</div>
+        <div class="lesson-title">👁️ Observer Pattern</div>
+        <div class="lesson-subtitle">Define a one-to-many dependency. When one object changes state, all its dependents are notified automatically.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="diagram">
+          <div class="arch-flow">
+            <div class="arch-box ab-s">Subject<br><small>subscribe/notify</small></div>
+            <div class="arch-arrow">notifies →</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="arch-box ab-d">Observer A<br><small>update()</small></div>
+              <div class="arch-box ab-i">Observer B<br><small>update()</small></div>
+              <div class="arch-box ab-l">Observer C<br><small>update()</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">interface</span> <span class="cls">Observer</span>&lt;T&gt; { <span class="fn">update</span>(data: T): <span class="kw">void</span>; }
+
+<span class="kw">class</span> <span class="cls">EventEmitter</span>&lt;T&gt; {
+  <span class="kw">private</span> observers: <span class="cls">Observer</span>&lt;T&gt;[] = [];
+
+  <span class="fn">subscribe</span>(obs: <span class="cls">Observer</span>&lt;T&gt;)   { <span class="kw">this</span>.observers.<span class="fn">push</span>(obs); }
+  <span class="fn">unsubscribe</span>(obs: <span class="cls">Observer</span>&lt;T&gt;) {
+    <span class="kw">this</span>.observers = <span class="kw">this</span>.observers.<span class="fn">filter</span>(o => o !== obs);
+  }
+  <span class="fn">notify</span>(data: T) { <span class="kw">this</span>.observers.<span class="fn">forEach</span>(o => o.<span class="fn">update</span>(data)); }
+}
+
+<span class="cm">// Subject</span>
+<span class="kw">class</span> <span class="cls">StockPrice</span> <span class="kw">extends</span> <span class="cls">EventEmitter</span>&lt;<span class="kw">number</span>&gt; {
+  <span class="kw">private</span> price = <span class="nm">0</span>;
+
+  <span class="fn">setPrice</span>(price: <span class="kw">number</span>) {
+    <span class="kw">this</span>.price = price;
+    <span class="kw">this</span>.<span class="fn">notify</span>(price);  <span class="cm">// automatically notify all observers</span>
+  }
+}
+
+<span class="cm">// Observers</span>
+<span class="kw">class</span> <span class="cls">PriceAlert</span> <span class="kw">implements</span> <span class="cls">Observer</span>&lt;<span class="kw">number</span>&gt; {
+  <span class="fn">update</span>(price: <span class="kw">number</span>) {
+    <span class="kw">if</span> (price > <span class="nm">100</span>) console.<span class="fn">log</span>(<span class="st">`🚨 Price alert: $${price}`</span>);
+  }
+}
+
+<span class="kw">class</span> <span class="cls">PriceLogger</span> <span class="kw">implements</span> <span class="cls">Observer</span>&lt;<span class="kw">number</span>&gt; {
+  <span class="fn">update</span>(price: <span class="kw">number</span>) { console.<span class="fn">log</span>(<span class="st">`📝 Logged: $${price}`</span>); }
+}
+
+<span class="kw">const</span> stock = <span class="kw">new</span> <span class="cls">StockPrice</span>();
+stock.<span class="fn">subscribe</span>(<span class="kw">new</span> <span class="cls">PriceAlert</span>());
+stock.<span class="fn">subscribe</span>(<span class="kw">new</span> <span class="cls">PriceLogger</span>());
+stock.<span class="fn">setPrice</span>(<span class="nm">105</span>); <span class="cm">// both observers notified!</span></pre>
+        </div>
+      </div>
+      <div class="info-box"><strong>Observer is everywhere:</strong> DOM events (addEventListener), RxJS/Observables, React hooks (useEffect watching state), Redux (store subscriptions), Node.js EventEmitter, WebSocket event handlers, database triggers, Kafka consumers.</div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Observer pattern and where is it used in practice?</div>
+        <div class="interview-a">Observer defines a one-to-many dependency — when the subject's state changes, all registered observers are automatically notified and updated. Practical uses: event systems (DOM events), reactive programming (RxJS), MVC (view observes model changes), publish-subscribe messaging (Kafka/RabbitMQ at a conceptual level), real-time notifications, change tracking. Key benefit: loose coupling — the subject doesn't know about specific observers. New observers can be added without modifying the subject (OCP).</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between Observer and Pub/Sub?</div>
+        <div class="interview-a">Observer: subject knows about observers (direct reference). Observers subscribe directly to subject. Simpler, tighter coupling. In-process. Pub/Sub: publishers and subscribers don't know each other — there's a broker/message bus in between. More decoupled. Often distributed (Kafka, RabbitMQ). Observers are synchronous by default; Pub/Sub is typically async. Observer is a design pattern; Pub/Sub is a messaging architecture. Observer is like direct subscriptions; Pub/Sub is like a newspaper — publisher doesn't know its readers.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('composite')">← Composite</button>
+        <button class="mark-done-btn" onclick="markDone('observer')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('strategy')">Next: Strategy →</button>
+      </div>
+    </div>
+
+    <!-- ===== STRATEGY ===== -->
+    <div id="lesson-strategy" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-bh">// BEHAVIORAL PATTERNS</div>
+        <div class="lesson-title">♟️ Strategy Pattern</div>
+        <div class="lesson-subtitle">Define a family of algorithms, encapsulate each, and make them interchangeable. Select the algorithm at runtime.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Strategy interface</span>
+<span class="kw">interface</span> <span class="cls">SortStrategy</span> {
+  <span class="fn">sort</span>(data: <span class="kw">number</span>[]): <span class="kw">number</span>[];
+}
+
+<span class="cm">// Concrete strategies</span>
+<span class="kw">class</span> <span class="cls">BubbleSort</span> <span class="kw">implements</span> <span class="cls">SortStrategy</span> {
+  <span class="fn">sort</span>(data: <span class="kw">number</span>[]) { <span class="cm">/* O(n²) for small arrays */</span> <span class="kw">return</span> [...data].<span class="fn">sort</span>(); }
+}
+<span class="kw">class</span> <span class="cls">QuickSort</span> <span class="kw">implements</span> <span class="cls">SortStrategy</span> {
+  <span class="fn">sort</span>(data: <span class="kw">number</span>[]) { <span class="cm">/* O(n log n) average */</span> <span class="kw">return</span> [...data].<span class="fn">sort</span>(); }
+}
+<span class="kw">class</span> <span class="cls">MergeSort</span> <span class="kw">implements</span> <span class="cls">SortStrategy</span> {
+  <span class="fn">sort</span>(data: <span class="kw">number</span>[]) { <span class="cm">/* O(n log n) stable */</span> <span class="kw">return</span> [...data].<span class="fn">sort</span>(); }
+}
+
+<span class="cm">// Context — uses a strategy, can swap it</span>
+<span class="kw">class</span> <span class="cls">Sorter</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> strategy: <span class="cls">SortStrategy</span>) {}
+
+  <span class="fn">setStrategy</span>(s: <span class="cls">SortStrategy</span>) { <span class="kw">this</span>.strategy = s; }
+
+  <span class="fn">sort</span>(data: <span class="kw">number</span>[]) {
+    <span class="cm">// Select strategy dynamically based on data size</span>
+    <span class="kw">if</span> (data.length < <span class="nm">10</span>) <span class="kw">this</span>.<span class="fn">setStrategy</span>(<span class="kw">new</span> <span class="cls">BubbleSort</span>());
+    <span class="kw">return this</span>.strategy.<span class="fn">sort</span>(data);
+  }
+}
+
+<span class="cm">// Real example: payment strategies</span>
+<span class="kw">class</span> <span class="cls">ShoppingCart</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> paymentStrategy: <span class="cls">PaymentMethod</span>) {}
+
+  <span class="fn">checkout</span>(amount: <span class="kw">number</span>) {
+    <span class="kw">this</span>.paymentStrategy.<span class="fn">process</span>(amount);
+  }
+}
+
+<span class="cm">// Switch strategy at runtime:</span>
+<span class="kw">const</span> cart = <span class="kw">new</span> <span class="cls">ShoppingCart</span>(<span class="kw">new</span> <span class="cls">CreditCardPayment</span>());
+cart.<span class="fn">checkout</span>(<span class="nm">100</span>);
+<span class="cm">// User switches to PayPal:</span>
+cart.paymentStrategy = <span class="kw">new</span> <span class="cls">PayPalPayment</span>();
+cart.<span class="fn">checkout</span>(<span class="nm">100</span>);</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Strategy pattern and how does it relate to OCP?</div>
+        <div class="interview-a">Strategy encapsulates interchangeable algorithms behind a common interface, allowing them to be swapped at runtime. It implements OCP perfectly — adding a new algorithm means adding a new strategy class, not modifying the context. Use when: you have multiple variations of an algorithm (sorting, compression, pricing), you need to switch behavior at runtime based on user input/config/data, you want to eliminate large if/else or switch statements that select algorithm variants. Examples: payment methods, authentication strategies, compression algorithms, rendering engines.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('observer')">← Observer</button>
+        <button class="mark-done-btn" onclick="markDone('strategy')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('command')">Next: Command →</button>
+      </div>
+    </div>
+
+    <!-- ===== COMMAND ===== -->
+    <div id="lesson-command" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-bh">// BEHAVIORAL PATTERNS</div>
+        <div class="lesson-title">📟 Command Pattern</div>
+        <div class="lesson-subtitle">Encapsulate a request as an object. Enables undo/redo, queuing, logging, and transactional behavior.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation with Undo/Redo</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="kw">interface</span> <span class="cls">Command</span> {
+  <span class="fn">execute</span>(): <span class="kw">void</span>;
+  <span class="fn">undo</span>(): <span class="kw">void</span>;
+}
+
+<span class="cm">// Receiver — the object that actually does the work</span>
+<span class="kw">class</span> <span class="cls">TextEditor</span> {
+  <span class="kw">private</span> content = <span class="st">""</span>;
+  <span class="fn">insertText</span>(text: <span class="kw">string</span>) { <span class="kw">this</span>.content += text; }
+  <span class="fn">deleteText</span>(len: <span class="kw">number</span>)  { <span class="kw">this</span>.content = <span class="kw">this</span>.content.slice(<span class="nm">0</span>, -len); }
+  <span class="fn">getText</span>() { <span class="kw">return this</span>.content; }
+}
+
+<span class="cm">// Concrete commands</span>
+<span class="kw">class</span> <span class="cls">InsertCommand</span> <span class="kw">implements</span> <span class="cls">Command</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> editor: <span class="cls">TextEditor</span>, <span class="kw">private</span> text: <span class="kw">string</span>) {}
+  <span class="fn">execute</span>() { <span class="kw">this</span>.editor.<span class="fn">insertText</span>(<span class="kw">this</span>.text); }
+  <span class="fn">undo</span>()    { <span class="kw">this</span>.editor.<span class="fn">deleteText</span>(<span class="kw">this</span>.text.length); }
+}
+
+<span class="cm">// Invoker — tracks history, supports undo/redo</span>
+<span class="kw">class</span> <span class="cls">CommandHistory</span> {
+  <span class="kw">private</span> history: <span class="cls">Command</span>[] = [];
+  <span class="kw">private</span> pointer = -<span class="nm">1</span>;
+
+  <span class="fn">execute</span>(cmd: <span class="cls">Command</span>) {
+    <span class="kw">this</span>.history.<span class="fn">splice</span>(<span class="kw">this</span>.pointer + <span class="nm">1</span>); <span class="cm">// clear redo stack</span>
+    cmd.<span class="fn">execute</span>();
+    <span class="kw">this</span>.history.<span class="fn">push</span>(cmd);
+    <span class="kw">this</span>.pointer++;
+  }
+
+  <span class="fn">undo</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.pointer >= <span class="nm">0</span>) {
+      <span class="kw">this</span>.history[<span class="kw">this</span>.pointer--].<span class="fn">undo</span>();
+    }
+  }
+
+  <span class="fn">redo</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.pointer < <span class="kw">this</span>.history.length - <span class="nm">1</span>) {
+      <span class="kw">this</span>.history[++<span class="kw">this</span>.pointer].<span class="fn">execute</span>();
+    }
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are the main use cases for the Command pattern?</div>
+        <div class="interview-a">Command encapsulates a request as an object, enabling: (1) Undo/Redo — store history of commands, each knows how to reverse itself, (2) Task queuing — commands can be serialized, scheduled, sent over a network, (3) Logging/auditing — log every command that changes state, (4) Macro recording — record a sequence of commands and replay them, (5) Transactional behavior — execute multiple commands, rollback all if any fails. Real examples: text editor undo, database transactions, event sourcing, task schedulers, GUI button handlers.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('strategy')">← Strategy</button>
+        <button class="mark-done-btn" onclick="markDone('command')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('template-method')">Next: Template Method →</button>
+      </div>
+    </div>
+
+    <!-- ===== TEMPLATE METHOD ===== -->
+    <div id="lesson-template-method" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-bh">// BEHAVIORAL PATTERNS</div>
+        <div class="lesson-title">📋 Template Method Pattern</div>
+        <div class="lesson-subtitle">Define the skeleton of an algorithm in the base class, deferring some steps to subclasses.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Abstract class defines the template</span>
+<span class="kw">abstract class</span> <span class="cls">DataExporter</span> {
+  <span class="cm">// TEMPLATE METHOD — defines the algorithm skeleton</span>
+  <span class="kw">export</span>(data: <span class="kw">any</span>[]) {
+    <span class="kw">const</span> processed = <span class="kw">this</span>.<span class="fn">processData</span>(data);   <span class="cm">// step 1</span>
+    <span class="kw">const</span> formatted = <span class="kw">this</span>.<span class="fn">formatData</span>(processed); <span class="cm">// step 2 (varies)</span>
+    <span class="kw">this</span>.<span class="fn">writeOutput</span>(formatted);                  <span class="cm">// step 3 (varies)</span>
+    <span class="kw">this</span>.<span class="fn">notifyComplete</span>();                        <span class="cm">// step 4 (hook - optional)</span>
+  }
+
+  <span class="cm">// Concrete step — same for all exporters</span>
+  <span class="kw">private</span> <span class="fn">processData</span>(data: <span class="kw">any</span>[]) {
+    <span class="kw">return</span> data.<span class="fn">filter</span>(item => item.active);    <span class="cm">// common logic</span>
+  }
+
+  <span class="cm">// Abstract steps — MUST be overridden</span>
+  <span class="kw">protected abstract</span> <span class="fn">formatData</span>(data: <span class="kw">any</span>[]): <span class="kw">string</span>;
+  <span class="kw">protected abstract</span> <span class="fn">writeOutput</span>(output: <span class="kw">string</span>): <span class="kw">void</span>;
+
+  <span class="cm">// Hook — CAN be overridden (optional step)</span>
+  <span class="kw">protected</span> <span class="fn">notifyComplete</span>() { <span class="cm">/* default: do nothing */</span> }
+}
+
+<span class="cm">// Concrete implementations only override what differs</span>
+<span class="kw">class</span> <span class="cls">CsvExporter</span> <span class="kw">extends</span> <span class="cls">DataExporter</span> {
+  <span class="kw">protected</span> <span class="fn">formatData</span>(data: <span class="kw">any</span>[]) {
+    <span class="kw">return</span> data.<span class="fn">map</span>(row => Object.<span class="fn">values</span>(row).<span class="fn">join</span>(<span class="st">','</span>)).<span class="fn">join</span>(<span class="st">'\n'</span>);
+  }
+  <span class="kw">protected</span> <span class="fn">writeOutput</span>(output: <span class="kw">string</span>) { fs.<span class="fn">writeFileSync</span>(<span class="st">'data.csv'</span>, output); }
+}
+
+<span class="kw">class</span> <span class="cls">JsonExporter</span> <span class="kw">extends</span> <span class="cls">DataExporter</span> {
+  <span class="kw">protected</span> <span class="fn">formatData</span>(data: <span class="kw">any</span>[]) { <span class="kw">return</span> JSON.<span class="fn">stringify</span>(data, <span class="kw">null</span>, <span class="nm">2</span>); }
+  <span class="kw">protected</span> <span class="fn">writeOutput</span>(output: <span class="kw">string</span>) { fs.<span class="fn">writeFileSync</span>(<span class="st">'data.json'</span>, output); }
+  <span class="kw">protected</span> <span class="fn">notifyComplete</span>() { console.<span class="fn">log</span>(<span class="st">"JSON export done!"</span>); } <span class="cm">// hook!</span>
+}</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Template Method vs Strategy — what's the difference?</div>
+        <div class="interview-a">Both deal with varying algorithms, but differently. Template Method: uses INHERITANCE — the algorithm skeleton is in the base class, subclasses override specific steps. Variation happens at compile time via class hierarchy. Strategy: uses COMPOSITION — the algorithm is encapsulated in a separate strategy object, injected at runtime. "Prefer composition over inheritance" — Strategy is more flexible. Template Method is simpler when you just need a few variants of the same process. Strategy allows runtime switching; Template Method doesn't.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('command')">← Command</button>
+        <button class="mark-done-btn" onclick="markDone('template-method')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('iterator')">Next: Iterator →</button>
+      </div>
+    </div>
+
+    <!-- ===== ITERATOR ===== -->
+    <div id="lesson-iterator" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-bh">// BEHAVIORAL PATTERNS</div>
+        <div class="lesson-title">🔄 Iterator Pattern</div>
+        <div class="lesson-subtitle">Provide a way to sequentially access elements of a collection without exposing its underlying structure.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">TYPESCRIPT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+          <pre><span class="cm">// Custom iterator for a binary tree (in-order traversal)</span>
+<span class="kw">class</span> <span class="cls">TreeNode</span>&lt;T&gt; {
+  <span class="kw">constructor</span>(
+    <span class="kw">public</span> value: T,
+    <span class="kw">public</span> left?: <span class="cls">TreeNode</span>&lt;T&gt;,
+    <span class="kw">public</span> right?: <span class="cls">TreeNode</span>&lt;T&gt;
+  ) {}
+}
+
+<span class="cm">// Using JavaScript generator (built-in iterator protocol)</span>
+<span class="kw">class</span> <span class="cls">BinaryTree</span>&lt;T&gt; {
+  <span class="kw">constructor</span>(<span class="kw">private</span> root: <span class="cls">TreeNode</span>&lt;T&gt;) {}
+
+  *[Symbol.<span class="fn">iterator</span>](): <span class="cls">Iterator</span>&lt;T&gt; {   <span class="cm">// implements iterable protocol</span>
+    <span class="kw">yield</span>* <span class="kw">this</span>.<span class="fn">inOrder</span>(<span class="kw">this</span>.root);
+  }
+
+  <span class="kw">private</span> *<span class="fn">inOrder</span>(node?: <span class="cls">TreeNode</span>&lt;T&gt;): <span class="cls">Generator</span>&lt;T&gt; {
+    <span class="kw">if</span> (!node) <span class="kw">return</span>;
+    <span class="kw">yield</span>* <span class="kw">this</span>.<span class="fn">inOrder</span>(node.left);
+    <span class="kw">yield</span> node.value;
+    <span class="kw">yield</span>* <span class="kw">this</span>.<span class="fn">inOrder</span>(node.right);
+  }
+}
+
+<span class="cm">// Client uses for...of — doesn't know about tree internals</span>
+<span class="kw">const</span> tree = <span class="kw">new</span> <span class="cls">BinaryTree</span>(<span class="cm">/* ... */</span>);
+<span class="kw">for</span> (<span class="kw">const</span> value <span class="kw">of</span> tree) {
+  console.<span class="fn">log</span>(value); <span class="cm">// in-order traversal without knowing it's a tree</span>
+}
+<span class="cm">// Also works: [...tree], Array.from(tree), tree.forEach()</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the Iterator pattern and where does JavaScript use it natively?</div>
+        <div class="interview-a">Iterator provides a standardized way to traverse a collection (array, tree, graph, set) without knowing its internal structure. JavaScript has the Iterator Protocol built-in: any object with a [Symbol.iterator] method is iterable. Arrays, Strings, Maps, Sets, Generators are all iterables. This is why for...of, spread (...), destructuring, Array.from(), and Promise.all() work on all these types — they all speak the same iterator protocol. Implementing [Symbol.iterator] on your custom class makes it work with all these built-in features automatically.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('template-method')">← Template Method</button>
+        <button class="mark-done-btn" onclick="markDone('iterator')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- ===== CHEATSHEET ===== -->
     <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 Design & OOD cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for interviews.</div>
-      <div class="content-section">
-        <div class="section-title">SOLID</div>
-        <div class="prose">SRP (one reason to change), OCP (extend not modify), LSP (substitutable subtypes), ISP (small interfaces), DIP (depend on abstractions).</div>
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-solid">// STUDY AID</div>
+        <div class="lesson-title">📋 SOLID + Patterns Cheatsheet</div>
+        <div class="lesson-subtitle">Every principle and pattern on one page. Review before your interview.</div>
       </div>
+
       <div class="content-section">
-        <div class="section-title">Patterns</div>
-        <div class="prose">Creational: Singleton, Factory, Builder. Structural: Adapter, Decorator, Proxy, Facade, Composite. Behavioral: Observer, Strategy, Command, State.</div>
+        <div class="section-title">SOLID — One-Line Summaries</div>
+        <table class="cheat-table">
+          <tr><th>Principle</th><th>One-line rule</th><th>Violation sign</th></tr>
+          <tr><td style="color:var(--s)">S — SRP</td><td>One reason to change</td><td>Class name has "And" / does unrelated things</td></tr>
+          <tr><td style="color:var(--o)">O — OCP</td><td>Extend, don't modify</td><td>Adding a feature requires changing existing code</td></tr>
+          <tr><td style="color:var(--l)">L — LSP</td><td>Subtypes substitutable</td><td>if instanceof or throw NotImplemented in subclass</td></tr>
+          <tr><td style="color:var(--i)">I — ISP</td><td>No unused methods</td><td>Implementing methods with throw UnsupportedOperation</td></tr>
+          <tr><td style="color:var(--d)">D — DIP</td><td>Depend on abstractions</td><td>new ConcreteClass() deep inside business logic</td></tr>
+        </table>
       </div>
+
       <div class="content-section">
-        <div class="section-title">OOD process</div>
-        <div class="prose">Requirements → entities → relationships (has-a, is-a) → key methods → SOLID and patterns. Use cases: parking lot, elevator, deck of cards, etc.</div>
+        <div class="section-title">Design Patterns Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Pattern</th><th>Type</th><th>One-liner</th><th>Use when</th></tr>
+          <tr><td>Singleton</td><td style="color:var(--l)">Creational</td><td>One instance, global access</td><td>Config, loggers, caches</td></tr>
+          <tr><td>Factory Method</td><td style="color:var(--l)">Creational</td><td>Decouple creation from use</td><td>Vary which concrete class is created</td></tr>
+          <tr><td>Abstract Factory</td><td style="color:var(--l)">Creational</td><td>Create families of related objects</td><td>UI toolkits, cross-platform families</td></tr>
+          <tr><td>Builder</td><td style="color:var(--l)">Creational</td><td>Build complex object step by step</td><td>Many optional parameters, fluent API</td></tr>
+          <tr><td>Prototype</td><td style="color:var(--l)">Creational</td><td>Clone instead of creating from scratch</td><td>Expensive init, many similar objects</td></tr>
+          <tr><td>Adapter</td><td style="color:var(--i)">Structural</td><td>Translate one interface to another</td><td>Integrating third-party library</td></tr>
+          <tr><td>Decorator</td><td style="color:var(--i)">Structural</td><td>Add behavior by wrapping</td><td>Dynamic, composable feature addition</td></tr>
+          <tr><td>Facade</td><td style="color:var(--i)">Structural</td><td>Simplify complex subsystem</td><td>Hide complexity, provide clean API</td></tr>
+          <tr><td>Proxy</td><td style="color:var(--i)">Structural</td><td>Control access to object</td><td>Lazy init, caching, access control</td></tr>
+          <tr><td>Composite</td><td style="color:var(--i)">Structural</td><td>Treat objects and groups uniformly</td><td>Tree structures, file systems, UI trees</td></tr>
+          <tr><td>Observer</td><td style="color:var(--d)">Behavioral</td><td>Notify many on state change</td><td>Events, reactive systems, pub/sub</td></tr>
+          <tr><td>Strategy</td><td style="color:var(--d)">Behavioral</td><td>Swap algorithms at runtime</td><td>Multiple algorithm variants, OCP</td></tr>
+          <tr><td>Command</td><td style="color:var(--d)">Behavioral</td><td>Encapsulate request as object</td><td>Undo/redo, queuing, logging</td></tr>
+          <tr><td>Template Method</td><td style="color:var(--d)">Behavioral</td><td>Skeleton in base, steps in subclass</td><td>Same algorithm, varying steps</td></tr>
+          <tr><td>Iterator</td><td style="color:var(--d)">Behavioral</td><td>Traverse without knowing structure</td><td>Custom collections, lazy sequences</td></tr>
+        </table>
       </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+
+      <div class="content-section">
+        <div class="section-title">Proxy vs Decorator vs Adapter — Memory Aid</div>
+        <div class="success-box">
+          <strong>Proxy</strong> = same interface, CONTROLS access (lazy, cache, auth, log)<br>
+          <strong>Decorator</strong> = same interface, ADDS behavior (stackable, composable)<br>
+          <strong>Adapter</strong> = DIFFERENT interface, TRANSLATES between incompatible APIs
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="section-title">Common Pattern Pairings</div>
+        <table class="cheat-table">
+          <tr><th>Principle/Pattern</th><th>Related to</th><th>How</th></tr>
+          <tr><td>OCP</td><td>Strategy, Observer</td><td>Strategy implements OCP for algorithms; Observer for notifications</td></tr>
+          <tr><td>DIP</td><td>Factory Method</td><td>Factory returns interface, client depends on abstraction</td></tr>
+          <tr><td>SRP</td><td>Facade, Command</td><td>Facade extracts subsystem; Command separates invoke from execute</td></tr>
+          <tr><td>Strategy</td><td>Template Method</td><td>Both vary algorithms — composition (Strategy) vs inheritance (Template)</td></tr>
+          <tr><td>Composite</td><td>Iterator</td><td>Iterator often used to traverse Composite trees</td></tr>
+          <tr><td>Observer</td><td>Pub/Sub</td><td>Observer = direct; Pub/Sub = broker in between</td></tr>
+        </table>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('iterator')">← Iterator</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
     </div>
+
   </main>
 </div>
+
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done-design') || '[]')), xp: parseInt(localStorage.getItem('xp-design') || '0'), totalTopics: 6 };
-function showPage(p) { document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); if (p === 'home') document.getElementById('nav-home').classList.add('active'); document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; }
-function showLesson(id) { document.getElementById('home-page').style.display = 'none'; document.querySelectorAll('.lesson-page').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); const L = document.getElementById('lesson-' + id); const N = document.getElementById('nav-' + id); if (L) L.classList.add('active'); if (N) N.classList.add('active'); window.scrollTo(0, 0); }
-function markDone(id) { if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-design', JSON.stringify([...state.completed])); localStorage.setItem('xp-design', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; } document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; }
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP'; document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%'; state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
+  const TOPICS = ['srp','ocp','lsp','isp','dip','singleton','factory','abstract-factory','builder','prototype-pattern','adapter','decorator','facade','proxy-pattern','composite','observer','strategy','command','template-method','iterator','cheatsheet'];
+  const state = {
+    completed: new Set(JSON.parse(localStorage.getItem('sp-done') || '[]')),
+    xp: parseInt(localStorage.getItem('sp-xp') || '0'),
+    totalTopics: TOPICS.length
+  };
+
+  function showPage(p) {
+    document.getElementById('home-page').style.display = (p === 'home') ? 'block' : 'none';
+    document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    if (p === 'home') document.getElementById('nav-home').classList.add('active');
+    updateXP();
+  }
+
+  function showLesson(id) {
+    document.getElementById('home-page').style.display = 'none';
+    document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    const l = document.getElementById('lesson-' + id);
+    if (l) l.classList.add('active');
+    const n = document.getElementById('nav-' + id);
+    if (n) n.classList.add('active');
+    document.querySelector('main').scrollTo(0, 0);
+    window.scrollTo(0, 0);
+  }
+
+  function checkQuiz(btn, id, result) {
+    const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.style.pointerEvents = 'none');
+    const fb = document.getElementById('quiz-' + id + '-fb');
+    if (result === 'correct') {
+      btn.classList.add('correct');
+      fb.className = 'quiz-feedback show right';
+      fb.textContent = '✅ Correct! Well done.';
+      addXP(20);
+    } else {
+      btn.classList.add('wrong');
+      fb.className = 'quiz-feedback show wrong';
+      fb.textContent = '❌ Not quite — review the section above.';
+      opts.forEach(o => {
+        if (o.getAttribute('onclick') && o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');
+      });
+    }
+  }
+
+  function toggleAnswer(el) {
+    el.classList.toggle('open');
+    const next = el.nextElementSibling;
+    if (next && next.classList.contains('interview-a')) next.classList.toggle('open');
+  }
+
+  function markDone(id) {
+    if (!state.completed.has(id)) {
+      state.completed.add(id);
+      addXP(50);
+      localStorage.setItem('sp-done', JSON.stringify([...state.completed]));
+      const n = document.getElementById('nav-' + id);
+      if (n) n.classList.add('completed');
+      const btn = event.target;
+      btn.textContent = '✓ Done!';
+    }
+    updateProgress();
+  }
+
+  function addXP(a) {
+    state.xp += a;
+    localStorage.setItem('sp-xp', state.xp.toString());
+    updateXP();
+  }
+  function updateXP() {
+    document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`;
+    updateProgress();
+  }
+  function updateProgress() {
+    const pct = (state.completed.size / state.totalTopics) * 100;
+    document.getElementById('globalProgress').style.width = pct + '%';
+  }
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'COPIED!';
+      setTimeout(() => btn.textContent = 'COPY', 2000);
+    });
+  }
+  function init() {
+    state.completed.forEach(id => {
+      const n = document.getElementById('nav-' + id);
+      if (n) n.classList.add('completed');
+    });
+    updateProgress();
+    updateXP();
+  }
+  init();
 </script>
 </body>
 </html>

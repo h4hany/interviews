@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python & FastAPI — Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080c;--surface:#0a0d14;--surface2:#0f121c;--border:#171d2e;
+  --py:#3776ab;--fa:#009485;--accent:#4da6ff;--accent2:#00d4aa;--accent3:#f59e0b;--accent4:#a78bfa;
+  --text:#e8f0ff;--text-dim:#6880a8;--text-dimmer:#1a2235;
+  --yellow:#fbbf24;--red:#f87171;--green:#34d399;--card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(55,118,171,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,148,133,0.02) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 20%,rgba(55,118,171,0.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(0,148,133,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+header{position:sticky;top:0;z-index:100;background:rgba(6,8,12,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.logo-py{color:var(--accent);font-weight:700;font-size:15px}.logo-sep{color:var(--text-dimmer)}.logo-fa{color:var(--accent2);font-size:14px}
+.logo span{color:var(--text-dim)}
+.progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--py),var(--fa));transition:width 0.5s ease;width:0%}
+.xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
+.app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
+nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
+.nav-item:hover{color:var(--text);background:var(--surface)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(77,166,255,0.05)}
+.nav-item.fa-active{color:var(--accent2);border-left-color:var(--accent2);background:rgba(0,148,133,0.06)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);display:none}
+.nav-item.completed .done-dot{display:block}
+main{overflow-y:auto}
+.hero{padding:56px 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px}
+.hero h1{font-size:clamp(34px,5vw,60px);font-weight:800;line-height:1.06;margin-bottom:16px}
+.hl-py{background:linear-gradient(135deg,var(--py),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hl-fa{background:linear-gradient(135deg,var(--fa),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.75;margin-bottom:32px;font-weight:400}
+.stat-row{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--accent)}
+.stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase}
+.section-header{padding:24px 48px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.section-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:4px}
+.sb-py{background:rgba(55,118,171,0.15);color:var(--accent);border:1px solid rgba(77,166,255,0.3)}
+.sb-fa{background:rgba(0,148,133,0.15);color:var(--accent2);border:1px solid rgba(0,212,170,0.3)}
+.section-badge-title{font-size:16px;font-weight:700;color:var(--text)}
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;background:var(--border)}
+.topic-card{background:var(--bg);padding:26px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.topic-card:hover{background:var(--surface)}
+.topic-card:hover::before{opacity:1}
+.cpy::before{background:radial-gradient(circle at 0% 0%,rgba(55,118,171,0.12),transparent 60%)}
+.cfa::before{background:radial-gradient(circle at 0% 0%,rgba(0,148,133,0.12),transparent 60%)}
+.co::before{background:radial-gradient(circle at 0% 0%,rgba(245,158,11,0.08),transparent 60%)}
+.cv::before{background:radial-gradient(circle at 0% 0%,rgba(167,139,250,0.08),transparent 60%)}
+.card-emoji{font-size:28px;margin-bottom:10px;display:block}
+.card-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;font-weight:400}
+.card-tag-row{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.tag.hot{background:rgba(248,113,113,0.1);color:var(--red);border-color:rgba(248,113,113,0.2)}
+.tag.key{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+.tag.py{background:rgba(77,166,255,0.1);color:var(--accent);border-color:rgba(77,166,255,0.2)}
+.tag.fa{background:rgba(0,212,170,0.1);color:var(--accent2);border-color:rgba(0,212,170,0.2)}
+.lesson-page{display:none;padding:40px 48px;max-width:940px}
+.lesson-page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer}
+.lesson-breadcrumb:hover{color:var(--accent)}
+.lesson-breadcrumb::before{content:'← '}
+.lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+.e-py{color:var(--accent)}.e-fa{color:var(--accent2)}.e-both{color:var(--accent3)}
+.lesson-title{font-size:34px;font-weight:800;margin-bottom:12px;line-height:1.1}
+.lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:640px;font-weight:400}
+.content-section{margin-bottom:44px}
+.section-title{font-size:19px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:20px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400}
+.prose strong{color:var(--text);font-weight:700}
+.prose .hl{color:var(--accent)}.prose .h2{color:var(--accent2)}.prose .h3{color:var(--accent3)}.prose .h4{color:var(--green)}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;margin:20px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-lang{font-size:10px;letter-spacing:2px;font-family:'Space Mono',monospace;color:var(--accent)}
+.code-lang.fa{color:var(--accent2)}
+.copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.75;color:#b0cce8;font-family:'JetBrains Mono',monospace}
+.kw{color:#7ec8e3}.fn{color:#93c5fd}.st{color:#86efac}.nm{color:#fbbf24}.cm{color:#253550;font-style:italic}.op{color:#67e8f9}.id{color:#f9a8d4}.cls{color:#34d399}
+.analogy-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.18);border-left:3px solid var(--yellow);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:18px 22px;margin:20px 0}
+.analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px}
+.analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400}
+.info-box{background:rgba(77,166,255,0.04);border:1px solid rgba(77,166,255,0.15);border-left:3px solid var(--accent);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.info-box strong{color:var(--accent)}
+.warn-box{background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);border-left:3px solid var(--red);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.warn-box strong{color:var(--red)}
+.success-box{background:rgba(52,211,153,0.04);border:1px solid rgba(52,211,153,0.15);border-left:3px solid var(--green);border-radius:0 var(--card-radius) var(--card-radius) 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.75}
+.success-box strong{color:var(--green)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0}
+.cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.65}
+.cheat-table tr:last-child td{border-bottom:none}
+.cheat-table td:first-child{color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:12px}
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:22px 20px;margin:20px 0;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 0}
+.arch-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;font-family:'Space Mono',monospace;text-align:center}
+.ab-py{border-color:rgba(55,118,171,0.5);color:var(--accent);background:rgba(55,118,171,0.07)}
+.ab-fa{border-color:rgba(0,148,133,0.5);color:var(--accent2);background:rgba(0,148,133,0.07)}
+.ab-g{border-color:rgba(52,211,153,0.5);color:var(--green);background:rgba(52,211,153,0.06)}
+.ab-o{border-color:rgba(245,158,11,0.5);color:var(--accent3);background:rgba(245,158,11,0.06)}
+.ab-v{border-color:rgba(167,139,250,0.5);color:var(--accent4);background:rgba(167,139,250,0.06)}
+.ab-n{border-color:var(--border);color:var(--text-dim)}
+.arch-arrow{color:var(--text-dimmer);font-size:18px}
+.interview-box{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.15);border-radius:var(--card-radius);padding:22px 24px;margin:24px 0}
+.interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent4);margin-bottom:14px}
+.interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0}
+.interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent4);font-size:18px;transition:transform 0.2s;flex-shrink:0}
+.interview-q.open::after{transform:rotate(45deg)}
+.interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.85;font-weight:400;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+.interview-a.open{display:block}
+.quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:28px;margin:32px 0}
+.quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px}
+.quiz-q{font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.55}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:12px;font-weight:600;font-family:'Syne',sans-serif}
+.quiz-opt:hover{border-color:var(--accent);background:var(--surface2)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.05);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.05);color:var(--red)}
+.opt-letter{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0}
+.quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.quiz-feedback.show{display:block}
+.quiz-feedback.right{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+.quiz-feedback.wrong{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;flex-wrap:wrap;gap:12px}
+.btn{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;transition:all 0.2s;font-weight:700}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{box-shadow:0 0 20px rgba(77,166,255,0.35);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--text)}
+.mark-done-btn{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.mark-done-btn:hover{background:rgba(52,211,153,0.2)}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#home-page{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-py">Python</span><span class="logo-sep">&amp;</span>
+    <span class="logo-fa">FastAPI</span>
+    <span>// INTERVIEW PREP</span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-section-title">Start Here</div>
+    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-section-title">🐍 Python Core</div>
+    <div class="nav-item" onclick="showLesson('py-fundamentals')" id="nav-py-fundamentals"><span class="icon">⚡</span>Python Fundamentals<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('oop')" id="nav-oop"><span class="icon">🧬</span>OOP &amp; Classes<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('decorators')" id="nav-decorators"><span class="icon">🎁</span>Decorators &amp; Closures<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('async-python')" id="nav-async-python"><span class="icon">⏳</span>Async / Await<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('generators')" id="nav-generators"><span class="icon">🔄</span>Generators &amp; Iterators<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('type-hints')" id="nav-type-hints"><span class="icon">📐</span>Type Hints &amp; Pydantic<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('collections')" id="nav-collections"><span class="icon">📦</span>Collections &amp; Comprehensions<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('error-handling')" id="nav-error-handling"><span class="icon">🛡️</span>Error Handling<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('concurrency')" id="nav-concurrency"><span class="icon">🚀</span>Concurrency (GIL, threads)<span class="done-dot"></span></div>
+    <div class="nav-section-title">⚡ FastAPI</div>
+    <div class="nav-item" onclick="showLesson('fastapi-basics')" id="nav-fastapi-basics"><span class="icon">🚀</span>FastAPI Fundamentals<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('path-query')" id="nav-path-query"><span class="icon">🛣️</span>Path, Query &amp; Body<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('pydantic-models')" id="nav-pydantic-models"><span class="icon">✅</span>Pydantic Models<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('dependency-injection')" id="nav-dependency-injection"><span class="icon">💉</span>Dependency Injection<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('auth')" id="nav-auth"><span class="icon">🔐</span>Auth &amp; Security<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('database')" id="nav-database"><span class="icon">🗄️</span>Database &amp; SQLAlchemy<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('middleware')" id="nav-middleware"><span class="icon">🔗</span>Middleware &amp; Background Tasks<span class="done-dot"></span></div>
+    <div class="nav-item" onclick="showLesson('testing-fastapi')" id="nav-testing-fastapi"><span class="icon">🧪</span>Testing FastAPI<span class="done-dot"></span></div>
+    <div class="nav-section-title">Interview Blitz</div>
+    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
+  </nav>
+
+  <main id="mainContent">
+    <!-- HOME -->
+    <div id="home-page">
+      <div class="hero">
+        <div class="hero-eyebrow">// INTERACTIVE INTERVIEW PREP</div>
+        <h1>Master <span class="hl-py">Python</span> &amp;<br><span class="hl-fa">FastAPI</span></h1>
+        <p class="hero-sub">GIL, decorators, async/await, generators, type hints, Pydantic, dependency injection, JWT auth, SQLAlchemy, and testing — everything you need to ace your Python &amp; FastAPI interview.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">18</div><div class="stat-label">Core Topics</div></div>
+          <div class="stat"><div class="stat-num">70+</div><div class="stat-label">Interview Questions</div></div>
+          <div class="stat"><div class="stat-num">55+</div><div class="stat-label">Code Examples</div></div>
+          <div class="stat"><div class="stat-num">18</div><div class="stat-label">Quizzes</div></div>
+        </div>
+      </div>
+      <div class="section-header"><span class="section-badge sb-py">🐍 PYTHON</span><span class="section-badge-title">Python Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cpy" onclick="showLesson('py-fundamentals')"><span class="card-emoji">⚡</span><div class="card-title">Python Fundamentals</div><div class="card-desc">Mutable vs immutable, LEGB scope, *args/**kwargs, dunder methods, pass-by-assignment.</div><div class="card-tag-row"><span class="tag key">FUNDAMENTAL</span><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('oop')"><span class="card-emoji">🧬</span><div class="card-title">OOP &amp; Classes</div><div class="card-desc">Inheritance, MRO, @property, @classmethod, @staticmethod, dataclasses, abstract classes.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('decorators')"><span class="card-emoji">🎁</span><div class="card-title">Decorators &amp; Closures</div><div class="card-desc">How decorators work under the hood, functools.wraps, parametrized decorators, closures.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('async-python')"><span class="card-emoji">⏳</span><div class="card-title">Async / Await</div><div class="card-desc">Event loop, coroutines, asyncio.gather, TaskGroup, async context managers.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('generators')"><span class="card-emoji">🔄</span><div class="card-title">Generators &amp; Iterators</div><div class="card-desc">yield, generator expressions, itertools, lazy evaluation, memory efficiency.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card co" onclick="showLesson('type-hints')"><span class="card-emoji">📐</span><div class="card-title">Type Hints &amp; Pydantic</div><div class="card-desc">typing module, TypeVar, Protocol, Pydantic v2 runtime validation.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('collections')"><span class="card-emoji">📦</span><div class="card-title">Collections &amp; Comprehensions</div><div class="card-desc">defaultdict, Counter, deque, list/dict/set comprehensions, namedtuple.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('error-handling')"><span class="card-emoji">🛡️</span><div class="card-title">Error Handling</div><div class="card-desc">Exception hierarchy, context managers, __enter__/__exit__, contextlib.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cpy" onclick="showLesson('concurrency')"><span class="card-emoji">🚀</span><div class="card-title">Concurrency &amp; GIL</div><div class="card-desc">GIL explained, threading vs multiprocessing vs asyncio, when to use what.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+      </div>
+      <div class="section-header"><span class="section-badge sb-fa">⚡ FASTAPI</span><span class="section-badge-title">FastAPI Mastery</span></div>
+      <div class="topics-grid">
+        <div class="topic-card cfa" onclick="showLesson('fastapi-basics')"><span class="card-emoji">🚀</span><div class="card-title">FastAPI Fundamentals</div><div class="card-desc">Why FastAPI, ASGI vs WSGI, lifespan, auto docs, response models, status codes.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag fa">FASTAPI</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('path-query')"><span class="card-emoji">🛣️</span><div class="card-title">Path, Query &amp; Body</div><div class="card-desc">Path params, query params, request body, Form data, File uploads, Headers.</div><div class="card-tag-row"><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('pydantic-models')"><span class="card-emoji">✅</span><div class="card-title">Pydantic Models</div><div class="card-desc">Request/response schemas, field validators, model inheritance, from_attributes.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('dependency-injection')"><span class="card-emoji">💉</span><div class="card-title">Dependency Injection</div><div class="card-desc">Depends(), yield dependencies, chaining DI, overrides for testing.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span><span class="tag key">MUST KNOW</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('auth')"><span class="card-emoji">🔐</span><div class="card-title">Auth &amp; Security</div><div class="card-desc">JWT tokens, OAuth2PasswordBearer, password hashing, role-based access control.</div><div class="card-tag-row"><span class="tag hot">HOT TOPIC</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('database')"><span class="card-emoji">🗄️</span><div class="card-title">Database &amp; SQLAlchemy</div><div class="card-desc">Async SQLAlchemy 2.0, session management, relationships, Alembic migrations.</div><div class="card-tag-row"><span class="tag hot">ALWAYS ASKED</span></div></div>
+        <div class="topic-card cfa" onclick="showLesson('middleware')"><span class="card-emoji">🔗</span><div class="card-title">Middleware &amp; Background Tasks</div><div class="card-desc">Custom middleware, CORS, request timing, BackgroundTasks, WebSockets.</div><div class="card-tag-row"><span class="tag key">PRODUCTION</span></div></div>
+        <div class="topic-card cv" onclick="showLesson('testing-fastapi')"><span class="card-emoji">🧪</span><div class="card-title">Testing FastAPI</div><div class="card-desc">TestClient, pytest fixtures, async tests, dependency overrides.</div><div class="card-tag-row"><span class="tag key">PRODUCTION</span></div></div>
+      </div>
+    </div>
+
+    <!-- PYTHON FUNDAMENTALS -->
+    <div id="lesson-py-fundamentals" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">⚡ Python Fundamentals</div>
+        <div class="lesson-subtitle">The Python concepts that separate developers who use Python from those who truly understand it.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Mutable vs Immutable &amp; The Default Argument Trap</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Immutable: int, float, str, tuple, frozenset, bytes</span>
+<span class="cm"># Mutable  : list, dict, set, bytearray, custom objects</span>
+
+<span class="cm"># ❌ THE CLASSIC MUTABLE DEFAULT ARGUMENT BUG</span>
+<span class="kw">def</span> <span class="fn">append_to</span>(val, lst=[]):     <span class="cm"># list evaluated ONCE at definition!</span>
+    lst.<span class="fn">append</span>(val)
+    <span class="kw">return</span> lst
+
+<span class="fn">append_to</span>(<span class="nm">1</span>)   <span class="cm"># [1]</span>
+<span class="fn">append_to</span>(<span class="nm">2</span>)   <span class="cm"># [1, 2]  ← SURPRISE! Same list every call!</span>
+
+<span class="cm"># ✅ Fix: use None sentinel</span>
+<span class="kw">def</span> <span class="fn">append_to</span>(val, lst=<span class="kw">None</span>):
+    <span class="kw">if</span> lst <span class="kw">is None</span>:
+        lst = []
+    lst.<span class="fn">append</span>(val)
+    <span class="kw">return</span> lst
+
+<span class="cm"># Pass by assignment — not value, not reference</span>
+<span class="kw">def</span> <span class="fn">try_rebind</span>(x):
+    x = <span class="nm">100</span>           <span class="cm"># only rebinds local name — caller unchanged</span>
+
+<span class="kw">def</span> <span class="fn">mutate_list</span>(lst):
+    lst.<span class="fn">append</span>(<span class="nm">99</span>)  <span class="cm"># mutates the SAME object — caller sees change!</span>
+
+<span class="cm"># *args / **kwargs / keyword-only</span>
+<span class="kw">def</span> <span class="fn">flexible</span>(*args, keyword_only: str, **kwargs):
+    <span class="fn">print</span>(args)         <span class="cm"># tuple of positional extras</span>
+    <span class="fn">print</span>(keyword_only) <span class="cm"># must be passed as keyword</span>
+    <span class="fn">print</span>(kwargs)       <span class="cm"># dict of remaining keywords</span>
+
+<span class="cm"># Unpacking</span>
+first, *rest = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>]   <span class="cm"># first=1, rest=[2,3,4]</span>
+merged = {**dict1, **dict2}         <span class="cm"># merge dicts; dict2 wins collisions</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">LEGB Scope &amp; Dunder Methods</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># LEGB: Local → Enclosing → Global → Built-in</span>
+x = <span class="st">"global"</span>
+<span class="kw">def</span> <span class="fn">outer</span>():
+    x = <span class="st">"enclosing"</span>
+    <span class="kw">def</span> <span class="fn">inner</span>():
+        <span class="fn">print</span>(x)  <span class="cm"># "enclosing" — found in enclosing scope</span>
+    <span class="fn">inner</span>()
+
+<span class="cm"># Essential dunder methods</span>
+<span class="kw">class</span> <span class="cls">Money</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, amount: float, currency: str = <span class="st">"USD"</span>):
+        self.amount = amount
+        self.currency = currency
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):   <span class="cm"># unambiguous — for devs/debugging</span>
+        <span class="kw">return</span> <span class="st">f"Money({self.amount!r}, {self.currency!r})"</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):    <span class="cm"># readable — for users/print()</span>
+        <span class="kw">return</span> <span class="st">f"{self.amount} {self.currency}"</span>
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(self, other: <span class="st">"Money"</span>) -> <span class="st">"Money"</span>:
+        <span class="kw">if</span> self.currency != other.currency:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="st">"Currency mismatch"</span>)
+        <span class="kw">return</span> <span class="cls">Money</span>(self.amount + other.amount, self.currency)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other) -> bool:
+        <span class="kw">return</span> self.amount == other.amount <span class="kw">and</span> self.currency == other.currency
+
+    <span class="kw">def</span> <span class="fn">__hash__</span>(self):   <span class="cm"># needed to use in sets/dict keys</span>
+        <span class="kw">return</span> <span class="fn">hash</span>((self.amount, self.currency))</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the mutable default argument trap?</div>
+        <div class="interview-a">Default argument values are evaluated ONCE at function definition time, not on each call. If a mutable object (list, dict) is used as a default, all calls that don't supply that argument share the same object. def f(lst=[]): lst.append(1); return lst — calling f() repeatedly returns [1], [1,1], [1,1,1]... Fix: use None as default and create a new object inside the function body. This is one of the most famous Python interview gotchas.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Is Python pass-by-value or pass-by-reference?</div>
+        <div class="interview-a">Neither — Python uses "pass by object reference" (also called "pass by assignment"). When you call a function, the parameter name is bound to the same object the caller passed. Reassigning the parameter (x = 100) only rebinds the local name — it doesn't affect the caller's variable. But mutating the object (lst.append(99)) modifies the shared object and the caller sees the change. Immutable types (int, str, tuple) effectively behave like pass-by-value since you cannot mutate them in place.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between __repr__ and __str__?</div>
+        <div class="interview-a">__repr__ should return an unambiguous string, ideally one that could recreate the object: eval(repr(obj)) == obj. Used in the REPL, for debugging, and as a fallback for __str__. __str__ returns a user-friendly readable string. print() and str() call __str__. In containers (lists, dicts) __repr__ is used for elements. Rule: always implement __repr__. If only implementing one, implement __repr__ — it serves as the fallback for __str__.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">What does this print? <br><small style="font-family:'JetBrains Mono',monospace;color:var(--text-dim)">def f(x=[]): x.append(1); return x<br>print(f(), f(), f())</small></div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'pf','wrong')"><span class="opt-letter">A</span>[1]  [1]  [1]</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pf','correct')"><span class="opt-letter">B</span>[1]  [1, 1]  [1, 1, 1]  ✓ (same list!)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pf','wrong')"><span class="opt-letter">C</span>[]  []  []</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'pf','wrong')"><span class="opt-letter">D</span>Error</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-pf-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="mark-done-btn" onclick="markDone('py-fundamentals')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('oop')">Next: OOP →</button>
+      </div>
+    </div>
+
+    <!-- OOP -->
+    <div id="lesson-oop" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">🧬 OOP &amp; Classes</div>
+        <div class="lesson-subtitle">Python's object model — inheritance, MRO, properties, dataclasses, and abstract classes.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Classes, Decorators &amp; Dataclasses</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> functools <span class="kw">import</span> cached_property
+
+<span class="kw">class</span> <span class="cls">Animal</span>(ABC):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: str):
+        self._name = name          <span class="cm"># _ = "private by convention"</span>
+        self.__secret = <span class="st">"hidden"</span>  <span class="cm"># __ = name-mangled → _Animal__secret</span>
+
+    <span class="op">@property</span>
+    <span class="kw">def</span> <span class="fn">name</span>(self) -> str:         <span class="cm"># getter</span>
+        <span class="kw">return</span> self._name
+
+    <span class="op">@name.setter</span>
+    <span class="kw">def</span> <span class="fn">name</span>(self, value: str):    <span class="cm"># setter with validation</span>
+        <span class="kw">if not</span> value.strip(): <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="st">"Name cannot be empty"</span>)
+        self._name = value.strip()
+
+    <span class="op">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(self) -> str: ...    <span class="cm"># subclasses MUST implement</span>
+
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">create</span>(cls, name: str):    <span class="cm"># factory — cls = the actual class called on</span>
+        <span class="kw">return</span> <span class="fn">cls</span>(name)
+
+    <span class="op">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">validate</span>(name: str) -> bool:  <span class="cm"># no self or cls</span>
+        <span class="kw">return bool</span>(name.strip())
+
+<span class="cm"># Dataclass — auto-generates __init__, __repr__, __eq__</span>
+<span class="op">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Point</span>:
+    x: float
+    y: float
+    z: float = <span class="nm">0.0</span>
+    tags: list = field(default_factory=list)  <span class="cm"># mutable default — correct!</span>
+
+    <span class="op">@cached_property</span>                    <span class="cm"># computed once, then cached on instance</span>
+    <span class="kw">def</span> <span class="fn">magnitude</span>(self) -> float:
+        <span class="kw">return</span> (self.x**<span class="nm">2</span> + self.y**<span class="nm">2</span> + self.z**<span class="nm">2</span>) ** <span class="nm">0.5</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">MRO — Method Resolution Order</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># C3 linearization — determines method lookup order in multiple inheritance</span>
+<span class="kw">class</span> <span class="cls">A</span>:
+    <span class="kw">def</span> <span class="fn">who</span>(self): <span class="kw">return</span> <span class="st">"A"</span>
+<span class="kw">class</span> <span class="cls">B</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">who</span>(self): <span class="kw">return</span> <span class="st">"B"</span>
+<span class="kw">class</span> <span class="cls">C</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">who</span>(self): <span class="kw">return</span> <span class="st">"C"</span>
+<span class="kw">class</span> <span class="cls">D</span>(<span class="cls">B</span>, <span class="cls">C</span>): <span class="kw">pass</span>    <span class="cm"># diamond inheritance</span>
+
+<span class="cls">D</span>.__mro__   <span class="cm"># (D, B, C, A, object)  ← left-to-right, depth-first</span>
+<span class="cls">D</span>().<span class="fn">who</span>()   <span class="cm"># "B"  — first in MRO that has the method</span>
+
+<span class="cm"># super() follows MRO — always use it to call parent methods</span>
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: str, breed: str):
+        <span class="fn">super</span>().__init__(name)   <span class="cm"># safe even with multiple inheritance</span>
+        self.breed = breed
+
+    <span class="kw">def</span> <span class="fn">speak</span>(self) -> str:
+        <span class="kw">return</span> <span class="st">f"Woof! I'm {self.name}, a {self.breed}"</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between @classmethod and @staticmethod?</div>
+        <div class="interview-a">@classmethod receives the class (cls) as the first argument. It can access or modify class-level state and is inherited — if called on a subclass, cls is the subclass. Commonly used as alternative constructors (factory methods). @staticmethod receives no implicit first argument. It's just a regular function grouped inside the class namespace. Cannot access class or instance state. Use it for utility functions logically related to the class. Key difference: classmethod.create() called on Dog subclass returns a Dog; staticmethod has no such awareness.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are dataclasses and when should you use them?</div>
+        <div class="interview-a">Dataclasses (Python 3.7+) automatically generate __init__, __repr__, __eq__ (and optionally __hash__, __lt__, etc.) from class variable annotations. Use them when: you need a simple, mostly-data container class and want to avoid writing repetitive boilerplate. @dataclass(frozen=True) makes it immutable (hashable). For validation at runtime, use Pydantic instead — Pydantic is to dataclasses what a bouncer is to an open door. For truly read-only data, consider typing.NamedTuple.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('py-fundamentals')">← Fundamentals</button>
+        <button class="mark-done-btn" onclick="markDone('oop')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('decorators')">Next: Decorators →</button>
+      </div>
+    </div>
+
+    <!-- DECORATORS -->
+    <div id="lesson-decorators" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">🎁 Decorators &amp; Closures</div>
+        <div class="lesson-subtitle">Python's most elegant feature. How decorators work under the hood and how to write them correctly.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">How Decorators Work</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">A decorator is like <strong>gift wrapping</strong>. You take an existing function (the gift), wrap it in new behavior (the wrapping paper), and return the wrapped version. The original function is unchanged inside. <code>@decorator</code> is pure syntactic sugar for <code>func = decorator(func)</code>.</div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> functools, time
+
+<span class="cm"># Basic decorator — ALWAYS use @functools.wraps!</span>
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="op">@functools.wraps</span>(func)  <span class="cm"># preserves __name__, __doc__, signature</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.<span class="fn">perf_counter</span>()
+        result = <span class="fn">func</span>(*args, **kwargs)
+        <span class="fn">print</span>(<span class="st">f"{func.__name__} took {time.perf_counter()-start:.4f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper   <span class="cm"># return the wrapper, not the result!</span>
+
+<span class="op">@timer</span>
+<span class="kw">def</span> <span class="fn">slow</span>(): time.<span class="fn">sleep</span>(<span class="nm">0.1</span>)
+<span class="cm"># same as: slow = timer(slow)</span>
+
+<span class="cm"># Parametrized decorator (3 levels of nesting)</span>
+<span class="kw">def</span> <span class="fn">retry</span>(max_attempts: int = <span class="nm">3</span>, delay: float = <span class="nm">1.0</span>):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="op">@functools.wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            last_exc = <span class="kw">None</span>
+            <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_attempts):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> <span class="fn">func</span>(*args, **kwargs)
+                <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+                    last_exc = e
+                    <span class="kw">if</span> attempt < max_attempts - <span class="nm">1</span>:
+                        time.<span class="fn">sleep</span>(delay)
+            <span class="kw">raise</span> last_exc
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="op">@retry</span>(max_attempts=<span class="nm">3</span>, delay=<span class="nm">0.5</span>)
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(url: str): ...
+
+<span class="cm"># Closure — inner function retains access to enclosing scope</span>
+<span class="kw">def</span> <span class="fn">make_multiplier</span>(n: int):
+    <span class="kw">def</span> <span class="fn">multiplier</span>(x: int) -> int:
+        <span class="kw">return</span> x * n   <span class="cm"># n "closed over" from enclosing scope</span>
+    <span class="kw">return</span> multiplier
+
+double = <span class="fn">make_multiplier</span>(<span class="nm">2</span>)
+<span class="fn">double</span>(<span class="nm">5</span>)   <span class="cm"># 10  — n=2 lives as long as double does</span>
+double.__closure__[<span class="nm">0</span>].cell_contents   <span class="cm"># 2</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is @functools.wraps important in decorators?</div>
+        <div class="interview-a">Without @functools.wraps, the wrapper function replaces the decorated function's __name__, __doc__, __annotations__, and __wrapped__ attributes. This breaks: help() documentation, stack traces (show "wrapper" instead of real name), introspection tools, type checkers, and critically — FastAPI uses function signatures to generate OpenAPI docs and parse parameters. If you decorate a FastAPI route handler without @functools.wraps, FastAPI can't see the original parameter annotations. Always use it.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is a closure and what are its use cases?</div>
+        <div class="interview-a">A closure is a function that retains a reference to variables from its enclosing scope even after that scope has finished executing. The enclosed variables live in the function's __closure__ attribute. Use cases: factory functions (make_multiplier), decorators (the wrapper closes over the original func), callbacks that need context, memoization, and partial application (though functools.partial is cleaner for that). Compared to a class, closures are more concise for simple stateful functions. Use a class when you need multiple methods or the concept deserves its own type.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('oop')">← OOP</button>
+        <button class="mark-done-btn" onclick="markDone('decorators')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('async-python')">Next: Async →</button>
+      </div>
+    </div>
+
+    <!-- ASYNC PYTHON -->
+    <div id="lesson-async-python" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">⏳ Async / Await</div>
+        <div class="lesson-subtitle">Python's event loop, coroutines, and async patterns — the foundation of FastAPI's performance.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Async Fundamentals</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> asyncio
+<span class="kw">from</span> asyncio <span class="kw">import</span> TaskGroup
+
+<span class="cm"># Coroutine — defined with async def</span>
+<span class="kw">async def</span> <span class="fn">fetch_user</span>(user_id: int) -> dict:
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nm">0.1</span>)   <span class="cm"># yields control to event loop</span>
+    <span class="kw">return</span> {<span class="st">"id"</span>: user_id, <span class="st">"name"</span>: <span class="st">"Hany"</span>}
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># ❌ Sequential — 0.3s total</span>
+    u1 = <span class="kw">await</span> <span class="fn">fetch_user</span>(<span class="nm">1</span>)
+    u2 = <span class="kw">await</span> <span class="fn">fetch_user</span>(<span class="nm">2</span>)
+    u3 = <span class="kw">await</span> <span class="fn">fetch_user</span>(<span class="nm">3</span>)
+
+    <span class="cm"># ✅ Concurrent with gather — ~0.1s (run simultaneously)</span>
+    u1, u2, u3 = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+        <span class="fn">fetch_user</span>(<span class="nm">1</span>), <span class="fn">fetch_user</span>(<span class="nm">2</span>), <span class="fn">fetch_user</span>(<span class="nm">3</span>),
+    )
+
+    <span class="cm"># ✅ TaskGroup (Python 3.11+) — cancels ALL on any error</span>
+    <span class="kw">async with</span> TaskGroup() <span class="kw">as</span> tg:
+        t1 = tg.<span class="fn">create_task</span>(<span class="fn">fetch_user</span>(<span class="nm">1</span>))
+        t2 = tg.<span class="fn">create_task</span>(<span class="fn">fetch_user</span>(<span class="nm">2</span>))
+    <span class="cm"># t1.result(), t2.result() available after the block</span>
+
+<span class="cm"># Run CPU-bound work without blocking the event loop</span>
+<span class="kw">import</span> asyncio
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+
+<span class="kw">async def</span> <span class="fn">heavy_work</span>(data):
+    loop = asyncio.<span class="fn">get_event_loop</span>()
+    <span class="kw">with</span> <span class="fn">ProcessPoolExecutor</span>() <span class="kw">as</span> pool:
+        result = <span class="kw">await</span> loop.<span class="fn">run_in_executor</span>(pool, <span class="fn">cpu_intensive_fn</span>, data)
+    <span class="kw">return</span> result</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">gather vs wait vs TaskGroup</div>
+        <table class="cheat-table">
+          <tr><th>Method</th><th>Error behaviour</th><th>Use when</th></tr>
+          <tr><td>asyncio.gather()</td><td>First exception propagates; others may continue</td><td>All tasks must succeed</td></tr>
+          <tr><td>gather(return_exceptions=True)</td><td>Returns exceptions as values in results list</td><td>Want every result regardless of errors</td></tr>
+          <tr><td>asyncio.wait()</td><td>Manual — returns done/pending sets</td><td>Fine-grained control over completion</td></tr>
+          <tr><td>TaskGroup (3.11+)</td><td>Cancels ALL tasks on any error</td><td>Structured concurrency — safer default</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is an event loop and how does async/await work?</div>
+        <div class="interview-a">The event loop is a scheduler that runs coroutines. When a coroutine hits await, it suspends execution and yields control back to the event loop, which can then run other coroutines. When the awaited operation completes (I/O done, timer elapsed), the event loop resumes the suspended coroutine. This cooperative multitasking allows handling thousands of concurrent I/O operations on a single thread with no OS thread-switching overhead. Critical: CPU-bound work still blocks the event loop — use run_in_executor for that.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What happens if you call a blocking function inside an async FastAPI route?</div>
+        <div class="interview-a">It blocks the entire event loop — no other request can be processed until it completes. This kills the concurrency benefit of async. Fix: use asyncio.run_in_executor(executor, blocking_fn, arg) to run it in a thread pool. Or better in FastAPI: define the route with def (not async def) — FastAPI automatically runs synchronous routes in a thread pool executor. Rule: async def + awaitable async libraries = good. async def + sync blocking calls (requests library, psycopg2 sync) = event loop blocked = bad.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('decorators')">← Decorators</button>
+        <button class="mark-done-btn" onclick="markDone('async-python')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('generators')">Next: Generators →</button>
+      </div>
+    </div>
+
+    <!-- GENERATORS -->
+    <div id="lesson-generators" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">🔄 Generators &amp; Iterators</div>
+        <div class="lesson-subtitle">Lazy evaluation, memory efficiency, and the iterator protocol that powers Python's for loops.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Generators</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> itertools <span class="kw">import</span> islice, chain, groupby
+
+<span class="cm"># Generator function — yields values lazily</span>
+<span class="kw">def</span> <span class="fn">fibonacci</span>():
+    a, b = <span class="nm">0</span>, <span class="nm">1</span>
+    <span class="kw">while True</span>:
+        <span class="kw">yield</span> a          <span class="cm"># pause here, return a, resume next call</span>
+        a, b = b, a + b
+
+<span class="cm"># Memory-efficient — only one value at a time!</span>
+<span class="kw">for</span> n <span class="kw">in</span> <span class="fn">islice</span>(<span class="fn">fibonacci</span>(), <span class="nm">10</span>):
+    <span class="fn">print</span>(n)   <span class="cm"># 0, 1, 1, 2, 3, 5, 8, 13, 21, 34</span>
+
+<span class="cm"># Generator expression — lazy list comprehension</span>
+squares = (x**<span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1_000_000</span>))   <span class="cm"># ~100 bytes!</span>
+all_sq  = [x**<span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1_000_000</span>)]   <span class="cm"># ~8 MB!</span>
+
+<span class="cm"># Process large files without loading into memory</span>
+<span class="kw">def</span> <span class="fn">read_large_file</span>(path: str):
+    <span class="kw">with</span> <span class="fn">open</span>(path) <span class="kw">as</span> f:
+        <span class="kw">for</span> line <span class="kw">in</span> f:          <span class="cm"># file is already an iterator</span>
+            <span class="kw">yield</span> line.<span class="fn">strip</span>()  <span class="cm"># one line at a time</span>
+
+<span class="cm"># Custom iterator — implement __iter__ and __next__</span>
+<span class="kw">class</span> <span class="cls">CountUp</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, stop: int):
+        self.current, self.stop = <span class="nm">0</span>, stop
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self): <span class="kw">return</span> self  <span class="cm"># is both iterable and iterator</span>
+
+    <span class="kw">def</span> <span class="fn">__next__</span>(self):
+        <span class="kw">if</span> self.current >= self.stop:
+            <span class="kw">raise</span> <span class="cls">StopIteration</span>
+        self.current += <span class="nm">1</span>
+        <span class="kw">return</span> self.current</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between a list comprehension and a generator expression?</div>
+        <div class="interview-a">List comprehension [x**2 for x in range(N)] is eager — computes all N values immediately and stores them in memory. For N=1,000,000 this uses ~8MB. Generator expression (x**2 for x in range(N)) is lazy — computes one value at a time on demand, using ~100 bytes regardless of N. Use generators when: iterating large datasets, only need to iterate once, using with short-circuiting functions like any()/all()/sum(). Use lists when: need random access by index, need to iterate multiple times, need len().</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Python's for loop actually work?</div>
+        <div class="interview-a">for x in iterable: (1) calls iter(iterable) → __iter__() to get an iterator object, (2) repeatedly calls next(iterator) → __next__() to get the next value, (3) when __next__() raises StopIteration, the loop ends cleanly. Any object implementing __iter__ (returning an iterator) is iterable. Any object implementing both __iter__ and __next__ is an iterator. Generator functions return generator objects that implement both automatically — that's why you can for-loop over any generator without extra code.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('async-python')">← Async</button>
+        <button class="mark-done-btn" onclick="markDone('generators')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('type-hints')">Next: Type Hints →</button>
+      </div>
+    </div>
+
+    <!-- TYPE HINTS -->
+    <div id="lesson-type-hints" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">📐 Type Hints &amp; Pydantic</div>
+        <div class="lesson-subtitle">Modern Python annotations and runtime validation with Pydantic v2 — the backbone of FastAPI.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Type Annotations</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> typing <span class="kw">import</span> TypeVar, Generic, Protocol, TypedDict
+<span class="kw">from</span> collections.abc <span class="kw">import</span> Callable, Sequence
+
+<span class="cm"># Modern union syntax (Python 3.10+)</span>
+<span class="kw">def</span> <span class="fn">find_user</span>(uid: int) -> str | <span class="kw">None</span>: ...  <span class="cm"># same as Optional[str]</span>
+
+<span class="cm"># TypeVar — generic functions</span>
+T = TypeVar(<span class="st">'T'</span>)
+
+<span class="kw">def</span> <span class="fn">first</span>(items: Sequence[T]) -> T | <span class="kw">None</span>:
+    <span class="kw">return</span> items[<span class="nm">0</span>] <span class="kw">if</span> items <span class="kw">else None</span>
+
+<span class="cm"># Protocol — structural subtyping (duck typing with types)</span>
+<span class="kw">class</span> <span class="cls">Saveable</span>(<span class="cls">Protocol</span>):
+    <span class="kw">def</span> <span class="fn">save</span>(self) -> <span class="kw">None</span>: ...
+
+<span class="kw">def</span> <span class="fn">persist</span>(obj: <span class="cls">Saveable</span>) -> <span class="kw">None</span>:
+    obj.<span class="fn">save</span>()  <span class="cm"># works for ANY object with save() — no inheritance needed</span>
+
+<span class="cm"># TypedDict — typed dict for structured dicts</span>
+<span class="kw">class</span> <span class="cls">UserDict</span>(<span class="cls">TypedDict</span>):
+    name: str
+    age: int
+    email: str | <span class="kw">None</span></pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Pydantic v2</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON — PYDANTIC v2</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator, model_validator, ConfigDict
+<span class="kw">from</span> pydantic <span class="kw">import</span> EmailStr, HttpUrl
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">class</span> <span class="cls">UserCreate</span>(<span class="cls">BaseModel</span>):
+    name: str = <span class="fn">Field</span>(min_length=<span class="nm">1</span>, max_length=<span class="nm">100</span>)
+    email: <span class="cls">EmailStr</span>
+    age:  int  = <span class="fn">Field</span>(ge=<span class="nm">0</span>, le=<span class="nm">150</span>)    <span class="cm"># 0 ≤ age ≤ 150</span>
+    website: <span class="cls">HttpUrl</span> | <span class="kw">None</span> = <span class="kw">None</span>
+
+    model_config = <span class="fn">ConfigDict</span>(str_strip_whitespace=<span class="kw">True</span>)
+
+    <span class="op">@field_validator</span>(<span class="st">'name'</span>)
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">no_double_spaces</span>(cls, v: str) -> str:
+        <span class="kw">if</span> <span class="st">'  '</span> <span class="kw">in</span> v: <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="st">'No consecutive spaces'</span>)
+        <span class="kw">return</span> v
+
+    <span class="op">@model_validator</span>(mode=<span class="st">'after'</span>)   <span class="cm"># cross-field validation</span>
+    <span class="kw">def</span> <span class="fn">check_age_email</span>(self):
+        <span class="kw">if</span> self.age < <span class="nm">13</span>:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="st">'Must be 13+'</span>)
+        <span class="kw">return</span> self
+
+<span class="cm"># Usage</span>
+user = <span class="fn">UserCreate</span>(name=<span class="st">"Hany"</span>, email=<span class="st">"hany@example.com"</span>, age=<span class="nm">30</span>)
+user.<span class="fn">model_dump</span>()          <span class="cm"># dict</span>
+user.<span class="fn">model_dump_json</span>()     <span class="cm"># JSON string</span>
+<span class="cls">UserCreate</span>.<span class="fn">model_validate</span>({<span class="st">"name"</span>: <span class="st">"Hany"</span>, <span class="st">"email"</span>: <span class="st">"h@x.com"</span>, <span class="st">"age"</span>: <span class="nm">30</span>})</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between type hints and runtime validation?</div>
+        <div class="interview-a">Type hints are just annotations — Python doesn't enforce them at runtime by default. def f(x: int): pass — calling f("hello") runs fine. They exist for static analysis (mypy, pyright) and IDE autocomplete. Runtime validation (Pydantic) actually checks and coerces values when code runs, raising ValidationError for invalid input. FastAPI uses Pydantic models to: validate all incoming request data automatically, generate OpenAPI schema, serialize responses. This is why FastAPI can return a 422 Unprocessable Entity with detailed error messages for invalid input without any manual validation code.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('generators')">← Generators</button>
+        <button class="mark-done-btn" onclick="markDone('type-hints')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('collections')">Next: Collections →</button>
+      </div>
+    </div>
+
+    <!-- COLLECTIONS -->
+    <div id="lesson-collections" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">📦 Collections &amp; Comprehensions</div>
+        <div class="lesson-subtitle">Python's powerful built-in data structures and concise comprehension syntax.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">collections Module</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter, deque, namedtuple
+
+<span class="cm"># defaultdict — no KeyError, auto-initialises missing keys</span>
+word_count = defaultdict(<span class="fn">int</span>)
+<span class="kw">for</span> word <span class="kw">in</span> <span class="st">"hello world hello"</span>.<span class="fn">split</span>():
+    word_count[word] += <span class="nm">1</span>   <span class="cm"># no KeyError on first encounter</span>
+
+graph = defaultdict(<span class="fn">list</span>)   <span class="cm"># adjacency list</span>
+graph[<span class="st">"A"</span>].<span class="fn">append</span>(<span class="st">"B"</span>)
+
+<span class="cm"># Counter — count hashable objects</span>
+c = <span class="fn">Counter</span>(<span class="st">"abracadabra"</span>)
+c.<span class="fn">most_common</span>(<span class="nm">3</span>)      <span class="cm"># [('a', 5), ('b', 2), ('r', 2)]</span>
+c1 + c2                  <span class="cm"># merge counters (sum values)</span>
+
+<span class="cm"># deque — O(1) append/pop from BOTH ends</span>
+dq = deque(maxlen=<span class="nm">5</span>)    <span class="cm"># bounded; oldest auto-discarded</span>
+dq.<span class="fn">appendleft</span>(<span class="nm">0</span>)        <span class="cm"># O(1) vs list.insert(0, x) which is O(n)</span>
+
+<span class="cm"># Comprehensions</span>
+evens  = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">20</span>) <span class="kw">if</span> x % <span class="nm">2</span> == <span class="nm">0</span>]
+sq_map = {x: x**<span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">6</span>)}      <span class="cm"># dict comp</span>
+uniq   = {x % <span class="nm">3</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">10</span>)}        <span class="cm"># set comp → {0,1,2}</span>
+flat   = [n <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> n <span class="kw">in</span> row]  <span class="cm"># nested</span>
+
+<span class="cm"># namedtuple — immutable struct with named fields</span>
+<span class="cls">Point</span> = namedtuple(<span class="st">'Point'</span>, [<span class="st">'x'</span>, <span class="st">'y'</span>])
+p = <span class="fn">Point</span>(<span class="nm">3</span>, <span class="nm">4</span>)
+p.x, p.y   <span class="cm"># named access</span>
+p[<span class="nm">0</span>], p[<span class="nm">1</span>]  <span class="cm"># index access</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When would you use a deque instead of a list?</div>
+        <div class="interview-a">deque (double-ended queue) has O(1) append and pop from BOTH ends. list has O(1) only at the right end; insert/pop at index 0 is O(n) because all elements shift. Use deque for: FIFO queues (appendleft + pop), sliding window problems (use maxlen), BFS, when frequently adding/removing from both ends. Use list for: random access by index (list O(1), deque O(n)), sorting and slicing, when mostly appending to the right end. Rule: if you need popleft() often, use deque.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What are list comprehensions and when should you avoid them?</div>
+        <div class="interview-a">List comprehensions create a list from an iterable in a concise one-liner with optional filtering: [expr for item in iterable if condition]. They're faster than equivalent for loops (CPython optimizes them). Avoid when: the expression is complex enough to need a comment (just use a for loop), you have multiple nested loops with conditions (readability drops fast beyond 2 levels), you need early exit (comprehensions always process the full iterable), you're building a large list but only need to iterate once (use a generator expression instead).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('type-hints')">← Type Hints</button>
+        <button class="mark-done-btn" onclick="markDone('collections')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('error-handling')">Next: Error Handling →</button>
+      </div>
+    </div>
+
+    <!-- ERROR HANDLING -->
+    <div id="lesson-error-handling" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">🛡️ Error Handling</div>
+        <div class="lesson-subtitle">Exception hierarchy, context managers with with, and the contextlib patterns for clean resource management.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Exceptions &amp; Context Managers</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager, asynccontextmanager, suppress
+
+<span class="cm"># Custom exception hierarchy</span>
+<span class="kw">class</span> <span class="cls">AppError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, message: str, code: int = <span class="nm">500</span>):
+        <span class="fn">super</span>().__init__(message)
+        self.code = code
+
+<span class="kw">class</span> <span class="cls">NotFoundError</span>(<span class="cls">AppError</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, resource: str):
+        <span class="fn">super</span>().__init__(<span class="st">f"{resource} not found"</span>, code=<span class="nm">404</span>)
+
+<span class="cm"># ❌ BAD — bare except swallows EVERYTHING including KeyboardInterrupt</span>
+<span class="kw">try</span>: ...
+<span class="kw">except</span>: ...   <span class="cm"># NEVER use this</span>
+
+<span class="cm"># ✅ GOOD — specific exceptions, else, finally, chaining</span>
+<span class="kw">try</span>:
+    result = <span class="fn">risky_operation</span>()
+<span class="kw">except</span> <span class="cls">NotFoundError</span> <span class="kw">as</span> e:
+    <span class="fn">logger</span>.<span class="fn">warning</span>(<span class="st">f"Not found: {e}"</span>)
+    <span class="kw">raise</span>                             <span class="cm"># re-raise unchanged</span>
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+    <span class="kw">raise</span> <span class="cls">AppError</span>(<span class="st">"Bad input"</span>) <span class="kw">from</span> e  <span class="cm"># chain exceptions</span>
+<span class="kw">else</span>:
+    <span class="fn">process</span>(result)  <span class="cm"># runs only if NO exception</span>
+<span class="kw">finally</span>:
+    <span class="fn">cleanup</span>()        <span class="cm"># ALWAYS runs</span>
+
+<span class="cm"># @contextmanager — make a context manager with yield</span>
+<span class="op">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">managed_db</span>(dsn: str):
+    conn = <span class="fn">connect</span>(dsn)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> conn       <span class="cm"># code inside 'with' block runs here</span>
+        conn.<span class="fn">commit</span>()
+    <span class="kw">except</span>:
+        conn.<span class="fn">rollback</span>()
+        <span class="kw">raise</span>
+    <span class="kw">finally</span>:
+        conn.<span class="fn">close</span>()    <span class="cm"># always, even on exception</span>
+
+<span class="cm"># Async version</span>
+<span class="op">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">async_managed_db</span>(dsn: str):
+    conn = <span class="kw">await</span> <span class="fn">async_connect</span>(dsn)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> conn
+    <span class="kw">finally</span>:
+        <span class="kw">await</span> conn.<span class="fn">close</span>()
+
+<span class="cm"># suppress — ignore specific exceptions</span>
+<span class="kw">with</span> <span class="fn">suppress</span>(<span class="cls">FileNotFoundError</span>):
+    Path(<span class="st">"tmp.txt"</span>).<span class="fn">unlink</span>()  <span class="cm"># silently ignore if missing</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is exception chaining (raise X from Y)?</div>
+        <div class="interview-a">Exception chaining preserves the original exception context when raising a new one. raise NewException("message") from original_exc creates a chain — the traceback shows both. Use when: converting low-level exceptions to higher-level ones for callers (wrapping a psycopg2.Error into a DatabaseError). raise AppError("DB failure") from e — callers see the clean AppError but the original cause is still in __cause__. raise AppError(...) from None suppresses the chain, hiding the original. Good for library authors who don't want to leak implementation details.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do context managers work and when should you use them?</div>
+        <div class="interview-a">Context managers execute code on entry (__enter__) and guaranteed cleanup on exit (__exit__) — even if an exception occurs. The with statement calls __enter__, runs the block, then calls __exit__(exc_type, exc_val, exc_tb). If __exit__ returns True, the exception is suppressed. Use for: file handles (open), database connections/sessions, locks (threading.Lock), temporary directory creation, mocking in tests. The key guarantee: cleanup code ALWAYS runs. Without context managers, a developer might forget to call close() in an error path, leaking resources.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('collections')">← Collections</button>
+        <button class="mark-done-btn" onclick="markDone('error-handling')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('concurrency')">Next: Concurrency →</button>
+      </div>
+    </div>
+
+    <!-- CONCURRENCY -->
+    <div id="lesson-concurrency" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// PYTHON CORE</div>
+        <div class="lesson-title">🚀 Concurrency &amp; the GIL</div>
+        <div class="lesson-subtitle">The GIL explained, threading vs multiprocessing vs asyncio — and when to use each one.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">The GIL — Global Interpreter Lock</div>
+        <div class="analogy-box">
+          <div class="analogy-label">💡 ANALOGY</div>
+          <div class="analogy-text">The GIL is like a <strong>single bathroom key at a busy office</strong>. Only one person (thread) can use the bathroom (execute Python bytecode) at a time. Multiple people can wait in line, but only one is ever inside. The key is passed frequently, giving the illusion of concurrency. Exception: threads release the key during I/O — while one thread waits for a network response, another can run Python code.</div>
+        </div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, ProcessPoolExecutor
+<span class="kw">import</span> asyncio, multiprocessing
+
+<span class="cm"># Threading — I/O-bound (GIL released during I/O)</span>
+<span class="kw">with</span> <span class="fn">ThreadPoolExecutor</span>(max_workers=<span class="nm">10</span>) <span class="kw">as</span> pool:
+    futures = [pool.<span class="fn">submit</span>(<span class="fn">fetch_url</span>, url) <span class="kw">for</span> url <span class="kw">in</span> urls]
+    results = [f.<span class="fn">result</span>() <span class="kw">for</span> f <span class="kw">in</span> futures]
+
+<span class="cm"># Multiprocessing — CPU-bound (each process = own GIL)</span>
+<span class="kw">with</span> <span class="fn">ProcessPoolExecutor</span>(max_workers=multiprocessing.<span class="fn">cpu_count</span>()) <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.<span class="fn">map</span>(<span class="fn">cpu_heavy_fn</span>, large_dataset))
+
+<span class="cm"># Asyncio — best for many concurrent I/O tasks (single thread)</span>
+<span class="kw">async def</span> <span class="fn">main</span>():
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[<span class="fn">fetch_url</span>(url) <span class="kw">for</span> url <span class="kw">in</span> urls])</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Decision Matrix</div>
+        <table class="cheat-table">
+          <tr><th>Task type</th><th>Best choice</th><th>Why</th></tr>
+          <tr><td>Many HTTP requests</td><td>asyncio</td><td>No thread overhead; scales to thousands</td></tr>
+          <tr><td>DB queries (many concurrent)</td><td>asyncio + async driver</td><td>I/O-bound; cooperative multitasking</td></tr>
+          <tr><td>File I/O</td><td>threading or asyncio</td><td>GIL released during I/O</td></tr>
+          <tr><td>Image / video processing</td><td>multiprocessing</td><td>CPU-bound; bypass GIL</td></tr>
+          <tr><td>NumPy / Pandas heavy work</td><td>multiprocessing or C extension</td><td>NumPy releases GIL internally</td></tr>
+          <tr><td>Simple parallel tasks</td><td>concurrent.futures</td><td>High-level; swap Executor easily</td></tr>
+        </table>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the GIL and why does Python have it?</div>
+        <div class="interview-a">The GIL (Global Interpreter Lock) is a mutex that prevents multiple threads from executing Python bytecode simultaneously. CPython's memory management uses reference counting — without the GIL, concurrent reference count updates would corrupt memory. The GIL simplifies the interpreter and makes single-threaded code faster. Downside: CPU-bound multi-threaded code doesn't parallelize. Workarounds: multiprocessing (separate processes each with own GIL), C extensions like NumPy (release the GIL in C code), asyncio (single-threaded concurrent I/O). Python 3.13 has an experimental "no-GIL" mode.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why does threading still help for I/O-bound tasks despite the GIL?</div>
+        <div class="interview-a">The GIL is released during I/O system calls — reading a file, waiting for a network response, sleeping. While thread 1 waits for a network response (GIL released), threads 2–10 can run Python code or start their own I/O. True parallelism is not achieved, but I/O wait time is overlapped. With 10 threads each spending 90% of their time waiting, you get ~10x throughput vs single-threaded. Threading doesn't help CPU-bound tasks (heavy computation) — threads compete for the GIL without making real progress. Use asyncio for the same benefit with less overhead when the async libraries are available.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('error-handling')">← Error Handling</button>
+        <button class="mark-done-btn" onclick="markDone('concurrency')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('fastapi-basics')">Next: FastAPI →</button>
+      </div>
+    </div>
+
+    <!-- FASTAPI BASICS -->
+    <div id="lesson-fastapi-basics" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🚀 FastAPI Fundamentals</div>
+        <div class="lesson-subtitle">Why FastAPI is the fastest-growing Python web framework. ASGI, auto docs, lifespan, and core patterns.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">ASGI vs WSGI &amp; Why FastAPI</div>
+        <table class="cheat-table">
+          <tr><th>Feature</th><th>FastAPI</th><th>Flask / Django</th></tr>
+          <tr><td>Protocol</td><td>ASGI (async-first)</td><td>WSGI (sync-first)</td></tr>
+          <tr><td>Performance</td><td>Top-tier (uvicorn/Starlette)</td><td>Slower under concurrency</td></tr>
+          <tr><td>Auto docs</td><td>✅ Swagger + ReDoc out of the box</td><td>Manual / plugins</td></tr>
+          <tr><td>Validation</td><td>✅ Pydantic — type hints drive everything</td><td>Manual or separate lib</td></tr>
+          <tr><td>WebSockets</td><td>✅ Native</td><td>Limited / extension</td></tr>
+          <tr><td>Type safety</td><td>Full type hints, excellent IDE support</td><td>Limited</td></tr>
+        </table>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — COMPLETE EXAMPLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, status
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+
+<span class="cm"># Lifespan — replaces deprecated @app.on_event</span>
+<span class="op">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">lifespan</span>(app: FastAPI):
+    <span class="cm"># Startup: connect DB, load ML models, warm caches</span>
+    app.state.db = <span class="kw">await</span> <span class="fn">create_db_pool</span>()
+    <span class="kw">yield</span>
+    <span class="cm"># Shutdown: release resources</span>
+    <span class="kw">await</span> app.state.db.<span class="fn">close</span>()
+
+app = <span class="fn">FastAPI</span>(
+    title=<span class="st">"My API"</span>, version=<span class="st">"1.0.0"</span>,
+    lifespan=lifespan
+)
+
+<span class="kw">class</span> <span class="cls">ItemIn</span>(<span class="cls">BaseModel</span>):
+    name: str
+    price: float
+
+<span class="kw">class</span> <span class="cls">ItemOut</span>(<span class="cls">BaseModel</span>):
+    id: int
+    name: str
+    price: float
+
+<span class="op">@app.post</span>(<span class="st">"/items/"</span>,
+    response_model=<span class="cls">ItemOut</span>,           <span class="cm"># filters output, generates docs</span>
+    status_code=status.HTTP_201_CREATED,
+    summary=<span class="st">"Create a new item"</span>,
+)
+<span class="kw">async def</span> <span class="fn">create_item</span>(item: <span class="cls">ItemIn</span>) -> <span class="cls">ItemOut</span>:
+    saved = <span class="kw">await</span> db.<span class="fn">save</span>(item)
+    <span class="kw">return</span> saved
+
+<span class="op">@app.get</span>(<span class="st">"/items/{item_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_item</span>(item_id: int) -> <span class="cls">ItemOut</span>:
+    item = <span class="kw">await</span> db.<span class="fn">get</span>(item_id)
+    <span class="kw">if not</span> item:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=<span class="st">f"Item {item_id} not found"</span>
+        )
+    <span class="kw">return</span> item</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is ASGI and how does it differ from WSGI?</div>
+        <div class="interview-a">WSGI (Web Server Gateway Interface) is a synchronous Python web standard — one request maps to one synchronous function call. Can't natively handle WebSockets or long-running connections. Used by Flask and Django. ASGI (Asynchronous Server Gateway Interface) is async-first — supports concurrent connections, WebSockets, HTTP/2, background tasks, lifespan events. FastAPI is built on Starlette (ASGI framework) served by uvicorn (ASGI server). Under high I/O concurrency, ASGI handles far more simultaneous requests than WSGI's thread-per-request model.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: When should a FastAPI route be async def vs def?</div>
+        <div class="interview-a">Use async def when the route uses awaitable operations — async database drivers (asyncpg, motor), httpx, aiofiles, etc. FastAPI runs async def routes on the event loop. Use plain def when the route uses synchronous/blocking libraries (requests, psycopg2 sync, pandas). FastAPI automatically runs def routes in a thread pool executor, keeping the event loop unblocked. The critical mistake: using async def with synchronous blocking calls blocks the entire event loop. Either use sync def (FastAPI threads it) or use async-compatible libraries.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-label">// QUIZ</div>
+        <div class="quiz-q">Your FastAPI route uses a synchronous database library that blocks. Which signature prevents blocking the event loop?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'fa','wrong')"><span class="opt-letter">A</span>async def — always use async in FastAPI</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'fa','correct')"><span class="opt-letter">B</span>def — FastAPI runs it in a thread pool automatically ✓</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'fa','wrong')"><span class="opt-letter">C</span>It doesn't matter in FastAPI</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'fa','wrong')"><span class="opt-letter">D</span>async def + asyncio.sleep(0) after each DB call</div>
+        </div>
+        <div class="quiz-feedback" id="quiz-fa-fb"></div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('concurrency')">← Concurrency</button>
+        <button class="mark-done-btn" onclick="markDone('fastapi-basics')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('path-query')">Next: Path &amp; Query →</button>
+      </div>
+    </div>
+
+    <!-- PATH QUERY BODY -->
+    <div id="lesson-path-query" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🛣️ Path, Query &amp; Body</div>
+        <div class="lesson-subtitle">How FastAPI extracts and validates every part of an HTTP request automatically from type annotations.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">All Parameter Types</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — ALL PARAMETER TYPES</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Path, Query, Body, Header, Cookie, File, UploadFile
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated
+
+app = <span class="fn">FastAPI</span>()
+
+<span class="kw">class</span> <span class="cls">ItemCreate</span>(<span class="cls">BaseModel</span>):
+    name: str
+    price: float
+
+<span class="cm"># FastAPI auto-detects parameter source from type + name:</span>
+<span class="cm">#   name matches {path_var}  → path parameter</span>
+<span class="cm">#   simple scalar, no match  → query parameter</span>
+<span class="cm">#   Pydantic model           → request body</span>
+<span class="op">@app.get</span>(<span class="st">"/items/{item_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_items</span>(
+    <span class="cm"># Path param with constraints</span>
+    item_id: Annotated[int, Path(ge=<span class="nm">1</span>, description=<span class="st">"The item ID"</span>)],
+    <span class="cm"># Query params — optional with defaults</span>
+    page:   Annotated[int, Query(ge=<span class="nm">1</span>)] = <span class="nm">1</span>,
+    limit:  Annotated[int, Query(ge=<span class="nm">1</span>, le=<span class="nm">100</span>)] = <span class="nm">20</span>,
+    search: str | <span class="kw">None</span> = <span class="kw">None</span>,
+    <span class="cm"># Headers (FastAPI auto-converts X-Token → x_token)</span>
+    x_token: str = <span class="fn">Header</span>(...),
+    user_agent: str | <span class="kw">None</span> = <span class="fn">Header</span>(<span class="kw">None</span>),
+    <span class="cm"># Cookie</span>
+    session_id: str | <span class="kw">None</span> = <span class="fn">Cookie</span>(<span class="kw">None</span>),
+):
+    <span class="kw">return</span> {<span class="st">"item_id"</span>: item_id, <span class="st">"page"</span>: page}
+
+<span class="cm"># File upload</span>
+<span class="op">@app.post</span>(<span class="st">"/upload/"</span>)
+<span class="kw">async def</span> <span class="fn">upload</span>(file: <span class="cls">UploadFile</span>):
+    content = <span class="kw">await</span> file.<span class="fn">read</span>()
+    <span class="kw">return</span> {<span class="st">"filename"</span>: file.filename, <span class="st">"size"</span>: <span class="fn">len</span>(content)}
+
+<span class="cm"># Multiple body parameters → nested JSON: {"item":{...}, "user":{...}}</span>
+<span class="op">@app.put</span>(<span class="st">"/items/{item_id}"</span>)
+<span class="kw">async def</span> <span class="fn">update_item</span>(
+    item_id: int,
+    item: <span class="cls">ItemCreate</span>,
+    importance: Annotated[int, <span class="fn">Body</span>(ge=<span class="nm">1</span>, le=<span class="nm">5</span>)],  <span class="cm"># scalar in body</span>
+): ...</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How does FastAPI automatically determine where a parameter comes from?</div>
+        <div class="interview-a">FastAPI inspects the function signature and uses these rules: (1) If the parameter name matches a placeholder in the URL path ({param_name}), it's a path parameter. (2) If it's a simple type (int, str, float, bool, Enum) and NOT in the path, it's a query parameter — extracted from the URL query string. (3) If it's a Pydantic BaseModel subclass, it's treated as a JSON request body. (4) Use Path(), Query(), Body(), Header(), Cookie() explicitly to override defaults or add validation constraints. This convention-over-configuration approach keeps route handlers clean and self-documenting.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('fastapi-basics')">← FastAPI Basics</button>
+        <button class="mark-done-btn" onclick="markDone('path-query')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('pydantic-models')">Next: Pydantic Models →</button>
+      </div>
+    </div>
+
+    <!-- PYDANTIC MODELS -->
+    <div id="lesson-pydantic-models" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">✅ Pydantic Models in FastAPI</div>
+        <div class="lesson-subtitle">Request/response schemas, inheritance, response_model security, and ORM integration.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Schema Inheritance Pattern</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — SCHEMA DESIGN</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, ConfigDict
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Base — shared fields across all schemas</span>
+<span class="kw">class</span> <span class="cls">UserBase</span>(<span class="cls">BaseModel</span>):
+    email: str
+    name: str
+
+<span class="cm"># Create — input schema (password required, no id/timestamps)</span>
+<span class="kw">class</span> <span class="cls">UserCreate</span>(<span class="cls">UserBase</span>):
+    password: str          <span class="cm"># only in request, NEVER in response!</span>
+
+<span class="cm"># Patch — all optional for partial update</span>
+<span class="kw">class</span> <span class="cls">UserUpdate</span>(<span class="cls">BaseModel</span>):
+    email: str | <span class="kw">None</span> = <span class="kw">None</span>
+    name:  str | <span class="kw">None</span> = <span class="kw">None</span>
+
+<span class="cm"># Response — output schema (no password, includes server-set fields)</span>
+<span class="kw">class</span> <span class="cls">UserResponse</span>(<span class="cls">UserBase</span>):
+    id: int
+    created_at: datetime
+    is_active: bool = <span class="kw">True</span>
+
+    <span class="cm"># from_attributes: read from ORM model objects (SQLAlchemy rows)</span>
+    model_config = <span class="fn">ConfigDict</span>(from_attributes=<span class="kw">True</span>)
+
+<span class="cm"># Route — response_model FILTERS output fields!</span>
+<span class="op">@app.post</span>(<span class="st">"/users/"</span>, response_model=<span class="cls">UserResponse</span>)
+<span class="kw">async def</span> <span class="fn">create_user</span>(user: <span class="cls">UserCreate</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(<span class="fn">get_db</span>)):
+    db_user = <span class="cls">User</span>(**user.<span class="fn">model_dump</span>(exclude={<span class="st">"password"</span>}))
+    db_user.hashed_password = <span class="fn">hash_password</span>(user.password)
+    db.<span class="fn">add</span>(db_user)
+    <span class="kw">await</span> db.<span class="fn">commit</span>()
+    <span class="kw">await</span> db.<span class="fn">refresh</span>(db_user)
+    <span class="kw">return</span> db_user  <span class="cm"># FastAPI uses UserResponse — password never leaks!</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is response_model and why is it important for security?</div>
+        <div class="interview-a">response_model defines the Pydantic schema for the API response. FastAPI uses it to: (1) Filter output — only fields declared in response_model are serialized, even if the returned object has extra fields. (2) Generate accurate OpenAPI docs for clients. (3) Validate and serialize the response. Security: even if you return a SQLAlchemy User object that has a hashed_password field, if your UserResponse schema doesn't include it, it will NEVER appear in the API response. This is the primary defense against accidentally leaking sensitive data — password hashes, internal IDs, audit fields, etc.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('path-query')">← Path &amp; Query</button>
+        <button class="mark-done-btn" onclick="markDone('pydantic-models')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('dependency-injection')">Next: DI →</button>
+      </div>
+    </div>
+
+    <!-- DEPENDENCY INJECTION -->
+    <div id="lesson-dependency-injection" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">💉 Dependency Injection</div>
+        <div class="lesson-subtitle">FastAPI's most powerful feature. Composable, testable, reusable logic — from DB sessions to auth checks.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Depends() — The Foundation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — DEPENDENCY INJECTION</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> Depends, HTTPException
+<span class="kw">from</span> sqlalchemy.ext.asyncio <span class="kw">import</span> AsyncSession
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated
+
+<span class="cm"># DB session dependency — yield pattern ensures cleanup</span>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    <span class="kw">async with</span> <span class="fn">AsyncSessionLocal</span>() <span class="kw">as</span> session:
+        <span class="kw">try</span>:
+            <span class="kw">yield</span> session            <span class="cm"># request code runs here</span>
+            <span class="kw">await</span> session.<span class="fn">commit</span>()  <span class="cm"># commit on success</span>
+        <span class="kw">except</span>:
+            <span class="kw">await</span> session.<span class="fn">rollback</span>() <span class="cm"># rollback on exception</span>
+            <span class="kw">raise</span>
+
+<span class="cm"># Auth dependency — chain DI</span>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    token: str = <span class="fn">Depends</span>(<span class="fn">get_bearer_token</span>),  <span class="cm"># nested dependency</span>
+    db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(<span class="fn">get_db</span>),
+) -> <span class="cls">User</span>:
+    payload = <span class="fn">decode_jwt</span>(token)
+    user = <span class="kw">await</span> db.<span class="fn">get</span>(<span class="cls">User</span>, payload[<span class="st">"sub"</span>])
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="nm">401</span>, detail=<span class="st">"Invalid credentials"</span>)
+    <span class="kw">return</span> user
+
+<span class="cm"># Role check depends on user check</span>
+<span class="kw">async def</span> <span class="fn">require_admin</span>(
+    current_user: Annotated[<span class="cls">User</span>, <span class="fn">Depends</span>(<span class="fn">get_current_user</span>)]
+) -> <span class="cls">User</span>:
+    <span class="kw">if</span> current_user.role != <span class="st">"admin"</span>:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="nm">403</span>, detail=<span class="st">"Admin access required"</span>)
+    <span class="kw">return</span> current_user
+
+<span class="cm"># Type aliases keep route signatures clean</span>
+DB          = Annotated[<span class="cls">AsyncSession</span>, <span class="fn">Depends</span>(<span class="fn">get_db</span>)]
+CurrentUser = Annotated[<span class="cls">User</span>, <span class="fn">Depends</span>(<span class="fn">get_current_user</span>)]
+AdminUser   = Annotated[<span class="cls">User</span>, <span class="fn">Depends</span>(<span class="fn">require_admin</span>)]
+
+<span class="cm"># Clean route signatures</span>
+<span class="op">@app.get</span>(<span class="st">"/me"</span>)
+<span class="kw">async def</span> <span class="fn">get_me</span>(user: CurrentUser) -> <span class="cls">UserResponse</span>:
+    <span class="kw">return</span> user
+
+<span class="op">@app.delete</span>(<span class="st">"/users/{user_id}"</span>)
+<span class="kw">async def</span> <span class="fn">delete_user</span>(user_id: int, _: AdminUser, db: DB):
+    <span class="kw">await</span> db.<span class="fn">delete</span>(<span class="kw">await</span> db.<span class="fn">get</span>(<span class="cls">User</span>, user_id))</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is dependency injection in FastAPI and what problems does it solve?</div>
+        <div class="interview-a">Depends() lets you declare reusable, composable dependencies. FastAPI resolves them automatically — if two route handlers both Depends(get_db), FastAPI calls get_db once per request and shares the result. Solves: (1) Eliminates repetition — auth check, DB session, pagination params written once and reused everywhere. (2) Testability — override dependencies in tests without modifying route code. (3) Lifecycle management — yield dependencies with cleanup (DB rollback, close connections). (4) Chaining — dependencies can themselves have dependencies, building composable pipelines.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you override dependencies in tests?</div>
+        <div class="interview-a">Use app.dependency_overrides dict: app.dependency_overrides[get_db] = lambda: test_db_session. FastAPI replaces the real dependency with your override for that test. Use in pytest fixtures: yield the override, then clean up: def override(): yield session; yield then app.dependency_overrides.clear(). This is the canonical way to inject test databases, mock auth (get_current_user returns a fake user), mock external services — all without touching production code. Critical for integration tests that need a clean database per test.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('pydantic-models')">← Pydantic</button>
+        <button class="mark-done-btn" onclick="markDone('dependency-injection')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('auth')">Next: Auth →</button>
+      </div>
+    </div>
+
+    <!-- AUTH -->
+    <div id="lesson-auth" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🔐 Auth &amp; Security</div>
+        <div class="lesson-subtitle">JWT tokens, OAuth2, password hashing, and role-based access — the full production auth pattern.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">JWT Auth Implementation</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — JWT AUTH</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> Depends, HTTPException, status
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer, OAuth2PasswordRequestForm
+<span class="kw">from</span> passlib.context <span class="kw">import</span> CryptContext
+<span class="kw">import</span> jwt
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, timezone
+
+SECRET_KEY = <span class="st">"change-me-in-production"</span>
+ALGORITHM  = <span class="st">"HS256"</span>
+pwd_ctx    = <span class="fn">CryptContext</span>(schemes=[<span class="st">"bcrypt"</span>], deprecated=<span class="st">"auto"</span>)
+oauth2_scheme = <span class="fn">OAuth2PasswordBearer</span>(tokenUrl=<span class="st">"auth/token"</span>)
+
+<span class="cm"># Password helpers</span>
+<span class="kw">def</span> <span class="fn">hash_password</span>(plain: str) -> str:
+    <span class="kw">return</span> pwd_ctx.<span class="fn">hash</span>(plain)
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(plain: str, hashed: str) -> bool:
+    <span class="kw">return</span> pwd_ctx.<span class="fn">verify</span>(plain, hashed)
+
+<span class="cm"># Create JWT</span>
+<span class="kw">def</span> <span class="fn">create_access_token</span>(subject: str, expires_in: int = <span class="nm">30</span>) -> str:
+    expire = datetime.<span class="fn">now</span>(timezone.utc) + timedelta(minutes=expires_in)
+    payload = {<span class="st">"sub"</span>: subject, <span class="st">"exp"</span>: expire}
+    <span class="kw">return</span> jwt.<span class="fn">encode</span>(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+<span class="cm"># Auth endpoint</span>
+<span class="op">@app.post</span>(<span class="st">"/auth/token"</span>)
+<span class="kw">async def</span> <span class="fn">login</span>(
+    form: <span class="cls">OAuth2PasswordRequestForm</span> = <span class="fn">Depends</span>(),
+    db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(<span class="fn">get_db</span>),
+):
+    user = <span class="kw">await</span> <span class="fn">get_user_by_email</span>(db, form.username)
+    <span class="kw">if not</span> user <span class="kw">or not</span> <span class="fn">verify_password</span>(form.password, user.hashed_password):
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="st">"Incorrect credentials"</span>,
+            headers={<span class="st">"WWW-Authenticate"</span>: <span class="st">"Bearer"</span>},
+        )
+    token = <span class="fn">create_access_token</span>(subject=str(user.id))
+    <span class="kw">return</span> {<span class="st">"access_token"</span>: token, <span class="st">"token_type"</span>: <span class="st">"bearer"</span>}
+
+<span class="cm"># Decode JWT — used as dependency</span>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(token: str = <span class="fn">Depends</span>(oauth2_scheme)) -> <span class="cls">User</span>:
+    <span class="kw">try</span>:
+        payload = jwt.<span class="fn">decode</span>(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.<span class="fn">get</span>(<span class="st">"sub"</span>)
+        <span class="kw">if not</span> user_id: <span class="kw">raise</span> <span class="cls">ValueError</span>
+    <span class="kw">except</span> (<span class="cls">jwt.ExpiredSignatureError</span>, <span class="cls">jwt.InvalidTokenError</span>, <span class="cls">ValueError</span>):
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="nm">401</span>, detail=<span class="st">"Invalid or expired token"</span>)
+    user = <span class="kw">await</span> db.<span class="fn">get</span>(<span class="cls">User</span>, <span class="fn">int</span>(user_id))
+    <span class="kw">if not</span> user: <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="nm">401</span>, detail=<span class="st">"User not found"</span>)
+    <span class="kw">return</span> user</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is JWT and how does it work in FastAPI?</div>
+        <div class="interview-a">JWT (JSON Web Token) is a self-contained token with three parts: header (algorithm), payload (claims like sub, exp, roles), and signature. The server signs the payload with a secret key — no database lookup needed to validate a token. Flow: (1) User logs in with credentials → server creates JWT signed with SECRET_KEY → sends to client. (2) Client stores token (memory or httpOnly cookie) and includes it in every request (Authorization: Bearer token). (3) Server decodes and verifies signature on each request — if valid, extracts user ID from payload. FastAPI's OAuth2PasswordBearer extracts the Bearer token automatically from the Authorization header.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: Why use bcrypt for passwords instead of SHA-256 or MD5?</div>
+        <div class="interview-a">MD5 and SHA-256 are fast general-purpose hash functions — an attacker with a GPU can try billions of MD5 hashes per second. bcrypt is intentionally slow — it has a configurable "work factor" that makes each hash take ~100ms. Brute-forcing bcrypt takes years vs minutes for MD5. bcrypt also includes a built-in salt (prevents rainbow table attacks) and is adaptive — increase the work factor as hardware improves without changing stored hashes. Never use MD5, SHA-1, or SHA-256 directly for passwords. Use bcrypt, Argon2id, or scrypt via passlib.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('dependency-injection')">← DI</button>
+        <button class="mark-done-btn" onclick="markDone('auth')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('database')">Next: Database →</button>
+      </div>
+    </div>
+
+    <!-- DATABASE -->
+    <div id="lesson-database" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🗄️ Database &amp; SQLAlchemy 2.0</div>
+        <div class="lesson-subtitle">Async SQLAlchemy 2.0, session management, ORM relationships, and Alembic migrations.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Async SQLAlchemy 2.0 Setup</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">SQLALCHEMY 2.0 + FASTAPI</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> sqlalchemy.ext.asyncio <span class="kw">import</span> AsyncSession, create_async_engine, async_sessionmaker
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> DeclarativeBase, Mapped, mapped_column, relationship
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> String, ForeignKey, select
+
+<span class="cm"># Engine and session factory</span>
+engine = <span class="fn">create_async_engine</span>(
+    <span class="st">"postgresql+asyncpg://user:pass@localhost/db"</span>,
+    echo=<span class="kw">False</span>, pool_size=<span class="nm">20</span>, max_overflow=<span class="nm">40</span>
+)
+AsyncSessionLocal = <span class="fn">async_sessionmaker</span>(engine, expire_on_commit=<span class="kw">False</span>)
+
+<span class="cm"># Declarative base</span>
+<span class="kw">class</span> <span class="cls">Base</span>(<span class="cls">DeclarativeBase</span>): <span class="kw">pass</span>
+
+<span class="cm"># Models with type-annotated columns (SQLAlchemy 2.0 style)</span>
+<span class="kw">class</span> <span class="cls">User</span>(<span class="cls">Base</span>):
+    __tablename__ = <span class="st">"users"</span>
+
+    id:    <span class="cls">Mapped</span>[int]          = <span class="fn">mapped_column</span>(primary_key=<span class="kw">True</span>)
+    email: <span class="cls">Mapped</span>[str]          = <span class="fn">mapped_column</span>(<span class="fn">String</span>(<span class="nm">255</span>), unique=<span class="kw">True</span>)
+    name:  <span class="cls">Mapped</span>[str]          = <span class="fn">mapped_column</span>(<span class="fn">String</span>(<span class="nm">100</span>))
+    posts: <span class="cls">Mapped</span>[list[<span class="st">"Post"</span>]] = <span class="fn">relationship</span>(back_populates=<span class="st">"author"</span>)
+
+<span class="kw">class</span> <span class="cls">Post</span>(<span class="cls">Base</span>):
+    __tablename__ = <span class="st">"posts"</span>
+
+    id:        <span class="cls">Mapped</span>[int] = <span class="fn">mapped_column</span>(primary_key=<span class="kw">True</span>)
+    title:     <span class="cls">Mapped</span>[str]
+    user_id:   <span class="cls">Mapped</span>[int] = <span class="fn">mapped_column</span>(<span class="fn">ForeignKey</span>(<span class="st">"users.id"</span>))
+    author:    <span class="cls">Mapped</span>[<span class="st">"User"</span>] = <span class="fn">relationship</span>(back_populates=<span class="st">"posts"</span>)
+
+<span class="cm"># CRUD operations</span>
+<span class="kw">async def</span> <span class="fn">get_user</span>(db: <span class="cls">AsyncSession</span>, user_id: int) -> <span class="cls">User</span> | <span class="kw">None</span>:
+    <span class="kw">return await</span> db.<span class="fn">get</span>(<span class="cls">User</span>, user_id)
+
+<span class="kw">async def</span> <span class="fn">get_users</span>(db: <span class="cls">AsyncSession</span>, skip: int = <span class="nm">0</span>, limit: int = <span class="nm">100</span>):
+    result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(<span class="cls">User</span>).<span class="fn">offset</span>(skip).<span class="fn">limit</span>(limit))
+    <span class="kw">return</span> result.<span class="fn">scalars</span>().<span class="fn">all</span>()
+
+<span class="kw">async def</span> <span class="fn">create_user</span>(db: <span class="cls">AsyncSession</span>, email: str, name: str) -> <span class="cls">User</span>:
+    user = <span class="cls">User</span>(email=email, name=name)
+    db.<span class="fn">add</span>(user)
+    <span class="kw">await</span> db.<span class="fn">flush</span>()   <span class="cm"># get auto-incremented ID without committing</span>
+    <span class="kw">await</span> db.<span class="fn">refresh</span>(user)  <span class="cm"># reload from DB</span>
+    <span class="kw">return</span> user</pre>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Alembic Migrations</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">SHELL — ALEMBIC COMMANDS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="cm"># Initialize Alembic</span>
+alembic init alembic
+
+<span class="cm"># Auto-generate migration from model changes</span>
+alembic revision --autogenerate -m <span class="st">"add users table"</span>
+
+<span class="cm"># Apply migrations</span>
+alembic upgrade head
+
+<span class="cm"># Rollback one migration</span>
+alembic downgrade -1
+
+<span class="cm"># Check current revision</span>
+alembic current</pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the N+1 query problem and how do you avoid it with SQLAlchemy?</div>
+        <div class="interview-a">N+1 happens when you fetch N objects then execute 1 additional query per object to load a related field. Example: fetch 100 users, then for each user load their posts = 101 queries. Fix: use eager loading. SQLAlchemy options: selectinload() — executes a second IN query for related objects (best for collections), joinedload() — adds a JOIN (best for single relationships), subqueryload() — similar to selectinload but uses a subquery. Usage: select(User).options(selectinload(User.posts)). For lazy loading in async, you must use either eager loading or awaitable_attrs — regular lazy loading doesn't work with async sessions.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is expire_on_commit and why does it matter?</div>
+        <div class="interview-a">By default, SQLAlchemy expires all object attributes after commit — accessing them again triggers a lazy SELECT. In async code this causes "greenlet_spawn has not been called" errors because lazy loads are synchronous by default. Fix: async_sessionmaker(..., expire_on_commit=False) — attributes stay populated after commit. Or use await db.refresh(obj) explicitly to reload needed fields. Best practice for FastAPI: set expire_on_commit=False on the session factory, and use refresh() only when you need fresh server-set values (auto-incremented IDs, default timestamps).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('auth')">← Auth</button>
+        <button class="mark-done-btn" onclick="markDone('database')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('middleware')">Next: Middleware →</button>
+      </div>
+    </div>
+
+    <!-- MIDDLEWARE -->
+    <div id="lesson-middleware" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🔗 Middleware &amp; Background Tasks</div>
+        <div class="lesson-subtitle">Custom middleware, CORS, request logging, background tasks, and WebSocket basics.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Custom Middleware</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — MIDDLEWARE + BACKGROUND TASKS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request, BackgroundTasks
+<span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+<span class="kw">from</span> starlette.middleware.base <span class="kw">import</span> BaseHTTPMiddleware
+<span class="kw">import</span> time, uuid
+
+app = <span class="fn">FastAPI</span>()
+
+<span class="cm"># CORS middleware</span>
+app.<span class="fn">add_middleware</span>(
+    <span class="cls">CORSMiddleware</span>,
+    allow_origins=[<span class="st">"https://myapp.com"</span>],   <span class="cm"># or ["*"] for dev</span>
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="st">"*"</span>],
+    allow_headers=[<span class="st">"*"</span>],
+)
+
+<span class="cm"># Custom request timing + tracing middleware</span>
+<span class="kw">class</span> <span class="cls">RequestTimingMiddleware</span>(<span class="cls">BaseHTTPMiddleware</span>):
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(self, request: <span class="cls">Request</span>, call_next):
+        start = time.<span class="fn">perf_counter</span>()
+        request_id = str(uuid.<span class="fn">uuid4</span>())[:<span class="nm">8</span>]
+        request.state.request_id = request_id
+
+        response = <span class="kw">await</span> <span class="fn">call_next</span>(request)
+
+        duration = (time.<span class="fn">perf_counter</span>() - start) * <span class="nm">1000</span>
+        response.headers[<span class="st">"X-Request-ID"</span>] = request_id
+        response.headers[<span class="st">"X-Response-Time"</span>] = <span class="st">f"{duration:.2f}ms"</span>
+        <span class="kw">return</span> response
+
+app.<span class="fn">add_middleware</span>(<span class="cls">RequestTimingMiddleware</span>)
+
+<span class="cm"># Background tasks — fire and forget, run after response sent</span>
+<span class="kw">async def</span> <span class="fn">send_welcome_email</span>(email: str, name: str):
+    <span class="kw">await</span> email_service.<span class="fn">send</span>(
+        to=email, subject=<span class="st">"Welcome!"</span>,
+        body=<span class="st">f"Hi {name}, welcome to our platform"</span>
+    )
+
+<span class="op">@app.post</span>(<span class="st">"/users/"</span>, status_code=<span class="nm">201</span>)
+<span class="kw">async def</span> <span class="fn">create_user</span>(user: <span class="cls">UserCreate</span>, background: <span class="cls">BackgroundTasks</span>):
+    db_user = <span class="kw">await</span> <span class="fn">save_user</span>(user)
+    <span class="cm"># Add task — runs after response is sent to client</span>
+    background.<span class="fn">add_task</span>(<span class="fn">send_welcome_email</span>, db_user.email, db_user.name)
+    <span class="kw">return</span> db_user  <span class="cm"># response sent immediately, email sends async</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between middleware and dependencies in FastAPI?</div>
+        <div class="interview-a">Middleware wraps the entire request/response cycle — it runs for EVERY request regardless of which route is called. Use for: logging, timing, CORS, adding response headers, rate limiting, authentication that applies globally. Dependencies (Depends) are tied to specific routes or routers — they only run when their specific route is called. Use for: per-route auth, DB sessions, query parameter validation, any reusable logic specific to certain endpoints. Rule: global concerns → middleware. Per-route concerns → dependencies.</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('database')">← Database</button>
+        <button class="mark-done-btn" onclick="markDone('middleware')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('testing-fastapi')">Next: Testing →</button>
+      </div>
+    </div>
+
+    <!-- TESTING -->
+    <div id="lesson-testing-fastapi" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-fa">// FASTAPI</div>
+        <div class="lesson-title">🧪 Testing FastAPI</div>
+        <div class="lesson-subtitle">TestClient, pytest fixtures, dependency overrides, and async test patterns.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Complete Test Setup</div>
+        <div class="code-block"><div class="code-header"><span class="code-lang fa">FASTAPI — TESTING</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+<pre><span class="kw">import</span> pytest
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> httpx <span class="kw">import</span> AsyncClient, ASGITransport
+<span class="kw">from</span> sqlalchemy.ext.asyncio <span class="kw">import</span> AsyncSession, create_async_engine
+<span class="kw">from</span> sqlalchemy.pool <span class="kw">import</span> StaticPool
+
+<span class="cm"># Test database — in-memory SQLite</span>
+TEST_DB_URL = <span class="st">"sqlite+aiosqlite:///:memory:"</span>
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"session"</span>)
+<span class="kw">async def</span> <span class="fn">engine</span>():
+    e = <span class="fn">create_async_engine</span>(TEST_DB_URL, poolclass=<span class="cls">StaticPool</span>)
+    <span class="kw">async with</span> e.<span class="fn">begin</span>() <span class="kw">as</span> conn:
+        <span class="kw">await</span> conn.<span class="fn">run_sync</span>(Base.metadata.<span class="fn">create_all</span>)
+    <span class="kw">yield</span> e
+    <span class="kw">await</span> e.<span class="fn">dispose</span>()
+
+<span class="op">@pytest.fixture</span>
+<span class="kw">async def</span> <span class="fn">db_session</span>(engine):
+    <span class="kw">async with</span> <span class="fn">AsyncSession</span>(engine) <span class="kw">as</span> session:
+        <span class="kw">yield</span> session
+        <span class="kw">await</span> session.<span class="fn">rollback</span>()   <span class="cm"># rollback after each test!</span>
+
+<span class="op">@pytest.fixture</span>
+<span class="kw">async def</span> <span class="fn">client</span>(db_session):
+    <span class="cm"># Override DB dependency with test session</span>
+    app.dependency_overrides[<span class="fn">get_db</span>] = <span class="kw">lambda</span>: db_session
+    <span class="kw">async with</span> <span class="fn">AsyncClient</span>(
+        transport=<span class="fn">ASGITransport</span>(app=app), base_url=<span class="st">"http://test"</span>
+    ) <span class="kw">as</span> ac:
+        <span class="kw">yield</span> ac
+    app.dependency_overrides.<span class="fn">clear</span>()  <span class="cm"># clean up after test</span>
+
+<span class="cm"># Tests</span>
+<span class="op">@pytest.mark</span>.asyncio
+<span class="kw">async def</span> <span class="fn">test_create_user</span>(client):
+    response = <span class="kw">await</span> client.<span class="fn">post</span>(<span class="st">"/users/"</span>, json={
+        <span class="st">"email"</span>: <span class="st">"hany@example.com"</span>,
+        <span class="st">"name"</span>: <span class="st">"Hany"</span>,
+        <span class="st">"password"</span>: <span class="st">"securepass123"</span>
+    })
+    <span class="kw">assert</span> response.<span class="fn">status_code</span>() == <span class="nm">201</span>
+    data = response.<span class="fn">json</span>()
+    <span class="kw">assert</span> data[<span class="st">"email"</span>] == <span class="st">"hany@example.com"</span>
+    <span class="kw">assert</span> <span class="st">"password"</span> <span class="kw">not in</span> data      <span class="cm"># password must NOT be in response!</span>
+    <span class="kw">assert</span> <span class="st">"id"</span> <span class="kw">in</span> data
+
+<span class="op">@pytest.mark</span>.asyncio
+<span class="kw">async def</span> <span class="fn">test_get_protected_route_without_auth</span>(client):
+    response = <span class="kw">await</span> client.<span class="fn">get</span>(<span class="st">"/me"</span>)
+    <span class="kw">assert</span> response.<span class="fn">status_code</span>() == <span class="nm">401</span></pre>
+        </div>
+      </div>
+      <div class="interview-box">
+        <div class="interview-label">🎯 INTERVIEW QUESTIONS</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you test routes that require authentication?</div>
+        <div class="interview-a">Two approaches: (1) Dependency override — override get_current_user with a fixture that returns a fake user object directly, bypassing JWT entirely: app.dependency_overrides[get_current_user] = lambda: fake_user. Best for testing route logic without auth. (2) Full auth flow — create a test user in the DB fixture, call the login endpoint to get a real JWT, pass it as Authorization: Bearer {token} header. Best for testing auth itself. Use override for speed and isolation; use full auth flow for integration tests of the auth system.</div>
+        <div class="interview-q" onclick="toggleAnswer(this)">Q: What is pytest fixtures scope and which should you use for database tests?</div>
+        <div class="interview-a">Fixture scope controls how often the fixture is set up/torn down: function (default) = once per test, class = once per test class, module = once per module, session = once for the entire test run. For databases: engine at session scope (creating the schema once is expensive), test session at function scope (roll back after each test for isolation). This pattern — session-scoped engine, function-scoped session with rollback — gives you speed (schema created once) and isolation (each test sees a clean state).</div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('middleware')">← Middleware</button>
+        <button class="mark-done-btn" onclick="markDone('testing-fastapi')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+      </div>
+    </div>
+
+    <!-- CHEATSHEET -->
+    <div id="lesson-cheatsheet" class="lesson-page">
+      <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+      <div class="lesson-header">
+        <div class="lesson-eyebrow e-py">// STUDY AID</div>
+        <div class="lesson-title">📋 Python &amp; FastAPI Cheatsheet</div>
+        <div class="lesson-subtitle">Every key concept in one place. Review before your interview.</div>
+      </div>
+      <div class="content-section">
+        <div class="section-title">🐍 Python Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>Mutable default arg</td><td>Evaluated ONCE — use None and create inside. Classic trap.</td></tr>
+          <tr><td>Pass by…</td><td>Object reference. Rebind=no effect on caller. Mutate=caller sees it.</td></tr>
+          <tr><td>LEGB</td><td>Local → Enclosing → Global → Built-in lookup order.</td></tr>
+          <tr><td>@functools.wraps</td><td>Always use in decorators — preserves __name__, __doc__, signature.</td></tr>
+          <tr><td>GIL</td><td>One thread executes Python at a time. Released during I/O. Use multiprocessing for CPU-bound.</td></tr>
+          <tr><td>asyncio</td><td>Cooperative single-thread concurrency. Only helps I/O-bound. Blocking = event loop stalls.</td></tr>
+          <tr><td>generator</td><td>yield = lazy. O(1) memory vs O(n) for lists. Use for large datasets.</td></tr>
+          <tr><td>__repr__ vs __str__</td><td>repr = unambiguous/debug. str = user-friendly. Fallback: repr → str.</td></tr>
+          <tr><td>MRO</td><td>C3 linearization. Use super() — don't call parent directly.</td></tr>
+          <tr><td>context manager</td><td>__enter__/__exit__ or @contextmanager. Cleanup ALWAYS runs.</td></tr>
+          <tr><td>dataclass</td><td>Auto __init__/__repr__/__eq__. Use field(default_factory=list) for mutables.</td></tr>
+          <tr><td>Protocol</td><td>Structural subtyping — type-check duck typing without inheritance.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">⚡ FastAPI Quick Reference</div>
+        <table class="cheat-table">
+          <tr><th>Concept</th><th>Key Point</th></tr>
+          <tr><td>ASGI vs WSGI</td><td>ASGI = async-first, supports WS/concurrent. FastAPI = Starlette (ASGI) + Pydantic.</td></tr>
+          <tr><td>async def vs def</td><td>async = event loop (needs async libs). def = auto thread pool (safe for sync libs).</td></tr>
+          <tr><td>response_model</td><td>Filters output fields — prevents leaking passwords/internal data.</td></tr>
+          <tr><td>Depends()</td><td>Composable DI. Yield deps get cleanup. Override in tests.</td></tr>
+          <tr><td>parameter detection</td><td>Name matches path var = path. Simple type = query. BaseModel = body.</td></tr>
+          <tr><td>Pydantic v2</td><td>Runtime validation. field_validator, model_validator, ConfigDict.</td></tr>
+          <tr><td>JWT pattern</td><td>bcrypt passwords. jwt.encode/decode. OAuth2PasswordBearer extracts token.</td></tr>
+          <tr><td>SQLAlchemy 2.0</td><td>Mapped[T] columns. expire_on_commit=False. selectinload for N+1.</td></tr>
+          <tr><td>BackgroundTasks</td><td>Fire-and-forget after response sent. For heavy work use Celery/ARQ.</td></tr>
+          <tr><td>Middleware vs DI</td><td>Middleware = every request globally. DI = specific routes.</td></tr>
+          <tr><td>Testing</td><td>AsyncClient + dependency_overrides + rollback per test.</td></tr>
+          <tr><td>lifespan</td><td>@asynccontextmanager lifespan(app). Replaces deprecated on_event.</td></tr>
+        </table>
+      </div>
+      <div class="content-section">
+        <div class="section-title">Concurrency Decision Guide</div>
+        <table class="cheat-table">
+          <tr><th>Task</th><th>Use</th><th>Why</th></tr>
+          <tr><td>Many HTTP requests</td><td>asyncio.gather()</td><td>I/O-bound, no thread overhead</td></tr>
+          <tr><td>CPU-heavy (image, ML)</td><td>ProcessPoolExecutor</td><td>Each process has own GIL</td></tr>
+          <tr><td>Sync lib in async app</td><td>def route (FastAPI threads it)</td><td>Keeps event loop free</td></tr>
+          <tr><td>File processing</td><td>ThreadPoolExecutor</td><td>GIL released during file I/O</td></tr>
+          <tr><td>Async DB queries</td><td>asyncpg / aiosqlite</td><td>Native async — no blocking</td></tr>
+        </table>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showLesson('testing-fastapi')">← Testing</button>
+        <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as Done</button>
+        <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TOPICS=['py-fundamentals','oop','decorators','async-python','generators','type-hints','collections','error-handling','concurrency','fastapi-basics','path-query','pydantic-models','dependency-injection','auth','database','middleware','testing-fastapi','cheatsheet'];
+const state={
+  completed:new Set(JSON.parse(localStorage.getItem('pyfa-done')||'[]')),
+  xp:parseInt(localStorage.getItem('pyfa-xp')||'0'),
+  totalTopics:TOPICS.length
+};
+
+function showPage(p){
+  document.getElementById('home-page').style.display=(p==='home')?'block':'none';
+  document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active','fa-active'));
+  if(p==='home') document.getElementById('nav-home').classList.add('active');
+  updateXP();
+}
+
+function showLesson(id){
+  document.getElementById('home-page').style.display='none';
+  document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active','fa-active'));
+  const l=document.getElementById('lesson-'+id);
+  if(l) l.classList.add('active');
+  const n=document.getElementById('nav-'+id);
+  if(n){
+    const isFa=['fastapi-basics','path-query','pydantic-models','dependency-injection','auth','database','middleware','testing-fastapi'].includes(id);
+    n.classList.add(isFa?'fa-active':'active');
+  }
+  document.querySelector('main').scrollTo(0,0);
+  window.scrollTo(0,0);
+}
+
+function checkQuiz(btn,id,result){
+  const opts=btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+  const fb=document.getElementById('quiz-'+id+'-fb');
+  if(result==='correct'){
+    btn.classList.add('correct');
+    fb.className='quiz-feedback show right';
+    fb.textContent='✅ Correct! Well done.';
+    addXP(20);
+  } else {
+    btn.classList.add('wrong');
+    fb.className='quiz-feedback show wrong';
+    fb.textContent='❌ Not quite — review the section above.';
+    opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');});
+  }
+}
+
+function toggleAnswer(el){
+  el.classList.toggle('open');
+  const next=el.nextElementSibling;
+  if(next&&next.classList.contains('interview-a')) next.classList.toggle('open');
+}
+
+function markDone(id){
+  if(!state.completed.has(id)){
+    state.completed.add(id);
+    addXP(50);
+    localStorage.setItem('pyfa-done',JSON.stringify([...state.completed]));
+    const n=document.getElementById('nav-'+id);
+    if(n) n.classList.add('completed');
+    const btn=event.target;
+    btn.textContent='✓ Done!';
+  }
+  updateProgress();
+}
+
+function addXP(a){state.xp+=a;localStorage.setItem('pyfa-xp',state.xp.toString());updateXP();}
+function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress();}
+function updateProgress(){
+  document.getElementById('globalProgress').style.width=(state.completed.size/state.totalTopics*100)+'%';
+}
+function copyCode(btn){
+  const pre=btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000);});
+}
+function init(){
+  state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');});
+  updateProgress();updateXP();
+}
+init();
+</script>
+</body>
+</html>
