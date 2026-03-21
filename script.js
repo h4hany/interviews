@@ -178,6 +178,8 @@ const fileStructure = {
     },
     "Resume & Career": {
         "Interview Preparation Cheatsheet": "Resume-Career/Interview-Preparation-Cheatsheet.md",
+        "Interview Master Cheatsheet (HTML)": "Resume-Career/interview-master-cheatsheet.html",
+        "Interview Preparation Masterguide (HTML)": "Resume-Career/interview-preparation-masterguide.html",
         "ATS Optimized CV": "Resume-Career/Hany Sayed Ahmed - ATS Optimized CV.md",
         "FAANG Interview Q&A": "Resume-Career/FAANG Interview Preparation - Extended Q&A.md",
         "Staff Engineer Q&A": "Resume-Career/staff Q&A.md",
