@@ -212,6 +212,8 @@ const fileStructure = {
         "DevOps & Infrastructure": "DevOps/devops-infrastructure-interview-prep.html",
         "Design (SOLID, Patterns, OOD)": "design/design-interview-prep.html",
         "Behavioral & Leadership": "Resume-Career/behavioral-leadership-interview-prep.html",
+        "Interview Master Cheatsheet": "Resume-Career/interview-master-cheatsheet.html",
+        "Interview Preparation Masterguide": "Resume-Career/interview-preparation-masterguide.html",
         "AI Engineering": "specialized/LLM/ai-engineering-interview-prep.html"
     }
 };
@@ -610,6 +612,12 @@ function showWelcome() {
                     </a>
                     <a href="${p('Resume-Career/behavioral-leadership-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">⭐</span>Behavioral
+                    </a>
+                    <a href="${p('Resume-Career/interview-master-cheatsheet.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🧠</span>Interview Cheatsheet
+                    </a>
+                    <a href="${p('Resume-Career/interview-preparation-masterguide.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🗺️</span>Interview Masterguide
                     </a>
                 </div>
             </div>
