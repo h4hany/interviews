@@ -1,276 +1,1278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redis · RabbitMQ · Kafka — Interview Mastery</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root{--header-h:60px;--bg:#08090a;--surface:#0f1115;--surface2:#14161b;--border:#1c1f26;--accent:#ff4d4d;--accent2:#ff9500;--accent3:#00d2ff;--accent4:#a8ff3e;--text:#eef0f4;--text-dim:#7a8089;--text-dimmer:#2e3038;--yellow:#ffd700;--red:#ff4d4d;--card-radius:12px;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 70% 10%,rgba(255,77,77,.04) 0%,transparent 50%),radial-gradient(ellipse at 30% 90%,rgba(0,210,255,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
-header{position:sticky;top:0;z-index:100;background:rgba(8,9,10,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 16px 0 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px 12px;min-height:var(--header-h);height:auto;}
-.nav-toggle{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-right:4px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--accent);cursor:pointer;transition:border-color .2s,background .2s;font-size:18px;line-height:1;}
-.nav-toggle:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));}
-.nav-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-.logo{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:2px;}
-.logo span{color:var(--text-dim);}
-.progress-bar-wrap{flex:1;max-width:300px;margin:0 16px;min-width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .5s ease;width:0%;}
-.xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);padding:4px 12px;border-radius:20px;}
-.app{display:block;min-height:calc(100vh - var(--header-h));position:relative;z-index:1;}
-.sidebar-shell{min-width:0;}
-.sidebar-backdrop{position:fixed;inset:0;top:var(--header-h);background:rgba(0,0,0,.45);z-index:150;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s;pointer-events:none;}
-.app.sidebar-open .sidebar-backdrop{opacity:1;visibility:visible;pointer-events:auto;}
-nav.sidebar{position:fixed;left:0;top:var(--header-h);width:min(280px,88vw);height:calc(100vh - var(--header-h));max-height:calc(100vh - var(--header-h));border-right:1px solid var(--border);padding:20px 0;background:var(--surface);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;z-index:160;transform:translateX(-100%);transition:transform .25s ease;box-shadow:8px 0 32px rgba(0,0,0,.35);}
-.app.sidebar-open nav.sidebar{transform:translateX(0);}
-@media (min-width:769px){.app{display:grid;grid-template-columns:0px minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:start;transition:grid-template-columns .25s ease;}.app.sidebar-open{grid-template-columns:min(280px,32vw) minmax(0,1fr);}.sidebar-shell{display:block;overflow:hidden;align-self:stretch;min-height:calc(100vh - var(--header-h));}.sidebar-backdrop{display:none!important;}nav.sidebar{position:sticky;top:var(--header-h);left:auto;width:100%;max-width:min(280px,32vw);transform:none!important;box-shadow:none;z-index:1;}.app:not(.sidebar-open) nav.sidebar{pointer-events:none;visibility:hidden;}.app.sidebar-open nav.sidebar{pointer-events:auto;visibility:visible;}main{grid-column:2;grid-row:1;min-width:0;}}
-@media (max-width:768px){.sidebar-shell{display:contents;}}
-.nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim);}
-.nav-item:hover{color:var(--text);background:var(--surface);}
-.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(255,77,77,.05);}
-.nav-item .done-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--accent4);display:none;}
-.nav-item.completed .done-dot{display:block;}
-main{overflow-y:auto;}
-.hero{padding:60px 48px;border-bottom:1px solid var(--border);}
-.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);margin-bottom:16px;}
-.hero h1{font-size:clamp(32px,4vw,56px);font-weight:800;line-height:1.05;margin-bottom:16px;}
-.hero h1 .r{color:var(--accent);}
-.hero h1 .rb{color:var(--accent2);}
-.hero h1 .k{color:var(--accent3);}
-.hero-sub{color:var(--text-dim);font-size:15px;max-width:560px;line-height:1.7;margin-bottom:32px;font-weight:400;}
-.stat-row{display:flex;gap:32px;flex-wrap:wrap;}
-.stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;}
-.stat-label{font-size:11px;color:var(--text-dimmer);letter-spacing:1px;text-transform:uppercase;}
-.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);}
-.topic-card{background:var(--bg);padding:28px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
-.topic-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;}
-.topic-card:hover{background:var(--surface);}
-.topic-card:hover::before{opacity:1;}
-.cr::before{background:radial-gradient(circle at 0% 0%,rgba(255,77,77,.08),transparent 60%);}
-.co::before{background:radial-gradient(circle at 0% 0%,rgba(255,149,0,.08),transparent 60%);}
-.cb::before{background:radial-gradient(circle at 0% 0%,rgba(0,210,255,.08),transparent 60%);}
-.cg::before{background:radial-gradient(circle at 0% 0%,rgba(168,255,62,.08),transparent 60%);}
-.card-emoji{font-size:32px;margin-bottom:12px;display:block;}
-.card-title{font-size:16px;font-weight:700;margin-bottom:6px;}
-.card-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:16px;font-weight:400;}
-.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:3px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);}
-.tag.r{background:rgba(255,77,77,.1);color:var(--accent);border-color:rgba(255,77,77,.2);}
-.tag.o{background:rgba(255,149,0,.1);color:var(--accent2);border-color:rgba(255,149,0,.2);}
-.tag.b{background:rgba(0,210,255,.1);color:var(--accent3);border-color:rgba(0,210,255,.2);}
-.tag.g{background:rgba(168,255,62,.1);color:var(--accent4);border-color:rgba(168,255,62,.2);}
-.lesson-page{display:none;padding:40px 48px;max-width:960px;}
-.lesson-page.active{display:block;animation:fadeIn .3s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.lesson-breadcrumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dimmer);margin-bottom:24px;cursor:pointer;}
-.lesson-breadcrumb:hover{color:var(--accent);}
-.lesson-breadcrumb::before{content:'← ';}
-.lesson-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;margin-bottom:10px;}
-.lesson-title{font-size:36px;font-weight:800;margin-bottom:12px;}
-.lesson-subtitle{color:var(--text-dim);font-size:15px;line-height:1.7;max-width:600px;font-weight:400;margin-bottom:0;}
-.lesson-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);}
-.content-section{margin-bottom:40px;}
-.section-title{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-.section-title::before{content:'';width:3px;height:20px;border-radius:2px;}
-.section-title.red::before{background:var(--accent);}
-.section-title.orange::before{background:var(--accent2);}
-.section-title.blue::before{background:var(--accent3);}
-.section-title.green::before{background:var(--accent4);}
-.section-title.default::before{background:var(--accent);}
-.prose{color:var(--text-dim);font-size:14px;line-height:1.9;font-weight:400;}
-.prose strong{color:var(--text);font-weight:700;}
-.prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent3);background:var(--surface2);padding:1px 5px;border-radius:3px;}
-.code-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0;}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border);}
-.code-lang{font-size:10px;letter-spacing:2px;color:var(--accent3);font-family:'Space Mono',monospace;}
-.copy-btn{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dimmer);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .2s;}
-.copy-btn:hover{color:var(--accent3);border-color:var(--accent3);}
-pre{padding:20px;overflow-x:auto;font-size:13px;line-height:1.7;color:#abb2bf;font-family:'JetBrains Mono',monospace;}
-.kw{color:#c678dd;}.fn{color:#61afef;}.st{color:#98c379;}.nm{color:#d19a66;}.cm{color:#5c6370;font-style:italic;}.op{color:#56b6c2;}.id{color:#e06c75;}
-.analogy-box{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:20px 24px;margin:20px 0;}
-.analogy-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px;}
-.analogy-text{color:var(--text-dim);font-size:13px;line-height:1.8;font-weight:400;}
-.interview-box{background:rgba(168,255,62,.04);border:1px solid rgba(168,255,62,.12);border-radius:12px;padding:20px 24px;margin:20px 0;}
-.interview-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent4);margin-bottom:12px;}
-.interview-q{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
-.interview-q::after{content:'+';font-family:'Space Mono',monospace;color:var(--accent4);font-size:16px;transition:transform .2s;}
-.interview-q.open::after{transform:rotate(45deg);}
-.interview-a{display:none;color:var(--text-dim);font-size:13px;line-height:1.8;padding:12px 0 4px;}
-.interview-a.open{display:block;}
-.quiz-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin:32px 0;}
-.quiz-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:16px;}
-.quiz-q{font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.5;}
-.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px;}
-.quiz-opt:hover{border-color:var(--accent3);background:var(--surface2);}
-.quiz-opt.correct{border-color:var(--accent4);background:rgba(168,255,62,.05);color:var(--accent4);}
-.quiz-opt.wrong{border-color:var(--red);background:rgba(255,77,77,.05);color:var(--red);}
-.quiz-opt .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;flex-shrink:0;}
-.quiz-feedback{display:none;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;}
-.quiz-feedback.show{display:block;}
-.quiz-feedback.right{background:rgba(168,255,62,.1);color:var(--accent4);border:1px solid rgba(168,255,62,.2);}
-.quiz-feedback.wrong{background:rgba(255,77,77,.1);color:var(--red);border:1px solid rgba(255,77,77,.2);}
-.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:40px;}
-.btn{font-family:'Space Mono',monospace;font-size:12px;padding:12px 24px;border-radius:6px;cursor:pointer;border:none;font-weight:700;transition:all .2s;}
-.btn-primary{background:var(--accent3);color:var(--bg);}
-.btn-primary:hover{box-shadow:0 0 20px rgba(0,210,255,.3);transform:translateY(-1px);}
-.btn-secondary{background:transparent;color:var(--text-dim);border:1px solid var(--border);}
-.btn-secondary:hover{border-color:var(--accent3);color:var(--text);}
-.mark-done-btn{background:rgba(168,255,62,.1);color:var(--accent4);border:1px solid rgba(168,255,62,.3);font-family:'Space Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all .2s;}
-.cheat-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0;}
-.cheat-table th{text-align:left;padding:10px 14px;background:var(--surface2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);border-bottom:1px solid var(--border);}
-.cheat-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top;line-height:1.6;}
-.cheat-table tr:last-child td{border-bottom:none;}
-.cheat-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12px;}
-.info-box{background:rgba(0,210,255,.05);border-left:3px solid var(--accent3);border-radius:0 12px 12px 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7;}
-.warn-box{background:rgba(255,149,0,.05);border-left:3px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-dim);line-height:1.7;}
-.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
-.pill{font-family:'Space Mono',monospace;font-size:11px;padding:6px 14px;border-radius:20px;font-weight:700;}
-.pill-r{background:rgba(255,77,77,.15);color:var(--accent);border:1px solid rgba(255,77,77,.3);}
-.pill-o{background:rgba(255,149,0,.15);color:var(--accent2);border:1px solid rgba(255,149,0,.3);}
-.pill-b{background:rgba(0,210,255,.15);color:var(--accent3);border:1px solid rgba(0,210,255,.3);}
-#home-page{display:block;}
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis · RabbitMQ · Kafka — Interview Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          rel="stylesheet">
+    <style>
+        :root {
+            --header-h: 60px;
+            --bg: #08090a;
+            --surface: #0f1115;
+            --surface2: #14161b;
+            --border: #1c1f26;
+            --accent: #ff4d4d;
+            --accent2: #ff9500;
+            --accent3: #00d2ff;
+            --accent4: #a8ff3e;
+            --text: #eef0f4;
+            --text-dim: #7a8089;
+            --text-dimmer: #2e3038;
+            --yellow: #ffd700;
+            --red: #ff4d4d;
+            --card-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 10%, rgba(255, 77, 77, .04) 0%, transparent 50%), radial-gradient(ellipse at 30% 90%, rgba(0, 210, 255, .04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 9, 10, .95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            gap: 8px 12px;
+            min-height: var(--header-h);
+            height: auto;
+        }
+
+        .nav-toggle {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            margin-right: 4px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--accent);
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .nav-toggle:hover {
+            border-color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+        }
+
+        .nav-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: var(--text-dim);
+        }
+
+        .progress-bar-wrap {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 16px;
+            min-width: 80px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            transition: width .5s ease;
+            width: 0%;
+        }
+
+        .xp-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--yellow);
+            background: rgba(255, 215, 0, .1);
+            border: 1px solid rgba(255, 215, 0, .2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .app {
+            display: block;
+            min-height: calc(100vh - var(--header-h));
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-shell {
+            min-width: 0;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            top: var(--header-h);
+            background: rgba(0, 0, 0, .45);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .25s ease, visibility .25s;
+            pointer-events: none;
+        }
+
+        .app.sidebar-open .sidebar-backdrop {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        nav.sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-h);
+            width: min(280px, 88vw);
+            height: calc(100vh - var(--header-h));
+            max-height: calc(100vh - var(--header-h));
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            background: var(--surface);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+            z-index: 160;
+            transform: translateX(-100%);
+            transition: transform .25s ease;
+            box-shadow: 8px 0 32px rgba(0, 0, 0, .35);
+        }
+
+        .app.sidebar-open nav.sidebar {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 769px) {
+            .app {
+                display: grid;
+                grid-template-columns:0px minmax(0, 1fr);
+                grid-template-rows:minmax(0, 1fr);
+                align-items: start;
+                transition: grid-template-columns .25s ease;
+            }
+
+            .app.sidebar-open {
+                grid-template-columns:min(280px, 32vw) minmax(0, 1fr);
+            }
+
+            .sidebar-shell {
+                display: block;
+                overflow: hidden;
+                align-self: stretch;
+                min-height: calc(100vh - var(--header-h));
+            }
+
+            .sidebar-backdrop {
+                display: none !important;
+            }
+
+            nav.sidebar {
+                position: sticky;
+                top: var(--header-h);
+                left: auto;
+                width: 100%;
+                max-width: min(280px, 32vw);
+                transform: none !important;
+                box-shadow: none;
+                z-index: 1;
+            }
+
+            .app:not(.sidebar-open) nav.sidebar {
+                pointer-events: none;
+                visibility: hidden;
+            }
+
+            .app.sidebar-open nav.sidebar {
+                pointer-events: auto;
+                visibility: visible;
+            }
+
+            main {
+                grid-column: 2;
+                grid-row: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-shell {
+                display: contents;
+            }
+        }
+
+        .nav-section-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--text-dimmer);
+            padding: 16px 20px 8px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all .2s;
+            border-left: 2px solid transparent;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(255, 77, 77, .05);
+        }
+
+        .nav-item .done-dot {
+            margin-left: auto;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent4);
+            display: none;
+        }
+
+        .nav-item.completed .done-dot {
+            display: block;
+        }
+
+        main {
+            overflow-y: auto;
+        }
+
+        .hero {
+            padding: 60px 48px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 4vw, 56px);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .r {
+            color: var(--accent);
+        }
+
+        .hero h1 .rb {
+            color: var(--accent2);
+        }
+
+        .hero h1 .k {
+            color: var(--accent3);
+        }
+
+        .hero-sub {
+            color: var(--text-dim);
+            font-size: 15px;
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-dimmer);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .topic-card {
+            background: var(--bg);
+            padding: 28px;
+            cursor: pointer;
+            transition: all .25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .topic-card:hover {
+            background: var(--surface);
+        }
+
+        .topic-card:hover::before {
+            opacity: 1;
+        }
+
+        .cr::before {
+            background: radial-gradient(circle at 0% 0%, rgba(255, 77, 77, .08), transparent 60%);
+        }
+
+        .co::before {
+            background: radial-gradient(circle at 0% 0%, rgba(255, 149, 0, .08), transparent 60%);
+        }
+
+        .cb::before {
+            background: radial-gradient(circle at 0% 0%, rgba(0, 210, 255, .08), transparent 60%);
+        }
+
+        .cg::before {
+            background: radial-gradient(circle at 0% 0%, rgba(168, 255, 62, .08), transparent 60%);
+        }
+
+        .card-emoji {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--surface2);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .tag.r {
+            background: rgba(255, 77, 77, .1);
+            color: var(--accent);
+            border-color: rgba(255, 77, 77, .2);
+        }
+
+        .tag.o {
+            background: rgba(255, 149, 0, .1);
+            color: var(--accent2);
+            border-color: rgba(255, 149, 0, .2);
+        }
+
+        .tag.b {
+            background: rgba(0, 210, 255, .1);
+            color: var(--accent3);
+            border-color: rgba(0, 210, 255, .2);
+        }
+
+        .tag.g {
+            background: rgba(168, 255, 62, .1);
+            color: var(--accent4);
+            border-color: rgba(168, 255, 62, .2);
+        }
+
+        .lesson-page {
+            display: none;
+            padding: 40px 48px;
+            max-width: 960px;
+        }
+
+        .lesson-page.active {
+            display: block;
+            animation: fadeIn .3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .lesson-breadcrumb {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dimmer);
+            margin-bottom: 24px;
+            cursor: pointer;
+        }
+
+        .lesson-breadcrumb:hover {
+            color: var(--accent);
+        }
+
+        .lesson-breadcrumb::before {
+            content: '← ';
+        }
+
+        .lesson-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .lesson-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .lesson-subtitle {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.7;
+            max-width: 600px;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        .lesson-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 3px;
+            height: 20px;
+            border-radius: 2px;
+        }
+
+        .section-title.red::before {
+            background: var(--accent);
+        }
+
+        .section-title.orange::before {
+            background: var(--accent2);
+        }
+
+        .section-title.blue::before {
+            background: var(--accent3);
+        }
+
+        .section-title.green::before {
+            background: var(--accent4);
+        }
+
+        .section-title.default::before {
+            background: var(--accent);
+        }
+
+        .prose {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.9;
+            font-weight: 400;
+        }
+
+        .prose strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .prose code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent3);
+            background: var(--surface2);
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-lang {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--accent3);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .copy-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dimmer);
+            background: none;
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent3);
+            border-color: var(--accent3);
+        }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #abb2bf;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .kw {
+            color: #c678dd;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .st {
+            color: #98c379;
+        }
+
+        .nm {
+            color: #d19a66;
+        }
+
+        .cm {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .op {
+            color: #56b6c2;
+        }
+
+        .id {
+            color: #e06c75;
+        }
+
+        .analogy-box {
+            background: rgba(255, 215, 0, .05);
+            border: 1px solid rgba(255, 215, 0, .15);
+            border-left: 3px solid var(--yellow);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .analogy-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--yellow);
+            margin-bottom: 8px;
+        }
+
+        .analogy-text {
+            color: var(--text-dim);
+            font-size: 13px;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .interview-box {
+            background: rgba(168, 255, 62, .04);
+            border: 1px solid rgba(168, 255, 62, .12);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .interview-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--accent4);
+            margin-bottom: 12px;
+        }
+
+        .interview-q {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .interview-q::after {
+            content: '+';
+            font-family: 'Space Mono', monospace;
+            color: var(--accent4);
+            font-size: 16px;
+            transition: transform .2s;
+        }
+
+        .interview-q.open::after {
+            transform: rotate(45deg);
+        }
+
+        .interview-a {
+            display: none;
+            color: var(--text-dim);
+            font-size: 13px;
+            line-height: 1.8;
+            padding: 12px 0 4px;
+        }
+
+        .interview-a.open {
+            display: block;
+        }
+
+        .quiz-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 32px 0;
+        }
+
+        .quiz-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--accent2);
+            margin-bottom: 16px;
+        }
+
+        .quiz-q {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-opt {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-opt:hover {
+            border-color: var(--accent3);
+            background: var(--surface2);
+        }
+
+        .quiz-opt.correct {
+            border-color: var(--accent4);
+            background: rgba(168, 255, 62, .05);
+            color: var(--accent4);
+        }
+
+        .quiz-opt.wrong {
+            border-color: var(--red);
+            background: rgba(255, 77, 77, .05);
+            color: var(--red);
+        }
+
+        .quiz-opt .opt-letter {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .quiz-feedback {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.right {
+            background: rgba(168, 255, 62, .1);
+            color: var(--accent4);
+            border: 1px solid rgba(168, 255, 62, .2);
+        }
+
+        .quiz-feedback.wrong {
+            background: rgba(255, 77, 77, .1);
+            color: var(--red);
+            border: 1px solid rgba(255, 77, 77, .2);
+        }
+
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        .btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-weight: 700;
+            transition: all .2s;
+        }
+
+        .btn-primary {
+            background: var(--accent3);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(0, 210, 255, .3);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent3);
+            color: var(--text);
+        }
+
+        .mark-done-btn {
+            background: rgba(168, 255, 62, .1);
+            color: var(--accent4);
+            border: 1px solid rgba(168, 255, 62, .3);
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .cheat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin: 20px 0;
+        }
+
+        .cheat-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: var(--surface2);
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cheat-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .cheat-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cheat-table td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .info-box {
+            background: rgba(0, 210, 255, .05);
+            border-left: 3px solid var(--accent3);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .warn-box {
+            background: rgba(255, 149, 0, .05);
+            border-left: 3px solid var(--accent2);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .pill {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .pill-r {
+            background: rgba(255, 77, 77, .15);
+            color: var(--accent);
+            border: 1px solid rgba(255, 77, 77, .3);
+        }
+
+        .pill-o {
+            background: rgba(255, 149, 0, .15);
+            color: var(--accent2);
+            border: 1px solid rgba(255, 149, 0, .3);
+        }
+
+        .pill-b {
+            background: rgba(0, 210, 255, .15);
+            color: var(--accent3);
+            border: 1px solid rgba(0, 210, 255, .3);
+        }
+
+        #home-page {
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
 <header>
-  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu" aria-expanded="false" aria-controls="sidebarNav">☰</button>
-  <div class="logo"><span style="color:var(--accent)">REDIS</span> <span>·</span> <span style="color:var(--accent2)">RABBIT</span> <span>·</span> <span style="color:var(--accent3)">KAFKA</span></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
-  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+    <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu"
+            aria-expanded="false" aria-controls="sidebarNav">☰
+    </button>
+    <div class="logo"><span style="color:var(--accent)">REDIS</span> <span>·</span> <span style="color:var(--accent2)">RABBIT</span>
+        <span>·</span> <span style="color:var(--accent3)">KAFKA</span></div>
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="globalProgress"></div>
+    </div>
+    <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 <div class="app" id="appRoot">
-<div class="sidebar-shell">
-<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
-<nav class="sidebar" id="sidebarNav" aria-label="Topics">
-  <div class="nav-section-title">Start Here</div>
-  <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-  <div class="nav-section-title" style="color:var(--accent)">⚡ REDIS</div>
-  <div class="nav-item" onclick="showLesson('redis-intro')" id="nav-redis-intro"><span>📖</span> What is Redis<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('redis-datatypes')" id="nav-redis-datatypes"><span>🗂️</span> Data Structures<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('redis-patterns')" id="nav-redis-patterns"><span>🔧</span> Use Cases & Patterns<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('redis-persistence')" id="nav-redis-persistence"><span>💾</span> Persistence & Cluster<span class="done-dot"></span></div>
-  <div class="nav-section-title" style="color:var(--accent2)">🐰 RABBITMQ</div>
-  <div class="nav-item" onclick="showLesson('rabbit-intro')" id="nav-rabbit-intro"><span>📖</span> What is RabbitMQ<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('rabbit-concepts')" id="nav-rabbit-concepts"><span>🔀</span> Exchanges & Routing<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('rabbit-patterns')" id="nav-rabbit-patterns"><span>🔧</span> Patterns & Reliability<span class="done-dot"></span></div>
-  <div class="nav-section-title" style="color:var(--accent3)">📡 KAFKA</div>
-  <div class="nav-item" onclick="showLesson('kafka-intro')" id="nav-kafka-intro"><span>📖</span> What is Kafka<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('kafka-architecture')" id="nav-kafka-architecture"><span>🏗️</span> Architecture Deep Dive<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('kafka-consumers')" id="nav-kafka-consumers"><span>👥</span> Consumers & Groups<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('kafka-patterns')" id="nav-kafka-patterns"><span>🔧</span> Patterns & Guarantees<span class="done-dot"></span></div>
-  <div class="nav-section-title">📊 COMPARISON</div>
-  <div class="nav-item" onclick="showLesson('comparison')" id="nav-comparison"><span>⚖️</span> Redis vs Rabbit vs Kafka<span class="done-dot"></span></div>
-  <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Full Cheatsheet<span class="done-dot"></span></div>
-</nav>
-</div>
-<main id="mainContent">
+    <div class="sidebar-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
+        <nav class="sidebar" id="sidebarNav" aria-label="Topics">
+            <div class="nav-section-title">Start Here</div>
+            <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+            <div class="nav-section-title" style="color:var(--accent)">⚡ REDIS</div>
+            <div class="nav-item" onclick="showLesson('redis-intro')" id="nav-redis-intro"><span>📖</span> What is
+                Redis<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('redis-datatypes')" id="nav-redis-datatypes"><span>🗂️</span> Data
+                Structures<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('redis-patterns')" id="nav-redis-patterns"><span>🔧</span> Use
+                Cases & Patterns<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('redis-persistence')" id="nav-redis-persistence"><span>💾</span>
+                Persistence & Cluster<span class="done-dot"></span></div>
+            <div class="nav-section-title" style="color:var(--accent2)">🐰 RABBITMQ</div>
+            <div class="nav-item" onclick="showLesson('rabbit-intro')" id="nav-rabbit-intro"><span>📖</span> What is
+                RabbitMQ<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('rabbit-concepts')" id="nav-rabbit-concepts"><span>🔀</span>
+                Exchanges & Routing<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('rabbit-patterns')" id="nav-rabbit-patterns"><span>🔧</span>
+                Patterns & Reliability<span class="done-dot"></span></div>
+            <div class="nav-section-title" style="color:var(--accent3)">📡 KAFKA</div>
+            <div class="nav-item" onclick="showLesson('kafka-intro')" id="nav-kafka-intro"><span>📖</span> What is
+                Kafka<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('kafka-architecture')" id="nav-kafka-architecture"><span>🏗️</span>
+                Architecture Deep Dive<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('kafka-consumers')" id="nav-kafka-consumers"><span>👥</span>
+                Consumers & Groups<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('kafka-patterns')" id="nav-kafka-patterns"><span>🔧</span> Patterns
+                & Guarantees<span class="done-dot"></span></div>
+            <div class="nav-section-title">📊 COMPARISON</div>
+            <div class="nav-item" onclick="showLesson('comparison')" id="nav-comparison"><span>⚖️</span> Redis vs Rabbit
+                vs Kafka<span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Full
+                Cheatsheet<span class="done-dot"></span></div>
+        </nav>
+    </div>
+    <main id="mainContent">
 
-<!-- HOME -->
-<div id="home-page">
-  <div class="hero">
-    <div class="hero-eyebrow">// MESSAGING & CACHING PREP</div>
-    <h1><span class="r">Redis</span> · <span class="rb">RabbitMQ</span> · <span class="k">Kafka</span></h1>
-    <p class="hero-sub">Master the three most important data infrastructure tools in modern backends. From caching patterns to event streaming — everything for your interview.</p>
-    <div class="stat-row">
-      <div><div class="stat-num" style="color:var(--accent)">12</div><div class="stat-label">Topics</div></div>
-      <div><div class="stat-num" style="color:var(--accent2)">40+</div><div class="stat-label">Interview Qs</div></div>
-      <div><div class="stat-num" style="color:var(--accent3)">30+</div><div class="stat-label">Code Examples</div></div>
-    </div>
-  </div>
-  <div class="topics-grid">
-    <div class="topic-card cr" onclick="showLesson('redis-intro')"><span class="card-emoji">⚡</span><div class="card-title">What is Redis</div><div class="card-desc">In-memory data store, why it's fast, when to use it.</div><div style="display:flex;gap:6px"><span class="tag r">REDIS</span></div></div>
-    <div class="topic-card cr" onclick="showLesson('redis-datatypes')"><span class="card-emoji">🗂️</span><div class="card-title">Redis Data Structures</div><div class="card-desc">String, Hash, List, Set, ZSet, Bitmap, HyperLogLog, Streams.</div><div style="display:flex;gap:6px"><span class="tag r">REDIS</span><span class="tag g">MUST KNOW</span></div></div>
-    <div class="topic-card cr" onclick="showLesson('redis-patterns')"><span class="card-emoji">🔧</span><div class="card-title">Redis Patterns</div><div class="card-desc">Caching, sessions, rate limiting, distributed locks, pub/sub.</div><div style="display:flex;gap:6px"><span class="tag r">REDIS</span><span class="tag g">MUST KNOW</span></div></div>
-    <div class="topic-card cr" onclick="showLesson('redis-persistence')"><span class="card-emoji">💾</span><div class="card-title">Persistence & Cluster</div><div class="card-desc">RDB snapshots, AOF, Redis Sentinel, Redis Cluster.</div><div style="display:flex;gap:6px"><span class="tag r">REDIS</span></div></div>
-    <div class="topic-card co" onclick="showLesson('rabbit-intro')"><span class="card-emoji">🐰</span><div class="card-title">What is RabbitMQ</div><div class="card-desc">AMQP protocol, broker model, when to use message queues.</div><div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span></div></div>
-    <div class="topic-card co" onclick="showLesson('rabbit-concepts')"><span class="card-emoji">🔀</span><div class="card-title">Exchanges & Routing</div><div class="card-desc">Direct, Topic, Fanout, Headers exchanges. Bindings and routing keys.</div><div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span><span class="tag g">MUST KNOW</span></div></div>
-    <div class="topic-card co" onclick="showLesson('rabbit-patterns')"><span class="card-emoji">🛡️</span><div class="card-title">Reliability Patterns</div><div class="card-desc">Ack/Nack, dead letter queues, message TTL, persistence, retry logic.</div><div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span></div></div>
-    <div class="topic-card cb" onclick="showLesson('kafka-intro')"><span class="card-emoji">📡</span><div class="card-title">What is Kafka</div><div class="card-desc">Event streaming platform, distributed commit log, vs message queues.</div><div style="display:flex;gap:6px"><span class="tag b">KAFKA</span><span class="tag g">MUST KNOW</span></div></div>
-    <div class="topic-card cb" onclick="showLesson('kafka-architecture')"><span class="card-emoji">🏗️</span><div class="card-title">Kafka Architecture</div><div class="card-desc">Topics, partitions, brokers, Zookeeper/KRaft, replication, offsets.</div><div style="display:flex;gap:6px"><span class="tag b">KAFKA</span><span class="tag g">MUST KNOW</span></div></div>
-    <div class="topic-card cb" onclick="showLesson('kafka-consumers')"><span class="card-emoji">👥</span><div class="card-title">Consumers & Groups</div><div class="card-desc">Consumer groups, partition assignment, lag, rebalancing, commit strategies.</div><div style="display:flex;gap:6px"><span class="tag b">KAFKA</span></div></div>
-    <div class="topic-card cb" onclick="showLesson('kafka-patterns')"><span class="card-emoji">🔧</span><div class="card-title">Kafka Patterns</div><div class="card-desc">Exactly-once, CQRS, event sourcing, Kafka Streams, Connect.</div><div style="display:flex;gap:6px"><span class="tag b">KAFKA</span></div></div>
-    <div class="topic-card cg" onclick="showLesson('comparison')"><span class="card-emoji">⚖️</span><div class="card-title">Redis vs Rabbit vs Kafka</div><div class="card-desc">The ultimate comparison. When to use which, and hybrid architectures.</div><div style="display:flex;gap:6px"><span class="tag g">KEY</span></div></div>
-  </div>
-</div>
+        <!-- HOME -->
+        <div id="home-page">
+            <div class="hero">
+                <div class="hero-eyebrow">// MESSAGING & CACHING PREP</div>
+                <h1><span class="r">Redis</span> · <span class="rb">RabbitMQ</span> · <span class="k">Kafka</span></h1>
+                <p class="hero-sub">Master the three most important data infrastructure tools in modern backends. From
+                    caching patterns to event streaming — everything for your interview.</p>
+                <div class="stat-row">
+                    <div>
+                        <div class="stat-num" style="color:var(--accent)">12</div>
+                        <div class="stat-label">Topics</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" style="color:var(--accent2)">40+</div>
+                        <div class="stat-label">Interview Qs</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" style="color:var(--accent3)">30+</div>
+                        <div class="stat-label">Code Examples</div>
+                    </div>
+                </div>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card cr" onclick="showLesson('redis-intro')"><span class="card-emoji">⚡</span>
+                    <div class="card-title">What is Redis</div>
+                    <div class="card-desc">In-memory data store, why it's fast, when to use it.</div>
+                    <div style="display:flex;gap:6px"><span class="tag r">REDIS</span></div>
+                </div>
+                <div class="topic-card cr" onclick="showLesson('redis-datatypes')"><span class="card-emoji">🗂️</span>
+                    <div class="card-title">Redis Data Structures</div>
+                    <div class="card-desc">String, Hash, List, Set, ZSet, Bitmap, HyperLogLog, Streams.</div>
+                    <div style="display:flex;gap:6px"><span class="tag r">REDIS</span><span
+                            class="tag g">MUST KNOW</span></div>
+                </div>
+                <div class="topic-card cr" onclick="showLesson('redis-patterns')"><span class="card-emoji">🔧</span>
+                    <div class="card-title">Redis Patterns</div>
+                    <div class="card-desc">Caching, sessions, rate limiting, distributed locks, pub/sub.</div>
+                    <div style="display:flex;gap:6px"><span class="tag r">REDIS</span><span
+                            class="tag g">MUST KNOW</span></div>
+                </div>
+                <div class="topic-card cr" onclick="showLesson('redis-persistence')"><span class="card-emoji">💾</span>
+                    <div class="card-title">Persistence & Cluster</div>
+                    <div class="card-desc">RDB snapshots, AOF, Redis Sentinel, Redis Cluster.</div>
+                    <div style="display:flex;gap:6px"><span class="tag r">REDIS</span></div>
+                </div>
+                <div class="topic-card co" onclick="showLesson('rabbit-intro')"><span class="card-emoji">🐰</span>
+                    <div class="card-title">What is RabbitMQ</div>
+                    <div class="card-desc">AMQP protocol, broker model, when to use message queues.</div>
+                    <div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span></div>
+                </div>
+                <div class="topic-card co" onclick="showLesson('rabbit-concepts')"><span class="card-emoji">🔀</span>
+                    <div class="card-title">Exchanges & Routing</div>
+                    <div class="card-desc">Direct, Topic, Fanout, Headers exchanges. Bindings and routing keys.</div>
+                    <div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span><span
+                            class="tag g">MUST KNOW</span></div>
+                </div>
+                <div class="topic-card co" onclick="showLesson('rabbit-patterns')"><span class="card-emoji">🛡️</span>
+                    <div class="card-title">Reliability Patterns</div>
+                    <div class="card-desc">Ack/Nack, dead letter queues, message TTL, persistence, retry logic.</div>
+                    <div style="display:flex;gap:6px"><span class="tag o">RABBITMQ</span></div>
+                </div>
+                <div class="topic-card cb" onclick="showLesson('kafka-intro')"><span class="card-emoji">📡</span>
+                    <div class="card-title">What is Kafka</div>
+                    <div class="card-desc">Event streaming platform, distributed commit log, vs message queues.</div>
+                    <div style="display:flex;gap:6px"><span class="tag b">KAFKA</span><span
+                            class="tag g">MUST KNOW</span></div>
+                </div>
+                <div class="topic-card cb" onclick="showLesson('kafka-architecture')"><span class="card-emoji">🏗️</span>
+                    <div class="card-title">Kafka Architecture</div>
+                    <div class="card-desc">Topics, partitions, brokers, Zookeeper/KRaft, replication, offsets.</div>
+                    <div style="display:flex;gap:6px"><span class="tag b">KAFKA</span><span
+                            class="tag g">MUST KNOW</span></div>
+                </div>
+                <div class="topic-card cb" onclick="showLesson('kafka-consumers')"><span class="card-emoji">👥</span>
+                    <div class="card-title">Consumers & Groups</div>
+                    <div class="card-desc">Consumer groups, partition assignment, lag, rebalancing, commit strategies.
+                    </div>
+                    <div style="display:flex;gap:6px"><span class="tag b">KAFKA</span></div>
+                </div>
+                <div class="topic-card cb" onclick="showLesson('kafka-patterns')"><span class="card-emoji">🔧</span>
+                    <div class="card-title">Kafka Patterns</div>
+                    <div class="card-desc">Exactly-once, CQRS, event sourcing, Kafka Streams, Connect.</div>
+                    <div style="display:flex;gap:6px"><span class="tag b">KAFKA</span></div>
+                </div>
+                <div class="topic-card cg" onclick="showLesson('comparison')"><span class="card-emoji">⚖️</span>
+                    <div class="card-title">Redis vs Rabbit vs Kafka</div>
+                    <div class="card-desc">The ultimate comparison. When to use which, and hybrid architectures.</div>
+                    <div style="display:flex;gap:6px"><span class="tag g">KEY</span></div>
+                </div>
+            </div>
+        </div>
 
-<!-- REDIS INTRO -->
-<div id="lesson-redis-intro" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
-    <div class="lesson-title">⚡ What is Redis?</div>
-    <div class="lesson-subtitle">Remote Dictionary Server — the world's most popular in-memory data store. Used by Twitter, GitHub, Snapchat, Craigslist and millions of others.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Why is Redis so Fast?</div>
-    <div class="prose">
-    <strong>1. In-memory:</strong> All data lives in RAM. RAM access = ~100ns. Disk access = ~100ms. That's 1000x faster.<br><br>
-    <strong>2. Single-threaded event loop:</strong> No thread context switching. No mutex locks. One command at a time, processed atomically.<br><br>
-    <strong>3. Simple data structures:</strong> Optimized C implementations of strings, lists, sets, sorted sets. No query parsing overhead.<br><br>
-    <strong>4. Non-blocking I/O:</strong> Uses epoll/kqueue to handle thousands of connections with one thread.
-    </div>
-    <div class="analogy-box">
-      <div class="analogy-label">💡 ANALOGY</div>
-      <div class="analogy-text">Redis is like a super-fast whiteboard on your desk. Your database is like a filing cabinet in a different building. For frequently-needed info (who's logged in, what's trending), you write it on the whiteboard. Instant access. When the office closes (restart), the whiteboard is cleared (unless you configured persistence).</div>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">When to Use Redis</div>
-    <div class="pill-row">
-      <span class="pill pill-r">Session Storage</span>
-      <span class="pill pill-r">Caching DB Queries</span>
-      <span class="pill pill-r">Rate Limiting</span>
-      <span class="pill pill-r">Leaderboards</span>
-      <span class="pill pill-r">Distributed Locks</span>
-      <span class="pill pill-r">Pub/Sub</span>
-      <span class="pill pill-r">Job Queues</span>
-      <span class="pill pill-r">Real-time Analytics</span>
-    </div>
-    <div class="warn-box"><strong>⚠️ Don't use Redis as a primary database</strong> unless you can afford data loss or have persistence configured. Redis is best as a complementary layer alongside a durable DB (Postgres, MySQL, MongoDB).</div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is Redis single-threaded but still fast?</div>
-    <div class="interview-a">Redis is single-threaded for command processing, which eliminates race conditions and context switching overhead. It's fast because: (1) All operations happen in RAM (not disk), (2) Operations are O(1) or O(log n) due to optimized data structures, (3) Network I/O uses epoll (handles thousands of connections with one thread), (4) No transaction overhead. Note: Redis 6+ uses multiple I/O threads for networking, but command processing remains single-threaded.</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What happens to Redis data when the server restarts?</div>
-    <div class="interview-a">By default, Redis is in-memory only — all data is lost on restart. Options: (1) RDB (Redis Database) — periodic snapshots to disk (configurable interval, e.g., every 5 min or every 1000 writes). Data loss up to last snapshot interval. (2) AOF (Append Only File) — logs every write command. More durable, larger files. Rewrite/compact periodically. (3) Both combined — RDB for fast restarts, AOF for durability.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="mark-done-btn" onclick="markDone('redis-intro')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('redis-datatypes')">Next: Data Structures →</button>
-  </div>
-</div>
+        <!-- REDIS INTRO -->
+        <div id="lesson-redis-intro" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
+                <div class="lesson-title">⚡ What is Redis?</div>
+                <div class="lesson-subtitle">Remote Dictionary Server — the world's most popular in-memory data store.
+                    Used by Twitter, GitHub, Snapchat, Craigslist and millions of others.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Why is Redis so Fast?</div>
+                <div class="prose">
+                    <strong>1. In-memory:</strong> All data lives in RAM. RAM access = ~100ns. Disk access = ~100ms.
+                    That's 1000x faster.<br><br>
+                    <strong>2. Single-threaded event loop:</strong> No thread context switching. No mutex locks. One
+                    command at a time, processed atomically.<br><br>
+                    <strong>3. Simple data structures:</strong> Optimized C implementations of strings, lists, sets,
+                    sorted sets. No query parsing overhead.<br><br>
+                    <strong>4. Non-blocking I/O:</strong> Uses epoll/kqueue to handle thousands of connections with one
+                    thread.
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-label">💡 ANALOGY</div>
+                    <div class="analogy-text">Redis is like a super-fast whiteboard on your desk. Your database is like
+                        a filing cabinet in a different building. For frequently-needed info (who's logged in, what's
+                        trending), you write it on the whiteboard. Instant access. When the office closes (restart), the
+                        whiteboard is cleared (unless you configured persistence).
+                    </div>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">When to Use Redis</div>
+                <div class="pill-row">
+                    <span class="pill pill-r">Session Storage</span>
+                    <span class="pill pill-r">Caching DB Queries</span>
+                    <span class="pill pill-r">Rate Limiting</span>
+                    <span class="pill pill-r">Leaderboards</span>
+                    <span class="pill pill-r">Distributed Locks</span>
+                    <span class="pill pill-r">Pub/Sub</span>
+                    <span class="pill pill-r">Job Queues</span>
+                    <span class="pill pill-r">Real-time Analytics</span>
+                </div>
+                <div class="warn-box"><strong>⚠️ Don't use Redis as a primary database</strong> unless you can afford
+                    data loss or have persistence configured. Redis is best as a complementary layer alongside a durable
+                    DB (Postgres, MySQL, MongoDB).
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is Redis single-threaded but still fast?
+                </div>
+                <div class="interview-a">Redis is single-threaded for command processing, which eliminates race
+                    conditions and context switching overhead. It's fast because: (1) All operations happen in RAM (not
+                    disk), (2) Operations are O(1) or O(log n) due to optimized data structures, (3) Network I/O uses
+                    epoll (handles thousands of connections with one thread), (4) No transaction overhead. Note: Redis
+                    6+ uses multiple I/O threads for networking, but command processing remains single-threaded.
+                </div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What happens to Redis data when the server
+                    restarts?
+                </div>
+                <div class="interview-a">By default, Redis is in-memory only — all data is lost on restart. Options: (1)
+                    RDB (Redis Database) — periodic snapshots to disk (configurable interval, e.g., every 5 min or every
+                    1000 writes). Data loss up to last snapshot interval. (2) AOF (Append Only File) — logs every write
+                    command. More durable, larger files. Rewrite/compact periodically. (3) Both combined — RDB for fast
+                    restarts, AOF for durability.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="mark-done-btn" onclick="markDone('redis-intro')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('redis-datatypes')">Next: Data Structures →</button>
+            </div>
+        </div>
 
-<!-- REDIS DATA TYPES -->
-<div id="lesson-redis-datatypes" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
-    <div class="lesson-title">🗂️ Redis Data Structures</div>
-    <div class="lesson-subtitle">Redis is more than a cache — it's a data structure server. Each type is purpose-built for specific use cases.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">The 5 Core Types</div>
-    <table class="cheat-table">
-      <tr><th>Type</th><th>Commands</th><th>Use Case</th><th>Complexity</th></tr>
-      <tr><td style="color:var(--accent)">String</td><td>GET, SET, INCR, APPEND</td><td>Cache, counters, sessions</td><td>O(1)</td></tr>
-      <tr><td style="color:var(--accent)">Hash</td><td>HGET, HSET, HGETALL</td><td>User objects, config</td><td>O(1) per field</td></tr>
-      <tr><td style="color:var(--accent)">List</td><td>LPUSH, RPOP, LRANGE</td><td>Message queues, activity feeds</td><td>O(1) push/pop</td></tr>
-      <tr><td style="color:var(--accent)">Set</td><td>SADD, SMEMBERS, SINTER</td><td>Tags, unique visitors, follows</td><td>O(1) add/check</td></tr>
-      <tr><td style="color:var(--accent)">Sorted Set (ZSet)</td><td>ZADD, ZRANGE, ZRANK</td><td>Leaderboards, priority queues</td><td>O(log n)</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Practical Examples</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">REDIS CLI — REAL PATTERNS</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-      <pre><span class="cm"># String — simple cache with TTL</span>
+        <!-- REDIS DATA TYPES -->
+        <div id="lesson-redis-datatypes" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
+                <div class="lesson-title">🗂️ Redis Data Structures</div>
+                <div class="lesson-subtitle">Redis is more than a cache — it's a data structure server. Each type is
+                    purpose-built for specific use cases.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">The 5 Core Types</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Type</th>
+                        <th>Commands</th>
+                        <th>Use Case</th>
+                        <th>Complexity</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">String</td>
+                        <td>GET, SET, INCR, APPEND</td>
+                        <td>Cache, counters, sessions</td>
+                        <td>O(1)</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">Hash</td>
+                        <td>HGET, HSET, HGETALL</td>
+                        <td>User objects, config</td>
+                        <td>O(1) per field</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">List</td>
+                        <td>LPUSH, RPOP, LRANGE</td>
+                        <td>Message queues, activity feeds</td>
+                        <td>O(1) push/pop</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">Set</td>
+                        <td>SADD, SMEMBERS, SINTER</td>
+                        <td>Tags, unique visitors, follows</td>
+                        <td>O(1) add/check</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">Sorted Set (ZSet)</td>
+                        <td>ZADD, ZRANGE, ZRANK</td>
+                        <td>Leaderboards, priority queues</td>
+                        <td>O(log n)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Practical Examples</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">REDIS CLI — REAL PATTERNS</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                    </div>
+                    <pre><span class="cm"># String — simple cache with TTL</span>
 SET user:123:name "Hany" EX 3600
 GET user:123:name
 
@@ -297,46 +1299,85 @@ SCARD daily:visitors  <span class="cm"># count</span>
 <span class="cm"># List — simple job queue (BRPOP blocks until item available)</span>
 LPUSH job:queue '{"type":"email","to":"h@x.com"}'
 BRPOP job:queue 0  <span class="cm"># worker pops with blocking wait</span></pre>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Advanced Types</div>
-    <table class="cheat-table">
-      <tr><th>Type</th><th>What it does</th><th>Use Case</th></tr>
-      <tr><td style="color:var(--accent3)">Bitmap</td><td>Bit-level operations on strings</td><td>Daily active users, feature flags per user</td></tr>
-      <tr><td style="color:var(--accent3)">HyperLogLog</td><td>Approximate unique count (0.81% error)</td><td>Count unique visitors, distinct search queries</td></tr>
-      <tr><td style="color:var(--accent3)">Stream</td><td>Append-only log with consumer groups</td><td>Event sourcing, lightweight Kafka alternative</td></tr>
-      <tr><td style="color:var(--accent3)">Geo</td><td>Store/query geospatial data</td><td>Find nearby restaurants, drivers</td></tr>
-    </table>
-    <div class="info-box"><strong>HyperLogLog magic:</strong> Uses only 12KB of memory to count up to 2^64 unique items with ~1% error. A regular set counting 100M unique items would use GBs. Use PFADD/PFCOUNT for massive scale cardinality estimation.</div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: How would you implement a real-time leaderboard with Redis?</div>
-    <div class="interview-a">Sorted Set (ZADD/ZRANGE): ZADD leaderboard {score} {user_id}. Get top 10: ZRANGE leaderboard 0 9 WITHSCORES REV. Get user rank: ZRANK leaderboard user_id. Increment score: ZINCRBY leaderboard 100 user_id. This is O(log N) per update and O(log N + K) per range query. Perfect for gaming leaderboards, content upvotes, trending topics. Example: Reddit's hot posts use a sorted set with a score calculated from votes + time decay.</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between Redis Hash and storing JSON as a String?</div>
-    <div class="interview-a">Hash: HSET user:1 name "Hany" age 28 — stores fields separately, can update one field (HSET user:1 age 29) without loading the whole object. More memory efficient for small objects. String (JSON): SET user:1 '{"name":"Hany","age":28}' — must parse/serialize full JSON on every read/write, atomic updates require read-modify-write cycle. Use Hash when you frequently access/update individual fields. Use String (JSON) when you almost always need the full object.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('redis-intro')">← What is Redis</button>
-    <button class="mark-done-btn" onclick="markDone('redis-datatypes')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('redis-patterns')">Next: Patterns →</button>
-  </div>
-</div>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Advanced Types</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Type</th>
+                        <th>What it does</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Bitmap</td>
+                        <td>Bit-level operations on strings</td>
+                        <td>Daily active users, feature flags per user</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">HyperLogLog</td>
+                        <td>Approximate unique count (0.81% error)</td>
+                        <td>Count unique visitors, distinct search queries</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Stream</td>
+                        <td>Append-only log with consumer groups</td>
+                        <td>Event sourcing, lightweight Kafka alternative</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Geo</td>
+                        <td>Store/query geospatial data</td>
+                        <td>Find nearby restaurants, drivers</td>
+                    </tr>
+                </table>
+                <div class="info-box"><strong>HyperLogLog magic:</strong> Uses only 12KB of memory to count up to 2^64
+                    unique items with ~1% error. A regular set counting 100M unique items would use GBs. Use
+                    PFADD/PFCOUNT for massive scale cardinality estimation.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How would you implement a real-time leaderboard
+                    with Redis?
+                </div>
+                <div class="interview-a">Sorted Set (ZADD/ZRANGE): ZADD leaderboard {score} {user_id}. Get top 10:
+                    ZRANGE leaderboard 0 9 WITHSCORES REV. Get user rank: ZRANK leaderboard user_id. Increment score:
+                    ZINCRBY leaderboard 100 user_id. This is O(log N) per update and O(log N + K) per range query.
+                    Perfect for gaming leaderboards, content upvotes, trending topics. Example: Reddit's hot posts use a
+                    sorted set with a score calculated from votes + time decay.
+                </div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is the difference between Redis Hash and
+                    storing JSON as a String?
+                </div>
+                <div class="interview-a">Hash: HSET user:1 name "Hany" age 28 — stores fields separately, can update one
+                    field (HSET user:1 age 29) without loading the whole object. More memory efficient for small
+                    objects. String (JSON): SET user:1 '{"name":"Hany","age":28}' — must parse/serialize full JSON on
+                    every read/write, atomic updates require read-modify-write cycle. Use Hash when you frequently
+                    access/update individual fields. Use String (JSON) when you almost always need the full object.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('redis-intro')">← What is Redis</button>
+                <button class="mark-done-btn" onclick="markDone('redis-datatypes')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('redis-patterns')">Next: Patterns →</button>
+            </div>
+        </div>
 
-<!-- REDIS PATTERNS -->
-<div id="lesson-redis-patterns" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
-    <div class="lesson-title">🔧 Redis Patterns</div>
-    <div class="lesson-subtitle">The production patterns every backend developer must know.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Distributed Lock (Redlock)</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">NODE.JS — DISTRIBUTED LOCK</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-      <pre><span class="cm">// SET NX EX = Set if Not eXists, with EXpiry</span>
+        <!-- REDIS PATTERNS -->
+        <div id="lesson-redis-patterns" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
+                <div class="lesson-title">🔧 Redis Patterns</div>
+                <div class="lesson-subtitle">The production patterns every backend developer must know.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Distributed Lock (Redlock)</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">NODE.JS — DISTRIBUTED LOCK</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                    </div>
+                    <pre><span class="cm">// SET NX EX = Set if Not eXists, with EXpiry</span>
 <span class="cm">// This is ATOMIC — no race condition possible</span>
 
 <span class="kw">async function</span> <span class="fn">acquireLock</span>(lockKey, ttlMs) {
@@ -357,13 +1398,15 @@ BRPOP job:queue 0  <span class="cm"># worker pops with blocking wait</span></pre
     else return 0 end`</span>;
   <span class="kw">await</span> redis.<span class="fn">eval</span>(script, [lockKey], [token]);
 }</pre>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Rate Limiting</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">REDIS — SLIDING WINDOW RATE LIMIT</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-      <pre><span class="cm">-- Lua script (atomic) — sliding window rate limiter</span>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Rate Limiting</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">REDIS — SLIDING WINDOW RATE LIMIT</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                    </div>
+                    <pre><span class="cm">-- Lua script (atomic) — sliding window rate limiter</span>
 <span class="cm">-- Key: user:{id}:ratelimit | Limit: 100 requests/minute</span>
 <span class="kw">local</span> key = KEYS[1]
 <span class="kw">local</span> now = tonumber(ARGV[1])
@@ -379,147 +1422,282 @@ redis.call(<span class="st">'ZREMRANGEBYSCORE'</span>, key, <span class="nm">0</
 <span class="kw">else</span>
   <span class="kw">return</span> <span class="nm">0</span>  <span class="cm">-- rate limited</span>
 <span class="kw">end</span></pre>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Pub/Sub</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">NODE.JS — REDIS PUB/SUB</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-      <pre><span class="cm">// Publisher — notify all subscribers of a new message</span>
-<span class="kw">await</span> publisher.<span class="fn">publish</span>(<span class="st">'chat:room:42'</span>, <span class="op">JSON</span>.<span class="fn">stringify</span>({
-  user: <span class="st">'Hany'</span>, text: <span class="st">'Hello!'</span>, ts: <span class="op">Date</span>.<span class="fn">now</span>()
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Pub/Sub</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">NODE.JS — REDIS PUB/SUB</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                    </div>
+                    <pre><span class="cm">// Publisher — notify all subscribers of a new message</span>
+<span class="kw">await</span> publisher.<span class="fn">publish</span>(<span class="st">'chat:room:42'</span>, <span
+                                class="op">JSON</span>.<span class="fn">stringify</span>({
+  user: <span class="st">'Hany'</span>, text: <span class="st">'Hello!'</span>, ts: <span class="op">Date</span>.<span
+                                class="fn">now</span>()
 }));
 
 <span class="cm">// Subscriber — receive messages in real-time</span>
 <span class="kw">await</span> subscriber.<span class="fn">subscribe</span>(<span class="st">'chat:room:42'</span>, (msg) => {
   <span class="kw">const</span> data = <span class="op">JSON</span>.<span class="fn">parse</span>(msg);
-  io.<span class="fn">to</span>(<span class="st">'room42'</span>).<span class="fn">emit</span>(<span class="st">'message'</span>, data); <span class="cm">// forward to WebSocket</span>
+  io.<span class="fn">to</span>(<span class="st">'room42'</span>).<span class="fn">emit</span>(<span class="st">'message'</span>, data); <span
+                                class="cm">// forward to WebSocket</span>
 });
 
 <span class="cm">// Pattern subscribe — match multiple channels</span>
 <span class="kw">await</span> subscriber.<span class="fn">psubscribe</span>(<span class="st">'chat:room:*'</span>, (msg, channel) => { ... });</pre>
-    </div>
-    <div class="warn-box"><strong>⚠️ Redis Pub/Sub is fire-and-forget.</strong> If a subscriber is offline when a message is published, the message is LOST. For durable messaging, use Redis Streams (XADD/XREAD) which stores messages and allows replay, or use RabbitMQ/Kafka.</div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you implement a distributed lock with Redis?</div>
-    <div class="interview-a">Use SET key value NX PX ttl (atomic: set only if not exists, with expiry). NX ensures only one process gets the lock. PX ensures automatic release if the holder crashes. Always use a unique token as the value — when releasing, use a Lua script to atomically check that you own the lock before deleting it. This prevents releasing someone else's lock. For multi-node Redis, use the Redlock algorithm (acquire lock on majority of N Redis nodes).</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Redis pipelining and when should you use it?</div>
-    <div class="interview-a">Pipelining sends multiple commands in one network round trip without waiting for each response. Instead of 100 round trips (each ~1ms = 100ms total), you send all 100 commands at once and receive all responses together (~1ms total). Use when: batch operations (bulk insert, bulk fetch), when commands don't depend on each other's results. Don't use when commands depend on previous results (use Lua scripts instead). Node.js: redis.pipeline().set().get().exec()</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('redis-datatypes')">← Data Structures</button>
-    <button class="mark-done-btn" onclick="markDone('redis-patterns')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('redis-persistence')">Next: Persistence →</button>
-  </div>
-</div>
+                </div>
+                <div class="warn-box"><strong>⚠️ Redis Pub/Sub is fire-and-forget.</strong> If a subscriber is offline
+                    when a message is published, the message is LOST. For durable messaging, use Redis Streams
+                    (XADD/XREAD) which stores messages and allows replay, or use RabbitMQ/Kafka.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you implement a distributed lock with
+                    Redis?
+                </div>
+                <div class="interview-a">Use SET key value NX PX ttl (atomic: set only if not exists, with expiry). NX
+                    ensures only one process gets the lock. PX ensures automatic release if the holder crashes. Always
+                    use a unique token as the value — when releasing, use a Lua script to atomically check that you own
+                    the lock before deleting it. This prevents releasing someone else's lock. For multi-node Redis, use
+                    the Redlock algorithm (acquire lock on majority of N Redis nodes).
+                </div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Redis pipelining and when should you
+                    use it?
+                </div>
+                <div class="interview-a">Pipelining sends multiple commands in one network round trip without waiting
+                    for each response. Instead of 100 round trips (each ~1ms = 100ms total), you send all 100 commands
+                    at once and receive all responses together (~1ms total). Use when: batch operations (bulk insert,
+                    bulk fetch), when commands don't depend on each other's results. Don't use when commands depend on
+                    previous results (use Lua scripts instead). Node.js: redis.pipeline().set().get().exec()
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('redis-datatypes')">← Data Structures</button>
+                <button class="mark-done-btn" onclick="markDone('redis-patterns')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('redis-persistence')">Next: Persistence →</button>
+            </div>
+        </div>
 
-<!-- REDIS PERSISTENCE -->
-<div id="lesson-redis-persistence" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
-    <div class="lesson-title">💾 Persistence & Cluster</div>
-    <div class="lesson-subtitle">Making Redis durable and scalable — RDB, AOF, Sentinel, and Redis Cluster.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Persistence Options</div>
-    <table class="cheat-table">
-      <tr><th>Option</th><th>How</th><th>Data Loss Risk</th><th>Performance</th></tr>
-      <tr><td style="color:var(--accent)">No persistence</td><td>All in memory only</td><td>All data on crash</td><td>Fastest</td></tr>
-      <tr><td style="color:var(--accent)">RDB (Snapshot)</td><td>Fork process, dump to disk every N min</td><td>Up to last snapshot interval</td><td>Good</td></tr>
-      <tr><td style="color:var(--accent)">AOF (Append-Only)</td><td>Log every write command</td><td>Up to last fsync (1s with everysec)</td><td>Slightly slower</td></tr>
-      <tr><td style="color:var(--accent)">RDB + AOF</td><td>Both</td><td>Minimal (AOF recovery)</td><td>Combined overhead</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">High Availability: Sentinel vs Cluster</div>
-    <table class="cheat-table">
-      <tr><th>Aspect</th><th>Redis Sentinel</th><th>Redis Cluster</th></tr>
-      <tr><td>Purpose</td><td>Automatic failover (HA)</td><td>Horizontal scaling + HA</td></tr>
-      <tr><td>Data</td><td>All data on primary (replicated)</td><td>Data sharded across 16384 slots</td></tr>
-      <tr><td>Scale</td><td>Vertically (bigger machine)</td><td>Horizontally (more nodes)</td></tr>
-      <tr><td>Failover</td><td>Automatic primary promotion</td><td>Automatic (per shard)</td></tr>
-      <tr><td>Use when</td><td>Need HA, data fits on one machine</td><td>Data too large for one machine</td></tr>
-    </table>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Redis Cluster and how does it shard data?</div>
-    <div class="interview-a">Redis Cluster splits the keyspace into 16384 hash slots. Each node handles a range of slots. Key's slot = CRC16(key) % 16384. Minimum 3 primary nodes (each with a replica = 6 nodes total). Client libraries are cluster-aware: they compute the slot, send to the right node. Multi-key operations require all keys on the same slot (use hash tags: {user:1}:name and {user:1}:email share slot because of {user:1}). Cluster handles resharding when adding/removing nodes.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('redis-patterns')">← Patterns</button>
-    <button class="mark-done-btn" onclick="markDone('redis-persistence')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('rabbit-intro')">Next: RabbitMQ →</button>
-  </div>
-</div>
+        <!-- REDIS PERSISTENCE -->
+        <div id="lesson-redis-persistence" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent)">// REDIS</div>
+                <div class="lesson-title">💾 Persistence & Cluster</div>
+                <div class="lesson-subtitle">Making Redis durable and scalable — RDB, AOF, Sentinel, and Redis
+                    Cluster.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Persistence Options</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Option</th>
+                        <th>How</th>
+                        <th>Data Loss Risk</th>
+                        <th>Performance</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">No persistence</td>
+                        <td>All in memory only</td>
+                        <td>All data on crash</td>
+                        <td>Fastest</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">RDB (Snapshot)</td>
+                        <td>Fork process, dump to disk every N min</td>
+                        <td>Up to last snapshot interval</td>
+                        <td>Good</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">AOF (Append-Only)</td>
+                        <td>Log every write command</td>
+                        <td>Up to last fsync (1s with everysec)</td>
+                        <td>Slightly slower</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent)">RDB + AOF</td>
+                        <td>Both</td>
+                        <td>Minimal (AOF recovery)</td>
+                        <td>Combined overhead</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">High Availability: Sentinel vs Cluster</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Redis Sentinel</th>
+                        <th>Redis Cluster</th>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Automatic failover (HA)</td>
+                        <td>Horizontal scaling + HA</td>
+                    </tr>
+                    <tr>
+                        <td>Data</td>
+                        <td>All data on primary (replicated)</td>
+                        <td>Data sharded across 16384 slots</td>
+                    </tr>
+                    <tr>
+                        <td>Scale</td>
+                        <td>Vertically (bigger machine)</td>
+                        <td>Horizontally (more nodes)</td>
+                    </tr>
+                    <tr>
+                        <td>Failover</td>
+                        <td>Automatic primary promotion</td>
+                        <td>Automatic (per shard)</td>
+                    </tr>
+                    <tr>
+                        <td>Use when</td>
+                        <td>Need HA, data fits on one machine</td>
+                        <td>Data too large for one machine</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is Redis Cluster and how does it shard
+                    data?
+                </div>
+                <div class="interview-a">Redis Cluster splits the keyspace into 16384 hash slots. Each node handles a
+                    range of slots. Key's slot = CRC16(key) % 16384. Minimum 3 primary nodes (each with a replica = 6
+                    nodes total). Client libraries are cluster-aware: they compute the slot, send to the right node.
+                    Multi-key operations require all keys on the same slot (use hash tags: {user:1}:name and
+                    {user:1}:email share slot because of {user:1}). Cluster handles resharding when adding/removing
+                    nodes.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('redis-patterns')">← Patterns</button>
+                <button class="mark-done-btn" onclick="markDone('redis-persistence')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('rabbit-intro')">Next: RabbitMQ →</button>
+            </div>
+        </div>
 
-<!-- RABBITMQ INTRO -->
-<div id="lesson-rabbit-intro" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
-    <div class="lesson-title">🐰 What is RabbitMQ?</div>
-    <div class="lesson-subtitle">A traditional message broker implementing AMQP. Routes messages from producers to consumers via a flexible exchange/queue system.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Core Concepts</div>
-    <div class="prose">
-    <strong>Producer:</strong> Publishes messages to an Exchange<br>
-    <strong>Exchange:</strong> Receives messages and routes them to queues based on routing rules<br>
-    <strong>Queue:</strong> Buffer that stores messages until consumed<br>
-    <strong>Consumer:</strong> Reads messages from queues<br>
-    <strong>Binding:</strong> Link between Exchange and Queue with a routing key
-    </div>
-    <div class="analogy-box">
-      <div class="analogy-label">💡 ANALOGY</div>
-      <div class="analogy-text">RabbitMQ is like a <strong>post office</strong>. Producer = letter writer. Exchange = sorting department (decides which mailbox/queue to put the letter in). Queue = mailbox. Consumer = person who picks up mail. The routing key is like the address on the envelope — the sorting department uses it to decide where it goes.</div>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">RabbitMQ vs Redis Queues</div>
-    <table class="cheat-table">
-      <tr><th>Feature</th><th>RabbitMQ</th><th>Redis List Queue</th></tr>
-      <tr><td>Message routing</td><td>Complex (exchanges, bindings)</td><td>Simple (key = queue name)</td></tr>
-      <tr><td>Acknowledgments</td><td>Built-in ACK/NACK</td><td>Manual (LMOVE + confirm)</td></tr>
-      <tr><td>Dead letter queues</td><td>Native support</td><td>Manual implementation</td></tr>
-      <tr><td>Message persistence</td><td>Durable queues + persistent messages</td><td>Via Redis persistence (RDB/AOF)</td></tr>
-      <tr><td>Complex routing</td><td>Topic, fanout, headers exchanges</td><td>Only key-based</td></tr>
-      <tr><td>Management UI</td><td>Built-in web UI</td><td>RedisInsight (separate)</td></tr>
-    </table>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('redis-persistence')">← Redis Persistence</button>
-    <button class="mark-done-btn" onclick="markDone('rabbit-intro')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('rabbit-concepts')">Next: Exchanges →</button>
-  </div>
-</div>
+        <!-- RABBITMQ INTRO -->
+        <div id="lesson-rabbit-intro" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
+                <div class="lesson-title">🐰 What is RabbitMQ?</div>
+                <div class="lesson-subtitle">A traditional message broker implementing AMQP. Routes messages from
+                    producers to consumers via a flexible exchange/queue system.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Core Concepts</div>
+                <div class="prose">
+                    <strong>Producer:</strong> Publishes messages to an Exchange<br>
+                    <strong>Exchange:</strong> Receives messages and routes them to queues based on routing rules<br>
+                    <strong>Queue:</strong> Buffer that stores messages until consumed<br>
+                    <strong>Consumer:</strong> Reads messages from queues<br>
+                    <strong>Binding:</strong> Link between Exchange and Queue with a routing key
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-label">💡 ANALOGY</div>
+                    <div class="analogy-text">RabbitMQ is like a <strong>post office</strong>. Producer = letter writer.
+                        Exchange = sorting department (decides which mailbox/queue to put the letter in). Queue =
+                        mailbox. Consumer = person who picks up mail. The routing key is like the address on the
+                        envelope — the sorting department uses it to decide where it goes.
+                    </div>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">RabbitMQ vs Redis Queues</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th>RabbitMQ</th>
+                        <th>Redis List Queue</th>
+                    </tr>
+                    <tr>
+                        <td>Message routing</td>
+                        <td>Complex (exchanges, bindings)</td>
+                        <td>Simple (key = queue name)</td>
+                    </tr>
+                    <tr>
+                        <td>Acknowledgments</td>
+                        <td>Built-in ACK/NACK</td>
+                        <td>Manual (LMOVE + confirm)</td>
+                    </tr>
+                    <tr>
+                        <td>Dead letter queues</td>
+                        <td>Native support</td>
+                        <td>Manual implementation</td>
+                    </tr>
+                    <tr>
+                        <td>Message persistence</td>
+                        <td>Durable queues + persistent messages</td>
+                        <td>Via Redis persistence (RDB/AOF)</td>
+                    </tr>
+                    <tr>
+                        <td>Complex routing</td>
+                        <td>Topic, fanout, headers exchanges</td>
+                        <td>Only key-based</td>
+                    </tr>
+                    <tr>
+                        <td>Management UI</td>
+                        <td>Built-in web UI</td>
+                        <td>RedisInsight (separate)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('redis-persistence')">← Redis Persistence</button>
+                <button class="mark-done-btn" onclick="markDone('rabbit-intro')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('rabbit-concepts')">Next: Exchanges →</button>
+            </div>
+        </div>
 
-<!-- RABBITMQ EXCHANGES -->
-<div id="lesson-rabbit-concepts" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
-    <div class="lesson-title">🔀 Exchanges & Routing</div>
-    <div class="lesson-subtitle">The heart of RabbitMQ — how messages are routed to the right queues.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Exchange Types</div>
-    <table class="cheat-table">
-      <tr><th>Exchange</th><th>Routing Rule</th><th>Use Case</th></tr>
-      <tr><td style="color:var(--accent2)">Direct</td><td>Route to queue with exact routing key match</td><td>Task distribution, work queues</td></tr>
-      <tr><td style="color:var(--accent2)">Topic</td><td>Route by pattern (* = one word, # = many words)</td><td>Selective pub/sub, log routing</td></tr>
-      <tr><td style="color:var(--accent2)">Fanout</td><td>Route to ALL bound queues (ignores routing key)</td><td>Broadcast, notifications to all services</td></tr>
-      <tr><td style="color:var(--accent2)">Headers</td><td>Route based on message header attributes</td><td>Complex routing without key string</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Topic Exchange Pattern Example</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">RABBITMQ — TOPIC ROUTING</span></div>
-      <pre><span class="cm"># Pattern: {service}.{action}.{region}</span>
+        <!-- RABBITMQ EXCHANGES -->
+        <div id="lesson-rabbit-concepts" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
+                <div class="lesson-title">🔀 Exchanges & Routing</div>
+                <div class="lesson-subtitle">The heart of RabbitMQ — how messages are routed to the right queues.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Exchange Types</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Exchange</th>
+                        <th>Routing Rule</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent2)">Direct</td>
+                        <td>Route to queue with exact routing key match</td>
+                        <td>Task distribution, work queues</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent2)">Topic</td>
+                        <td>Route by pattern (* = one word, # = many words)</td>
+                        <td>Selective pub/sub, log routing</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent2)">Fanout</td>
+                        <td>Route to ALL bound queues (ignores routing key)</td>
+                        <td>Broadcast, notifications to all services</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent2)">Headers</td>
+                        <td>Route based on message header attributes</td>
+                        <td>Complex routing without key string</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Topic Exchange Pattern Example</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">RABBITMQ — TOPIC ROUTING</span></div>
+                    <pre><span class="cm"># Pattern: {service}.{action}.{region}</span>
 <span class="cm"># Routing key examples:</span>
   user.created.us-east
   order.shipped.eu-west
@@ -536,133 +1714,185 @@ redis.call(<span class="st">'ZREMRANGEBYSCORE'</span>, key, <span class="nm">0</
 <span class="cm"># → us.queue (*.*.us-* matches)</span>
 <span class="cm"># → payment.queue (payment.# matches)</span>
 <span class="cm"># → critical.queue (*.failed.* matches)</span></pre>
-    </div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Direct, Topic, and Fanout exchanges?</div>
-    <div class="interview-a">Direct: routes message to queue(s) where binding key = routing key (exact match). Use for point-to-point or load distribution between workers. Topic: routes by pattern matching (* for one word, # for zero or more words). Use for pub/sub where consumers subscribe to subsets of messages. Fanout: copies message to ALL bound queues, ignores routing key entirely. Use for broadcasting events that all services need (e.g., "user signed up" needs to notify email service, analytics service, and recommendation service simultaneously).</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('rabbit-intro')">← What is RabbitMQ</button>
-    <button class="mark-done-btn" onclick="markDone('rabbit-concepts')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('rabbit-patterns')">Next: Reliability →</button>
-  </div>
-</div>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What's the difference between Direct, Topic,
+                    and Fanout exchanges?
+                </div>
+                <div class="interview-a">Direct: routes message to queue(s) where binding key = routing key (exact
+                    match). Use for point-to-point or load distribution between workers. Topic: routes by pattern
+                    matching (* for one word, # for zero or more words). Use for pub/sub where consumers subscribe to
+                    subsets of messages. Fanout: copies message to ALL bound queues, ignores routing key entirely. Use
+                    for broadcasting events that all services need (e.g., "user signed up" needs to notify email
+                    service, analytics service, and recommendation service simultaneously).
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('rabbit-intro')">← What is RabbitMQ</button>
+                <button class="mark-done-btn" onclick="markDone('rabbit-concepts')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('rabbit-patterns')">Next: Reliability →</button>
+            </div>
+        </div>
 
-<!-- RABBITMQ PATTERNS -->
-<div id="lesson-rabbit-patterns" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
-    <div class="lesson-title">🛡️ Patterns & Reliability</div>
-    <div class="lesson-subtitle">ACK/NACK, dead letter queues, persistence — making RabbitMQ bulletproof.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Acknowledgments — The Key to Reliability</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">NODE.JS — ACK/NACK PATTERN</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-      <pre><span class="cm">// Consumer with manual acknowledgment</span>
+        <!-- RABBITMQ PATTERNS -->
+        <div id="lesson-rabbit-patterns" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent2)">// RABBITMQ</div>
+                <div class="lesson-title">🛡️ Patterns & Reliability</div>
+                <div class="lesson-subtitle">ACK/NACK, dead letter queues, persistence — making RabbitMQ bulletproof.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Acknowledgments — The Key to Reliability</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">NODE.JS — ACK/NACK PATTERN</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                    </div>
+                    <pre><span class="cm">// Consumer with manual acknowledgment</span>
 channel.<span class="fn">consume</span>(<span class="st">'task.queue'</span>, <span class="kw">async</span> (msg) => {
   <span class="kw">if</span> (!msg) <span class="kw">return</span>;
 
   <span class="kw">try</span> {
-    <span class="kw">const</span> task = <span class="op">JSON</span>.<span class="fn">parse</span>(msg.content.<span class="fn">toString</span>());
+    <span class="kw">const</span> task = <span class="op">JSON</span>.<span class="fn">parse</span>(msg.content.<span
+                                class="fn">toString</span>());
     <span class="kw">await</span> <span class="fn">processTask</span>(task);
     channel.<span class="fn">ack</span>(msg); <span class="cm">// ✅ Success — remove from queue</span>
   } <span class="kw">catch</span> (err) {
-    <span class="kw">const</span> retries = msg.properties.headers[<span class="st">'x-retries'</span>] || <span class="nm">0</span>;
+    <span class="kw">const</span> retries = msg.properties.headers[<span class="st">'x-retries'</span>] || <span
+                                class="nm">0</span>;
     <span class="kw">if</span> (retries &lt; <span class="nm">3</span>) {
       <span class="cm">// Requeue with retry count</span>
-      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span class="cm">// → goes to dead letter queue</span>
+      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span
+                                class="cm">// → goes to dead letter queue</span>
     } <span class="kw">else</span> {
-      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span class="cm">// max retries reached → DLQ</span>
+      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span
+                                class="cm">// max retries reached → DLQ</span>
     }
   }
 }, { noAck: <span class="kw">false</span> }); <span class="cm">// manual ack mode!</span></pre>
-    </div>
-    <div class="info-box"><strong>noAck: false</strong> (manual ack) is critical for at-least-once delivery. If consumer crashes before ACKing, RabbitMQ automatically redelivers the message to another consumer. With <strong>noAck: true</strong> (auto-ack), message is deleted as soon as delivered — if processing crashes, message is LOST.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Dead Letter Queue (DLQ)</div>
-    <div class="prose">Messages go to DLQ when: rejected with <code>nack(..., false)</code>, TTL expires, queue is full.<br><br>
-    Set up DLQ as exchange + queue. Configure main queue with <code>x-dead-letter-exchange</code> argument. Messages in DLQ can be inspected, retried manually, or processed by a separate error handler.</div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you ensure a message is not lost in RabbitMQ?</div>
-    <div class="interview-a">Three layers of durability: (1) Durable queue — queue survives broker restart (durable: true when declaring); (2) Persistent message — message written to disk (deliveryMode: 2 in properties); (3) Consumer ACK — message only removed from queue after explicit channel.ack(). All three are needed for zero message loss. Also consider publisher confirms (confirmSelect) — broker acknowledges that it has persisted the message, so producer knows it's safe.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('rabbit-concepts')">← Exchanges</button>
-    <button class="mark-done-btn" onclick="markDone('rabbit-patterns')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('kafka-intro')">Next: Kafka →</button>
-  </div>
-</div>
+                </div>
+                <div class="info-box"><strong>noAck: false</strong> (manual ack) is critical for at-least-once delivery.
+                    If consumer crashes before ACKing, RabbitMQ automatically redelivers the message to another
+                    consumer. With <strong>noAck: true</strong> (auto-ack), message is deleted as soon as delivered — if
+                    processing crashes, message is LOST.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Dead Letter Queue (DLQ)</div>
+                <div class="prose">Messages go to DLQ when: rejected with <code>nack(..., false)</code>, TTL expires,
+                    queue is full.<br><br>
+                    Set up DLQ as exchange + queue. Configure main queue with <code>x-dead-letter-exchange</code>
+                    argument. Messages in DLQ can be inspected, retried manually, or processed by a separate error
+                    handler.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How do you ensure a message is not lost in
+                    RabbitMQ?
+                </div>
+                <div class="interview-a">Three layers of durability: (1) Durable queue — queue survives broker restart
+                    (durable: true when declaring); (2) Persistent message — message written to disk (deliveryMode: 2 in
+                    properties); (3) Consumer ACK — message only removed from queue after explicit channel.ack(). All
+                    three are needed for zero message loss. Also consider publisher confirms (confirmSelect) — broker
+                    acknowledges that it has persisted the message, so producer knows it's safe.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('rabbit-concepts')">← Exchanges</button>
+                <button class="mark-done-btn" onclick="markDone('rabbit-patterns')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('kafka-intro')">Next: Kafka →</button>
+            </div>
+        </div>
 
-<!-- KAFKA INTRO -->
-<div id="lesson-kafka-intro" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
-    <div class="lesson-title">📡 What is Kafka?</div>
-    <div class="lesson-subtitle">A distributed event streaming platform. Not a message queue — a distributed commit log that retains events and enables replay.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Kafka's Key Insight</div>
-    <div class="prose">
-    Traditional message queues delete messages after consumption. Kafka <strong>retains messages</strong> for a configurable period (default 7 days). This enables:<br><br>
-    ✅ <strong>Multiple independent consumers</strong> reading the same events<br>
-    ✅ <strong>Replay</strong> — reprocess historical events<br>
-    ✅ <strong>Event sourcing</strong> — the event log IS your source of truth<br>
-    ✅ <strong>Massive throughput</strong> — millions of events/sec via sequential disk I/O
-    </div>
-    <div class="analogy-box">
-      <div class="analogy-label">💡 ANALOGY</div>
-      <div class="analogy-text">RabbitMQ is like a <strong>to-do list</strong> — items are done and checked off. Kafka is like a <strong>bank statement / transaction log</strong>. Every transaction is permanently recorded. Multiple people (services) can read the same statement. You can replay from any date. The log is the truth.</div>
-    </div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is Kafka so fast despite writing to disk?</div>
-    <div class="interview-a">Kafka achieves high throughput via: (1) Sequential disk writes — always appending to end of log file (sequential I/O = ~500MB/s vs random I/O = ~100MB/s); (2) OS page cache — Kafka relies heavily on OS file system cache (data lives in RAM cache most of the time); (3) Zero-copy transfer — sendfile() syscall sends data from disk to network without copying through userspace; (4) Batching — messages accumulated and sent in batches; (5) Partitions — parallel I/O across multiple disks/nodes. Result: millions of messages/sec on commodity hardware.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('rabbit-patterns')">← RabbitMQ</button>
-    <button class="mark-done-btn" onclick="markDone('kafka-intro')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('kafka-architecture')">Next: Architecture →</button>
-  </div>
-</div>
+        <!-- KAFKA INTRO -->
+        <div id="lesson-kafka-intro" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
+                <div class="lesson-title">📡 What is Kafka?</div>
+                <div class="lesson-subtitle">A distributed event streaming platform. Not a message queue — a distributed
+                    commit log that retains events and enables replay.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Kafka's Key Insight</div>
+                <div class="prose">
+                    Traditional message queues delete messages after consumption. Kafka <strong>retains
+                    messages</strong> for a configurable period (default 7 days). This enables:<br><br>
+                    ✅ <strong>Multiple independent consumers</strong> reading the same events<br>
+                    ✅ <strong>Replay</strong> — reprocess historical events<br>
+                    ✅ <strong>Event sourcing</strong> — the event log IS your source of truth<br>
+                    ✅ <strong>Massive throughput</strong> — millions of events/sec via sequential disk I/O
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-label">💡 ANALOGY</div>
+                    <div class="analogy-text">RabbitMQ is like a <strong>to-do list</strong> — items are done and
+                        checked off. Kafka is like a <strong>bank statement / transaction log</strong>. Every
+                        transaction is permanently recorded. Multiple people (services) can read the same statement. You
+                        can replay from any date. The log is the truth.
+                    </div>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: Why is Kafka so fast despite writing to disk?
+                </div>
+                <div class="interview-a">Kafka achieves high throughput via: (1) Sequential disk writes — always
+                    appending to end of log file (sequential I/O = ~500MB/s vs random I/O = ~100MB/s); (2) OS page cache
+                    — Kafka relies heavily on OS file system cache (data lives in RAM cache most of the time); (3)
+                    Zero-copy transfer — sendfile() syscall sends data from disk to network without copying through
+                    userspace; (4) Batching — messages accumulated and sent in batches; (5) Partitions — parallel I/O
+                    across multiple disks/nodes. Result: millions of messages/sec on commodity hardware.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('rabbit-patterns')">← RabbitMQ</button>
+                <button class="mark-done-btn" onclick="markDone('kafka-intro')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('kafka-architecture')">Next: Architecture →</button>
+            </div>
+        </div>
 
-<!-- KAFKA ARCHITECTURE -->
-<div id="lesson-kafka-architecture" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
-    <div class="lesson-title">🏗️ Kafka Architecture</div>
-    <div class="lesson-subtitle">Topics, partitions, brokers, replication — the internals that make Kafka scale.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Core Components</div>
-    <div class="prose">
-    <strong>Topic:</strong> Named category for messages (like a DB table). E.g., "user-events", "orders".<br><br>
-    <strong>Partition:</strong> A topic is split into N partitions. Each partition = an ordered, immutable, append-only log. Partitions enable parallelism and scaling.<br><br>
-    <strong>Offset:</strong> Each message in a partition has a sequential ID (offset: 0, 1, 2...). Consumers track their offset to know where they are.<br><br>
-    <strong>Broker:</strong> A Kafka server. Cluster has multiple brokers. Each partition has one leader broker (handles all reads/writes) and N-1 replica followers.<br><br>
-    <strong>Replication Factor:</strong> How many copies of each partition. RF=3 means 1 leader + 2 followers. Tolerates RF-1 = 2 broker failures.
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Partitioning Strategy</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">KAFKA — PRODUCER PARTITION ASSIGNMENT</span></div>
-      <pre><span class="cm">// With key: partition = hash(key) % numPartitions</span>
+        <!-- KAFKA ARCHITECTURE -->
+        <div id="lesson-kafka-architecture" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
+                <div class="lesson-title">🏗️ Kafka Architecture</div>
+                <div class="lesson-subtitle">Topics, partitions, brokers, replication — the internals that make Kafka
+                    scale.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Core Components</div>
+                <div class="prose">
+                    <strong>Topic:</strong> Named category for messages (like a DB table). E.g., "user-events",
+                    "orders".<br><br>
+                    <strong>Partition:</strong> A topic is split into N partitions. Each partition = an ordered,
+                    immutable, append-only log. Partitions enable parallelism and scaling.<br><br>
+                    <strong>Offset:</strong> Each message in a partition has a sequential ID (offset: 0, 1, 2...).
+                    Consumers track their offset to know where they are.<br><br>
+                    <strong>Broker:</strong> A Kafka server. Cluster has multiple brokers. Each partition has one leader
+                    broker (handles all reads/writes) and N-1 replica followers.<br><br>
+                    <strong>Replication Factor:</strong> How many copies of each partition. RF=3 means 1 leader + 2
+                    followers. Tolerates RF-1 = 2 broker failures.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Partitioning Strategy</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">KAFKA — PRODUCER PARTITION ASSIGNMENT</span></div>
+                    <pre><span class="cm">// With key: partition = hash(key) % numPartitions</span>
 <span class="cm">// Same key ALWAYS goes to same partition → ordering guaranteed</span>
 
 producer.<span class="fn">send</span>({
   topic: <span class="st">'user-events'</span>,
   key: <span class="st">'user:12345'</span>,   <span class="cm">// all events for user 12345 → same partition</span>
-  value: <span class="op">JSON</span>.<span class="fn">stringify</span>({ action: <span class="st">'login'</span>, ts: <span class="op">Date</span>.<span class="fn">now</span>() })
+  value: <span class="op">JSON</span>.<span class="fn">stringify</span>({ action: <span
+                                class="st">'login'</span>, ts: <span class="op">Date</span>.<span class="fn">now</span>() })
 });
 
 <span class="cm">// Without key: round-robin across partitions</span>
@@ -671,228 +1901,555 @@ producer.<span class="fn">send</span>({
 <span class="cm">// Topic config: 'user-events' with 8 partitions, RF=3</span>
 <span class="cm">// = 8 parallel consumer workers maximum</span>
 <span class="cm">// = data on 3 brokers (survives 2 broker failures)</span></pre>
-    </div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Kafka handle replication and leader election?</div>
-    <div class="interview-a">Each partition has 1 leader and N replicas. Producers/consumers always talk to the leader. Replicas pull from leader and stay in sync (ISR — In-Sync Replicas list). If leader fails: Kafka controller (or KRaft in modern versions) detects it via heartbeat timeout, elects new leader from ISR list, updates metadata. Unclean leader election (promote non-ISR) risks data loss but improves availability. acks=all means producer waits for all ISR replicas to confirm — strongest durability guarantee.</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: How many partitions should a topic have?</div>
-    <div class="interview-a">Partitions = max parallelism. More partitions = more throughput but more overhead. Rule of thumb: start with target throughput ÷ single-partition throughput (single partition does ~10-100MB/s). Also cap at max consumers you'll ever want (consumer group can't have more active consumers than partitions). Example: 1GB/s throughput, 50MB/s per partition = 20 partitions. Tip: overpartition slightly (2-3x expected need) since adding partitions later is easy but rebalancing is disruptive.</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('kafka-intro')">← What is Kafka</button>
-    <button class="mark-done-btn" onclick="markDone('kafka-architecture')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('kafka-consumers')">Next: Consumers →</button>
-  </div>
-</div>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How does Kafka handle replication and leader
+                    election?
+                </div>
+                <div class="interview-a">Each partition has 1 leader and N replicas. Producers/consumers always talk to
+                    the leader. Replicas pull from leader and stay in sync (ISR — In-Sync Replicas list). If leader
+                    fails: Kafka controller (or KRaft in modern versions) detects it via heartbeat timeout, elects new
+                    leader from ISR list, updates metadata. Unclean leader election (promote non-ISR) risks data loss
+                    but improves availability. acks=all means producer waits for all ISR replicas to confirm — strongest
+                    durability guarantee.
+                </div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: How many partitions should a topic have?</div>
+                <div class="interview-a">Partitions = max parallelism. More partitions = more throughput but more
+                    overhead. Rule of thumb: start with target throughput ÷ single-partition throughput (single
+                    partition does ~10-100MB/s). Also cap at max consumers you'll ever want (consumer group can't have
+                    more active consumers than partitions). Example: 1GB/s throughput, 50MB/s per partition = 20
+                    partitions. Tip: overpartition slightly (2-3x expected need) since adding partitions later is easy
+                    but rebalancing is disruptive.
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('kafka-intro')">← What is Kafka</button>
+                <button class="mark-done-btn" onclick="markDone('kafka-architecture')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('kafka-consumers')">Next: Consumers →</button>
+            </div>
+        </div>
 
-<!-- KAFKA CONSUMERS -->
-<div id="lesson-kafka-consumers" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
-    <div class="lesson-title">👥 Consumers & Groups</div>
-    <div class="lesson-subtitle">Consumer groups enable parallel processing and independent consumption of the same topic by multiple services.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Consumer Groups</div>
-    <div class="prose">
-    A consumer group = multiple consumers sharing the work of consuming a topic.<br><br>
-    <strong>Key rule:</strong> Each partition is consumed by exactly one consumer within a group. If you have 8 partitions and 4 consumers → each consumer handles 2 partitions. If 8 consumers → 1 partition each. If 9 consumers → 1 is idle.<br><br>
-    <strong>Multiple groups:</strong> Kafka tracks each group's offset independently. Group A (analytics) and Group B (notifications) can consume the same "user-events" topic completely independently at their own pace.
-    </div>
-    <div class="analogy-box">
-      <div class="analogy-label">💡 ANALOGY</div>
-      <div class="analogy-text">A YouTube video (Kafka topic) can be watched by multiple viewers (consumer groups) independently. Pause/resume doesn't affect other viewers. Within a group of friends watching together on one screen (consumer group), only one of them can watch each segment — they split the work.</div>
-    </div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Commit Strategies</div>
-    <table class="cheat-table">
-      <tr><th>Strategy</th><th>How</th><th>Risk</th></tr>
-      <tr><td style="color:var(--accent3)">Auto-commit (enable.auto.commit=true)</td><td>Commits offset every N ms automatically</td><td>Can commit before processing complete → message loss on crash</td></tr>
-      <tr><td style="color:var(--accent3)">Manual commit (sync)</td><td>commitSync() after processing</td><td>At-least-once. Slower (blocks).</td></tr>
-      <tr><td style="color:var(--accent3)">Manual commit (async)</td><td>commitAsync() after processing</td><td>At-least-once. May commit out of order.</td></tr>
-      <tr><td style="color:var(--accent3)">Transactional</td><td>Commit offset + DB write in one transaction</td><td>Exactly-once. Complex setup.</td></tr>
-    </table>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What is consumer lag and how do you handle it?</div>
-    <div class="interview-a">Consumer lag = difference between latest offset in a partition and the consumer's committed offset. High lag means consumer is falling behind producers. Solutions: (1) Scale consumers (add more consumers to group, up to partition count); (2) Increase consumer parallelism (multiple threads per consumer); (3) Optimize processing logic (batch DB writes, async processing); (4) Scale partitions (more partitions = more parallel consumers); (5) Alert on lag > threshold. Monitor with kafka-consumer-groups.sh or Kafka monitoring tools (Confluent Control Center, Burrow, Grafana).</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('kafka-architecture')">← Architecture</button>
-    <button class="mark-done-btn" onclick="markDone('kafka-consumers')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('kafka-patterns')">Next: Patterns →</button>
-  </div>
-</div>
+        <!-- KAFKA CONSUMERS -->
+        <div id="lesson-kafka-consumers" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
+                <div class="lesson-title">👥 Consumers & Groups</div>
+                <div class="lesson-subtitle">Consumer groups enable parallel processing and independent consumption of
+                    the same topic by multiple services.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Consumer Groups</div>
+                <div class="prose">
+                    A consumer group = multiple consumers sharing the work of consuming a topic.<br><br>
+                    <strong>Key rule:</strong> Each partition is consumed by exactly one consumer within a group. If you
+                    have 8 partitions and 4 consumers → each consumer handles 2 partitions. If 8 consumers → 1 partition
+                    each. If 9 consumers → 1 is idle.<br><br>
+                    <strong>Multiple groups:</strong> Kafka tracks each group's offset independently. Group A
+                    (analytics) and Group B (notifications) can consume the same "user-events" topic completely
+                    independently at their own pace.
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-label">💡 ANALOGY</div>
+                    <div class="analogy-text">A YouTube video (Kafka topic) can be watched by multiple viewers (consumer
+                        groups) independently. Pause/resume doesn't affect other viewers. Within a group of friends
+                        watching together on one screen (consumer group), only one of them can watch each segment — they
+                        split the work.
+                    </div>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Commit Strategies</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Strategy</th>
+                        <th>How</th>
+                        <th>Risk</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Auto-commit (enable.auto.commit=true)</td>
+                        <td>Commits offset every N ms automatically</td>
+                        <td>Can commit before processing complete → message loss on crash</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Manual commit (sync)</td>
+                        <td>commitSync() after processing</td>
+                        <td>At-least-once. Slower (blocks).</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Manual commit (async)</td>
+                        <td>commitAsync() after processing</td>
+                        <td>At-least-once. May commit out of order.</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Transactional</td>
+                        <td>Commit offset + DB write in one transaction</td>
+                        <td>Exactly-once. Complex setup.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is consumer lag and how do you handle
+                    it?
+                </div>
+                <div class="interview-a">Consumer lag = difference between latest offset in a partition and the
+                    consumer's committed offset. High lag means consumer is falling behind producers. Solutions: (1)
+                    Scale consumers (add more consumers to group, up to partition count); (2) Increase consumer
+                    parallelism (multiple threads per consumer); (3) Optimize processing logic (batch DB writes, async
+                    processing); (4) Scale partitions (more partitions = more parallel consumers); (5) Alert on lag >
+                    threshold. Monitor with kafka-consumer-groups.sh or Kafka monitoring tools (Confluent Control
+                    Center, Burrow, Grafana).
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('kafka-architecture')">← Architecture</button>
+                <button class="mark-done-btn" onclick="markDone('kafka-consumers')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('kafka-patterns')">Next: Patterns →</button>
+            </div>
+        </div>
 
-<!-- KAFKA PATTERNS -->
-<div id="lesson-kafka-patterns" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
-    <div class="lesson-title">🔧 Kafka Patterns & Guarantees</div>
-    <div class="lesson-subtitle">Exactly-once delivery, event sourcing, CQRS, outbox pattern.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Delivery Guarantees</div>
-    <table class="cheat-table">
-      <tr><th>Setting</th><th>Guarantee</th><th>Config</th></tr>
-      <tr><td style="color:var(--accent3)">At-most-once</td><td>May lose messages, no duplicates</td><td>acks=0, auto-commit before processing</td></tr>
-      <tr><td style="color:var(--accent3)">At-least-once</td><td>No data loss, may duplicate</td><td>acks=all, retries=MAX, manual commit after</td></tr>
-      <tr><td style="color:var(--accent3)">Exactly-once</td><td>No loss, no duplicates</td><td>enable.idempotence=true + Kafka transactions</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Outbox Pattern — Reliable Event Publishing</div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">SQL — TRANSACTIONAL OUTBOX</span></div>
-      <pre><span class="cm">-- Problem: Writing to DB and publishing to Kafka is two operations</span>
+        <!-- KAFKA PATTERNS -->
+        <div id="lesson-kafka-patterns" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow" style="color:var(--accent3)">// KAFKA</div>
+                <div class="lesson-title">🔧 Kafka Patterns & Guarantees</div>
+                <div class="lesson-subtitle">Exactly-once delivery, event sourcing, CQRS, outbox pattern.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Delivery Guarantees</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Setting</th>
+                        <th>Guarantee</th>
+                        <th>Config</th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">At-most-once</td>
+                        <td>May lose messages, no duplicates</td>
+                        <td>acks=0, auto-commit before processing</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">At-least-once</td>
+                        <td>No data loss, may duplicate</td>
+                        <td>acks=all, retries=MAX, manual commit after</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent3)">Exactly-once</td>
+                        <td>No loss, no duplicates</td>
+                        <td>enable.idempotence=true + Kafka transactions</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Outbox Pattern — Reliable Event Publishing</div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">SQL — TRANSACTIONAL OUTBOX</span></div>
+                    <pre><span class="cm">-- Problem: Writing to DB and publishing to Kafka is two operations</span>
 <span class="cm">-- If Kafka publish fails after DB write, event is lost!</span>
 
 <span class="cm">-- Solution: Write event to DB outbox table IN SAME TRANSACTION</span>
 <span class="kw">BEGIN</span>;
   <span class="kw">INSERT INTO</span> orders (id, user_id, total) <span class="kw">VALUES</span> (1, 42, 99.99);
   <span class="kw">INSERT INTO</span> outbox (aggregate_id, event_type, payload, published)
-    <span class="kw">VALUES</span> (1, <span class="st">'ORDER_CREATED'</span>, <span class="st">'{"id":1,"total":99.99}'</span>, <span class="kw">false</span>);
+    <span class="kw">VALUES</span> (1, <span class="st">'ORDER_CREATED'</span>, <span class="st">'{"id":1,"total":99.99}'</span>, <span
+                                class="kw">false</span>);
 <span class="kw">COMMIT</span>;
 
 <span class="cm">-- Separate relay process reads unpublished outbox events</span>
 <span class="cm">-- and publishes to Kafka, then marks as published</span>
 <span class="cm">-- Debezium CDC can automate this by watching DB changes</span></pre>
-    </div>
-  </div>
-  <div class="interview-box">
-    <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
-    <div class="interview-q" onclick="toggleAnswer(this)">Q: What is event sourcing and how does Kafka support it?</div>
-    <div class="interview-a">Event sourcing stores state changes as a sequence of events rather than current state. E.g., instead of "account balance = $100", store: [deposited $200, withdrew $50, withdrew $50]. Current state is computed by replaying events. Kafka is perfect: immutable event log with long retention = natural event store. Replaying from offset 0 rebuilds any state. Benefits: full audit trail, debugging, time travel (what was state at 2pm?). Used by banks, e-commerce (order state machine), gaming (player action log).</div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('kafka-consumers')">← Consumers</button>
-    <button class="mark-done-btn" onclick="markDone('kafka-patterns')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('comparison')">Next: Comparison →</button>
-  </div>
-</div>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-label">🎯 TOP INTERVIEW QUESTIONS</div>
+                <div class="interview-q" onclick="toggleAnswer(this)">Q: What is event sourcing and how does Kafka
+                    support it?
+                </div>
+                <div class="interview-a">Event sourcing stores state changes as a sequence of events rather than current
+                    state. E.g., instead of "account balance = $100", store: [deposited $200, withdrew $50, withdrew
+                    $50]. Current state is computed by replaying events. Kafka is perfect: immutable event log with long
+                    retention = natural event store. Replaying from offset 0 rebuilds any state. Benefits: full audit
+                    trail, debugging, time travel (what was state at 2pm?). Used by banks, e-commerce (order state
+                    machine), gaming (player action log).
+                </div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('kafka-consumers')">← Consumers</button>
+                <button class="mark-done-btn" onclick="markDone('kafka-patterns')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('comparison')">Next: Comparison →</button>
+            </div>
+        </div>
 
-<!-- COMPARISON -->
-<div id="lesson-comparison" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow">// FULL COMPARISON</div>
-    <div class="lesson-title">⚖️ Redis vs RabbitMQ vs Kafka</div>
-    <div class="lesson-subtitle">The definitive comparison — when to use each, and how they work together.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Head-to-Head</div>
-    <table class="cheat-table">
-      <tr><th>Feature</th><th style="color:var(--accent)">Redis</th><th style="color:var(--accent2)">RabbitMQ</th><th style="color:var(--accent3)">Kafka</th></tr>
-      <tr><td>Primary use</td><td>Cache, fast storage</td><td>Task queue, routing</td><td>Event streaming</td></tr>
-      <tr><td>Message retention</td><td>Until consumed (Lists)</td><td>Until consumed</td><td>Configurable (days/weeks)</td></tr>
-      <tr><td>Throughput</td><td>1M+ ops/sec</td><td>20-50K msg/sec</td><td>1M+ msg/sec</td></tr>
-      <tr><td>Consumers</td><td>Competing (one gets msg)</td><td>Competing or fanout</td><td>Independent groups</td></tr>
-      <tr><td>Message replay</td><td>❌</td><td>❌</td><td>✅</td></tr>
-      <tr><td>Complex routing</td><td>❌</td><td>✅ (exchanges)</td><td>✅ (partitions + streams)</td></tr>
-      <tr><td>Ordering</td><td>Per-key (FIFO)</td><td>Per-queue (FIFO)</td><td>Per-partition (strict)</td></tr>
-      <tr><td>Learning curve</td><td>Low</td><td>Medium</td><td>High</td></tr>
-      <tr><td>Operational complexity</td><td>Low</td><td>Medium</td><td>High</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Decision Guide</div>
-    <table class="cheat-table">
-      <tr><th>Use case</th><th>Best choice</th></tr>
-      <tr><td>Cache DB queries, session storage</td><td style="color:var(--accent)">Redis</td></tr>
-      <tr><td>Real-time leaderboard, rate limiting</td><td style="color:var(--accent)">Redis</td></tr>
-      <tr><td>Distributed lock</td><td style="color:var(--accent)">Redis</td></tr>
-      <tr><td>Send email/SMS job queue</td><td style="color:var(--accent2)">RabbitMQ</td></tr>
-      <tr><td>Route events to multiple services</td><td style="color:var(--accent2)">RabbitMQ</td></tr>
-      <tr><td>User activity logging at scale</td><td style="color:var(--accent3)">Kafka</td></tr>
-      <tr><td>Event sourcing, audit log</td><td style="color:var(--accent3)">Kafka</td></tr>
-      <tr><td>Multiple teams consuming same events</td><td style="color:var(--accent3)">Kafka</td></tr>
-      <tr><td>Real-time analytics pipeline</td><td style="color:var(--accent3)">Kafka</td></tr>
-    </table>
-  </div>
-  <div class="quiz-section">
-    <div class="quiz-label">// QUIZ</div>
-    <div class="quiz-q">Your team needs to process user signup events. 3 different services need the same event: email service, analytics service, and recommendation service. Each must process it independently. Which tool is best?</div>
-    <div class="quiz-options">
-      <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">A</span>Redis List — simple queue</div>
-      <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">B</span>RabbitMQ Direct exchange — efficient routing</div>
-      <div class="quiz-opt" onclick="checkQuiz(this,'cmp','correct')"><span class="opt-letter">C</span>Kafka — multiple independent consumer groups ✓</div>
-      <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">D</span>RabbitMQ Fanout — broadcasts to all</div>
-    </div>
-    <div class="quiz-feedback" id="quiz-cmp-fb"></div>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('kafka-patterns')">← Kafka Patterns</button>
-    <button class="mark-done-btn" onclick="markDone('comparison')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
-  </div>
-</div>
+        <!-- COMPARISON -->
+        <div id="lesson-comparison" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// FULL COMPARISON</div>
+                <div class="lesson-title">⚖️ Redis vs RabbitMQ vs Kafka</div>
+                <div class="lesson-subtitle">The definitive comparison — when to use each, and how they work together.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Head-to-Head</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th style="color:var(--accent)">Redis</th>
+                        <th style="color:var(--accent2)">RabbitMQ</th>
+                        <th style="color:var(--accent3)">Kafka</th>
+                    </tr>
+                    <tr>
+                        <td>Primary use</td>
+                        <td>Cache, fast storage</td>
+                        <td>Task queue, routing</td>
+                        <td>Event streaming</td>
+                    </tr>
+                    <tr>
+                        <td>Message retention</td>
+                        <td>Until consumed (Lists)</td>
+                        <td>Until consumed</td>
+                        <td>Configurable (days/weeks)</td>
+                    </tr>
+                    <tr>
+                        <td>Throughput</td>
+                        <td>1M+ ops/sec</td>
+                        <td>20-50K msg/sec</td>
+                        <td>1M+ msg/sec</td>
+                    </tr>
+                    <tr>
+                        <td>Consumers</td>
+                        <td>Competing (one gets msg)</td>
+                        <td>Competing or fanout</td>
+                        <td>Independent groups</td>
+                    </tr>
+                    <tr>
+                        <td>Message replay</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Complex routing</td>
+                        <td>❌</td>
+                        <td>✅ (exchanges)</td>
+                        <td>✅ (partitions + streams)</td>
+                    </tr>
+                    <tr>
+                        <td>Ordering</td>
+                        <td>Per-key (FIFO)</td>
+                        <td>Per-queue (FIFO)</td>
+                        <td>Per-partition (strict)</td>
+                    </tr>
+                    <tr>
+                        <td>Learning curve</td>
+                        <td>Low</td>
+                        <td>Medium</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Operational complexity</td>
+                        <td>Low</td>
+                        <td>Medium</td>
+                        <td>High</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Decision Guide</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Use case</th>
+                        <th>Best choice</th>
+                    </tr>
+                    <tr>
+                        <td>Cache DB queries, session storage</td>
+                        <td style="color:var(--accent)">Redis</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time leaderboard, rate limiting</td>
+                        <td style="color:var(--accent)">Redis</td>
+                    </tr>
+                    <tr>
+                        <td>Distributed lock</td>
+                        <td style="color:var(--accent)">Redis</td>
+                    </tr>
+                    <tr>
+                        <td>Send email/SMS job queue</td>
+                        <td style="color:var(--accent2)">RabbitMQ</td>
+                    </tr>
+                    <tr>
+                        <td>Route events to multiple services</td>
+                        <td style="color:var(--accent2)">RabbitMQ</td>
+                    </tr>
+                    <tr>
+                        <td>User activity logging at scale</td>
+                        <td style="color:var(--accent3)">Kafka</td>
+                    </tr>
+                    <tr>
+                        <td>Event sourcing, audit log</td>
+                        <td style="color:var(--accent3)">Kafka</td>
+                    </tr>
+                    <tr>
+                        <td>Multiple teams consuming same events</td>
+                        <td style="color:var(--accent3)">Kafka</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time analytics pipeline</td>
+                        <td style="color:var(--accent3)">Kafka</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="quiz-section">
+                <div class="quiz-label">// QUIZ</div>
+                <div class="quiz-q">Your team needs to process user signup events. 3 different services need the same
+                    event: email service, analytics service, and recommendation service. Each must process it
+                    independently. Which tool is best?
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">A</span>Redis
+                        List — simple queue
+                    </div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">B</span>RabbitMQ
+                        Direct exchange — efficient routing
+                    </div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'cmp','correct')"><span class="opt-letter">C</span>Kafka
+                        — multiple independent consumer groups ✓
+                    </div>
+                    <div class="quiz-opt" onclick="checkQuiz(this,'cmp','wrong')"><span class="opt-letter">D</span>RabbitMQ
+                        Fanout — broadcasts to all
+                    </div>
+                </div>
+                <div class="quiz-feedback" id="quiz-cmp-fb"></div>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('kafka-patterns')">← Kafka Patterns</button>
+                <button class="mark-done-btn" onclick="markDone('comparison')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showLesson('cheatsheet')">Next: Cheatsheet →</button>
+            </div>
+        </div>
 
-<!-- CHEATSHEET -->
-<div id="lesson-cheatsheet" class="lesson-page">
-  <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
-  <div class="lesson-header">
-    <div class="lesson-eyebrow">// STUDY AID</div>
-    <div class="lesson-title">📋 Full Cheatsheet</div>
-    <div class="lesson-subtitle">All commands, patterns, and interview answers in one place.</div>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Redis Commands Quick Ref</div>
-    <table class="cheat-table">
-      <tr><th>Operation</th><th>Command</th></tr>
-      <tr><td>Set with TTL</td><td>SET key value EX 3600</td></tr>
-      <tr><td>Atomic increment</td><td>INCR / INCRBY key [amount]</td></tr>
-      <tr><td>Hash field get</td><td>HGET / HGETALL key field</td></tr>
-      <tr><td>Top N leaderboard</td><td>ZADD / ZRANGE key 0 N WITHSCORES REV</td></tr>
-      <tr><td>Distributed lock</td><td>SET lockkey uuid NX PX 30000</td></tr>
-      <tr><td>Atomic multi-op</td><td>MULTI / EXEC (transaction)</td></tr>
-      <tr><td>Unique count approx</td><td>PFADD / PFCOUNT key items</td></tr>
-      <tr><td>Sliding window</td><td>ZREMRANGEBYSCORE + ZADD + ZCARD (Lua)</td></tr>
-    </table>
-  </div>
-  <div class="content-section">
-    <div class="section-title default">Common Interview Traps</div>
-    <table class="cheat-table">
-      <tr><th>Trap</th><th>Reality</th></tr>
-      <tr><td>Redis is always faster than SQL</td><td>For simple lookups yes. Complex queries — no. Redis has no query language.</td></tr>
-      <tr><td>Redis is just a cache</td><td>Redis is a data structure server. Use for queues, counters, geo, streams, pub/sub.</td></tr>
-      <tr><td>RabbitMQ and Kafka are interchangeable</td><td>Completely different paradigms. Queue vs event log. Choosing wrong one is painful.</td></tr>
-      <tr><td>More Kafka partitions = always better</td><td>Too many partitions = more open file handles, longer leader election, rebalance time.</td></tr>
-      <tr><td>Kafka exactly-once is free</td><td>Requires transactional API, idempotent consumers. 20-30% throughput overhead.</td></tr>
-    </table>
-  </div>
-  <div class="lesson-nav">
-    <button class="btn btn-secondary" onclick="showLesson('comparison')">← Comparison</button>
-    <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark Done</button>
-    <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
-  </div>
-</div>
+        <!-- CHEATSHEET -->
+        <div id="lesson-cheatsheet" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">Back to Topics</div>
+            <div class="lesson-header">
+                <div class="lesson-eyebrow">// STUDY AID</div>
+                <div class="lesson-title">📋 Full Cheatsheet</div>
+                <div class="lesson-subtitle">All commands, patterns, and interview answers in one place.</div>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Redis Commands Quick Ref</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Operation</th>
+                        <th>Command</th>
+                    </tr>
+                    <tr>
+                        <td>Set with TTL</td>
+                        <td>SET key value EX 3600</td>
+                    </tr>
+                    <tr>
+                        <td>Atomic increment</td>
+                        <td>INCR / INCRBY key [amount]</td>
+                    </tr>
+                    <tr>
+                        <td>Hash field get</td>
+                        <td>HGET / HGETALL key field</td>
+                    </tr>
+                    <tr>
+                        <td>Top N leaderboard</td>
+                        <td>ZADD / ZRANGE key 0 N WITHSCORES REV</td>
+                    </tr>
+                    <tr>
+                        <td>Distributed lock</td>
+                        <td>SET lockkey uuid NX PX 30000</td>
+                    </tr>
+                    <tr>
+                        <td>Atomic multi-op</td>
+                        <td>MULTI / EXEC (transaction)</td>
+                    </tr>
+                    <tr>
+                        <td>Unique count approx</td>
+                        <td>PFADD / PFCOUNT key items</td>
+                    </tr>
+                    <tr>
+                        <td>Sliding window</td>
+                        <td>ZREMRANGEBYSCORE + ZADD + ZCARD (Lua)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="content-section">
+                <div class="section-title default">Common Interview Traps</div>
+                <table class="cheat-table">
+                    <tr>
+                        <th>Trap</th>
+                        <th>Reality</th>
+                    </tr>
+                    <tr>
+                        <td>Redis is always faster than SQL</td>
+                        <td>For simple lookups yes. Complex queries — no. Redis has no query language.</td>
+                    </tr>
+                    <tr>
+                        <td>Redis is just a cache</td>
+                        <td>Redis is a data structure server. Use for queues, counters, geo, streams, pub/sub.</td>
+                    </tr>
+                    <tr>
+                        <td>RabbitMQ and Kafka are interchangeable</td>
+                        <td>Completely different paradigms. Queue vs event log. Choosing wrong one is painful.</td>
+                    </tr>
+                    <tr>
+                        <td>More Kafka partitions = always better</td>
+                        <td>Too many partitions = more open file handles, longer leader election, rebalance time.</td>
+                    </tr>
+                    <tr>
+                        <td>Kafka exactly-once is free</td>
+                        <td>Requires transactional API, idempotent consumers. 20-30% throughput overhead.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" onclick="showLesson('comparison')">← Comparison</button>
+                <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark Done</button>
+                <button class="btn btn-primary" onclick="showPage('home')">🏠 Back to Home</button>
+            </div>
+        </div>
 
-</main>
+    </main>
 </div>
 <script>
-const state={completed:new Set(JSON.parse(localStorage.getItem('rrk_done')||'[]')),xp:parseInt(localStorage.getItem('rrk_xp')||'0'),total:12};
-function setSidebarOpen(open){const root=document.getElementById('appRoot');const btn=document.getElementById('navToggle');const backdrop=document.getElementById('sidebarBackdrop');if(!root||!btn)return;root.classList.toggle('sidebar-open',open);btn.setAttribute('aria-expanded',open?'true':'false');btn.setAttribute('aria-label',open?'Close topics menu':'Open topics menu');if(backdrop)backdrop.setAttribute('aria-hidden',open?'false':'true');document.body.style.overflow=open&&window.matchMedia('(max-width: 768px)').matches?'hidden':'';}
-function toggleSidebar(){const root=document.getElementById('appRoot');if(!root)return;setSidebarOpen(!root.classList.contains('sidebar-open'));}
-function closeSidebar(){setSidebarOpen(false);}
-function showPage(p){document.getElementById('home-page').style.display=p==='home'?'block':'none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(p==='home')document.getElementById('nav-home').classList.add('active');closeSidebar();updateXP();}
-function showLesson(id){document.getElementById('home-page').style.display='none';document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));const l=document.getElementById('lesson-'+id);if(l)l.classList.add('active');const n=document.getElementById('nav-'+id);if(n)n.classList.add('active');closeSidebar();document.querySelector('main').scrollTo(0,0);}
-function checkQuiz(btn,id,r){btn.closest('.quiz-options').querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');const fb=document.getElementById('quiz-'+id+'-fb');if(r==='correct'){btn.classList.add('correct');fb.className='quiz-feedback show right';fb.textContent='✅ Correct!';addXP(20);}else{btn.classList.add('wrong');fb.className='quiz-feedback show wrong';fb.textContent='❌ Not quite — review the explanation above.';}}
-function toggleAnswer(el){el.classList.toggle('open');const n=el.nextElementSibling;if(n)n.classList.toggle('open');}
-function markDone(id){if(!state.completed.has(id)){state.completed.add(id);addXP(50);localStorage.setItem('rrk_done',JSON.stringify([...state.completed]));const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');}const btn=event.target;btn.classList.add('done');btn.textContent='✓ Done!';updateProgress();}
-function addXP(n){state.xp+=n;localStorage.setItem('rrk_xp',state.xp.toString());updateXP();}
-function updateXP(){document.getElementById('xpBadge').textContent=`⚡ ${state.xp} XP`;updateProgress();}
-function updateProgress(){document.getElementById('globalProgress').style.width=(state.completed.size/state.total*100)+'%';}
-function copyCode(btn){const p=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(p.innerText).then(()=>{btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',2000);});}
-function init(){state.completed.forEach(id=>{const n=document.getElementById('nav-'+id);if(n)n.classList.add('completed');});updateProgress();updateXP();}
-init();
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidebar();});
-window.addEventListener('resize',()=>{const root=document.getElementById('appRoot');if(!root||!root.classList.contains('sidebar-open'))return;document.body.style.overflow=window.matchMedia('(max-width: 768px)').matches?'hidden':'';});
+    const state = {
+        completed: new Set(JSON.parse(localStorage.getItem('rrk_done') || '[]')),
+        xp: parseInt(localStorage.getItem('rrk_xp') || '0'),
+        total: 12
+    };
+
+    function setSidebarOpen(open) {
+        const root = document.getElementById('appRoot');
+        const btn = document.getElementById('navToggle');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        if (!root || !btn) return;
+        root.classList.toggle('sidebar-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Close topics menu' : 'Open topics menu');
+        if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+        document.body.style.overflow = open && window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
+    }
+
+    function toggleSidebar() {
+        const root = document.getElementById('appRoot');
+        if (!root) return;
+        setSidebarOpen(!root.classList.contains('sidebar-open'));
+    }
+
+    function closeSidebar() {
+        setSidebarOpen(false);
+    }
+
+    function showPage(p) {
+        document.getElementById('home-page').style.display = p === 'home' ? 'block' : 'none';
+        document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        if (p === 'home') document.getElementById('nav-home').classList.add('active');
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            closeSidebar();
+        }
+        updateXP();
+    }
+
+    function showLesson(id) {
+        document.getElementById('home-page').style.display = 'none';
+        document.querySelectorAll('.lesson-page').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        const l = document.getElementById('lesson-' + id);
+        if (l) l.classList.add('active');
+        const n = document.getElementById('nav-' + id);
+        if (n) n.classList.add('active');
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            closeSidebar();
+        }
+        document.querySelector('main').scrollTo(0, 0);
+    }
+
+    function checkQuiz(btn, id, r) {
+        btn.closest('.quiz-options').querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents = 'none');
+        const fb = document.getElementById('quiz-' + id + '-fb');
+        if (r === 'correct') {
+            btn.classList.add('correct');
+            fb.className = 'quiz-feedback show right';
+            fb.textContent = '✅ Correct!';
+            addXP(20);
+        } else {
+            btn.classList.add('wrong');
+            fb.className = 'quiz-feedback show wrong';
+            fb.textContent = '❌ Not quite — review the explanation above.';
+        }
+    }
+
+    function toggleAnswer(el) {
+        el.classList.toggle('open');
+        const n = el.nextElementSibling;
+        if (n) n.classList.toggle('open');
+    }
+
+    function markDone(id) {
+        if (!state.completed.has(id)) {
+            state.completed.add(id);
+            addXP(50);
+            localStorage.setItem('rrk_done', JSON.stringify([...state.completed]));
+            const n = document.getElementById('nav-' + id);
+            if (n) n.classList.add('completed');
+        }
+        const btn = event.target;
+        btn.classList.add('done');
+        btn.textContent = '✓ Done!';
+        updateProgress();
+    }
+
+    function addXP(n) {
+        state.xp += n;
+        localStorage.setItem('rrk_xp', state.xp.toString());
+        updateXP();
+    }
+
+    function updateXP() {
+        document.getElementById('xpBadge').textContent = `⚡ ${state.xp} XP`;
+        updateProgress();
+    }
+
+    function updateProgress() {
+        document.getElementById('globalProgress').style.width = (state.completed.size / state.total * 100) + '%';
+    }
+
+    function copyCode(btn) {
+        const p = btn.closest('.code-block').querySelector('pre');
+        navigator.clipboard.writeText(p.innerText).then(() => {
+            btn.textContent = 'COPIED!';
+            setTimeout(() => btn.textContent = 'COPY', 2000);
+        });
+    }
+
+    function init() {
+        state.completed.forEach(id => {
+            const n = document.getElementById('nav-' + id);
+            if (n) n.classList.add('completed');
+        });
+        updateProgress();
+        updateXP();
+    }
+
+    init();
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+    window.addEventListener('resize', () => {
+        const root = document.getElementById('appRoot');
+        if (!root || !root.classList.contains('sidebar-open')) return;
+        document.body.style.overflow = window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
+    });
 </script>
 </body>
 </html>

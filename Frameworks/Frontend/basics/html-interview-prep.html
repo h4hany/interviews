@@ -1,439 +1,1011 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HTML — Interview Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --header-h: 60px;
-    --bg: #0a0a0f; --surface: #111118; --surface2: #16161f; --border: #1e1e2e;
-    --accent: #ff9500; --accent2: #ff6b35; --accent3: #7c5cfc; --accent4: #00d4ff;
-    --text: #e8e8f0; --text-dim: #7070a0; --text-dimmer: #404060; --yellow: #ffd93d;
-    --card-radius: 12px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(255,149,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,149,0,0.03) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-    padding: 0 16px 0 12px; display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: nowrap; gap: 8px 12px; min-height: var(--header-h); height: auto;
-  }
-  .nav-toggle {
-    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px; margin-right: 4px; border: 1px solid var(--border); border-radius: 8px;
-    background: var(--surface); color: var(--accent); cursor: pointer;
-    transition: border-color 0.2s, background 0.2s; font-size: 18px; line-height: 1;
-  }
-  .nav-toggle:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
-  .nav-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .logo { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
-  .logo span { color: var(--text-dim); }
-  .progress-bar-wrap { flex: 1; max-width: 300px; margin: 0 16px; min-width: 80px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; width: 0%; }
-  .xp-badge { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--yellow); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 4px 12px; border-radius: 20px; }
-  .app { display: block; min-height: calc(100vh - var(--header-h)); position: relative; z-index: 1; }
-  .sidebar-shell { min-width: 0; }
-  .sidebar-backdrop {
-    position: fixed; inset: 0; top: var(--header-h); background: rgba(0,0,0,0.45); z-index: 150;
-    opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s; pointer-events: none;
-  }
-  .app.sidebar-open .sidebar-backdrop { opacity: 1; visibility: visible; pointer-events: auto; }
-  nav.sidebar {
-    position: fixed; left: 0; top: var(--header-h); width: min(280px, 88vw);
-    height: calc(100vh - var(--header-h)); max-height: calc(100vh - var(--header-h));
-    border-right: 1px solid var(--border); padding: 20px 0; background: var(--surface);
-    overflow-y: auto; z-index: 160; transform: translateX(-100%); transition: transform 0.25s ease;
-    box-shadow: 8px 0 32px rgba(0,0,0,0.35);
-  }
-  .app.sidebar-open nav.sidebar { transform: translateX(0); }
-  @media (min-width: 769px) {
-    .app {
-      display: grid; grid-template-columns: 0px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
-      align-items: start; transition: grid-template-columns 0.25s ease;
-    }
-    .app.sidebar-open { grid-template-columns: min(280px, 32vw) minmax(0, 1fr); }
-    .sidebar-shell { display: block; overflow: hidden; align-self: stretch; min-height: calc(100vh - var(--header-h)); }
-    .sidebar-backdrop { display: none !important; }
-    nav.sidebar {
-      position: sticky; top: var(--header-h); left: auto; width: 100%; max-width: min(280px, 32vw);
-      transform: none !important; box-shadow: none; z-index: 1;
-    }
-    .app:not(.sidebar-open) nav.sidebar { pointer-events: none; visibility: hidden; }
-    .app.sidebar-open nav.sidebar { pointer-events: auto; visibility: visible; }
-    main { grid-column: 2; grid-row: 1; min-width: 0; }
-  }
-  .nav-section-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text-dimmer); padding: 16px 20px 8px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-dim); }
-  .nav-item:hover { color: var(--text); background: var(--surface); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,149,0,0.05); }
-  .nav-item .done-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: none; }
-  .nav-item.completed .done-dot { display: block; }
-  main { padding: 0; overflow-y: auto; }
-  #home-page { display: block; padding: 60px 48px; }
-  .hero { margin-bottom: 32px; }
-  .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
-  .hero h1 .highlight { color: var(--accent); }
-  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 520px; line-height: 1.7; margin-bottom: 24px; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
-  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
-  .topic-card .card-emoji { font-size: 28px; margin-bottom: 10px; }
-  .topic-card .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .topic-card .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .lesson-page { display: none; padding: 40px 48px; max-width: 900px; }
-  .lesson-page.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .lesson-breadcrumb { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dimmer); margin-bottom: 24px; cursor: pointer; }
-  .lesson-breadcrumb:hover { color: var(--accent); }
-  .lesson-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .lesson-subtitle { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-  .content-section { margin-bottom: 28px; }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title::before { content: ''; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
-  .prose { color: var(--text-dim); font-size: 14px; line-height: 1.8; }
-  .prose strong { color: var(--text); }
-  .prose ul { margin: 10px 0 10px 20px; }
-  .prose li { margin-bottom: 6px; }
-  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; }
-  .code-block pre { padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #abb2bf; }
-  .interview-box { background: rgba(124,92,252,0.05); border: 1px solid rgba(124,92,252,0.2); border-radius: var(--card-radius); padding: 16px 20px; margin: 16px 0; }
-  .interview-q { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .interview-a { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-top: 10px; border-top: 1px solid var(--border); }
-  .mark-done-btn { background: rgba(255,149,0,0.1); color: var(--accent); border: 1px solid rgba(255,149,0,0.3); font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
-  @media (max-width: 768px) {
-    .sidebar-shell { display: contents; }
-    #home-page { padding: 32px 20px; }
-    .lesson-page { padding: 24px 20px; }
-    .logo span:last-child { display: none; }
-  }
-  @media (max-width: 520px) {
-    header { padding: 8px 10px; }
-    .progress-bar-wrap { max-width: min(140px, 28vw); margin: 0 8px; min-width: 48px; }
-    .xp-badge { padding: 4px 8px; font-size: 10px; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML — Interview Prep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet">
+    <style>
+        :root {
+            --header-h: 60px;
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #16161f;
+            --border: #1e1e2e;
+            --accent: #ff9500;
+            --accent2: #ff6b35;
+            --accent3: #7c5cfc;
+            --accent4: #00d4ff;
+            --text: #e8e8f0;
+            --text-dim: #7070a0;
+            --text-dimmer: #404060;
+            --yellow: #ffd93d;
+            --card-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 149, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 149, 0, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            gap: 8px 12px;
+            min-height: var(--header-h);
+            height: auto;
+        }
+
+        .nav-toggle {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            margin-right: 4px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--accent);
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .nav-toggle:hover {
+            border-color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+        }
+
+        .nav-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: var(--text-dim);
+        }
+
+        .progress-bar-wrap {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 16px;
+            min-width: 80px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .xp-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--yellow);
+            background: rgba(255, 217, 61, 0.1);
+            border: 1px solid rgba(255, 217, 61, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .app {
+            display: block;
+            min-height: calc(100vh - var(--header-h));
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-shell {
+            min-width: 0;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            top: var(--header-h);
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s;
+            pointer-events: none;
+        }
+
+        .app.sidebar-open .sidebar-backdrop {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        nav.sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-h);
+            width: min(280px, 88vw);
+            height: calc(100vh - var(--header-h));
+            max-height: calc(100vh - var(--header-h));
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            background: var(--surface);
+            overflow-y: auto;
+            z-index: 160;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .app.sidebar-open nav.sidebar {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 769px) {
+            .app {
+                display: grid;
+                grid-template-columns: 0px minmax(0, 1fr);
+                grid-template-rows: minmax(0, 1fr);
+                align-items: start;
+                transition: grid-template-columns 0.25s ease;
+            }
+
+            .app.sidebar-open {
+                grid-template-columns: min(280px, 32vw) minmax(0, 1fr);
+            }
+
+            .sidebar-shell {
+                display: block;
+                overflow: hidden;
+                align-self: stretch;
+                min-height: calc(100vh - var(--header-h));
+            }
+
+            .sidebar-backdrop {
+                display: none !important;
+            }
+
+            nav.sidebar {
+                position: sticky;
+                top: var(--header-h);
+                left: auto;
+                width: 100%;
+                max-width: min(280px, 32vw);
+                transform: none !important;
+                box-shadow: none;
+                z-index: 1;
+            }
+
+            .app:not(.sidebar-open) nav.sidebar {
+                pointer-events: none;
+                visibility: hidden;
+            }
+
+            .app.sidebar-open nav.sidebar {
+                pointer-events: auto;
+                visibility: visible;
+            }
+
+            main {
+                grid-column: 2;
+                grid-row: 1;
+                min-width: 0;
+            }
+        }
+
+        .nav-section-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--text-dimmer);
+            padding: 16px 20px 8px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(255, 149, 0, 0.05);
+        }
+
+        .nav-item .done-dot {
+            margin-left: auto;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: none;
+        }
+
+        .nav-item.completed .done-dot {
+            display: block;
+        }
+
+        main {
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        #home-page {
+            display: block;
+            padding: 60px 48px;
+        }
+
+        .hero {
+            margin-bottom: 32px;
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 .highlight {
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            color: var(--text-dim);
+            font-size: 16px;
+            max-width: 520px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .topic-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topic-card:hover {
+            border-color: var(--accent);
+            background: var(--surface2);
+        }
+
+        .topic-card .card-emoji {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .topic-card .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .topic-card .card-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .lesson-page {
+            display: none;
+            padding: 40px 48px;
+            max-width: 900px;
+        }
+
+        .lesson-page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .lesson-breadcrumb {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dimmer);
+            margin-bottom: 24px;
+            cursor: pointer;
+        }
+
+        .lesson-breadcrumb:hover {
+            color: var(--accent);
+        }
+
+        .lesson-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .lesson-subtitle {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .content-section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 3px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .prose {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .prose strong {
+            color: var(--text);
+        }
+
+        .prose ul {
+            margin: 10px 0 10px 20px;
+        }
+
+        .prose li {
+            margin-bottom: 6px;
+        }
+
+        .code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-block pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #abb2bf;
+        }
+
+        .interview-box {
+            background: rgba(124, 92, 252, 0.05);
+            border: 1px solid rgba(124, 92, 252, 0.2);
+            border-radius: var(--card-radius);
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        .interview-q {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .interview-a {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.7;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .mark-done-btn {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+            font-size: 11px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-shell {
+                display: contents;
+            }
+
+            #home-page {
+                padding: 32px 20px;
+            }
+
+            .lesson-page {
+                padding: 24px 20px;
+            }
+
+            .logo span:last-child {
+                display: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            header {
+                padding: 8px 10px;
+            }
+
+            .progress-bar-wrap {
+                max-width: min(140px, 28vw);
+                margin: 0 8px;
+                min-width: 48px;
+            }
+
+            .xp-badge {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 <header>
-  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu" aria-expanded="false" aria-controls="sidebarNav">☰</button>
-  <div class="logo">HTML<span>·</span>PREP <span>// MARKUP</span></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
-  <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
+    <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu"
+            aria-expanded="false" aria-controls="sidebarNav">☰
+    </button>
+    <div class="logo">HTML<span>·</span>PREP <span>// MARKUP</span></div>
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="globalProgress"></div>
+    </div>
+    <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 <div class="app" id="appRoot">
-  <div class="sidebar-shell">
-  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
-  <nav class="sidebar" id="sidebarNav" aria-label="Topics">
-    <div class="nav-section-title">Start</div>
-    <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
-    <div class="nav-section-title">HTML</div>
-    <div class="nav-item" onclick="showLesson('semantics')" id="nav-semantics"><span>📄</span> Semantics <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('void-entities')" id="nav-void-entities"><span>📌</span> Void & Entities <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('positions-display')" id="nav-positions-display"><span>📐</span> Position & Display <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('svg-canvas')" id="nav-svg-canvas"><span>🖼️</span> SVG vs Canvas <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('forms-a11y')" id="nav-forms-a11y"><span>♿</span> Forms & A11y <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('seo-perf')" id="nav-seo-perf"><span>🚀</span> SEO & Perf <span class="done-dot"></span></div>
-    <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span class="done-dot"></span></div>
-  </nav>
-  </div>
-  <main>
-    <div id="home-page">
-      <div class="hero">
-        <h1>Master <span class="highlight">HTML</span> Interviews</h1>
-        <p class="hero-sub">Semantic markup, forms, accessibility, and performance.</p>
-      </div>
-      <div class="topics-grid">
-        <div class="topic-card" onclick="showLesson('semantics')"><span class="card-emoji">📄</span><div class="card-title">Semantics</div><div class="card-desc">Semantic tags, why we need them, header, main, nav, section, article, aside, footer</div></div>
-        <div class="topic-card" onclick="showLesson('void-entities')"><span class="card-emoji">📌</span><div class="card-title">Void & Entities</div><div class="card-desc">Void elements, collapsing white space, HTML entities</div></div>
-        <div class="topic-card" onclick="showLesson('positions-display')"><span class="card-emoji">📐</span><div class="card-title">Position & Display</div><div class="card-desc">Static, absolute, fixed, relative; inline, block, flex, grid</div></div>
-        <div class="topic-card" onclick="showLesson('svg-canvas')"><span class="card-emoji">🖼️</span><div class="card-title">SVG vs Canvas</div><div class="card-desc">Vector vs raster, when to use each, scalability</div></div>
-        <div class="topic-card" onclick="showLesson('forms-a11y')"><span class="card-emoji">♿</span><div class="card-title">Forms & A11y</div><div class="card-desc">label, fieldset, ARIA, focus, contrast</div></div>
-        <div class="topic-card" onclick="showLesson('seo-perf')"><span class="card-emoji">🚀</span><div class="card-title">SEO & Perf</div><div class="card-desc">meta, structure, lazy loading, image formats</div></div>
-        <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span><div class="card-title">Cheatsheet</div><div class="card-desc">Full quick reference for interviews</div></div>
-      </div>
+    <div class="sidebar-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
+        <nav class="sidebar" id="sidebarNav" aria-label="Topics">
+            <div class="nav-section-title">Start</div>
+            <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span>🏠</span> Home</div>
+            <div class="nav-section-title">HTML</div>
+            <div class="nav-item" onclick="showLesson('semantics')" id="nav-semantics"><span>📄</span> Semantics <span
+                    class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('void-entities')" id="nav-void-entities"><span>📌</span> Void &
+                Entities <span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('positions-display')" id="nav-positions-display"><span>📐</span>
+                Position & Display <span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('svg-canvas')" id="nav-svg-canvas"><span>🖼️</span> SVG vs Canvas
+                <span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('forms-a11y')" id="nav-forms-a11y"><span>♿</span> Forms & A11y
+                <span class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('seo-perf')" id="nav-seo-perf"><span>🚀</span> SEO & Perf <span
+                    class="done-dot"></span></div>
+            <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span>📋</span> Cheatsheet <span
+                    class="done-dot"></span></div>
+        </nav>
     </div>
-    <div id="lesson-semantics" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📄 Semantic HTML</div>
-      <div class="lesson-subtitle">Tags that describe meaning and structure for browsers, developers, and assistive tech.</div>
-      <div class="content-section">
-        <div class="section-title">What are semantic tags?</div>
-        <div class="prose"><strong>Semantic tags</strong> are HTML elements that clearly describe their meaning and content both to the browser and to developers. They define the structure and purpose of the content inside them, making the code more readable and improving accessibility and search engine optimization (SEO).</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Why do we need semantic tags?</div>
-        <div class="prose">
-          <strong>1. Improved readability:</strong> Make the structure of the webpage more understandable to developers.<br><br>
-          <strong>2. SEO (Search Engine Optimization):</strong> Search engines use the structure of the HTML page to understand its content. Semantic tags help search engines like Google understand what parts of the page are the most important, boosting search rankings for relevant content.<br><br>
-          <strong>3. Accessibility:</strong> Screen readers and other assistive technologies rely on semantic tags to navigate and interpret the content more accurately. For example, a screen reader will treat a <code>&lt;nav&gt;</code> tag as navigation and allow users to quickly skip to the main content.<br><br>
-          <strong>4. Better for browsers:</strong> Browsers also rely on semantic tags to correctly render and style the page. A <code>&lt;section&gt;</code> or <code>&lt;article&gt;</code> is treated differently than a simple <code>&lt;div&gt;</code>.<br><br>
-          <strong>5. Maintainability:</strong> Using semantic tags provides a logical structure, making the code more maintainable and reducing technical debt.
+    <main>
+        <div id="home-page">
+            <div class="hero">
+                <h1>Master <span class="highlight">HTML</span> Interviews</h1>
+                <p class="hero-sub">Semantic markup, forms, accessibility, and performance.</p>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showLesson('semantics')"><span class="card-emoji">📄</span>
+                    <div class="card-title">Semantics</div>
+                    <div class="card-desc">Semantic tags, why we need them, header, main, nav, section, article, aside,
+                        footer
+                    </div>
+                </div>
+                <div class="topic-card" onclick="showLesson('void-entities')"><span class="card-emoji">📌</span>
+                    <div class="card-title">Void & Entities</div>
+                    <div class="card-desc">Void elements, collapsing white space, HTML entities</div>
+                </div>
+                <div class="topic-card" onclick="showLesson('positions-display')"><span class="card-emoji">📐</span>
+                    <div class="card-title">Position & Display</div>
+                    <div class="card-desc">Static, absolute, fixed, relative; inline, block, flex, grid</div>
+                </div>
+                <div class="topic-card" onclick="showLesson('svg-canvas')"><span class="card-emoji">🖼️</span>
+                    <div class="card-title">SVG vs Canvas</div>
+                    <div class="card-desc">Vector vs raster, when to use each, scalability</div>
+                </div>
+                <div class="topic-card" onclick="showLesson('forms-a11y')"><span class="card-emoji">♿</span>
+                    <div class="card-title">Forms & A11y</div>
+                    <div class="card-desc">label, fieldset, ARIA, focus, contrast</div>
+                </div>
+                <div class="topic-card" onclick="showLesson('seo-perf')"><span class="card-emoji">🚀</span>
+                    <div class="card-title">SEO & Perf</div>
+                    <div class="card-desc">meta, structure, lazy loading, image formats</div>
+                </div>
+                <div class="topic-card" onclick="showLesson('cheatsheet')"><span class="card-emoji">📋</span>
+                    <div class="card-title">Cheatsheet</div>
+                    <div class="card-desc">Full quick reference for interviews</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Key semantic elements</div>
-        <div class="prose">Use these instead of generic <code>&lt;div&gt;</code> when they fit: <strong>header</strong> (intro/logo/nav), <strong>main</strong> (primary content, one per page), <strong>nav</strong> (navigation links), <strong>section</strong> (thematic grouping), <strong>article</strong> (self-contained content), <strong>aside</strong> (tangential content), <strong>footer</strong>.</div>
-        <div class="code-block"><pre>&lt;header&gt;&lt;nav&gt;...&lt;/nav&gt;&lt;/header&gt;
+        <div id="lesson-semantics" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">📄 Semantic HTML</div>
+            <div class="lesson-subtitle">Tags that describe meaning and structure for browsers, developers, and
+                assistive tech.
+            </div>
+            <div class="content-section">
+                <div class="section-title">What are semantic tags?</div>
+                <div class="prose"><strong>Semantic tags</strong> are HTML elements that clearly describe their meaning
+                    and content both to the browser and to developers. They define the structure and purpose of the
+                    content inside them, making the code more readable and improving accessibility and search engine
+                    optimization (SEO).
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Why do we need semantic tags?</div>
+                <div class="prose">
+                    <strong>1. Improved readability:</strong> Make the structure of the webpage more understandable to
+                    developers.<br><br>
+                    <strong>2. SEO (Search Engine Optimization):</strong> Search engines use the structure of the HTML
+                    page to understand its content. Semantic tags help search engines like Google understand what parts
+                    of the page are the most important, boosting search rankings for relevant content.<br><br>
+                    <strong>3. Accessibility:</strong> Screen readers and other assistive technologies rely on semantic
+                    tags to navigate and interpret the content more accurately. For example, a screen reader will treat
+                    a <code>&lt;nav&gt;</code> tag as navigation and allow users to quickly skip to the main
+                    content.<br><br>
+                    <strong>4. Better for browsers:</strong> Browsers also rely on semantic tags to correctly render and
+                    style the page. A <code>&lt;section&gt;</code> or <code>&lt;article&gt;</code> is treated
+                    differently than a simple <code>&lt;div&gt;</code>.<br><br>
+                    <strong>5. Maintainability:</strong> Using semantic tags provides a logical structure, making the
+                    code more maintainable and reducing technical debt.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Key semantic elements</div>
+                <div class="prose">Use these instead of generic <code>&lt;div&gt;</code> when they fit:
+                    <strong>header</strong> (intro/logo/nav), <strong>main</strong> (primary content, one per page),
+                    <strong>nav</strong> (navigation links), <strong>section</strong> (thematic grouping), <strong>article</strong>
+                    (self-contained content), <strong>aside</strong> (tangential content), <strong>footer</strong>.
+                </div>
+                <div class="code-block"><pre>&lt;header&gt;&lt;nav&gt;...&lt;/nav&gt;&lt;/header&gt;
 &lt;main&gt;
   &lt;article&gt;...&lt;/article&gt;
   &lt;aside&gt;...&lt;/aside&gt;
 &lt;/main&gt;
-&lt;footer&gt;...&lt;/footer&gt;</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why use semantic HTML?</div>
-        <div class="interview-a">Accessibility (screen readers use landmarks), SEO (crawlers understand structure), and maintainability. It also makes default styles and behavior more predictable. Avoid div soup when a semantic tag fits.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How many &lt;main&gt; elements should a page have?</div>
-        <div class="interview-a">One. <code>&lt;main&gt;</code> represents the primary content of the document. Having more than one can confuse assistive tech and SEO. Use <code>&lt;section&gt;</code> or <code>&lt;article&gt;</code> to subdivide content inside main.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('semantics')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-void-entities" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📌 Void elements & HTML entities</div>
-      <div class="lesson-subtitle">Elements without closing tags, whitespace behavior, and reserved characters.</div>
-      <div class="content-section">
-        <div class="section-title">Void elements</div>
-        <div class="prose">HTML elements that do not have closing tags or do not need to be closed are <strong>void elements</strong>. Examples: <code>&lt;br&gt;</code>, <code>&lt;br /&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code>. In HTML5 the trailing slash is optional.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Collapsing white space</div>
-        <div class="prose">In HTML, a blank sequence of whitespace characters (spaces, newlines, tabs) is treated as a single space character. This helps keep source readable without affecting how the page renders. Use <code>&amp;nbsp;</code> or CSS (e.g. <code>white-space: pre</code>) when you need to preserve or force spaces.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">HTML entities</div>
-        <div class="prose">Some characters are reserved in HTML (e.g. <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>). To display them in the page you use <strong>character entities</strong>: <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;amp;</code>, <code>&amp;quot;</code>. Named entities like <code>&amp;copy;</code> (©) and <code>&amp;nbsp;</code> (non-breaking space) are also common.</div>
-        <div class="code-block"><pre>&amp;lt;   &amp;gt;   &amp;amp;   &amp;quot;   &amp;copy;   &amp;nbsp;</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: What are void elements? Give examples.</div>
-        <div class="interview-a">Void elements have no content and no closing tag: <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code>. They are self-closing by definition.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why use HTML entities?</div>
-        <div class="interview-a">To display reserved characters (e.g. &lt;, &gt;, &amp;) that would otherwise be interpreted as markup, and to show symbols (©, ®, non-breaking space) in a way that works across encodings.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('void-entities')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-positions-display" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📐 Position & display (CSS)</div>
-      <div class="lesson-subtitle">Position and display properties commonly discussed in HTML/CSS interviews.</div>
-      <div class="content-section">
-        <div class="section-title">Position</div>
-        <div class="prose">
-          <strong>Static:</strong> Default. Element follows the normal document flow.<br>
-          <strong>Relative:</strong> Normal flow, but positioned relative to its original position (top/right/bottom/left).<br>
-          <strong>Absolute:</strong> Positioned relative to the nearest positioned ancestor (or initial containing block). Removed from flow.<br>
-          <strong>Fixed:</strong> Like absolute but relative to the viewport; doesn’t scroll with the page.<br>
-          <strong>Sticky:</strong> Hybrid: normal until a threshold, then “sticks” like fixed within a container.<br>
-          <strong>Initial / Inherit:</strong> Reset to default or inherit from parent.
+&lt;footer&gt;...&lt;/footer&gt;</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Why use semantic HTML?</div>
+                <div class="interview-a">Accessibility (screen readers use landmarks), SEO (crawlers understand
+                    structure), and maintainability. It also makes default styles and behavior more predictable. Avoid
+                    div soup when a semantic tag fits.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: How many &lt;main&gt; elements should a page have?</div>
+                <div class="interview-a">One. <code>&lt;main&gt;</code> represents the primary content of the document.
+                    Having more than one can confuse assistive tech and SEO. Use <code>&lt;section&gt;</code> or <code>&lt;article&gt;</code>
+                    to subdivide content inside main.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('semantics')">✓ Mark as done</button>
         </div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Display</div>
-        <div class="prose">
-          <strong>Inline:</strong> Element flows inline; width/height don’t apply. Examples: span, a.<br>
-          <strong>Block:</strong> Element takes full width and starts on a new line. Examples: div, p.<br>
-          <strong>Inline-block:</strong> Inline flow but you can set width and height.<br>
-          <strong>Flex:</strong> Flex container; children follow flexbox rules.<br>
-          <strong>Inline-flex:</strong> Flex container that behaves as an inline element.<br>
-          <strong>Grid:</strong> Grid container for CSS Grid layout.<br>
-          <strong>None:</strong> Element is not rendered and doesn’t take space.
+        <div id="lesson-void-entities" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">📌 Void elements & HTML entities</div>
+            <div class="lesson-subtitle">Elements without closing tags, whitespace behavior, and reserved characters.
+            </div>
+            <div class="content-section">
+                <div class="section-title">Void elements</div>
+                <div class="prose">HTML elements that do not have closing tags or do not need to be closed are <strong>void
+                    elements</strong>. Examples: <code>&lt;br&gt;</code>, <code>&lt;br /&gt;</code>,
+                    <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;input&gt;</code>,
+                    <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code>. In HTML5 the trailing slash is optional.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Collapsing white space</div>
+                <div class="prose">In HTML, a blank sequence of whitespace characters (spaces, newlines, tabs) is
+                    treated as a single space character. This helps keep source readable without affecting how the page
+                    renders. Use <code>&amp;nbsp;</code> or CSS (e.g. <code>white-space: pre</code>) when you need to
+                    preserve or force spaces.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">HTML entities</div>
+                <div class="prose">Some characters are reserved in HTML (e.g. <code>&lt;</code>, <code>&gt;</code>,
+                    <code>&amp;</code>, <code>&quot;</code>). To display them in the page you use <strong>character
+                        entities</strong>: <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;amp;</code>, <code>&amp;quot;</code>.
+                    Named entities like <code>&amp;copy;</code> (©) and <code>&amp;nbsp;</code> (non-breaking space) are
+                    also common.
+                </div>
+                <div class="code-block">
+                    <pre>&amp;lt;   &amp;gt;   &amp;amp;   &amp;quot;   &amp;copy;   &amp;nbsp;</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: What are void elements? Give examples.</div>
+                <div class="interview-a">Void elements have no content and no closing tag: <code>&lt;br&gt;</code>,
+                    <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;input&gt;</code>,
+                    <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code>. They are self-closing by definition.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Why use HTML entities?</div>
+                <div class="interview-a">To display reserved characters (e.g. &lt;, &gt;, &amp;) that would otherwise be
+                    interpreted as markup, and to show symbols (©, ®, non-breaking space) in a way that works across
+                    encodings.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('void-entities')">✓ Mark as done</button>
         </div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Difference between position: absolute and position: fixed?</div>
-        <div class="interview-a">Absolute is positioned relative to the nearest positioned ancestor (or the initial containing block). Fixed is positioned relative to the viewport and stays in place when the user scrolls.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When would you use inline-block instead of inline or block?</div>
-        <div class="interview-a">When you need an element to flow inline (sit next to other content) but still apply width, height, and vertical padding/margin. Inline elements ignore those; block elements force a new line.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('positions-display')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-svg-canvas" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🖼️ SVG vs Canvas (HTML5)</div>
-      <div class="lesson-subtitle">Vector vs raster graphics; when to use each.</div>
-      <div class="content-section">
-        <div class="section-title">SVG (Scalable Vector Graphics)</div>
-        <div class="prose">
-          <strong>Vector-based</strong> — composed of shapes (paths, circles, text).<br>
-          Works better with <strong>larger surface</strong> and complex shapes.<br>
-          Can be <strong>modified with CSS and scripts</strong> (DOM nodes, attributes).<br>
-          <strong>Highly scalable</strong> — print at high quality at any resolution.<br>
-          Good for icons, logos, charts, and accessible graphics (text and structure stay in DOM).
+        <div id="lesson-positions-display" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">📐 Position & display (CSS)</div>
+            <div class="lesson-subtitle">Position and display properties commonly discussed in HTML/CSS interviews.
+            </div>
+            <div class="content-section">
+                <div class="section-title">Position</div>
+                <div class="prose">
+                    <strong>Static:</strong> Default. Element follows the normal document flow.<br>
+                    <strong>Relative:</strong> Normal flow, but positioned relative to its original position
+                    (top/right/bottom/left).<br>
+                    <strong>Absolute:</strong> Positioned relative to the nearest positioned ancestor (or initial
+                    containing block). Removed from flow.<br>
+                    <strong>Fixed:</strong> Like absolute but relative to the viewport; doesn’t scroll with the
+                    page.<br>
+                    <strong>Sticky:</strong> Hybrid: normal until a threshold, then “sticks” like fixed within a
+                    container.<br>
+                    <strong>Initial / Inherit:</strong> Reset to default or inherit from parent.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Display</div>
+                <div class="prose">
+                    <strong>Inline:</strong> Element flows inline; width/height don’t apply. Examples: span, a.<br>
+                    <strong>Block:</strong> Element takes full width and starts on a new line. Examples: div, p.<br>
+                    <strong>Inline-block:</strong> Inline flow but you can set width and height.<br>
+                    <strong>Flex:</strong> Flex container; children follow flexbox rules.<br>
+                    <strong>Inline-flex:</strong> Flex container that behaves as an inline element.<br>
+                    <strong>Grid:</strong> Grid container for CSS Grid layout.<br>
+                    <strong>None:</strong> Element is not rendered and doesn’t take space.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Difference between position: absolute and position: fixed?</div>
+                <div class="interview-a">Absolute is positioned relative to the nearest positioned ancestor (or the
+                    initial containing block). Fixed is positioned relative to the viewport and stays in place when the
+                    user scrolls.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: When would you use inline-block instead of inline or block?</div>
+                <div class="interview-a">When you need an element to flow inline (sit next to other content) but still
+                    apply width, height, and vertical padding/margin. Inline elements ignore those; block elements force
+                    a new line.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('positions-display')">✓ Mark as done</button>
         </div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Canvas</div>
-        <div class="prose">
-          <strong>Raster-based</strong> — composed of pixels.<br>
-          Works better with <strong>smaller surface</strong> and pixel-level manipulation.<br>
-          Can <strong>only be modified via scripts</strong> (no DOM for drawn content).<br>
-          <strong>Less scalable</strong> — scaling up can look blurry.<br>
-          Good for games, image processing, and dynamic pixel drawing.
+        <div id="lesson-svg-canvas" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">🖼️ SVG vs Canvas (HTML5)</div>
+            <div class="lesson-subtitle">Vector vs raster graphics; when to use each.</div>
+            <div class="content-section">
+                <div class="section-title">SVG (Scalable Vector Graphics)</div>
+                <div class="prose">
+                    <strong>Vector-based</strong> — composed of shapes (paths, circles, text).<br>
+                    Works better with <strong>larger surface</strong> and complex shapes.<br>
+                    Can be <strong>modified with CSS and scripts</strong> (DOM nodes, attributes).<br>
+                    <strong>Highly scalable</strong> — print at high quality at any resolution.<br>
+                    Good for icons, logos, charts, and accessible graphics (text and structure stay in DOM).
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Canvas</div>
+                <div class="prose">
+                    <strong>Raster-based</strong> — composed of pixels.<br>
+                    Works better with <strong>smaller surface</strong> and pixel-level manipulation.<br>
+                    Can <strong>only be modified via scripts</strong> (no DOM for drawn content).<br>
+                    <strong>Less scalable</strong> — scaling up can look blurry.<br>
+                    Good for games, image processing, and dynamic pixel drawing.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: SVG vs Canvas — when do you choose which?</div>
+                <div class="interview-a">Use SVG when you need scalability, accessibility, or to style/script individual
+                    parts (icons, data viz, responsive graphics). Use Canvas when you need high-frequency pixel updates
+                    (games, filters) or don’t need DOM structure for the drawing.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Can you style SVG with CSS?</div>
+                <div class="interview-a">Yes. SVG elements are part of the DOM and can be styled with CSS (fill, stroke,
+                    opacity, etc.) and animated. Canvas is a single bitmap; you can’t style individual drawn shapes with
+                    CSS.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('svg-canvas')">✓ Mark as done</button>
         </div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: SVG vs Canvas — when do you choose which?</div>
-        <div class="interview-a">Use SVG when you need scalability, accessibility, or to style/script individual parts (icons, data viz, responsive graphics). Use Canvas when you need high-frequency pixel updates (games, filters) or don’t need DOM structure for the drawing.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Can you style SVG with CSS?</div>
-        <div class="interview-a">Yes. SVG elements are part of the DOM and can be styled with CSS (fill, stroke, opacity, etc.) and animated. Canvas is a single bitmap; you can’t style individual drawn shapes with CSS.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('svg-canvas')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-forms-a11y" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">♿ Forms & Accessibility</div>
-      <div class="lesson-subtitle">Labels, fieldset, ARIA, focus order, and contrast.</div>
-      <div class="content-section">
-        <div class="section-title">Labels and form structure</div>
-        <div class="prose">Always pair every input with a <strong>label</strong> using <code>&lt;label for="input-id"&gt;</code> so the label is associated with the control. Use <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> to group related inputs (e.g. radio groups). This gives screen readers clear structure and improves click targets.</div>
-        <div class="code-block"><pre>&lt;label for="email"&gt;Email&lt;/label&gt;
+        <div id="lesson-forms-a11y" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">♿ Forms & Accessibility</div>
+            <div class="lesson-subtitle">Labels, fieldset, ARIA, focus order, and contrast.</div>
+            <div class="content-section">
+                <div class="section-title">Labels and form structure</div>
+                <div class="prose">Always pair every input with a <strong>label</strong> using <code>&lt;label
+                    for="input-id"&gt;</code> so the label is associated with the control. Use
+                    <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> to group related inputs (e.g. radio
+                    groups). This gives screen readers clear structure and improves click targets.
+                </div>
+                <div class="code-block"><pre>&lt;label for="email"&gt;Email&lt;/label&gt;
 &lt;input id="email" type="email" name="email"&gt;
 
 &lt;fieldset&gt;
   &lt;legend&gt;Choose one&lt;/legend&gt;
   &lt;input type="radio" id="a" name="opt"&gt; &lt;label for="a"&gt;A&lt;/label&gt;
   &lt;input type="radio" id="b" name="opt"&gt; &lt;label for="b"&gt;B&lt;/label&gt;
-&lt;/fieldset&gt;</pre></div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">ARIA and focus</div>
-        <div class="prose">Use ARIA when native HTML is not enough: <code>aria-label</code> for unlabeled icons, <code>aria-describedby</code> to link hints or errors to inputs, <code>role</code> when you build custom widgets. Ensure logical <strong>focus order</strong> (tab order matches visual order) and <strong>visible focus styles</strong>. Do not rely on color alone; use sufficient <strong>color contrast</strong> (e.g. WCAG AA).</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why is &lt;label for="id"&gt; important?</div>
-        <div class="interview-a">It programmatically associates the label with the input so screen readers announce the label when the input is focused, and clicking the label focuses the input. It also increases the clickable area and is required for accessibility.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: When do you use ARIA instead of native HTML?</div>
-        <div class="interview-a">When there is no suitable native element (e.g. custom dropdown, tab panel). Prefer native elements (button, input, select) first; use ARIA to expose state and semantics for custom components that cannot be built with natives alone.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('forms-a11y')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-seo-perf" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">🚀 SEO & Performance</div>
-      <div class="lesson-subtitle">Meta tags, structure, and loading best practices.</div>
-      <div class="content-section">
-        <div class="section-title">SEO basics</div>
-        <div class="prose">Use a meaningful <code>&lt;title&gt;</code> (unique per page, descriptive). Provide <code>&lt;meta name="description" content="..."&gt;</code> that summarizes the page; it often appears in search snippets. Use <strong>semantic structure</strong> and a clear <strong>heading hierarchy</strong>: one <code>h1</code> per page, then h2, h3 in order. Avoid skipping levels.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Performance (images and loading)</div>
-        <div class="prose">Use <code>loading="lazy"</code> for images below the fold. Always set <code>width</code> and <code>height</code> to avoid layout shift (CLS). Prefer modern formats like <strong>WebP</strong> or <strong>AVIF</strong> with fallbacks (<code>&lt;picture&gt;</code> or <code>source</code>). Use <code>decoding="async"</code> for non-critical images.</div>
-        <div class="code-block"><pre>&lt;img src="photo.webp" alt="Description" width="800" height="600"
-     loading="lazy" decoding="async"&gt;</pre></div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: How does semantic HTML help SEO?</div>
-        <div class="interview-a">Search engines use structure to understand content. Semantic tags (main, article, nav, headings) signal what is important and how sections relate. A clear hierarchy and one h1 help crawlers and can improve how your page is ranked and displayed.</div>
-      </div>
-      <div class="interview-box">
-        <div class="interview-q">Q: Why set width and height on images?</div>
-        <div class="interview-a">To prevent layout shift (CLS): without dimensions the layout does not reserve space until the image loads, causing content to jump. Setting width/height reserves space and improves perceived performance and Core Web Vitals.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('seo-perf')">✓ Mark as done</button>
-    </div>
-    <div id="lesson-cheatsheet" class="lesson-page">
-      <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
-      <div class="lesson-title">📋 HTML interview cheatsheet</div>
-      <div class="lesson-subtitle">Full quick reference for study and interviews.</div>
-      <div class="content-section">
-        <div class="section-title">Semantics</div>
-        <div class="prose">header, main (one per page), nav, section, article, aside, footer. Use them instead of div when they fit. Benefits: readability, SEO, accessibility, maintainability.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Void and entities</div>
-        <div class="prose">Void elements: br, img, hr, input, meta, link (no closing tag). Whitespace collapses to one space. Entities: &amp;lt; &amp;gt; &amp;amp; &amp;quot; &amp;copy; &amp;nbsp; for reserved or special characters.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Position and display</div>
-        <div class="prose">Position: static, relative, absolute, fixed, sticky. Display: inline, block, inline-block, flex, grid, none. Absolute vs fixed: absolute relative to ancestor, fixed relative to viewport.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">SVG vs Canvas</div>
-        <div class="prose">SVG: vector, scalable, styleable with CSS, good for icons and charts. Canvas: raster, pixel-level, script-only, good for games and dynamic drawing.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">Forms and A11y</div>
-        <div class="prose">label + for, fieldset + legend. ARIA when native is not enough. Focus order, visible focus, color contrast. Do not rely on color alone.</div>
-      </div>
-      <div class="content-section">
-        <div class="section-title">SEO and perf</div>
-        <div class="prose">Title, meta description, semantic structure, one h1, heading hierarchy. Lazy loading, width and height on images, WebP or AVIF with fallbacks.</div>
-      </div>
-      <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
-    </div>
-  </main>
+&lt;/fieldset&gt;</pre>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">ARIA and focus</div>
+                <div class="prose">Use ARIA when native HTML is not enough: <code>aria-label</code> for unlabeled icons,
+                    <code>aria-describedby</code> to link hints or errors to inputs, <code>role</code> when you build
+                    custom widgets. Ensure logical <strong>focus order</strong> (tab order matches visual order) and
+                    <strong>visible focus styles</strong>. Do not rely on color alone; use sufficient <strong>color
+                        contrast</strong> (e.g. WCAG AA).
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Why is &lt;label for="id"&gt; important?</div>
+                <div class="interview-a">It programmatically associates the label with the input so screen readers
+                    announce the label when the input is focused, and clicking the label focuses the input. It also
+                    increases the clickable area and is required for accessibility.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: When do you use ARIA instead of native HTML?</div>
+                <div class="interview-a">When there is no suitable native element (e.g. custom dropdown, tab panel).
+                    Prefer native elements (button, input, select) first; use ARIA to expose state and semantics for
+                    custom components that cannot be built with natives alone.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('forms-a11y')">✓ Mark as done</button>
+        </div>
+        <div id="lesson-seo-perf" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">🚀 SEO & Performance</div>
+            <div class="lesson-subtitle">Meta tags, structure, and loading best practices.</div>
+            <div class="content-section">
+                <div class="section-title">SEO basics</div>
+                <div class="prose">Use a meaningful <code>&lt;title&gt;</code> (unique per page, descriptive). Provide
+                    <code>&lt;meta name="description" content="..."&gt;</code> that summarizes the page; it often
+                    appears in search snippets. Use <strong>semantic structure</strong> and a clear <strong>heading
+                        hierarchy</strong>: one <code>h1</code> per page, then h2, h3 in order. Avoid skipping levels.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Performance (images and loading)</div>
+                <div class="prose">Use <code>loading="lazy"</code> for images below the fold. Always set
+                    <code>width</code> and <code>height</code> to avoid layout shift (CLS). Prefer modern formats like
+                    <strong>WebP</strong> or <strong>AVIF</strong> with fallbacks (<code>&lt;picture&gt;</code> or
+                    <code>source</code>). Use <code>decoding="async"</code> for non-critical images.
+                </div>
+                <div class="code-block"><pre>&lt;img src="photo.webp" alt="Description" width="800" height="600"
+     loading="lazy" decoding="async"&gt;</pre>
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: How does semantic HTML help SEO?</div>
+                <div class="interview-a">Search engines use structure to understand content. Semantic tags (main,
+                    article, nav, headings) signal what is important and how sections relate. A clear hierarchy and one
+                    h1 help crawlers and can improve how your page is ranked and displayed.
+                </div>
+            </div>
+            <div class="interview-box">
+                <div class="interview-q">Q: Why set width and height on images?</div>
+                <div class="interview-a">To prevent layout shift (CLS): without dimensions the layout does not reserve
+                    space until the image loads, causing content to jump. Setting width/height reserves space and
+                    improves perceived performance and Core Web Vitals.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('seo-perf')">✓ Mark as done</button>
+        </div>
+        <div id="lesson-cheatsheet" class="lesson-page">
+            <div class="lesson-breadcrumb" onclick="showPage('home')">← Back to Topics</div>
+            <div class="lesson-title">📋 HTML interview cheatsheet</div>
+            <div class="lesson-subtitle">Full quick reference for study and interviews.</div>
+            <div class="content-section">
+                <div class="section-title">Semantics</div>
+                <div class="prose">header, main (one per page), nav, section, article, aside, footer. Use them instead
+                    of div when they fit. Benefits: readability, SEO, accessibility, maintainability.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Void and entities</div>
+                <div class="prose">Void elements: br, img, hr, input, meta, link (no closing tag). Whitespace collapses
+                    to one space. Entities: &amp;lt; &amp;gt; &amp;amp; &amp;quot; &amp;copy; &amp;nbsp; for reserved or
+                    special characters.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Position and display</div>
+                <div class="prose">Position: static, relative, absolute, fixed, sticky. Display: inline, block,
+                    inline-block, flex, grid, none. Absolute vs fixed: absolute relative to ancestor, fixed relative to
+                    viewport.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">SVG vs Canvas</div>
+                <div class="prose">SVG: vector, scalable, styleable with CSS, good for icons and charts. Canvas: raster,
+                    pixel-level, script-only, good for games and dynamic drawing.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">Forms and A11y</div>
+                <div class="prose">label + for, fieldset + legend. ARIA when native is not enough. Focus order, visible
+                    focus, color contrast. Do not rely on color alone.
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-title">SEO and perf</div>
+                <div class="prose">Title, meta description, semantic structure, one h1, heading hierarchy. Lazy loading,
+                    width and height on images, WebP or AVIF with fallbacks.
+                </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('cheatsheet')">✓ Mark as done</button>
+        </div>
+    </main>
 </div>
 <script>
-const state = { completed: new Set(JSON.parse(localStorage.getItem('done-html') || '[]')), xp: parseInt(localStorage.getItem('xp-html') || '0'), totalTopics: 7 };
-function setSidebarOpen(open) {
-  const root = document.getElementById('appRoot');
-  const btn = document.getElementById('navToggle');
-  const backdrop = document.getElementById('sidebarBackdrop');
-  if (!root || !btn) return;
-  root.classList.toggle('sidebar-open', open);
-  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  btn.setAttribute('aria-label', open ? 'Close topics menu' : 'Open topics menu');
-  if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
-  document.body.style.overflow = open && window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
-}
-function toggleSidebar() {
-  const root = document.getElementById('appRoot');
-  if (!root) return;
-  setSidebarOpen(!root.classList.contains('sidebar-open'));
-}
-function closeSidebar() { setSidebarOpen(false); }
-function showPage(page) {
-  document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (page === 'home') document.getElementById('nav-home').classList.add('active');
-  closeSidebar();
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-}
-function showLesson(id) {
-  document.getElementById('home-page').style.display = 'none';
-  document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const lesson = document.getElementById('lesson-' + id);
-  if (lesson) lesson.classList.add('active');
-  const navItem = document.getElementById('nav-' + id);
-  if (navItem) navItem.classList.add('active');
-  closeSidebar();
-  window.scrollTo(0, 0);
-}
-function markDone(id) {
-  if (!state.completed.has(id)) { state.completed.add(id); state.xp += 50; localStorage.setItem('done-html', JSON.stringify([...state.completed])); localStorage.setItem('xp-html', state.xp); document.getElementById('nav-' + id).classList.add('completed'); event.target.textContent = '✓ Done!'; }
-  document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-  document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-}
-document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
-document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
-state.completed.forEach(id => { const n = document.getElementById('nav-' + id); if (n) n.classList.add('completed'); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
-window.addEventListener('resize', () => {
-  const root = document.getElementById('appRoot');
-  if (!root || !root.classList.contains('sidebar-open')) return;
-  document.body.style.overflow = window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
-});
+    const state = {
+        completed: new Set(JSON.parse(localStorage.getItem('done-html') || '[]')),
+        xp: parseInt(localStorage.getItem('xp-html') || '0'),
+        totalTopics: 7
+    };
+
+    function setSidebarOpen(open) {
+        const root = document.getElementById('appRoot');
+        const btn = document.getElementById('navToggle');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        if (!root || !btn) return;
+        root.classList.toggle('sidebar-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Close topics menu' : 'Open topics menu');
+        if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+        document.body.style.overflow = open && window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
+    }
+
+    function toggleSidebar() {
+        const root = document.getElementById('appRoot');
+        if (!root) return;
+        setSidebarOpen(!root.classList.contains('sidebar-open'));
+    }
+
+    function closeSidebar() {
+        setSidebarOpen(false);
+    }
+
+    function showPage(page) {
+        document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
+        document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if (page === 'home') document.getElementById('nav-home').classList.add('active');
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            closeSidebar();
+        }
+        document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+    }
+
+    function showLesson(id) {
+        document.getElementById('home-page').style.display = 'none';
+        document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const lesson = document.getElementById('lesson-' + id);
+        if (lesson) lesson.classList.add('active');
+        const navItem = document.getElementById('nav-' + id);
+        if (navItem) navItem.classList.add('active');
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            closeSidebar();
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function markDone(id) {
+        if (!state.completed.has(id)) {
+            state.completed.add(id);
+            state.xp += 50;
+            localStorage.setItem('done-html', JSON.stringify([...state.completed]));
+            localStorage.setItem('xp-html', state.xp);
+            document.getElementById('nav-' + id).classList.add('completed');
+            event.target.textContent = '✓ Done!';
+        }
+        document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+        document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+    }
+
+    document.getElementById('xpBadge').textContent = '⚡ ' + state.xp + ' XP';
+    document.getElementById('globalProgress').style.width = (state.completed.size / state.totalTopics) * 100 + '%';
+    state.completed.forEach(id => {
+        const n = document.getElementById('nav-' + id);
+        if (n) n.classList.add('completed');
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+    window.addEventListener('resize', () => {
+        const root = document.getElementById('appRoot');
+        if (!root || !root.classList.contains('sidebar-open')) return;
+        document.body.style.overflow = window.matchMedia('(max-width: 768px)').matches ? 'hidden' : '';
+    });
 </script>
 </body>
 </html>

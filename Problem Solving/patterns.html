@@ -1,245 +1,607 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أنماط حل المسائل 🧠</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#070b14;--surface:#0e1525;--card:#131d30;--border:#1e2d45;
-  --t1:#e8f4ff;--t2:#8aaccc;--muted:#4a6580;
-  --green:#00e5a0;--yellow:#ffd166;--orange:#ff9f43;--red:#ff6b6b;--blue:#4fc3f7;--purple:#b39ddb;
-}
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;direction:rtl}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أنماط حل المسائل 🧠</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap"
+          rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
 
-/* animated grid bg */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:60px 60px;opacity:.15;pointer-events:none;z-index:0;
-}
+        :root {
+            --bg: #070b14;
+            --surface: #0e1525;
+            --card: #131d30;
+            --border: #1e2d45;
+            --t1: #e8f4ff;
+            --t2: #8aaccc;
+            --muted: #4a6580;
+            --green: #00e5a0;
+            --yellow: #ffd166;
+            --orange: #ff9f43;
+            --red: #ff6b6b;
+            --blue: #4fc3f7;
+            --purple: #b39ddb;
+        }
 
-.wrap{max-width:1200px;margin:0 auto;padding:24px;position:relative;z-index:1}
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            direction: rtl
+        }
 
-/* HERO */
-.hero{text-align:center;padding:70px 20px 50px;position:relative}
-.hero-tag{
-  display:inline-block;background:linear-gradient(135deg,var(--green),var(--blue));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px
-}
-.hero h1{
-  font-size:clamp(2.2rem,7vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:16px;
-  background:linear-gradient(160deg,#fff 0%,var(--blue) 50%,var(--green) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero p{color:var(--t2);font-size:1.1rem;max-width:600px;margin:0 auto 40px;line-height:1.8}
+        /* animated grid bg */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: .15;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* NAV PILLS */
-.nav-wrap{
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-  padding:16px 20px;background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;margin-bottom:50px;
-}
-.nav-pill{
-  padding:8px 20px;border-radius:50px;border:1px solid var(--border);
-  background:transparent;color:var(--t2);font-family:'Cairo',sans-serif;font-size:0.85rem;
-  cursor:pointer;transition:all .2s;white-space:nowrap;
-}
-.nav-pill:hover,.nav-pill.active{background:var(--blue);color:#000;border-color:var(--blue);font-weight:700}
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            position: relative;
+            z-index: 1
+        }
 
-/* PATTERN SECTIONS */
-.pattern-section{margin-bottom:80px}
-.section-header{
-  display:flex;align-items:center;gap:16px;margin-bottom:30px;
-  padding-bottom:20px;border-bottom:1px solid var(--border);
-}
-.section-icon{font-size:2.5rem;width:64px;height:64px;display:flex;align-items:center;justify-content:center;
-  background:var(--card);border:1px solid var(--border);border-radius:16px;flex-shrink:0}
-.section-header h2{font-size:1.8rem;font-weight:900;margin-bottom:4px}
-.section-header p{color:var(--t2);font-size:.95rem}
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 70px 20px 50px;
+            position: relative
+        }
 
-/* CONTENT GRID */
-.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-@media(max-width:700px){.content-grid{grid-template-columns:1fr}}
+        .hero-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--green), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px
+        }
 
-.info-block{
-  background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;
-}
-.info-block h4{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;opacity:.7}
-.info-block p,.info-block li{font-size:.95rem;line-height:1.9;color:var(--t2)}
-.info-block ul{padding-right:18px}
-.info-block li{margin-bottom:4px}
+        .hero h1 {
+            font-size: clamp(2.2rem, 7vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(160deg, #fff 0%, var(--blue) 50%, var(--green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.full-width{grid-column:1/-1}
+        .hero p {
+            color: var(--t2);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.8
+        }
 
-/* IDEA BOX - special */
-.idea-box{
-  background:linear-gradient(135deg,rgba(0,229,160,.06),rgba(79,195,247,.06));
-  border:1px solid rgba(0,229,160,.2);border-radius:16px;padding:24px;
-  grid-column:1/-1;
-}
-.idea-box h4{color:var(--green);font-size:.75rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
-.idea-box p{font-size:1.05rem;line-height:2;color:var(--t1)}
+        /* NAV PILLS */
+        .nav-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 50px;
+        }
 
-/* WHEN/NOT WHEN */
-.when-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.when-grid{grid-template-columns:1fr}}
-.when-yes{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:16px}
-.when-no{background:rgba(255,107,107,.05);border:1px solid rgba(255,107,107,.2);border-radius:12px;padding:16px}
-.when-yes h5{color:var(--green);margin-bottom:10px;font-size:.8rem;text-transform:uppercase;letter-spacing:1px}
-.when-no h5{color:var(--red);margin-bottom:10px;font-size:.8rem;text-transform:uppercase;letter-spacing:1px}
-.when-yes li,.when-no li{font-size:.9rem;color:var(--t2);margin-bottom:6px;list-style:none;padding-right:0}
-.when-yes li::before{content:'✓ ';color:var(--green)}
-.when-no li::before{content:'✗ ';color:var(--red)}
+        .nav-pill {
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--t2);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all .2s;
+            white-space: nowrap;
+        }
 
-/* STEPS */
-.steps{display:flex;flex-direction:column;gap:10px}
-.step{
-  display:flex;gap:14px;align-items:flex-start;
-  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;
-}
-.step-num{
-  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:.85rem;flex-shrink:0;margin-top:2px;
-}
-.step p{font-size:.95rem;line-height:1.8;color:var(--t2)}
-.step strong{color:var(--t1)}
+        .nav-pill:hover, .nav-pill.active {
+            background: var(--blue);
+            color: #000;
+            border-color: var(--blue);
+            font-weight: 700
+        }
 
-/* CODE BLOCK */
-.code-wrap{
-  background:#080d18;border:1px solid var(--border);border-radius:16px;overflow:hidden;
-  margin-top:8px;
-}
-.code-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);
-}
-.code-header span{font-size:.8rem;color:var(--t2);font-family:'Fira Code',monospace}
-.dots{display:flex;gap:6px}
-.dot{width:10px;height:10px;border-radius:50%}
+        /* PATTERN SECTIONS */
+        .pattern-section {
+            margin-bottom: 80px
+        }
 
-pre{padding:20px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.9;direction:ltr;text-align:left}
-.c-kw{color:#bb9af7}
-.c-fn{color:#7dcfff}
-.c-str{color:#9ece6a}
-.c-num{color:#ff9e64}
-.c-comment{color:#4a6580;font-style:italic}
-.c-var{color:#e0af68}
-.c-op{color:#89ddff}
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
 
-/* COMPLEXITY BADGE */
-.complexity-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.comp-badge{
-  padding:6px 16px;border-radius:8px;font-size:.8rem;font-weight:700;
-  font-family:'Fira Code',monospace;
-}
-.comp-time{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.3)}
-.comp-space{background:rgba(79,195,247,.12);color:var(--blue);border:1px solid rgba(79,195,247,.3)}
+        .section-icon {
+            font-size: 2.5rem;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            flex-shrink: 0
+        }
 
-/* VISUAL DIAGRAM */
-.diagram{
-  background:#080d18;border:1px solid var(--border);border-radius:16px;
-  padding:24px;overflow-x:auto;margin-top:8px;
-}
-.diagram pre{padding:0;background:transparent;border:none;font-size:.9rem}
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 4px
+        }
 
-/* PATTERN TAG */
-.pattern-tag{
-  display:inline-block;padding:4px 14px;border-radius:6px;font-size:.75rem;font-weight:700;
-  background:rgba(79,195,247,.15);color:var(--blue);border:1px solid rgba(79,195,247,.3);margin-left:8px;
-}
+        .section-header p {
+            color: var(--t2);
+            font-size: .95rem
+        }
 
-/* CHEATSHEET */
-.cheatsheet{
-  background:var(--surface);border:1px solid var(--border);border-radius:20px;
-  padding:30px;margin-top:60px;
-}
-.cheatsheet h3{font-size:1.4rem;font-weight:900;margin-bottom:20px;text-align:center}
-.cs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.cs-card{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;
-  transition:border-color .2s;
-}
-.cs-card:hover{border-color:var(--blue)}
-.cs-card h5{font-size:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.cs-card p{font-size:.8rem;color:var(--t2);line-height:1.7}
-</style>
+        /* CONTENT GRID */
+        .content-grid {
+            display: grid;
+            grid-template-columns:1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px
+        }
+
+        @media (max-width: 700px) {
+            .content-grid {
+                grid-template-columns:1fr
+            }
+        }
+
+        .info-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+        }
+
+        .info-block h4 {
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            opacity: .7
+        }
+
+        .info-block p, .info-block li {
+            font-size: .95rem;
+            line-height: 1.9;
+            color: var(--t2)
+        }
+
+        .info-block ul {
+            padding-right: 18px
+        }
+
+        .info-block li {
+            margin-bottom: 4px
+        }
+
+        .full-width {
+            grid-column: 1/-1
+        }
+
+        /* IDEA BOX - special */
+        .idea-box {
+            background: linear-gradient(135deg, rgba(0, 229, 160, .06), rgba(79, 195, 247, .06));
+            border: 1px solid rgba(0, 229, 160, .2);
+            border-radius: 16px;
+            padding: 24px;
+            grid-column: 1/-1;
+        }
+
+        .idea-box h4 {
+            color: var(--green);
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px
+        }
+
+        .idea-box p {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: var(--t1)
+        }
+
+        /* WHEN/NOT WHEN */
+        .when-grid {
+            display: grid;
+            grid-template-columns:1fr 1fr;
+            gap: 12px
+        }
+
+        @media (max-width: 600px) {
+            .when-grid {
+                grid-template-columns:1fr
+            }
+        }
+
+        .when-yes {
+            background: rgba(0, 229, 160, .05);
+            border: 1px solid rgba(0, 229, 160, .2);
+            border-radius: 12px;
+            padding: 16px
+        }
+
+        .when-no {
+            background: rgba(255, 107, 107, .05);
+            border: 1px solid rgba(255, 107, 107, .2);
+            border-radius: 12px;
+            padding: 16px
+        }
+
+        .when-yes h5 {
+            color: var(--green);
+            margin-bottom: 10px;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .when-no h5 {
+            color: var(--red);
+            margin-bottom: 10px;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .when-yes li, .when-no li {
+            font-size: .9rem;
+            color: var(--t2);
+            margin-bottom: 6px;
+            list-style: none;
+            padding-right: 0
+        }
+
+        .when-yes li::before {
+            content: '✓ ';
+            color: var(--green)
+        }
+
+        .when-no li::before {
+            content: '✗ ';
+            color: var(--red)
+        }
+
+        /* STEPS */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: .85rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step p {
+            font-size: .95rem;
+            line-height: 1.8;
+            color: var(--t2)
+        }
+
+        .step strong {
+            color: var(--t1)
+        }
+
+        /* CODE BLOCK */
+        .code-wrap {
+            background: #080d18;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: .8rem;
+            color: var(--t2);
+            font-family: 'Fira Code', monospace
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%
+        }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: .85rem;
+            line-height: 1.9;
+            direction: ltr;
+            text-align: left
+        }
+
+        .c-kw {
+            color: #bb9af7
+        }
+
+        .c-fn {
+            color: #7dcfff
+        }
+
+        .c-str {
+            color: #9ece6a
+        }
+
+        .c-num {
+            color: #ff9e64
+        }
+
+        .c-comment {
+            color: #4a6580;
+            font-style: italic
+        }
+
+        .c-var {
+            color: #e0af68
+        }
+
+        .c-op {
+            color: #89ddff
+        }
+
+        /* COMPLEXITY BADGE */
+        .complexity-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px
+        }
+
+        .comp-badge {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .comp-time {
+            background: rgba(255, 209, 102, .12);
+            color: var(--yellow);
+            border: 1px solid rgba(255, 209, 102, .3)
+        }
+
+        .comp-space {
+            background: rgba(79, 195, 247, .12);
+            color: var(--blue);
+            border: 1px solid rgba(79, 195, 247, .3)
+        }
+
+        /* VISUAL DIAGRAM */
+        .diagram {
+            background: #080d18;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+
+        .diagram pre {
+            padding: 0;
+            background: transparent;
+            border: none;
+            font-size: .9rem
+        }
+
+        /* PATTERN TAG */
+        .pattern-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 700;
+            background: rgba(79, 195, 247, .15);
+            color: var(--blue);
+            border: 1px solid rgba(79, 195, 247, .3);
+            margin-left: 8px;
+        }
+
+        /* CHEATSHEET */
+        .cheatsheet {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 60px;
+        }
+
+        .cheatsheet h3 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center
+        }
+
+        .cs-grid {
+            display: grid;
+            grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px
+        }
+
+        .cs-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: border-color .2s;
+        }
+
+        .cs-card:hover {
+            border-color: var(--blue)
+        }
+
+        .cs-card h5 {
+            font-size: .85rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .cs-card p {
+            font-size: .8rem;
+            color: var(--t2);
+            line-height: 1.7
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
 
-<div class="hero">
-  <div class="hero-tag">Problem Solving Patterns</div>
-  <h1>الأنماط<br>بالعربي المصري 🇪🇬</h1>
-  <p>كل نمط مشروح بمثال من الحياة زي ما تشرحه لطفل — مع الكود وشرح كل سطر</p>
-</div>
-
-<div class="nav-wrap">
-  <button class="nav-pill active" onclick="scrollTo('sliding')">🪟 Sliding Window</button>
-  <button class="nav-pill" onclick="scrollTo('twoptr')">👆 Two Pointers</button>
-  <button class="nav-pill" onclick="scrollTo('dp')">🧠 Dynamic Programming</button>
-  <button class="nav-pill" onclick="scrollTo('bfs')">🌊 BFS</button>
-  <button class="nav-pill" onclick="scrollTo('dfs')">🌲 DFS</button>
-  <button class="nav-pill" onclick="scrollTo('bsearch')">🔍 Binary Search</button>
-  <button class="nav-pill" onclick="scrollTo('stack')">📚 Stack & Monotonic</button>
-  <button class="nav-pill" onclick="scrollTo('backtrack')">🔄 Backtracking</button>
-  <button class="nav-pill" onclick="scrollTo('greedy')">💰 Greedy</button>
-  <button class="nav-pill" onclick="scrollTo('topo')">🗺️ Topological Sort</button>
-</div>
-
-<!-- ═══════════════════════════════════════ -->
-<!-- 1. SLIDING WINDOW -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="sliding">
-  <div class="section-header">
-    <div class="section-icon">🪟</div>
-    <div>
-      <h2>Sliding Window <span class="pattern-tag">نافذة منزلقة</span></h2>
-      <p>بتمشي على array أو string بنافذة بتكبر وبتصغر</p>
-    </div>
-  </div>
-
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل إنك شايل مظروف وبتمشي على صف من الناس وبتاخد فلوس منهم. المظروف بيتسع لـ 3 ناس بس. لما تاخد واحد جديد من الأمام، الواحد اللي وراك بيطلع من المظروف. أنت مش بتحسب الكل من أول كل مرة — بس بتضيف الجديد وبتشيل القديم! ده هو الـ Sliding Window. بدل ما تجرب كل الاحتمالات (O(n²)) بتمشي مرة واحدة (O(n)).</p>
+    <div class="hero">
+        <div class="hero-tag">Problem Solving Patterns</div>
+        <h1>الأنماط<br>بالعربي المصري 🇪🇬</h1>
+        <p>كل نمط مشروح بمثال من الحياة زي ما تشرحه لطفل — مع الكود وشرح كل سطر</p>
     </div>
 
-    <div class="info-block">
-      <h4>⏰ إمتى تستخدمه؟</h4>
-      <div class="when-grid">
-        <ul class="when-yes">
-          <h5>✅ استخدمه لو</h5>
-          <li>بتدور على subarray/substring</li>
-          <li>فيه شرط على نطاق متتالي</li>
-          <li>الكلمات: "أطول / أقصر / أكبر مجموع"</li>
-          <li>البيانات متتالية (array / string)</li>
-        </ul>
-        <ul class="when-no">
-          <h5>❌ متستخدمهش لو</h5>
-          <li>العناصر مش متتالية</li>
-          <li>محتاج تقارن بعيدين من بعض</li>
-          <li>البيانات مش مرتبة بشكل معين</li>
-        </ul>
-      </div>
+    <div class="nav-wrap">
+        <button class="nav-pill active" onclick="scrollTo('sliding')">🪟 Sliding Window</button>
+        <button class="nav-pill" onclick="scrollTo('twoptr')">👆 Two Pointers</button>
+        <button class="nav-pill" onclick="scrollTo('dp')">🧠 Dynamic Programming</button>
+        <button class="nav-pill" onclick="scrollTo('bfs')">🌊 BFS</button>
+        <button class="nav-pill" onclick="scrollTo('dfs')">🌲 DFS</button>
+        <button class="nav-pill" onclick="scrollTo('bsearch')">🔍 Binary Search</button>
+        <button class="nav-pill" onclick="scrollTo('stack')">📚 Stack & Monotonic</button>
+        <button class="nav-pill" onclick="scrollTo('backtrack')">🔄 Backtracking</button>
+        <button class="nav-pill" onclick="scrollTo('greedy')">💰 Greedy</button>
+        <button class="nav-pill" onclick="scrollTo('topo')">🗺️ Topological Sort</button>
     </div>
 
-    <div class="info-block">
-      <h4>🪜 الخطوات</h4>
-      <div class="steps">
-        <div class="step"><div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">1</div><p><strong>حدد طرفين:</strong> left و right يبدأوا من 0</p></div>
-        <div class="step"><div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">2</div><p><strong>وسّع من اليمين:</strong> right++ وأضيف العنصر الجديد</p></div>
-        <div class="step"><div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">3</div><p><strong>لو الشرط اتكسر:</strong> ضيّق من الشمال left++</p></div>
-        <div class="step"><div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">4</div><p><strong>حدّث الجواب:</strong> في كل خطوة احسب الأفضل</p></div>
-      </div>
-    </div>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 1. SLIDING WINDOW -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="sliding">
+        <div class="section-header">
+            <div class="section-icon">🪟</div>
+            <div>
+                <h2>Sliding Window <span class="pattern-tag">نافذة منزلقة</span></h2>
+                <p>بتمشي على array أو string بنافذة بتكبر وبتصغر</p>
+            </div>
+        </div>
 
-    <div class="info-block full-width">
-      <h4>👁️ مثال مرئي - Longest Substring Without Repeating</h4>
-      <div class="diagram">
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل إنك شايل مظروف وبتمشي على صف من الناس وبتاخد فلوس منهم. المظروف بيتسع لـ 3 ناس بس. لما تاخد واحد
+                    جديد من الأمام، الواحد اللي وراك بيطلع من المظروف. أنت مش بتحسب الكل من أول كل مرة — بس بتضيف الجديد
+                    وبتشيل القديم! ده هو الـ Sliding Window. بدل ما تجرب كل الاحتمالات (O(n²)) بتمشي مرة واحدة
+                    (O(n)).</p>
+            </div>
+
+            <div class="info-block">
+                <h4>⏰ إمتى تستخدمه؟</h4>
+                <div class="when-grid">
+                    <ul class="when-yes">
+                        <h5>✅ استخدمه لو</h5>
+                        <li>بتدور على subarray/substring</li>
+                        <li>فيه شرط على نطاق متتالي</li>
+                        <li>الكلمات: "أطول / أقصر / أكبر مجموع"</li>
+                        <li>البيانات متتالية (array / string)</li>
+                    </ul>
+                    <ul class="when-no">
+                        <h5>❌ متستخدمهش لو</h5>
+                        <li>العناصر مش متتالية</li>
+                        <li>محتاج تقارن بعيدين من بعض</li>
+                        <li>البيانات مش مرتبة بشكل معين</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <h4>🪜 الخطوات</h4>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">1</div>
+                        <p><strong>حدد طرفين:</strong> left و right يبدأوا من 0</p></div>
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">2</div>
+                        <p><strong>وسّع من اليمين:</strong> right++ وأضيف العنصر الجديد</p></div>
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">3</div>
+                        <p><strong>لو الشرط اتكسر:</strong> ضيّق من الشمال left++</p></div>
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(0,229,160,.2);color:var(--green)">4</div>
+                        <p><strong>حدّث الجواب:</strong> في كل خطوة احسب الأفضل</p></div>
+                </div>
+            </div>
+
+            <div class="info-block full-width">
+                <h4>👁️ مثال مرئي - Longest Substring Without Repeating</h4>
+                <div class="diagram">
 <pre style="color:var(--t2)">
 الكلمة:  a  b  c  a  b  c  b  b
 Index:   0  1  2  3  4  5  6  7
@@ -254,118 +616,154 @@ Index:   0  1  2  3  4  5  6  7
           [c  a  b]        ← شيل b الأول أطول = 3
 الجواب النهائي: 3 ✅
 </pre>
-      </div>
-    </div>
+                </div>
+            </div>
 
-    <div class="info-block full-width">
-      <h4>💻 الكود مع شرح كل سطر</h4>
-      <div class="code-wrap">
-        <div class="code-header">
-          <div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div>
-          <span>slidingWindow.js</span>
-        </div>
-<pre><span class="c-comment">// 🎯 Sliding Window — أطول substring من غير تكرار</span>
+            <div class="info-block full-width">
+                <h4>💻 الكود مع شرح كل سطر</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>slidingWindow.js</span>
+                    </div>
+                    <pre><span class="c-comment">// 🎯 Sliding Window — أطول substring من غير تكرار</span>
 <span class="c-kw">function</span> <span class="c-fn">lengthOfLongestSubstring</span>(s) {
 
   <span class="c-comment">// Set بيحفظ الحروف اللي في النافذة الحالية</span>
-  <span class="c-kw">const</span> <span class="c-var">seen</span> <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">Set</span>();
+  <span class="c-kw">const</span> <span class="c-var">seen</span> <span class="c-op">=</span> <span
+                                class="c-kw">new</span> <span class="c-fn">Set</span>();
 
-  <span class="c-kw">let</span> <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-num">0</span>;   <span class="c-comment">// ← الطرف الأيسر (بداية النافذة)</span>
-  <span class="c-kw">let</span> <span class="c-var">maxLen</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-comment">// ← أطول نافذة لاقيناها</span>
+  <span class="c-kw">let</span> <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-num">0</span>;   <span
+                                class="c-comment">// ← الطرف الأيسر (بداية النافذة)</span>
+  <span class="c-kw">let</span> <span class="c-var">maxLen</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-comment">// ← أطول نافذة لاقيناها</span>
 
   <span class="c-comment">// right بيمشي من الأول للآخر (يمثل آخر النافذة)</span>
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">right</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">right</span> <span class="c-op">&lt;</span> s.<span class="c-var">length</span>; <span class="c-var">right</span><span class="c-op">++</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">right</span> <span
+                                class="c-op">=</span> <span class="c-num">0</span>; <span
+                                class="c-var">right</span> <span class="c-op">&lt;</span> s.<span
+                                class="c-var">length</span>; <span class="c-var">right</span><span
+                                class="c-op">++</span>) {
 
-    <span class="c-kw">const</span> <span class="c-var">char</span> <span class="c-op">=</span> s[<span class="c-var">right</span>]; <span class="c-comment">// الحرف الجديد اللي دخل النافذة</span>
+    <span class="c-kw">const</span> <span class="c-var">char</span> <span class="c-op">=</span> s[<span class="c-var">right</span>]; <span
+                                class="c-comment">// الحرف الجديد اللي دخل النافذة</span>
 
     <span class="c-comment">// لو الحرف ده موجود قبل كده في النافذة...</span>
     <span class="c-kw">while</span> (<span class="c-var">seen</span>.<span class="c-fn">has</span>(<span class="c-var">char</span>)) {
       <span class="c-comment">// شيل الحرف من الطرف الأيسر واحد واحد</span>
       <span class="c-var">seen</span>.<span class="c-fn">delete</span>(s[<span class="c-var">left</span>]);
-      <span class="c-var">left</span><span class="c-op">++</span>; <span class="c-comment">// ضيّق النافذة من الشمال</span>
+      <span class="c-var">left</span><span class="c-op">++</span>; <span
+                                class="c-comment">// ضيّق النافذة من الشمال</span>
     }
 
     <span class="c-comment">// أضيف الحرف الجديد للنافذة</span>
     <span class="c-var">seen</span>.<span class="c-fn">add</span>(<span class="c-var">char</span>);
 
     <span class="c-comment">// right - left + 1 = حجم النافذة الحالية</span>
-    <span class="c-var">maxLen</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span class="c-var">maxLen</span>, <span class="c-var">right</span> <span class="c-op">-</span> <span class="c-var">left</span> <span class="c-op">+</span> <span class="c-num">1</span>);
+    <span class="c-var">maxLen</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span
+                                class="c-var">maxLen</span>, <span class="c-var">right</span> <span
+                                class="c-op">-</span> <span class="c-var">left</span> <span class="c-op">+</span> <span
+                                class="c-num">1</span>);
   }
 
   <span class="c-kw">return</span> <span class="c-var">maxLen</span>; <span class="c-comment">// ← الجواب النهائي</span>
 }
 
 <span class="c-comment">// ✅ اختبار: "abcabcbb" → 3</span>
-<span class="c-fn">console.log</span>(<span class="c-fn">lengthOfLongestSubstring</span>(<span class="c-str">"abcabcbb"</span>)); <span class="c-comment">// 3</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n)</span>
-        <span class="comp-badge comp-space">💾 Space: O(min(n, alphabet))</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">lengthOfLongestSubstring</span>(<span
+                                class="c-str">"abcabcbb"</span>)); <span class="c-comment">// 3</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(min(n, alphabet))</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 2. TWO POINTERS -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="twoptr">
-  <div class="section-header">
-    <div class="section-icon">👆</div>
-    <div>
-      <h2>Two Pointers <span class="pattern-tag">إصبعين</span></h2>
-      <p>إصبعين بيتحركوا في نفس الـ array من اتجاهات مختلفة</p>
-    </div>
-  </div>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 2. TWO POINTERS -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="twoptr">
+        <div class="section-header">
+            <div class="section-icon">👆</div>
+            <div>
+                <h2>Two Pointers <span class="pattern-tag">إصبعين</span></h2>
+                <p>إصبعين بيتحركوا في نفس الـ array من اتجاهات مختلفة</p>
+            </div>
+        </div>
 
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل كتاب وعايز تعرف هل بيتقرأ نفسه من الاتجاهين (palindrome). بتحط إصبع في الصفحة الأولى وإصبع في الصفحة الأخيرة. لو متطابقين، الاتنين بيتحركوا للوسط. لو لأ — مش palindrome. ده بدل ما تقلب كل الصفحات وتقارن. نوعين: (1) واحد من كل طرف يتقابلوا في الوسط. (2) واحد سريع وواحد بطيء في نفس الاتجاه.</p>
-    </div>
-    <div class="info-block">
-      <h4>⏰ إمتى تستخدمه؟</h4>
-      <div class="when-grid">
-        <ul class="when-yes">
-          <h5>✅ استخدمه لو</h5>
-          <li>Array مرتبة وبتدور على زوجين</li>
-          <li>بتدور على palindrome</li>
-          <li>بتدور على cycle في linked list</li>
-          <li>بتحتاج تقليل O(n²) لـ O(n)</li>
-        </ul>
-        <ul class="when-no">
-          <h5>❌ متستخدمهش لو</h5>
-          <li>Array مش مرتبة (في بعض المسائل)</li>
-          <li>محتاج تتذكر أكتر من موقعين</li>
-        </ul>
-      </div>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Container With Most Water</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>twoPointers.js</span></div>
-<pre><span class="c-comment">// 🎯 أكبر حوض مياه — Two Pointers</span>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل كتاب وعايز تعرف هل بيتقرأ نفسه من الاتجاهين (palindrome). بتحط إصبع في الصفحة الأولى وإصبع في
+                    الصفحة الأخيرة. لو متطابقين، الاتنين بيتحركوا للوسط. لو لأ — مش palindrome. ده بدل ما تقلب كل
+                    الصفحات وتقارن. نوعين: (1) واحد من كل طرف يتقابلوا في الوسط. (2) واحد سريع وواحد بطيء في نفس
+                    الاتجاه.</p>
+            </div>
+            <div class="info-block">
+                <h4>⏰ إمتى تستخدمه؟</h4>
+                <div class="when-grid">
+                    <ul class="when-yes">
+                        <h5>✅ استخدمه لو</h5>
+                        <li>Array مرتبة وبتدور على زوجين</li>
+                        <li>بتدور على palindrome</li>
+                        <li>بتدور على cycle في linked list</li>
+                        <li>بتحتاج تقليل O(n²) لـ O(n)</li>
+                    </ul>
+                    <ul class="when-no">
+                        <h5>❌ متستخدمهش لو</h5>
+                        <li>Array مش مرتبة (في بعض المسائل)</li>
+                        <li>محتاج تتذكر أكتر من موقعين</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Container With Most Water</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>twoPointers.js</span></div>
+                    <pre><span class="c-comment">// 🎯 أكبر حوض مياه — Two Pointers</span>
 <span class="c-kw">function</span> <span class="c-fn">maxArea</span>(<span class="c-var">height</span>) {
 
-  <span class="c-kw">let</span> <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-num">0</span>;                      <span class="c-comment">// إصبع في أول حيط</span>
-  <span class="c-kw">let</span> <span class="c-var">right</span> <span class="c-op">=</span> <span class="c-var">height</span>.<span class="c-var">length</span> <span class="c-op">-</span> <span class="c-num">1</span>;  <span class="c-comment">// إصبع في آخر حيط</span>
-  <span class="c-kw">let</span> <span class="c-var">max</span> <span class="c-op">=</span> <span class="c-num">0</span>;                       <span class="c-comment">// أكبر مساحة لقيناها</span>
+  <span class="c-kw">let</span> <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-num">0</span>;                      <span
+                                class="c-comment">// إصبع في أول حيط</span>
+  <span class="c-kw">let</span> <span class="c-var">right</span> <span class="c-op">=</span> <span
+                                class="c-var">height</span>.<span class="c-var">length</span> <span
+                                class="c-op">-</span> <span class="c-num">1</span>;  <span class="c-comment">// إصبع في آخر حيط</span>
+  <span class="c-kw">let</span> <span class="c-var">max</span> <span class="c-op">=</span> <span class="c-num">0</span>;                       <span
+                                class="c-comment">// أكبر مساحة لقيناها</span>
 
   <span class="c-comment">// لحد ما الإصبعين يلتقوا في الوسط</span>
   <span class="c-kw">while</span> (<span class="c-var">left</span> <span class="c-op">&lt;</span> <span class="c-var">right</span>) {
 
     <span class="c-comment">// عرض الحوض = المسافة بين الحيطين</span>
-    <span class="c-kw">const</span> <span class="c-var">width</span> <span class="c-op">=</span> <span class="c-var">right</span> <span class="c-op">-</span> <span class="c-var">left</span>;
+    <span class="c-kw">const</span> <span class="c-var">width</span> <span class="c-op">=</span> <span class="c-var">right</span> <span
+                                class="c-op">-</span> <span class="c-var">left</span>;
 
     <span class="c-comment">// ارتفاع الحوض = أقصر الحيطين (المياه بتطفح من الأقصر)</span>
-    <span class="c-kw">const</span> <span class="c-var">h</span> <span class="c-op">=</span> <span class="c-fn">Math.min</span>(<span class="c-var">height</span>[<span class="c-var">left</span>], <span class="c-var">height</span>[<span class="c-var">right</span>]);
+    <span class="c-kw">const</span> <span class="c-var">h</span> <span class="c-op">=</span> <span
+                                class="c-fn">Math.min</span>(<span class="c-var">height</span>[<span
+                                class="c-var">left</span>], <span class="c-var">height</span>[<span
+                                class="c-var">right</span>]);
 
     <span class="c-comment">// احسب المساحة وحدّث الـ max</span>
-    <span class="c-var">max</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span class="c-var">max</span>, <span class="c-var">width</span> <span class="c-op">*</span> <span class="c-var">h</span>);
+    <span class="c-var">max</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span class="c-var">max</span>, <span
+                                class="c-var">width</span> <span class="c-op">*</span> <span class="c-var">h</span>);
 
     <span class="c-comment">// حرّك الإصبع اللي جنب الحيط الأقصر</span>
     <span class="c-comment">// (الأطول مهوش المشكلة، المشكلة في الأقصر)</span>
-    <span class="c-kw">if</span> (<span class="c-var">height</span>[<span class="c-var">left</span>] <span class="c-op">&lt;</span> <span class="c-var">height</span>[<span class="c-var">right</span>]) {
+    <span class="c-kw">if</span> (<span class="c-var">height</span>[<span class="c-var">left</span>] <span class="c-op">&lt;</span> <span
+                                class="c-var">height</span>[<span class="c-var">right</span>]) {
       <span class="c-var">left</span><span class="c-op">++</span>;   <span class="c-comment">// الحيط الأيسر أقصر → حرّكه</span>
     } <span class="c-kw">else</span> {
       <span class="c-var">right</span><span class="c-op">--</span>;  <span class="c-comment">// الحيط الأيمن أقصر → حرّكه</span>
@@ -376,58 +774,86 @@ Index:   0  1  2  3  4  5  6  7
 }
 
 <span class="c-comment">// ✅ اختبار: [1,8,6,2,5,4,8,3,7] → 49</span>
-<span class="c-fn">console.log</span>(<span class="c-fn">maxArea</span>([<span class="c-num">1</span>,<span class="c-num">8</span>,<span class="c-num">6</span>,<span class="c-num">2</span>,<span class="c-num">5</span>,<span class="c-num">4</span>,<span class="c-num">8</span>,<span class="c-num">3</span>,<span class="c-num">7</span>])); <span class="c-comment">// 49</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n)</span>
-        <span class="comp-badge comp-space">💾 Space: O(1)</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">maxArea</span>([<span class="c-num">1</span>,<span
+                                class="c-num">8</span>,<span class="c-num">6</span>,<span class="c-num">2</span>,<span
+                                class="c-num">5</span>,<span class="c-num">4</span>,<span class="c-num">8</span>,<span
+                                class="c-num">3</span>,<span class="c-num">7</span>])); <span
+                                class="c-comment">// 49</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(1)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 3. DYNAMIC PROGRAMMING -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="dp">
-  <div class="section-header">
-    <div class="section-icon">🧠</div>
-    <div>
-      <h2>Dynamic Programming <span class="pattern-tag">برمجة ديناميكية</span></h2>
-      <p>احفظ نتائج المسائل الصغيرة عشان ما تحلهاش تاني</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل بتحسب 5! (factorial). لو حسبت 4! من قبل، ما تحسبهاش تاني — بس اضرب 5 × 4!. DP = "أنا مش بحل نفس المسألة أكتر من مرة." بتقسم المسألة الكبيرة لمسائل أصغر، بتحل الصغيرة وبتحفظ نتيجتها في جدول (Memoization أو Tabulation)، وبتبني الكبيرة على الصغيرة. الأسئلة: "كام طريقة؟" أو "أقل / أكبر / أمثل" = DP في الغالب!</p>
-    </div>
-    <div class="info-block">
-      <h4>🔑 نوعين DP</h4>
-      <div class="steps">
-        <div class="step"><div class="step-num" style="background:rgba(255,209,102,.2);color:var(--yellow)">1</div><p><strong>Top-Down (Memoization):</strong> ابدأ من المسألة الكبيرة ونزّل للصغيرة. استخدم Recursion + Cache.</p></div>
-        <div class="step"><div class="step-num" style="background:rgba(255,209,102,.2);color:var(--yellow)">2</div><p><strong>Bottom-Up (Tabulation):</strong> ابدأ من أصغر مسألة وابني لفوق. استخدم Array/Table.</p></div>
-      </div>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Climbing Stairs + Coin Change</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>dynamicProgramming.js</span></div>
-<pre><span class="c-comment">// ══════════════════════════════════════</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 3. DYNAMIC PROGRAMMING -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="dp">
+        <div class="section-header">
+            <div class="section-icon">🧠</div>
+            <div>
+                <h2>Dynamic Programming <span class="pattern-tag">برمجة ديناميكية</span></h2>
+                <p>احفظ نتائج المسائل الصغيرة عشان ما تحلهاش تاني</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل بتحسب 5! (factorial). لو حسبت 4! من قبل، ما تحسبهاش تاني — بس اضرب 5 × 4!. DP = "أنا مش بحل نفس
+                    المسألة أكتر من مرة." بتقسم المسألة الكبيرة لمسائل أصغر، بتحل الصغيرة وبتحفظ نتيجتها في جدول
+                    (Memoization أو Tabulation)، وبتبني الكبيرة على الصغيرة. الأسئلة: "كام طريقة؟" أو "أقل / أكبر /
+                    أمثل" = DP في الغالب!</p>
+            </div>
+            <div class="info-block">
+                <h4>🔑 نوعين DP</h4>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(255,209,102,.2);color:var(--yellow)">1</div>
+                        <p><strong>Top-Down (Memoization):</strong> ابدأ من المسألة الكبيرة ونزّل للصغيرة. استخدم
+                            Recursion + Cache.</p></div>
+                    <div class="step">
+                        <div class="step-num" style="background:rgba(255,209,102,.2);color:var(--yellow)">2</div>
+                        <p><strong>Bottom-Up (Tabulation):</strong> ابدأ من أصغر مسألة وابني لفوق. استخدم Array/Table.
+                        </p></div>
+                </div>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Climbing Stairs + Coin Change</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>dynamicProgramming.js</span></div>
+                    <pre><span class="c-comment">// ══════════════════════════════════════</span>
 <span class="c-comment">// 🎯 مثال 1: Climbing Stairs (Bottom-Up)</span>
 <span class="c-comment">// ══════════════════════════════════════</span>
 <span class="c-kw">function</span> <span class="c-fn">climbStairs</span>(<span class="c-var">n</span>) {
 
   <span class="c-comment">// لو درجة 1 أو 2 — الجواب واضح</span>
-  <span class="c-kw">if</span> (<span class="c-var">n</span> <span class="c-op">&lt;=</span> <span class="c-num">2</span>) <span class="c-kw">return</span> <span class="c-var">n</span>;
+  <span class="c-kw">if</span> (<span class="c-var">n</span> <span class="c-op">&lt;=</span> <span
+                                class="c-num">2</span>) <span class="c-kw">return</span> <span class="c-var">n</span>;
 
   <span class="c-comment">// dp[i] = كام طريقة توصل للدرجة i</span>
-  <span class="c-kw">const</span> <span class="c-var">dp</span> <span class="c-op">=</span> [<span class="c-num">0</span>, <span class="c-num">1</span>, <span class="c-num">2</span>]; <span class="c-comment">// Base cases</span>
+  <span class="c-kw">const</span> <span class="c-var">dp</span> <span class="c-op">=</span> [<span
+                                class="c-num">0</span>, <span class="c-num">1</span>, <span
+                                class="c-num">2</span>]; <span class="c-comment">// Base cases</span>
 
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-num">3</span>; <span class="c-var">i</span> <span class="c-op">&lt;=</span> <span class="c-var">n</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span
+                                class="c-num">3</span>; <span class="c-var">i</span> <span
+                                class="c-op">&lt;=</span> <span class="c-var">n</span>; <span
+                                class="c-var">i</span><span class="c-op">++</span>) {
     <span class="c-comment">// طرق الوصول للدرجة i = طرق i-1 + طرق i-2</span>
     <span class="c-comment">// (جيت من درجة قبلها بخطوة) + (جيت من درجتين قبلها بقفزة)</span>
-    <span class="c-var">dp</span>[<span class="c-var">i</span>] <span class="c-op">=</span> <span class="c-var">dp</span>[<span class="c-var">i</span><span class="c-op">-</span><span class="c-num">1</span>] <span class="c-op">+</span> <span class="c-var">dp</span>[<span class="c-var">i</span><span class="c-op">-</span><span class="c-num">2</span>];
+    <span class="c-var">dp</span>[<span class="c-var">i</span>] <span class="c-op">=</span> <span
+                                class="c-var">dp</span>[<span class="c-var">i</span><span class="c-op">-</span><span
+                                class="c-num">1</span>] <span class="c-op">+</span> <span class="c-var">dp</span>[<span
+                                class="c-var">i</span><span class="c-op">-</span><span class="c-num">2</span>];
   }
 
   <span class="c-kw">return</span> <span class="c-var">dp</span>[<span class="c-var">n</span>]; <span class="c-comment">// الجواب</span>
@@ -436,93 +862,134 @@ Index:   0  1  2  3  4  5  6  7
 <span class="c-comment">// ══════════════════════════════════════</span>
 <span class="c-comment">// 🎯 مثال 2: Coin Change (Bottom-Up)</span>
 <span class="c-comment">// ══════════════════════════════════════</span>
-<span class="c-kw">function</span> <span class="c-fn">coinChange</span>(<span class="c-var">coins</span>, <span class="c-var">amount</span>) {
+<span class="c-kw">function</span> <span class="c-fn">coinChange</span>(<span class="c-var">coins</span>, <span
+                                class="c-var">amount</span>) {
 
   <span class="c-comment">// dp[i] = أقل عدد عملات لصرف مبلغ i</span>
   <span class="c-comment">// بنملاه بـ Infinity = "مستحيل" في البداية</span>
-  <span class="c-kw">const</span> <span class="c-var">dp</span> <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">Array</span>(<span class="c-var">amount</span> <span class="c-op">+</span> <span class="c-num">1</span>).<span class="c-fn">fill</span>(<span class="c-kw">Infinity</span>);
+  <span class="c-kw">const</span> <span class="c-var">dp</span> <span class="c-op">=</span> <span
+                                class="c-kw">new</span> <span class="c-fn">Array</span>(<span
+                                class="c-var">amount</span> <span class="c-op">+</span> <span
+                                class="c-num">1</span>).<span class="c-fn">fill</span>(<span
+                                class="c-kw">Infinity</span>);
 
   <span class="c-comment">// مبلغ 0 محتاج 0 عملات — Base case</span>
   <span class="c-var">dp</span>[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">0</span>;
 
   <span class="c-comment">// لكل مبلغ من 1 للـ amount</span>
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-num">1</span>; <span class="c-var">i</span> <span class="c-op">&lt;=</span> <span class="c-var">amount</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span
+                                class="c-num">1</span>; <span class="c-var">i</span> <span
+                                class="c-op">&lt;=</span> <span class="c-var">amount</span>; <span
+                                class="c-var">i</span><span class="c-op">++</span>) {
     <span class="c-comment">// جرب كل عملة</span>
-    <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">coin</span> <span class="c-kw">of</span> <span class="c-var">coins</span>) {
+    <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">coin</span> <span
+                                class="c-kw">of</span> <span class="c-var">coins</span>) {
 
       <span class="c-comment">// لو العملة أصغر من أو تساوي المبلغ</span>
       <span class="c-kw">if</span> (<span class="c-var">coin</span> <span class="c-op">&lt;=</span> <span class="c-var">i</span>) {
         <span class="c-comment">// dp[i-coin] = أقل عملات للباقي</span>
         <span class="c-comment">// +1 للعملة الحالية</span>
-        <span class="c-var">dp</span>[<span class="c-var">i</span>] <span class="c-op">=</span> <span class="c-fn">Math.min</span>(<span class="c-var">dp</span>[<span class="c-var">i</span>], <span class="c-var">dp</span>[<span class="c-var">i</span><span class="c-op">-</span><span class="c-var">coin</span>] <span class="c-op">+</span> <span class="c-num">1</span>);
+        <span class="c-var">dp</span>[<span class="c-var">i</span>] <span class="c-op">=</span> <span class="c-fn">Math.min</span>(<span
+                                class="c-var">dp</span>[<span class="c-var">i</span>], <span
+                                class="c-var">dp</span>[<span class="c-var">i</span><span class="c-op">-</span><span
+                                class="c-var">coin</span>] <span class="c-op">+</span> <span class="c-num">1</span>);
       }
     }
   }
 
   <span class="c-comment">// لو فضل Infinity → مستحيل نصرف المبلغ ده</span>
-  <span class="c-kw">return</span> <span class="c-var">dp</span>[<span class="c-var">amount</span>] <span class="c-op">===</span> <span class="c-kw">Infinity</span> <span class="c-op">?</span> <span class="c-op">-</span><span class="c-num">1</span> <span class="c-op">:</span> <span class="c-var">dp</span>[<span class="c-var">amount</span>];
+  <span class="c-kw">return</span> <span class="c-var">dp</span>[<span class="c-var">amount</span>] <span class="c-op">===</span> <span
+                                class="c-kw">Infinity</span> <span class="c-op">?</span> <span
+                                class="c-op">-</span><span class="c-num">1</span> <span class="c-op">:</span> <span
+                                class="c-var">dp</span>[<span class="c-var">amount</span>];
 }
 
-<span class="c-fn">console.log</span>(<span class="c-fn">climbStairs</span>(<span class="c-num">5</span>));                    <span class="c-comment">// 8</span>
-<span class="c-fn">console.log</span>(<span class="c-fn">coinChange</span>([<span class="c-num">1</span>,<span class="c-num">5</span>,<span class="c-num">6</span>,<span class="c-num">9</span>], <span class="c-num">11</span>));     <span class="c-comment">// 2</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n) / O(n×coins)</span>
-        <span class="comp-badge comp-space">💾 Space: O(n)</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">climbStairs</span>(<span class="c-num">5</span>));                    <span
+                                class="c-comment">// 8</span>
+<span class="c-fn">console.log</span>(<span class="c-fn">coinChange</span>([<span class="c-num">1</span>,<span
+                                class="c-num">5</span>,<span class="c-num">6</span>,<span class="c-num">9</span>], <span
+                                class="c-num">11</span>));     <span class="c-comment">// 2</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n) / O(n×coins)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(n)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 4. BFS -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="bfs">
-  <div class="section-header">
-    <div class="section-icon">🌊</div>
-    <div>
-      <h2>BFS — Breadth First Search <span class="pattern-tag">البحث بالعرض</span></h2>
-      <p>بتكشف المستوى الأول، بعدين الثاني، بعدين الثالث...</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل بتدور على صاحبك في مدينة. بتبعت رسائل لكل الناس اللي تعرفهم. كل واحد منهم بيبعت لكل اللي يعرفهم. بتكشف دايرة دايرة للخارج. BFS بتستخدم Queue (طابور) — الأقرب أول. مهم جداً لأقصر مسار في graph بدون أوزان.</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Level Order Tree Traversal</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>bfs.js</span></div>
-<pre><span class="c-comment">// 🎯 BFS على شجرة — قراءة مستوى مستوى</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 4. BFS -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="bfs">
+        <div class="section-header">
+            <div class="section-icon">🌊</div>
+            <div>
+                <h2>BFS — Breadth First Search <span class="pattern-tag">البحث بالعرض</span></h2>
+                <p>بتكشف المستوى الأول، بعدين الثاني، بعدين الثالث...</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل بتدور على صاحبك في مدينة. بتبعت رسائل لكل الناس اللي تعرفهم. كل واحد منهم بيبعت لكل اللي يعرفهم.
+                    بتكشف دايرة دايرة للخارج. BFS بتستخدم Queue (طابور) — الأقرب أول. مهم جداً لأقصر مسار في graph بدون
+                    أوزان.</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Level Order Tree Traversal</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>bfs.js</span></div>
+                    <pre><span class="c-comment">// 🎯 BFS على شجرة — قراءة مستوى مستوى</span>
 <span class="c-kw">function</span> <span class="c-fn">levelOrder</span>(<span class="c-var">root</span>) {
   <span class="c-comment">// لو الشجرة فاضية — ارجع array فاضي</span>
-  <span class="c-kw">if</span> (<span class="c-op">!</span><span class="c-var">root</span>) <span class="c-kw">return</span> [];
+  <span class="c-kw">if</span> (<span class="c-op">!</span><span class="c-var">root</span>) <span
+                                class="c-kw">return</span> [];
 
-  <span class="c-kw">const</span> <span class="c-var">result</span> <span class="c-op">=</span> [];          <span class="c-comment">// النتيجة النهائية</span>
-  <span class="c-kw">const</span> <span class="c-var">queue</span> <span class="c-op">=</span> [<span class="c-var">root</span>];      <span class="c-comment">// الطابور — ابدأ بالجذر</span>
+  <span class="c-kw">const</span> <span class="c-var">result</span> <span class="c-op">=</span> [];          <span
+                                class="c-comment">// النتيجة النهائية</span>
+  <span class="c-kw">const</span> <span class="c-var">queue</span> <span class="c-op">=</span> [<span
+                                class="c-var">root</span>];      <span class="c-comment">// الطابور — ابدأ بالجذر</span>
 
   <span class="c-comment">// لحد ما الطابور يفضى</span>
-  <span class="c-kw">while</span> (<span class="c-var">queue</span>.<span class="c-var">length</span> <span class="c-op">&gt;</span> <span class="c-num">0</span>) {
+  <span class="c-kw">while</span> (<span class="c-var">queue</span>.<span class="c-var">length</span> <span
+                                class="c-op">&gt;</span> <span class="c-num">0</span>) {
 
     <span class="c-comment">// عدد العقد في المستوى الحالي</span>
-    <span class="c-kw">const</span> <span class="c-var">levelSize</span> <span class="c-op">=</span> <span class="c-var">queue</span>.<span class="c-var">length</span>;
-    <span class="c-kw">const</span> <span class="c-var">level</span> <span class="c-op">=</span> [];           <span class="c-comment">// قيم المستوى ده</span>
+    <span class="c-kw">const</span> <span class="c-var">levelSize</span> <span class="c-op">=</span> <span
+                                class="c-var">queue</span>.<span class="c-var">length</span>;
+    <span class="c-kw">const</span> <span class="c-var">level</span> <span class="c-op">=</span> [];           <span
+                                class="c-comment">// قيم المستوى ده</span>
 
     <span class="c-comment">// اشتغل على كل عقدة في المستوى الحالي</span>
-    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">i</span> <span class="c-op">&lt;</span> <span class="c-var">levelSize</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
+    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span
+                                class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">i</span> <span
+                                class="c-op">&lt;</span> <span class="c-var">levelSize</span>; <span
+                                class="c-var">i</span><span class="c-op">++</span>) {
 
       <span class="c-comment">// اطلع أول عقدة من الطابور</span>
-      <span class="c-kw">const</span> <span class="c-var">node</span> <span class="c-op">=</span> <span class="c-var">queue</span>.<span class="c-fn">shift</span>();
+      <span class="c-kw">const</span> <span class="c-var">node</span> <span class="c-op">=</span> <span class="c-var">queue</span>.<span
+                                class="c-fn">shift</span>();
 
       <span class="c-comment">// حط قيمتها في مصفوفة المستوى</span>
-      <span class="c-var">level</span>.<span class="c-fn">push</span>(<span class="c-var">node</span>.<span class="c-var">val</span>);
+      <span class="c-var">level</span>.<span class="c-fn">push</span>(<span class="c-var">node</span>.<span
+                                class="c-var">val</span>);
 
       <span class="c-comment">// لو فيه ابن أيسر، حطه في الطابور للمستوى الجاي</span>
-      <span class="c-kw">if</span> (<span class="c-var">node</span>.<span class="c-var">left</span>)  <span class="c-var">queue</span>.<span class="c-fn">push</span>(<span class="c-var">node</span>.<span class="c-var">left</span>);
+      <span class="c-kw">if</span> (<span class="c-var">node</span>.<span class="c-var">left</span>)  <span
+                                class="c-var">queue</span>.<span class="c-fn">push</span>(<span
+                                class="c-var">node</span>.<span class="c-var">left</span>);
 
       <span class="c-comment">// لو فيه ابن أيمن، حطه في الطابور للمستوى الجاي</span>
-      <span class="c-kw">if</span> (<span class="c-var">node</span>.<span class="c-var">right</span>) <span class="c-var">queue</span>.<span class="c-fn">push</span>(<span class="c-var">node</span>.<span class="c-var">right</span>);
+      <span class="c-kw">if</span> (<span class="c-var">node</span>.<span class="c-var">right</span>) <span
+                                class="c-var">queue</span>.<span class="c-fn">push</span>(<span
+                                class="c-var">node</span>.<span class="c-var">right</span>);
     }
 
     <span class="c-comment">// ضيف المستوى كاملاً للنتيجة</span>
@@ -532,240 +999,353 @@ Index:   0  1  2  3  4  5  6  7
   <span class="c-kw">return</span> <span class="c-var">result</span>;
 }
 <span class="c-comment">// ✅ الشجرة [3,9,20,null,null,15,7] → [[3],[9,20],[15,7]]</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n)</span>
-        <span class="comp-badge comp-space">💾 Space: O(w) — w = عرض الشجرة</span>
-      </div>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(w) — w = عرض الشجرة</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 5. DFS -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="dfs">
-  <div class="section-header">
-    <div class="section-icon">🌲</div>
-    <div>
-      <h2>DFS — Depth First Search <span class="pattern-tag">البحث بالعمق</span></h2>
-      <p>روح لأعمق نقطة الأول، وارجع، وجرب الطريق التاني</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل بتتفرج على متاهة. بتدخل في أول طريق وبتمشي لأخره. لو وصلت لنهاية مسدودة، ترجع خطوة وتجرب الطريق التاني. بتستخدم Stack (أو Recursion). مهم لـ: الأشجار، الجرافات، Backtracking، إيجاد كل المسارات الممكنة.</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Number of Islands (DFS على Matrix)</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>dfs.js</span></div>
-<pre><span class="c-comment">// 🎯 عد الجزر — DFS على مصفوفة</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 5. DFS -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="dfs">
+        <div class="section-header">
+            <div class="section-icon">🌲</div>
+            <div>
+                <h2>DFS — Depth First Search <span class="pattern-tag">البحث بالعمق</span></h2>
+                <p>روح لأعمق نقطة الأول، وارجع، وجرب الطريق التاني</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل بتتفرج على متاهة. بتدخل في أول طريق وبتمشي لأخره. لو وصلت لنهاية مسدودة، ترجع خطوة وتجرب الطريق
+                    التاني. بتستخدم Stack (أو Recursion). مهم لـ: الأشجار، الجرافات، Backtracking، إيجاد كل المسارات
+                    الممكنة.</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Number of Islands (DFS على Matrix)</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>dfs.js</span></div>
+                    <pre><span class="c-comment">// 🎯 عد الجزر — DFS على مصفوفة</span>
 <span class="c-kw">function</span> <span class="c-fn">numIslands</span>(<span class="c-var">grid</span>) {
 
   <span class="c-comment">// لو ما فيش grid → صفر جزر</span>
-  <span class="c-kw">if</span> (<span class="c-op">!</span><span class="c-var">grid</span> <span class="c-op">||</span> <span class="c-var">grid</span>.<span class="c-var">length</span> <span class="c-op">===</span> <span class="c-num">0</span>) <span class="c-kw">return</span> <span class="c-num">0</span>;
+  <span class="c-kw">if</span> (<span class="c-op">!</span><span class="c-var">grid</span> <span class="c-op">||</span> <span
+                                class="c-var">grid</span>.<span class="c-var">length</span> <span
+                                class="c-op">===</span> <span class="c-num">0</span>) <span
+                                class="c-kw">return</span> <span class="c-num">0</span>;
 
-  <span class="c-kw">let</span> <span class="c-var">count</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-comment">// عداد الجزر</span>
+  <span class="c-kw">let</span> <span class="c-var">count</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-comment">// عداد الجزر</span>
 
   <span class="c-comment">// ابحث في كل خلية</span>
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">r</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">r</span> <span class="c-op">&lt;</span> <span class="c-var">grid</span>.<span class="c-var">length</span>; <span class="c-var">r</span><span class="c-op">++</span>) {
-    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">c</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">c</span> <span class="c-op">&lt;</span> <span class="c-var">grid</span>[<span class="c-num">0</span>].<span class="c-var">length</span>; <span class="c-var">c</span><span class="c-op">++</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">r</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-var">r</span> <span
+                                class="c-op">&lt;</span> <span class="c-var">grid</span>.<span
+                                class="c-var">length</span>; <span class="c-var">r</span><span class="c-op">++</span>) {
+    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">c</span> <span
+                                class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">c</span> <span
+                                class="c-op">&lt;</span> <span class="c-var">grid</span>[<span
+                                class="c-num">0</span>].<span class="c-var">length</span>; <span
+                                class="c-var">c</span><span class="c-op">++</span>) {
 
       <span class="c-comment">// لو لاقيت '1' (أرض) → جزيرة جديدة!</span>
-      <span class="c-kw">if</span> (<span class="c-var">grid</span>[<span class="c-var">r</span>][<span class="c-var">c</span>] <span class="c-op">===</span> <span class="c-str">'1'</span>) {
+      <span class="c-kw">if</span> (<span class="c-var">grid</span>[<span class="c-var">r</span>][<span
+                                class="c-var">c</span>] <span class="c-op">===</span> <span class="c-str">'1'</span>) {
         <span class="c-var">count</span><span class="c-op">++</span>;
-        <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span class="c-var">c</span>); <span class="c-comment">// احرق الجزيرة كلها عشان ما تعدهاش تاني</span>
+        <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span
+                                class="c-var">c</span>); <span class="c-comment">// احرق الجزيرة كلها عشان ما تعدهاش تاني</span>
       }
     }
   }
   <span class="c-kw">return</span> <span class="c-var">count</span>;
 }
 
-<span class="c-kw">function</span> <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span class="c-var">c</span>) {
+<span class="c-kw">function</span> <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span
+                                class="c-var">r</span>, <span class="c-var">c</span>) {
   <span class="c-comment">// توقف لو خرجنا من الحدود أو وصلنا لمياه أو زرنا من قبل</span>
-  <span class="c-kw">if</span> (<span class="c-var">r</span> <span class="c-op">&lt;</span> <span class="c-num">0</span> <span class="c-op">||</span> <span class="c-var">r</span> <span class="c-op">&gt;=</span> <span class="c-var">grid</span>.<span class="c-var">length</span> <span class="c-op">||</span>
-      <span class="c-var">c</span> <span class="c-op">&lt;</span> <span class="c-num">0</span> <span class="c-op">||</span> <span class="c-var">c</span> <span class="c-op">&gt;=</span> <span class="c-var">grid</span>[<span class="c-num">0</span>].<span class="c-var">length</span> <span class="c-op">||</span>
-      <span class="c-var">grid</span>[<span class="c-var">r</span>][<span class="c-var">c</span>] <span class="c-op">!==</span> <span class="c-str">'1'</span>) <span class="c-kw">return</span>;
+  <span class="c-kw">if</span> (<span class="c-var">r</span> <span class="c-op">&lt;</span> <span class="c-num">0</span> <span
+                                class="c-op">||</span> <span class="c-var">r</span> <span
+                                class="c-op">&gt;=</span> <span class="c-var">grid</span>.<span
+                                class="c-var">length</span> <span class="c-op">||</span>
+      <span class="c-var">c</span> <span class="c-op">&lt;</span> <span class="c-num">0</span> <span
+                                class="c-op">||</span> <span class="c-var">c</span> <span
+                                class="c-op">&gt;=</span> <span class="c-var">grid</span>[<span class="c-num">0</span>].<span
+                                class="c-var">length</span> <span class="c-op">||</span>
+      <span class="c-var">grid</span>[<span class="c-var">r</span>][<span class="c-var">c</span>] <span
+                                class="c-op">!==</span> <span class="c-str">'1'</span>) <span class="c-kw">return</span>;
 
   <span class="c-comment">// "احرق" الخلية (غيّرها لـ '0') = زيارة</span>
-  <span class="c-var">grid</span>[<span class="c-var">r</span>][<span class="c-var">c</span>] <span class="c-op">=</span> <span class="c-str">'0'</span>;
+  <span class="c-var">grid</span>[<span class="c-var">r</span>][<span class="c-var">c</span>] <span
+                                class="c-op">=</span> <span class="c-str">'0'</span>;
 
   <span class="c-comment">// زور الأربع اتجاهات</span>
-  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span><span class="c-op">+</span><span class="c-num">1</span>, <span class="c-var">c</span>); <span class="c-comment">// تحت</span>
-  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span><span class="c-op">-</span><span class="c-num">1</span>, <span class="c-var">c</span>); <span class="c-comment">// فوق</span>
-  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span class="c-var">c</span><span class="c-op">+</span><span class="c-num">1</span>); <span class="c-comment">// يمين</span>
-  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span class="c-var">c</span><span class="c-op">-</span><span class="c-num">1</span>); <span class="c-comment">// شمال</span>
+  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span><span class="c-op">+</span><span
+                                class="c-num">1</span>, <span class="c-var">c</span>); <span
+                                class="c-comment">// تحت</span>
+  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span><span class="c-op">-</span><span
+                                class="c-num">1</span>, <span class="c-var">c</span>); <span
+                                class="c-comment">// فوق</span>
+  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span
+                                class="c-var">c</span><span class="c-op">+</span><span class="c-num">1</span>); <span
+                                class="c-comment">// يمين</span>
+  <span class="c-fn">dfs</span>(<span class="c-var">grid</span>, <span class="c-var">r</span>, <span
+                                class="c-var">c</span><span class="c-op">-</span><span class="c-num">1</span>); <span
+                                class="c-comment">// شمال</span>
 }</pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n × m)</span>
-        <span class="comp-badge comp-space">💾 Space: O(n × m) stack</span>
-      </div>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n × m)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(n × m) stack</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 6. BINARY SEARCH -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="bsearch">
-  <div class="section-header">
-    <div class="section-icon">🔍</div>
-    <div>
-      <h2>Binary Search <span class="pattern-tag">البحث الثنائي</span></h2>
-      <p>اقسم المشكلة لنصين واحذف نص كل مرة</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>بتدور على اسم في قاموس ورقي. بتفتحه من النص. لو الاسم قبل الصفحة دي — روح النص الأول. لو بعدها — النص الثاني. كل مرة بتشيل نص الكتاب! ده بيحوّل O(n) لـ O(log n). شرط واحد مهم: البيانات لازم تكون مرتبة.</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Classic Binary Search Template</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>binarySearch.js</span></div>
-<pre><span class="c-comment">// 🎯 البحث الثنائي — Template ينفع لمعظم المسائل</span>
-<span class="c-kw">function</span> <span class="c-fn">binarySearch</span>(<span class="c-var">nums</span>, <span class="c-var">target</span>) {
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 6. BINARY SEARCH -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="bsearch">
+        <div class="section-header">
+            <div class="section-icon">🔍</div>
+            <div>
+                <h2>Binary Search <span class="pattern-tag">البحث الثنائي</span></h2>
+                <p>اقسم المشكلة لنصين واحذف نص كل مرة</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>بتدور على اسم في قاموس ورقي. بتفتحه من النص. لو الاسم قبل الصفحة دي — روح النص الأول. لو بعدها — النص
+                    الثاني. كل مرة بتشيل نص الكتاب! ده بيحوّل O(n) لـ O(log n). شرط واحد مهم: البيانات لازم تكون
+                    مرتبة.</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Classic Binary Search Template</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>binarySearch.js</span></div>
+                    <pre><span class="c-comment">// 🎯 البحث الثنائي — Template ينفع لمعظم المسائل</span>
+<span class="c-kw">function</span> <span class="c-fn">binarySearch</span>(<span class="c-var">nums</span>, <span
+                                class="c-var">target</span>) {
 
-  <span class="c-kw">let</span> <span class="c-var">left</span>  <span class="c-op">=</span> <span class="c-num">0</span>;                  <span class="c-comment">// بداية نطاق البحث</span>
-  <span class="c-kw">let</span> <span class="c-var">right</span> <span class="c-op">=</span> <span class="c-var">nums</span>.<span class="c-var">length</span> <span class="c-op">-</span> <span class="c-num">1</span>;  <span class="c-comment">// نهاية نطاق البحث</span>
+  <span class="c-kw">let</span> <span class="c-var">left</span>  <span class="c-op">=</span> <span
+                                class="c-num">0</span>;                  <span
+                                class="c-comment">// بداية نطاق البحث</span>
+  <span class="c-kw">let</span> <span class="c-var">right</span> <span class="c-op">=</span> <span
+                                class="c-var">nums</span>.<span class="c-var">length</span> <span class="c-op">-</span> <span
+                                class="c-num">1</span>;  <span class="c-comment">// نهاية نطاق البحث</span>
 
   <span class="c-kw">while</span> (<span class="c-var">left</span> <span class="c-op">&lt;=</span> <span class="c-var">right</span>) {
 
     <span class="c-comment">// النص — مش (left + right) / 2 عشان نتجنب overflow</span>
-    <span class="c-kw">const</span> <span class="c-var">mid</span> <span class="c-op">=</span> <span class="c-fn">Math.floor</span>((<span class="c-var">left</span> <span class="c-op">+</span> <span class="c-var">right</span>) <span class="c-op">/</span> <span class="c-num">2</span>);
+    <span class="c-kw">const</span> <span class="c-var">mid</span> <span class="c-op">=</span> <span class="c-fn">Math.floor</span>((<span
+                                class="c-var">left</span> <span class="c-op">+</span> <span class="c-var">right</span>) <span
+                                class="c-op">/</span> <span class="c-num">2</span>);
 
-    <span class="c-kw">if</span> (<span class="c-var">nums</span>[<span class="c-var">mid</span>] <span class="c-op">===</span> <span class="c-var">target</span>) {
+    <span class="c-kw">if</span> (<span class="c-var">nums</span>[<span class="c-var">mid</span>] <span
+                                class="c-op">===</span> <span class="c-var">target</span>) {
       <span class="c-kw">return</span> <span class="c-var">mid</span>;     <span class="c-comment">// ✅ لاقيناه!</span>
-    } <span class="c-kw">else if</span> (<span class="c-var">nums</span>[<span class="c-var">mid</span>] <span class="c-op">&lt;</span> <span class="c-var">target</span>) {
-      <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-var">mid</span> <span class="c-op">+</span> <span class="c-num">1</span>;  <span class="c-comment">// الـ target في النص الأيمن</span>
+    } <span class="c-kw">else if</span> (<span class="c-var">nums</span>[<span class="c-var">mid</span>] <span
+                                class="c-op">&lt;</span> <span class="c-var">target</span>) {
+      <span class="c-var">left</span> <span class="c-op">=</span> <span class="c-var">mid</span> <span
+                                class="c-op">+</span> <span class="c-num">1</span>;  <span class="c-comment">// الـ target في النص الأيمن</span>
     } <span class="c-kw">else</span> {
-      <span class="c-var">right</span> <span class="c-op">=</span> <span class="c-var">mid</span> <span class="c-op">-</span> <span class="c-num">1</span>; <span class="c-comment">// الـ target في النص الأيسر</span>
+      <span class="c-var">right</span> <span class="c-op">=</span> <span class="c-var">mid</span> <span
+                                class="c-op">-</span> <span class="c-num">1</span>; <span class="c-comment">// الـ target في النص الأيسر</span>
     }
   }
 
   <span class="c-kw">return</span> <span class="c-op">-</span><span class="c-num">1</span>; <span class="c-comment">// ما لقيناهوش</span>
 }
 
-<span class="c-fn">console.log</span>(<span class="c-fn">binarySearch</span>([<span class="c-num">1</span>,<span class="c-num">3</span>,<span class="c-num">5</span>,<span class="c-num">7</span>,<span class="c-num">9</span>], <span class="c-num">7</span>)); <span class="c-comment">// 3 (index)</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(log n)</span>
-        <span class="comp-badge comp-space">💾 Space: O(1)</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">binarySearch</span>([<span class="c-num">1</span>,<span
+                                class="c-num">3</span>,<span class="c-num">5</span>,<span class="c-num">7</span>,<span
+                                class="c-num">9</span>], <span class="c-num">7</span>)); <span class="c-comment">// 3 (index)</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(log n)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(1)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 7. STACK / MONOTONIC STACK -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="stack">
-  <div class="section-header">
-    <div class="section-icon">📚</div>
-    <div>
-      <h2>Stack & Monotonic Stack <span class="pattern-tag">الكومة</span></h2>
-      <p>آخر حاجة دخلت أول حاجة بتطلع (LIFO)</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>كومة طباق. آخر طبق حطيته فوق = أول طبق بتاخده. Stack عادي للأقواس والتعبيرات الحسابية. Monotonic Stack خاص: الكومة دايماً مرتبة (صاعدة أو نازلة). مفيد لـ "إيجاد أول عنصر أكبر/أصغر على اليمين أو اليسار".</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Valid Parentheses + Monotonic Stack</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>stack.js</span></div>
-<pre><span class="c-comment">// ══════════════════════════</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 7. STACK / MONOTONIC STACK -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="stack">
+        <div class="section-header">
+            <div class="section-icon">📚</div>
+            <div>
+                <h2>Stack & Monotonic Stack <span class="pattern-tag">الكومة</span></h2>
+                <p>آخر حاجة دخلت أول حاجة بتطلع (LIFO)</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>كومة طباق. آخر طبق حطيته فوق = أول طبق بتاخده. Stack عادي للأقواس والتعبيرات الحسابية. Monotonic
+                    Stack خاص: الكومة دايماً مرتبة (صاعدة أو نازلة). مفيد لـ "إيجاد أول عنصر أكبر/أصغر على اليمين أو
+                    اليسار".</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Valid Parentheses + Monotonic Stack</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>stack.js</span></div>
+                    <pre><span class="c-comment">// ══════════════════════════</span>
 <span class="c-comment">// 🎯 Valid Parentheses</span>
 <span class="c-comment">// ══════════════════════════</span>
 <span class="c-kw">function</span> <span class="c-fn">isValid</span>(<span class="c-var">s</span>) {
-  <span class="c-kw">const</span> <span class="c-var">stack</span> <span class="c-op">=</span> [];  <span class="c-comment">// الكومة — بتحفظ الأقواس المفتوحة</span>
-  <span class="c-kw">const</span> <span class="c-var">map</span> <span class="c-op">=</span> { <span class="c-str">')'</span>: <span class="c-str">'('</span>, <span class="c-str">'}'</span>: <span class="c-str">'{'</span>, <span class="c-str">']'</span>: <span class="c-str">'['</span> };
+  <span class="c-kw">const</span> <span class="c-var">stack</span> <span class="c-op">=</span> [];  <span
+                                class="c-comment">// الكومة — بتحفظ الأقواس المفتوحة</span>
+  <span class="c-kw">const</span> <span class="c-var">map</span> <span class="c-op">=</span> { <span
+                                class="c-str">')'</span>: <span class="c-str">'('</span>, <span class="c-str">'}'</span>: <span
+                                class="c-str">'{'</span>, <span class="c-str">']'</span>: <span class="c-str">'['</span> };
 
-  <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">ch</span> <span class="c-kw">of</span> <span class="c-var">s</span>) {
-    <span class="c-kw">if</span> (<span class="c-str">'({['</span>.<span class="c-fn">includes</span>(<span class="c-var">ch</span>)) {
-      <span class="c-var">stack</span>.<span class="c-fn">push</span>(<span class="c-var">ch</span>);       <span class="c-comment">// قوس مفتوح → حطه في الكومة</span>
+  <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">ch</span> <span
+                                class="c-kw">of</span> <span class="c-var">s</span>) {
+    <span class="c-kw">if</span> (<span class="c-str">'({['</span>.<span class="c-fn">includes</span>(<span
+                                class="c-var">ch</span>)) {
+      <span class="c-var">stack</span>.<span class="c-fn">push</span>(<span class="c-var">ch</span>);       <span
+                                class="c-comment">// قوس مفتوح → حطه في الكومة</span>
     } <span class="c-kw">else</span> {
       <span class="c-comment">// قوس مغلق → لازم يطابق آخر قوس في الكومة</span>
-      <span class="c-kw">if</span> (<span class="c-var">stack</span>.<span class="c-fn">pop</span>() <span class="c-op">!==</span> <span class="c-var">map</span>[<span class="c-var">ch</span>]) <span class="c-kw">return</span> <span class="c-kw">false</span>;
+      <span class="c-kw">if</span> (<span class="c-var">stack</span>.<span class="c-fn">pop</span>() <span class="c-op">!==</span> <span
+                                class="c-var">map</span>[<span class="c-var">ch</span>]) <span
+                                class="c-kw">return</span> <span class="c-kw">false</span>;
     }
   }
 
   <span class="c-comment">// الكومة لازم تبقى فاضية في الآخر</span>
-  <span class="c-kw">return</span> <span class="c-var">stack</span>.<span class="c-var">length</span> <span class="c-op">===</span> <span class="c-num">0</span>;
+  <span class="c-kw">return</span> <span class="c-var">stack</span>.<span class="c-var">length</span> <span
+                                class="c-op">===</span> <span class="c-num">0</span>;
 }
 
 <span class="c-comment">// ══════════════════════════════════</span>
 <span class="c-comment">// 🎯 Monotonic Stack — Largest Rectangle</span>
 <span class="c-comment">// ══════════════════════════════════</span>
 <span class="c-kw">function</span> <span class="c-fn">largestRectangle</span>(<span class="c-var">heights</span>) {
-  <span class="c-kw">const</span> <span class="c-var">stack</span> <span class="c-op">=</span> [];  <span class="c-comment">// بتحفظ indices</span>
-  <span class="c-kw">let</span> <span class="c-var">maxArea</span> <span class="c-op">=</span> <span class="c-num">0</span>;
+  <span class="c-kw">const</span> <span class="c-var">stack</span> <span class="c-op">=</span> [];  <span
+                                class="c-comment">// بتحفظ indices</span>
+  <span class="c-kw">let</span> <span class="c-var">maxArea</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>;
 
   <span class="c-comment">// أضيف 0 في الآخر عشان نفرّغ الـ stack</span>
   <span class="c-var">heights</span>.<span class="c-fn">push</span>(<span class="c-num">0</span>);
 
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">i</span> <span class="c-op">&lt;</span> <span class="c-var">heights</span>.<span class="c-var">length</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-var">i</span> <span
+                                class="c-op">&lt;</span> <span class="c-var">heights</span>.<span
+                                class="c-var">length</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
 
     <span class="c-comment">// لما ارتفاع جديد أقل من رأس الـ stack</span>
     <span class="c-comment">// ← ده معناه الشريط اللي فوق لقى حده</span>
-    <span class="c-kw">while</span> (<span class="c-var">stack</span>.<span class="c-var">length</span> <span class="c-op">&amp;&amp;</span> <span class="c-var">heights</span>[<span class="c-var">i</span>] <span class="c-op">&lt;</span> <span class="c-var">heights</span>[<span class="c-var">stack</span>[<span class="c-var">stack</span>.<span class="c-var">length</span><span class="c-op">-</span><span class="c-num">1</span>]]) {
+    <span class="c-kw">while</span> (<span class="c-var">stack</span>.<span class="c-var">length</span> <span
+                                class="c-op">&amp;&amp;</span> <span class="c-var">heights</span>[<span
+                                class="c-var">i</span>] <span class="c-op">&lt;</span> <span
+                                class="c-var">heights</span>[<span class="c-var">stack</span>[<span
+                                class="c-var">stack</span>.<span class="c-var">length</span><span
+                                class="c-op">-</span><span class="c-num">1</span>]]) {
 
-      <span class="c-kw">const</span> <span class="c-var">h</span> <span class="c-op">=</span> <span class="c-var">heights</span>[<span class="c-var">stack</span>.<span class="c-fn">pop</span>()];  <span class="c-comment">// ارتفاع الشريط</span>
-      <span class="c-kw">const</span> <span class="c-var">w</span> <span class="c-op">=</span> <span class="c-var">stack</span>.<span class="c-var">length</span> <span class="c-op">?</span> <span class="c-var">i</span> <span class="c-op">-</span> <span class="c-var">stack</span>[<span class="c-var">stack</span>.<span class="c-var">length</span><span class="c-op">-</span><span class="c-num">1</span>] <span class="c-op">-</span> <span class="c-num">1</span> <span class="c-op">:</span> <span class="c-var">i</span>; <span class="c-comment">// العرض</span>
+      <span class="c-kw">const</span> <span class="c-var">h</span> <span class="c-op">=</span> <span class="c-var">heights</span>[<span
+                                class="c-var">stack</span>.<span class="c-fn">pop</span>()];  <span class="c-comment">// ارتفاع الشريط</span>
+      <span class="c-kw">const</span> <span class="c-var">w</span> <span class="c-op">=</span> <span
+                                class="c-var">stack</span>.<span class="c-var">length</span> <span class="c-op">?</span> <span
+                                class="c-var">i</span> <span class="c-op">-</span> <span
+                                class="c-var">stack</span>[<span class="c-var">stack</span>.<span
+                                class="c-var">length</span><span class="c-op">-</span><span
+                                class="c-num">1</span>] <span class="c-op">-</span> <span class="c-num">1</span> <span
+                                class="c-op">:</span> <span class="c-var">i</span>; <span
+                                class="c-comment">// العرض</span>
 
-      <span class="c-var">maxArea</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span class="c-var">maxArea</span>, <span class="c-var">h</span> <span class="c-op">*</span> <span class="c-var">w</span>);
+      <span class="c-var">maxArea</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span
+                                class="c-var">maxArea</span>, <span class="c-var">h</span> <span
+                                class="c-op">*</span> <span class="c-var">w</span>);
     }
-    <span class="c-var">stack</span>.<span class="c-fn">push</span>(<span class="c-var">i</span>); <span class="c-comment">// حط الـ index الحالي</span>
+    <span class="c-var">stack</span>.<span class="c-fn">push</span>(<span class="c-var">i</span>); <span
+                                class="c-comment">// حط الـ index الحالي</span>
   }
   <span class="c-kw">return</span> <span class="c-var">maxArea</span>;
 }</pre>
-      </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 8. BACKTRACKING -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="backtrack">
-  <div class="section-header">
-    <div class="section-icon">🔄</div>
-    <div>
-      <h2>Backtracking <span class="pattern-tag">الرجوع للخلف</span></h2>
-      <p>جرب كل الاحتمالات وارجع لو ما نفعتش</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل بتحل كلمة متقاطعة. بتكتب حرف، لو ما نفعش امسحه وجرب التاني. Backtracking = "جرب، لو غلط ارجع خطوة وجرب غيره." بتبني الحل تدريجياً وبتشيل الاختيار الغلط. Pattern: اختار → ابنى → Recurse → امسح (Undo).</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Generate All Subsets</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>backtracking.js</span></div>
-<pre><span class="c-comment">// 🎯 Backtracking Template — جنّر كل الـ Subsets</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 8. BACKTRACKING -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="backtrack">
+        <div class="section-header">
+            <div class="section-icon">🔄</div>
+            <div>
+                <h2>Backtracking <span class="pattern-tag">الرجوع للخلف</span></h2>
+                <p>جرب كل الاحتمالات وارجع لو ما نفعتش</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل بتحل كلمة متقاطعة. بتكتب حرف، لو ما نفعش امسحه وجرب التاني. Backtracking = "جرب، لو غلط ارجع
+                    خطوة وجرب غيره." بتبني الحل تدريجياً وبتشيل الاختيار الغلط. Pattern: اختار → ابنى → Recurse → امسح
+                    (Undo).</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Generate All Subsets</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>backtracking.js</span></div>
+                    <pre><span class="c-comment">// 🎯 Backtracking Template — جنّر كل الـ Subsets</span>
 <span class="c-kw">function</span> <span class="c-fn">subsets</span>(<span class="c-var">nums</span>) {
-  <span class="c-kw">const</span> <span class="c-var">result</span> <span class="c-op">=</span> [];  <span class="c-comment">// كل النتائج</span>
+  <span class="c-kw">const</span> <span class="c-var">result</span> <span class="c-op">=</span> [];  <span
+                                class="c-comment">// كل النتائج</span>
 
-  <span class="c-kw">function</span> <span class="c-fn">backtrack</span>(<span class="c-var">start</span>, <span class="c-var">current</span>) {
+  <span class="c-kw">function</span> <span class="c-fn">backtrack</span>(<span class="c-var">start</span>, <span
+                                class="c-var">current</span>) {
     <span class="c-comment">// ✅ حط الحل الحالي في النتائج</span>
     <span class="c-var">result</span>.<span class="c-fn">push</span>([...<span class="c-var">current</span>]);
 
     <span class="c-comment">// جرب كل عنصر من الـ start للآخر</span>
-    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-var">start</span>; <span class="c-var">i</span> <span class="c-op">&lt;</span> <span class="c-var">nums</span>.<span class="c-var">length</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
+    <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span
+                                class="c-op">=</span> <span class="c-var">start</span>; <span
+                                class="c-var">i</span> <span class="c-op">&lt;</span> <span
+                                class="c-var">nums</span>.<span class="c-var">length</span>; <span
+                                class="c-var">i</span><span class="c-op">++</span>) {
 
       <span class="c-comment">// ① اختار: أضيف العنصر</span>
-      <span class="c-var">current</span>.<span class="c-fn">push</span>(<span class="c-var">nums</span>[<span class="c-var">i</span>]);
+      <span class="c-var">current</span>.<span class="c-fn">push</span>(<span class="c-var">nums</span>[<span
+                                class="c-var">i</span>]);
 
       <span class="c-comment">// ② ابنى: نزّل أكتر مع العنصر الجاي</span>
-      <span class="c-fn">backtrack</span>(<span class="c-var">i</span> <span class="c-op">+</span> <span class="c-num">1</span>, <span class="c-var">current</span>);
+      <span class="c-fn">backtrack</span>(<span class="c-var">i</span> <span class="c-op">+</span> <span
+                                class="c-num">1</span>, <span class="c-var">current</span>);
 
       <span class="c-comment">// ③ امسح (Undo): شيل العنصر اللي أضفناه</span>
       <span class="c-comment">// ← ده جوهر الـ Backtracking!</span>
@@ -778,50 +1358,63 @@ Index:   0  1  2  3  4  5  6  7
 }
 
 <span class="c-comment">// ✅ [1,2,3] → [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(2ⁿ)</span>
-        <span class="comp-badge comp-space">💾 Space: O(n)</span>
-      </div>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(2ⁿ)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(n)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 9. GREEDY -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="greedy">
-  <div class="section-header">
-    <div class="section-icon">💰</div>
-    <div>
-      <h2>Greedy <span class="pattern-tag">الجشع</span></h2>
-      <p>خد أفضل قرار دلوقتي بدون ما تفكر في المستقبل</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>تخيل عندك فكة (عملات) وعايز تدي زبون باقي بأقل عملات. بتاخد دايماً أكبر عملة ممكنة الأول. 87 جنيه: خد 50 (فضل 37) → خد 25 (فضل 12) → خد 10 (فضل 2) → خد 2. ده Greedy — "أحسن قرار محلي يوصل لأحسن قرار كلي". مش دايماً شغّال — لازم تثبت إن الـ Greedy choice صح!</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Best Time to Buy & Sell Stock</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>greedy.js</span></div>
-<pre><span class="c-comment">// 🎯 Greedy — أفضل وقت للشراء والبيع</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 9. GREEDY -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="greedy">
+        <div class="section-header">
+            <div class="section-icon">💰</div>
+            <div>
+                <h2>Greedy <span class="pattern-tag">الجشع</span></h2>
+                <p>خد أفضل قرار دلوقتي بدون ما تفكر في المستقبل</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>تخيل عندك فكة (عملات) وعايز تدي زبون باقي بأقل عملات. بتاخد دايماً أكبر عملة ممكنة الأول. 87 جنيه: خد
+                    50 (فضل 37) → خد 25 (فضل 12) → خد 10 (فضل 2) → خد 2. ده Greedy — "أحسن قرار محلي يوصل لأحسن قرار
+                    كلي". مش دايماً شغّال — لازم تثبت إن الـ Greedy choice صح!</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Best Time to Buy & Sell Stock</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>greedy.js</span></div>
+                    <pre><span class="c-comment">// 🎯 Greedy — أفضل وقت للشراء والبيع</span>
 <span class="c-kw">function</span> <span class="c-fn">maxProfit</span>(<span class="c-var">prices</span>) {
 
   <span class="c-comment">// بنفضل نتذكر أرخص سعر شفناه لحد دلوقتي</span>
   <span class="c-kw">let</span> <span class="c-var">minPrice</span> <span class="c-op">=</span> <span class="c-kw">Infinity</span>;
-  <span class="c-kw">let</span> <span class="c-var">maxProfit</span> <span class="c-op">=</span> <span class="c-num">0</span>;
+  <span class="c-kw">let</span> <span class="c-var">maxProfit</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>;
 
-  <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">price</span> <span class="c-kw">of</span> <span class="c-var">prices</span>) {
+  <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">price</span> <span
+                                class="c-kw">of</span> <span class="c-var">prices</span>) {
 
     <span class="c-comment">// لو الأسعار النهارده أرخص من أرخص سعر شفناه</span>
     <span class="c-kw">if</span> (<span class="c-var">price</span> <span class="c-op">&lt;</span> <span class="c-var">minPrice</span>) {
-      <span class="c-var">minPrice</span> <span class="c-op">=</span> <span class="c-var">price</span>; <span class="c-comment">// ← ده أحسن يوم للشراء</span>
+      <span class="c-var">minPrice</span> <span class="c-op">=</span> <span class="c-var">price</span>; <span
+                                class="c-comment">// ← ده أحسن يوم للشراء</span>
     } <span class="c-kw">else</span> {
       <span class="c-comment">// لو بعت النهارده — كام ربحنا؟</span>
-      <span class="c-var">maxProfit</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span class="c-var">maxProfit</span>, <span class="c-var">price</span> <span class="c-op">-</span> <span class="c-var">minPrice</span>);
+      <span class="c-var">maxProfit</span> <span class="c-op">=</span> <span class="c-fn">Math.max</span>(<span
+                                class="c-var">maxProfit</span>, <span class="c-var">price</span> <span
+                                class="c-op">-</span> <span class="c-var">minPrice</span>);
     }
   }
 
@@ -829,109 +1422,159 @@ Index:   0  1  2  3  4  5  6  7
 }
 
 <span class="c-comment">// ✅ [7,1,5,3,6,4] → 5 (اشتري بـ1، بيع بـ6)</span>
-<span class="c-fn">console.log</span>(<span class="c-fn">maxProfit</span>([<span class="c-num">7</span>,<span class="c-num">1</span>,<span class="c-num">5</span>,<span class="c-num">3</span>,<span class="c-num">6</span>,<span class="c-num">4</span>])); <span class="c-comment">// 5</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(n)</span>
-        <span class="comp-badge comp-space">💾 Space: O(1)</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">maxProfit</span>([<span class="c-num">7</span>,<span
+                                class="c-num">1</span>,<span class="c-num">5</span>,<span class="c-num">3</span>,<span
+                                class="c-num">6</span>,<span class="c-num">4</span>])); <span
+                                class="c-comment">// 5</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(n)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(1)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════ -->
-<!-- 10. TOPOLOGICAL SORT -->
-<!-- ═══════════════════════════════════════ -->
-<div class="pattern-section" id="topo">
-  <div class="section-header">
-    <div class="section-icon">🗺️</div>
-    <div>
-      <h2>Topological Sort <span class="pattern-tag">الترتيب التبولوجي</span></h2>
-      <p>رتّب المهام بحيث كل مهمة تيجي بعد اللي بتعتمد عليها</p>
-    </div>
-  </div>
-  <div class="content-grid">
-    <div class="idea-box">
-      <h4>💡 الفكرة بمثال من الحياة</h4>
-      <p>عندك وصفة أكل. لازم تقطع الخضار قبل ما تحطها في الطاجن، والطاجن لازم يتسخن قبل ما تأكل. Topological Sort بيرتب المهام بحيث كل مهمة تيجي بعد كل اللي بتعتمد عليه. لو فيه دورة (A يحتاج B وB يحتاج A) — مستحيل تكمل!</p>
-    </div>
-    <div class="info-block full-width">
-      <h4>💻 الكود - Course Schedule (Kahn's Algorithm)</h4>
-      <div class="code-wrap">
-        <div class="code-header"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>topologicalSort.js</span></div>
-<pre><span class="c-comment">// 🎯 Topological Sort — Kahn's BFS Algorithm</span>
-<span class="c-kw">function</span> <span class="c-fn">canFinish</span>(<span class="c-var">numCourses</span>, <span class="c-var">prerequisites</span>) {
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 10. TOPOLOGICAL SORT -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="pattern-section" id="topo">
+        <div class="section-header">
+            <div class="section-icon">🗺️</div>
+            <div>
+                <h2>Topological Sort <span class="pattern-tag">الترتيب التبولوجي</span></h2>
+                <p>رتّب المهام بحيث كل مهمة تيجي بعد اللي بتعتمد عليها</p>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="idea-box">
+                <h4>💡 الفكرة بمثال من الحياة</h4>
+                <p>عندك وصفة أكل. لازم تقطع الخضار قبل ما تحطها في الطاجن، والطاجن لازم يتسخن قبل ما تأكل. Topological
+                    Sort بيرتب المهام بحيث كل مهمة تيجي بعد كل اللي بتعتمد عليه. لو فيه دورة (A يحتاج B وB يحتاج A) —
+                    مستحيل تكمل!</p>
+            </div>
+            <div class="info-block full-width">
+                <h4>💻 الكود - Course Schedule (Kahn's Algorithm)</h4>
+                <div class="code-wrap">
+                    <div class="code-header">
+                        <div class="dots">
+                            <div class="dot" style="background:#ff5f57"></div>
+                            <div class="dot" style="background:#febc2e"></div>
+                            <div class="dot" style="background:#28c840"></div>
+                        </div>
+                        <span>topologicalSort.js</span></div>
+                    <pre><span class="c-comment">// 🎯 Topological Sort — Kahn's BFS Algorithm</span>
+<span class="c-kw">function</span> <span class="c-fn">canFinish</span>(<span class="c-var">numCourses</span>, <span
+                                class="c-var">prerequisites</span>) {
 
   <span class="c-comment">// inDegree[i] = كام كورس محتاج تخلص قبل كورس i</span>
-  <span class="c-kw">const</span> <span class="c-var">inDegree</span> <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">Array</span>(<span class="c-var">numCourses</span>).<span class="c-fn">fill</span>(<span class="c-num">0</span>);
+  <span class="c-kw">const</span> <span class="c-var">inDegree</span> <span class="c-op">=</span> <span
+                                class="c-kw">new</span> <span class="c-fn">Array</span>(<span
+                                class="c-var">numCourses</span>).<span class="c-fn">fill</span>(<span
+                                class="c-num">0</span>);
 
   <span class="c-comment">// graph[i] = الكورسات اللي بتعتمد على كورس i</span>
-  <span class="c-kw">const</span> <span class="c-var">graph</span> <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">Array</span>(<span class="c-var">numCourses</span>).<span class="c-fn">fill</span>(<span class="c-kw">null</span>).<span class="c-fn">map</span>(() <span class="c-op">=&gt;</span> []);
+  <span class="c-kw">const</span> <span class="c-var">graph</span> <span class="c-op">=</span> <span
+                                class="c-kw">new</span> <span class="c-fn">Array</span>(<span
+                                class="c-var">numCourses</span>).<span class="c-fn">fill</span>(<span
+                                class="c-kw">null</span>).<span class="c-fn">map</span>(() <span
+                                class="c-op">=&gt;</span> []);
 
   <span class="c-comment">// ابنى الجراف واحسب الـ inDegrees</span>
-  <span class="c-kw">for</span> (<span class="c-kw">const</span> [<span class="c-var">course</span>, <span class="c-var">prereq</span>] <span class="c-kw">of</span> <span class="c-var">prerequisites</span>) {
-    <span class="c-var">graph</span>[<span class="c-var">prereq</span>].<span class="c-fn">push</span>(<span class="c-var">course</span>);  <span class="c-comment">// prereq → course</span>
-    <span class="c-var">inDegree</span>[<span class="c-var">course</span>]<span class="c-op">++</span>;           <span class="c-comment">// course محتاج prereq</span>
+  <span class="c-kw">for</span> (<span class="c-kw">const</span> [<span class="c-var">course</span>, <span
+                                class="c-var">prereq</span>] <span class="c-kw">of</span> <span class="c-var">prerequisites</span>) {
+    <span class="c-var">graph</span>[<span class="c-var">prereq</span>].<span class="c-fn">push</span>(<span
+                                class="c-var">course</span>);  <span class="c-comment">// prereq → course</span>
+    <span class="c-var">inDegree</span>[<span class="c-var">course</span>]<span class="c-op">++</span>;           <span
+                                class="c-comment">// course محتاج prereq</span>
   }
 
   <span class="c-comment">// ابدأ بالكورسات اللي ما ليهاش prerequisites</span>
   <span class="c-kw">const</span> <span class="c-var">queue</span> <span class="c-op">=</span> [];
-  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-var">i</span> <span class="c-op">&lt;</span> <span class="c-var">numCourses</span>; <span class="c-var">i</span><span class="c-op">++</span>) {
-    <span class="c-kw">if</span> (<span class="c-var">inDegree</span>[<span class="c-var">i</span>] <span class="c-op">===</span> <span class="c-num">0</span>) <span class="c-var">queue</span>.<span class="c-fn">push</span>(<span class="c-var">i</span>);
+  <span class="c-kw">for</span> (<span class="c-kw">let</span> <span class="c-var">i</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-var">i</span> <span
+                                class="c-op">&lt;</span> <span class="c-var">numCourses</span>; <span
+                                class="c-var">i</span><span class="c-op">++</span>) {
+    <span class="c-kw">if</span> (<span class="c-var">inDegree</span>[<span class="c-var">i</span>] <span class="c-op">===</span> <span
+                                class="c-num">0</span>) <span class="c-var">queue</span>.<span class="c-fn">push</span>(<span
+                                class="c-var">i</span>);
   }
 
-  <span class="c-kw">let</span> <span class="c-var">completed</span> <span class="c-op">=</span> <span class="c-num">0</span>; <span class="c-comment">// عداد الكورسات اللي خلصناها</span>
+  <span class="c-kw">let</span> <span class="c-var">completed</span> <span class="c-op">=</span> <span
+                                class="c-num">0</span>; <span class="c-comment">// عداد الكورسات اللي خلصناها</span>
 
   <span class="c-kw">while</span> (<span class="c-var">queue</span>.<span class="c-var">length</span>) {
-    <span class="c-kw">const</span> <span class="c-var">course</span> <span class="c-op">=</span> <span class="c-var">queue</span>.<span class="c-fn">shift</span>(); <span class="c-comment">// خد كورس من الطابور</span>
+    <span class="c-kw">const</span> <span class="c-var">course</span> <span class="c-op">=</span> <span class="c-var">queue</span>.<span
+                                class="c-fn">shift</span>(); <span class="c-comment">// خد كورس من الطابور</span>
     <span class="c-var">completed</span><span class="c-op">++</span>;                   <span class="c-comment">// خلصناه!</span>
 
     <span class="c-comment">// لكل كورس بيعتمد على الكورس ده</span>
-    <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">next</span> <span class="c-kw">of</span> <span class="c-var">graph</span>[<span class="c-var">course</span>]) {
-      <span class="c-var">inDegree</span>[<span class="c-var">next</span>]<span class="c-op">--</span>;                     <span class="c-comment">// شيل prerequisite</span>
-      <span class="c-kw">if</span> (<span class="c-var">inDegree</span>[<span class="c-var">next</span>] <span class="c-op">===</span> <span class="c-num">0</span>) <span class="c-var">queue</span>.<span class="c-fn">push</span>(<span class="c-var">next</span>); <span class="c-comment">// أصبح جاهز!</span>
+    <span class="c-kw">for</span> (<span class="c-kw">const</span> <span class="c-var">next</span> <span
+                                class="c-kw">of</span> <span class="c-var">graph</span>[<span
+                                class="c-var">course</span>]) {
+      <span class="c-var">inDegree</span>[<span class="c-var">next</span>]<span class="c-op">--</span>;                     <span
+                                class="c-comment">// شيل prerequisite</span>
+      <span class="c-kw">if</span> (<span class="c-var">inDegree</span>[<span class="c-var">next</span>] <span
+                                class="c-op">===</span> <span class="c-num">0</span>) <span
+                                class="c-var">queue</span>.<span class="c-fn">push</span>(<span
+                                class="c-var">next</span>); <span class="c-comment">// أصبح جاهز!</span>
     }
   }
 
   <span class="c-comment">// لو خلصنا كل الكورسات → مفيش دورة → ممكن</span>
-  <span class="c-kw">return</span> <span class="c-var">completed</span> <span class="c-op">===</span> <span class="c-var">numCourses</span>;
+  <span class="c-kw">return</span> <span class="c-var">completed</span> <span class="c-op">===</span> <span
+                                class="c-var">numCourses</span>;
 }
 
-<span class="c-fn">console.log</span>(<span class="c-fn">canFinish</span>(<span class="c-num">2</span>, [[<span class="c-num">1</span>,<span class="c-num">0</span>]]));         <span class="c-comment">// true</span>
-<span class="c-fn">console.log</span>(<span class="c-fn">canFinish</span>(<span class="c-num">2</span>, [[<span class="c-num">1</span>,<span class="c-num">0</span>],[<span class="c-num">0</span>,<span class="c-num">1</span>]])); <span class="c-comment">// false (حلقة!)</span></pre>
-      </div>
-      <div class="complexity-row">
-        <span class="comp-badge comp-time">⏱ Time: O(V + E)</span>
-        <span class="comp-badge comp-space">💾 Space: O(V + E)</span>
-      </div>
+<span class="c-fn">console.log</span>(<span class="c-fn">canFinish</span>(<span class="c-num">2</span>, [[<span
+                                class="c-num">1</span>,<span class="c-num">0</span>]]));         <span
+                                class="c-comment">// true</span>
+<span class="c-fn">console.log</span>(<span class="c-fn">canFinish</span>(<span class="c-num">2</span>, [[<span
+                                class="c-num">1</span>,<span class="c-num">0</span>],[<span class="c-num">0</span>,<span
+                                class="c-num">1</span>]])); <span class="c-comment">// false (حلقة!)</span></pre>
+                </div>
+                <div class="complexity-row">
+                    <span class="comp-badge comp-time">⏱ Time: O(V + E)</span>
+                    <span class="comp-badge comp-space">💾 Space: O(V + E)</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- CHEATSHEET -->
-<div class="cheatsheet">
-  <h3>⚡ Cheat Sheet — إمتى تستخدم إيه؟</h3>
-  <div class="cs-grid">
-    <div class="cs-card"><h5>🪟 Sliding Window</h5><p>أطول/أقصر subarray/substring بشرط معين — بيانات متتالية</p></div>
-    <div class="cs-card"><h5>👆 Two Pointers</h5><p>زوجين في array مرتبة — Palindrome — Cycle detection</p></div>
-    <div class="cs-card"><h5>🔍 Binary Search</h5><p>بيانات مرتبة — "ابحث عن" — O(log n) بدل O(n)</p></div>
-    <div class="cs-card"><h5>📚 Stack</h5><p>أقواس — تعبيرات حسابية — "أول حاجة أكبر على اليمين"</p></div>
-    <div class="cs-card"><h5>🌊 BFS</h5><p>أقصر مسار — Level by level — Shortest path in graph</p></div>
-    <div class="cs-card"><h5>🌲 DFS</h5><p>كل المسارات — اكتشاف الجراف — Backtracking</p></div>
-    <div class="cs-card"><h5>🧠 DP</h5><p>"كام طريقة؟" — "أمثل؟" — "أكبر/أصغر؟" — تتكرر subproblems</p></div>
-    <div class="cs-card"><h5>💰 Greedy</h5><p>أفضل قرار لحظي — Scheduling — Intervals</p></div>
-    <div class="cs-card"><h5>🔄 Backtracking</h5><p>كل الاحتمالات — Permutations — Combinations</p></div>
-    <div class="cs-card"><h5>🗺️ Topo Sort</h5><p>ترتيب مهام متعلقة — Dependency — Course schedule</p></div>
-  </div>
-</div>
+    <!-- CHEATSHEET -->
+    <div class="cheatsheet">
+        <h3>⚡ Cheat Sheet — إمتى تستخدم إيه؟</h3>
+        <div class="cs-grid">
+            <div class="cs-card"><h5>🪟 Sliding Window</h5>
+                <p>أطول/أقصر subarray/substring بشرط معين — بيانات متتالية</p></div>
+            <div class="cs-card"><h5>👆 Two Pointers</h5>
+                <p>زوجين في array مرتبة — Palindrome — Cycle detection</p></div>
+            <div class="cs-card"><h5>🔍 Binary Search</h5>
+                <p>بيانات مرتبة — "ابحث عن" — O(log n) بدل O(n)</p></div>
+            <div class="cs-card"><h5>📚 Stack</h5>
+                <p>أقواس — تعبيرات حسابية — "أول حاجة أكبر على اليمين"</p></div>
+            <div class="cs-card"><h5>🌊 BFS</h5>
+                <p>أقصر مسار — Level by level — Shortest path in graph</p></div>
+            <div class="cs-card"><h5>🌲 DFS</h5>
+                <p>كل المسارات — اكتشاف الجراف — Backtracking</p></div>
+            <div class="cs-card"><h5>🧠 DP</h5>
+                <p>"كام طريقة؟" — "أمثل؟" — "أكبر/أصغر؟" — تتكرر subproblems</p></div>
+            <div class="cs-card"><h5>💰 Greedy</h5>
+                <p>أفضل قرار لحظي — Scheduling — Intervals</p></div>
+            <div class="cs-card"><h5>🔄 Backtracking</h5>
+                <p>كل الاحتمالات — Permutations — Combinations</p></div>
+            <div class="cs-card"><h5>🗺️ Topo Sort</h5>
+                <p>ترتيب مهام متعلقة — Dependency — Course schedule</p></div>
+        </div>
+    </div>
 
 </div>
 <script>
-function scrollTo(id) {
-  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
-  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
-  event.target.classList.add('active');
-}
+    function scrollTo(id) {
+        document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'start'});
+        document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+    }
 </script>
 </body>
 </html>

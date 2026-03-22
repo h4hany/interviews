@@ -1,220 +1,598 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LeetCode 75 — Solutions بالعربي 💻</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#06090f;--surface:#0c1220;--card:#111827;--border:#1e2d45;
-  --t1:#e2eeff;--t2:#7a9cc5;--muted:#3d5a7a;
-  --green:#00e5a0;--yellow:#ffd166;--orange:#ff9f43;--red:#ff6b6b;--blue:#60b4ff;--purple:#c084fc;--cyan:#22d3ee;
-}
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;direction:rtl}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode 75 — Solutions بالعربي 💻</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;500&display=swap"
+          rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
 
-body::before{
-  content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(96,180,255,.07), transparent),
-    radial-gradient(ellipse 60% 40% at 90% 90%, rgba(0,229,160,.05), transparent);
-  pointer-events:none;z-index:0;
-}
+        :root {
+            --bg: #06090f;
+            --surface: #0c1220;
+            --card: #111827;
+            --border: #1e2d45;
+            --t1: #e2eeff;
+            --t2: #7a9cc5;
+            --muted: #3d5a7a;
+            --green: #00e5a0;
+            --yellow: #ffd166;
+            --orange: #ff9f43;
+            --red: #ff6b6b;
+            --blue: #60b4ff;
+            --purple: #c084fc;
+            --cyan: #22d3ee;
+        }
 
-.wrap{max-width:1100px;margin:0 auto;padding:20px;position:relative;z-index:1}
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            direction: rtl
+        }
 
-/* HEADER */
-.header{text-align:center;padding:50px 20px 30px}
-.header h1{
-  font-size:clamp(2rem,6vw,3.5rem);font-weight:900;
-  background:linear-gradient(135deg,var(--blue),var(--cyan),var(--green));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:10px;
-}
-.header p{color:var(--t2);font-size:1rem;margin-bottom:30px}
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(96, 180, 255, .07), transparent),
+            radial-gradient(ellipse 60% 40% at 90% 90%, rgba(0, 229, 160, .05), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* SEARCH */
-.top-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.search{
-  flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);
-  border-radius:12px;padding:12px 18px;color:var(--t1);font-family:'Cairo',sans-serif;
-  font-size:.95rem;outline:none;direction:rtl;transition:border-color .2s;
-}
-.search:focus{border-color:var(--blue)}
-.search::placeholder{color:var(--muted)}
-.fbtn{
-  background:var(--surface);border:2px solid var(--border);border-radius:10px;
-  padding:10px 16px;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.85rem;
-  cursor:pointer;transition:all .2s;white-space:nowrap;
-}
-.fbtn:hover,.fbtn.on{border-color:var(--blue);color:var(--blue);background:rgba(96,180,255,.08)}
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1
+        }
 
-/* CATEGORY NAV */
-.cat-nav{
-  display:flex;flex-wrap:wrap;gap:6px;margin-bottom:30px;
-  padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;
-}
-.cbtn{
-  padding:6px 14px;border-radius:8px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;
-  cursor:pointer;transition:all .2s;
-}
-.cbtn:hover,.cbtn.on{background:var(--blue);color:#000;border-color:var(--blue);font-weight:700}
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 50px 20px 30px
+        }
 
-/* PROGRESS */
-.prog-bar{
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-}
-.bar-track{flex:1;min-width:150px;background:var(--border);border-radius:50px;height:10px;overflow:hidden}
-.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:50px;transition:width .5s}
-.prog-label{font-size:.85rem;color:var(--t2);white-space:nowrap}
-.prog-label strong{color:var(--yellow)}
+        .header h1 {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--blue), var(--cyan), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
 
-/* CATEGORY GROUP */
-.cat-group{margin-bottom:40px}
-.cat-title{
-  display:flex;align-items:center;gap:12px;margin-bottom:14px;
-  font-size:1.1rem;font-weight:700;padding:10px 0;
-  border-bottom:1px solid var(--border);
-}
-.cat-cnt{font-size:.75rem;background:var(--border);padding:2px 10px;border-radius:20px;color:var(--muted);font-weight:400}
+        .header p {
+            color: var(--t2);
+            font-size: 1rem;
+            margin-bottom: 30px
+        }
 
-/* SOLUTION CARD */
-.sol-card{
-  background:var(--card);border:2px solid var(--border);border-radius:14px;
-  overflow:hidden;margin-bottom:10px;transition:border-color .25s;cursor:pointer;
-}
-.sol-card:hover{border-color:#253550}
-.sol-card.open{border-color:var(--blue)}
+        /* SEARCH */
+        .top-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap
+        }
 
-.sol-head{display:flex;align-items:center;gap:12px;padding:14px 18px}
-.sol-num{
-  width:36px;height:36px;border-radius:9px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:.8rem;background:rgba(96,180,255,.12);color:var(--blue);
-}
-.sol-titles{flex:1}
-.sol-en{font-weight:700;font-size:.95rem}
-.sol-ar{font-size:.8rem;color:var(--t2);margin-top:2px}
-.diff{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700;flex-shrink:0}
-.easy{background:rgba(0,229,160,.12);color:var(--green)}
-.medium{background:rgba(255,209,102,.12);color:var(--yellow)}
-.hard{background:rgba(255,107,107,.12);color:var(--red)}
-.chev{color:var(--muted);transition:transform .3s;flex-shrink:0;font-size:1.1rem}
-.sol-card.open .chev{transform:rotate(90deg)}
+        .search {
+            flex: 1;
+            min-width: 200px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 18px;
+            color: var(--t1);
+            font-family: 'Cairo', sans-serif;
+            font-size: .95rem;
+            outline: none;
+            direction: rtl;
+            transition: border-color .2s;
+        }
 
-/* BODY */
-.sol-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.sol-card.open .sol-body{max-height:3000px}
+        .search:focus {
+            border-color: var(--blue)
+        }
 
-.sol-content{padding:0 18px 20px;border-top:1px solid var(--border)}
+        .search::placeholder {
+            color: var(--muted)
+        }
 
-.tabs{display:flex;gap:4px;padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap}
-.tab{
-  padding:6px 16px;border-radius:8px;border:1px solid transparent;
-  background:transparent;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.82rem;
-  cursor:pointer;transition:all .2s;
-}
-.tab:hover,.tab.on{background:rgba(96,180,255,.1);color:var(--blue);border-color:rgba(96,180,255,.3)}
+        .fbtn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: var(--muted);
+            font-family: 'Cairo', sans-serif;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s;
+            white-space: nowrap;
+        }
 
-.tab-panel{display:none}
-.tab-panel.on{display:block}
+        .fbtn:hover, .fbtn.on {
+            border-color: var(--blue);
+            color: var(--blue);
+            background: rgba(96, 180, 255, .08)
+        }
 
-/* IDEA PANEL */
-.idea-panel{
-  background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);
-  border-radius:12px;padding:18px;margin-bottom:12px;
-}
-.idea-panel p{font-size:.95rem;line-height:2;color:var(--t1)}
-.idea-panel .ex{
-  background:#080d18;border:1px solid var(--border);border-radius:8px;
-  padding:12px;margin-top:12px;font-family:'Fira Code',monospace;
-  font-size:.8rem;color:var(--cyan);direction:ltr;text-align:left;white-space:pre;overflow-x:auto;
-}
+        /* CATEGORY NAV */
+        .cat-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 30px;
+            padding: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
 
-/* CODE PANEL */
-.code-wrap{background:#050910;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.code-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);
-}
-.dots2{display:flex;gap:5px}
-.dot2{width:9px;height:9px;border-radius:50%}
-.lang-tag{font-size:.75rem;color:var(--muted);font-family:'Fira Code',monospace}
-.copy-btn{
-  background:rgba(96,180,255,.1);border:1px solid rgba(96,180,255,.2);
-  color:var(--blue);border-radius:6px;padding:3px 10px;font-family:'Cairo',sans-serif;
-  font-size:.72rem;cursor:pointer;transition:all .2s;
-}
-.copy-btn:hover{background:rgba(96,180,255,.2)}
-pre.code{
-  padding:18px;overflow-x:auto;font-family:'Fira Code',monospace;
-  font-size:.82rem;line-height:2;direction:ltr;text-align:left;margin:0;
-}
+        .cbtn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-family: 'Cairo', sans-serif;
+            font-size: .8rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
 
-/* syntax colors */
-.kw{color:#bb9af7}.fn{color:#7dcfff}.str{color:#9ece6a}.num{color:#ff9e64}
-.cm{color:#4a6580;font-style:italic}.vr{color:#e0af68}.op{color:#89ddff}
-.cm2{color:#3d5a7a;font-style:italic} /* subtle inline */
+        .cbtn:hover, .cbtn.on {
+            background: var(--blue);
+            color: #000;
+            border-color: var(--blue);
+            font-weight: 700
+        }
 
-/* COMPLEXITY */
-.cx-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 0}
-.cx{padding:5px 14px;border-radius:7px;font-size:.75rem;font-weight:700;font-family:'Fira Code',monospace}
-.cx-t{background:rgba(255,209,102,.1);color:var(--yellow);border:1px solid rgba(255,209,102,.25)}
-.cx-s{background:rgba(96,180,255,.1);color:var(--blue);border:1px solid rgba(96,180,255,.25)}
+        /* PROGRESS */
+        .prog-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
 
-/* SOLVED BTN */
-.mark-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);
-  color:var(--green);border-radius:8px;padding:7px 14px;
-  font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;margin-top:12px;
-}
-.mark-btn:hover{background:rgba(0,229,160,.16)}
-.mark-btn.done{background:rgba(0,229,160,.2);font-weight:700}
+        .bar-track {
+            flex: 1;
+            min-width: 150px;
+            background: var(--border);
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden
+        }
 
-.no-res{text-align:center;padding:50px;color:var(--muted);font-size:1.1rem}
-</style>
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            border-radius: 50px;
+            transition: width .5s
+        }
+
+        .prog-label {
+            font-size: .85rem;
+            color: var(--t2);
+            white-space: nowrap
+        }
+
+        .prog-label strong {
+            color: var(--yellow)
+        }
+
+        /* CATEGORY GROUP */
+        .cat-group {
+            margin-bottom: 40px
+        }
+
+        .cat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cat-cnt {
+            font-size: .75rem;
+            background: var(--border);
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: var(--muted);
+            font-weight: 400
+        }
+
+        /* SOLUTION CARD */
+        .sol-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            transition: border-color .25s;
+            cursor: pointer;
+        }
+
+        .sol-card:hover {
+            border-color: #253550
+        }
+
+        .sol-card.open {
+            border-color: var(--blue)
+        }
+
+        .sol-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px
+        }
+
+        .sol-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: .8rem;
+            background: rgba(96, 180, 255, .12);
+            color: var(--blue);
+        }
+
+        .sol-titles {
+            flex: 1
+        }
+
+        .sol-en {
+            font-weight: 700;
+            font-size: .95rem
+        }
+
+        .sol-ar {
+            font-size: .8rem;
+            color: var(--t2);
+            margin-top: 2px
+        }
+
+        .diff {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: .72rem;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .easy {
+            background: rgba(0, 229, 160, .12);
+            color: var(--green)
+        }
+
+        .medium {
+            background: rgba(255, 209, 102, .12);
+            color: var(--yellow)
+        }
+
+        .hard {
+            background: rgba(255, 107, 107, .12);
+            color: var(--red)
+        }
+
+        .chev {
+            color: var(--muted);
+            transition: transform .3s;
+            flex-shrink: 0;
+            font-size: 1.1rem
+        }
+
+        .sol-card.open .chev {
+            transform: rotate(90deg)
+        }
+
+        /* BODY */
+        .sol-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .4s ease
+        }
+
+        .sol-card.open .sol-body {
+            max-height: 3000px
+        }
+
+        .sol-content {
+            padding: 0 18px 20px;
+            border-top: 1px solid var(--border)
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 14px 0 10px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 14px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            font-family: 'Cairo', sans-serif;
+            font-size: .82rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .tab:hover, .tab.on {
+            background: rgba(96, 180, 255, .1);
+            color: var(--blue);
+            border-color: rgba(96, 180, 255, .3)
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.on {
+            display: block
+        }
+
+        /* IDEA PANEL */
+        .idea-panel {
+            background: rgba(0, 229, 160, .04);
+            border: 1px solid rgba(0, 229, 160, .15);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+
+        .idea-panel p {
+            font-size: .95rem;
+            line-height: 2;
+            color: var(--t1)
+        }
+
+        .idea-panel .ex {
+            background: #080d18;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: .8rem;
+            color: var(--cyan);
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* CODE PANEL */
+        .code-wrap {
+            background: #050910;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        .code-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dots2 {
+            display: flex;
+            gap: 5px
+        }
+
+        .dot2 {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%
+        }
+
+        .lang-tag {
+            font-size: .75rem;
+            color: var(--muted);
+            font-family: 'Fira Code', monospace
+        }
+
+        .copy-btn {
+            background: rgba(96, 180, 255, .1);
+            border: 1px solid rgba(96, 180, 255, .2);
+            color: var(--blue);
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: .72rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(96, 180, 255, .2)
+        }
+
+        pre.code {
+            padding: 18px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: .82rem;
+            line-height: 2;
+            direction: ltr;
+            text-align: left;
+            margin: 0;
+        }
+
+        /* syntax colors */
+        .kw {
+            color: #bb9af7
+        }
+
+        .fn {
+            color: #7dcfff
+        }
+
+        .str {
+            color: #9ece6a
+        }
+
+        .num {
+            color: #ff9e64
+        }
+
+        .cm {
+            color: #4a6580;
+            font-style: italic
+        }
+
+        .vr {
+            color: #e0af68
+        }
+
+        .op {
+            color: #89ddff
+        }
+
+        .cm2 {
+            color: #3d5a7a;
+            font-style: italic
+        }
+
+        /* subtle inline */
+
+        /* COMPLEXITY */
+        .cx-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px 0 0
+        }
+
+        .cx {
+            padding: 5px 14px;
+            border-radius: 7px;
+            font-size: .75rem;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace
+        }
+
+        .cx-t {
+            background: rgba(255, 209, 102, .1);
+            color: var(--yellow);
+            border: 1px solid rgba(255, 209, 102, .25)
+        }
+
+        .cx-s {
+            background: rgba(96, 180, 255, .1);
+            color: var(--blue);
+            border: 1px solid rgba(96, 180, 255, .25)
+        }
+
+        /* SOLVED BTN */
+        .mark-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 229, 160, .08);
+            border: 1px solid rgba(0, 229, 160, .25);
+            color: var(--green);
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s;
+            margin-top: 12px;
+        }
+
+        .mark-btn:hover {
+            background: rgba(0, 229, 160, .16)
+        }
+
+        .mark-btn.done {
+            background: rgba(0, 229, 160, .2);
+            font-weight: 700
+        }
+
+        .no-res {
+            text-align: center;
+            padding: 50px;
+            color: var(--muted);
+            font-size: 1.1rem
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
-<div class="header">
-  <h1>💻 Solutions بالعربي</h1>
-  <p>كل سؤال من الـ 75 مع الحل JavaScript وشرح كل سطر بالعربي</p>
-</div>
+    <div class="header">
+        <h1>💻 Solutions بالعربي</h1>
+        <p>كل سؤال من الـ 75 مع الحل JavaScript وشرح كل سطر بالعربي</p>
+    </div>
 
-<div class="prog-bar">
-  <span class="prog-label">تقدمك:</span>
-  <div class="bar-track"><div class="bar-fill" id="pFill" style="width:0%"></div></div>
-  <span class="prog-label">حليت <strong id="pCount">0</strong> / 75</span>
-</div>
+    <div class="prog-bar">
+        <span class="prog-label">تقدمك:</span>
+        <div class="bar-track">
+            <div class="bar-fill" id="pFill" style="width:0%"></div>
+        </div>
+        <span class="prog-label">حليت <strong id="pCount">0</strong> / 75</span>
+    </div>
 
-<div class="top-bar">
-  <input class="search" id="srch" type="text" placeholder="🔍 ابحث عن أي سؤال..." oninput="render()">
-  <button class="fbtn on" onclick="setDiff('all',this)">الكل</button>
-  <button class="fbtn" onclick="setDiff('easy',this)">سهل</button>
-  <button class="fbtn" onclick="setDiff('medium',this)">متوسط</button>
-  <button class="fbtn" onclick="setDiff('hard',this)">صعب</button>
-</div>
+    <div class="top-bar">
+        <input class="search" id="srch" type="text" placeholder="🔍 ابحث عن أي سؤال..." oninput="render()">
+        <button class="fbtn on" onclick="setDiff('all',this)">الكل</button>
+        <button class="fbtn" onclick="setDiff('easy',this)">سهل</button>
+        <button class="fbtn" onclick="setDiff('medium',this)">متوسط</button>
+        <button class="fbtn" onclick="setDiff('hard',this)">صعب</button>
+    </div>
 
-<div class="cat-nav" id="catNav"></div>
-<div id="main"></div>
+    <div class="cat-nav" id="catNav"></div>
+    <div id="main"></div>
 </div>
 
 <script>
-const solved = new Set();
-let curDiff = 'all';
-let curCat = 'all';
+    const solved = new Set();
+    let curDiff = 'all';
+    let curCat = 'all';
 
-const QS = [
+    const QS = [
 // ═══════════ ARRAYS & HASHING ═══════════
-{id:1,cat:'arrays',catN:'📦 Arrays & Hashing',diff:'easy',
-en:'Two Sum',ar:'إيجاد إتنين أرقام مجموعهم = الهدف',
-idea:'تخيل عندك أسعار حاجات في السوبرماركت وعايز إتنين حاجات مجموعهم 100 جنيه. بدل ما تجرب كل الاحتمالات، بتحفظ كل رقم في HashMap وبتسأل "محتاج كام؟" — لو اللي محتاجه موجود، لقيناهم!',
-ex:'nums=[2,7,11,15], target=9\nشفنا 2 → محتاجين 7\nشفنا 7 → 7 موجود في الـ map!\nالجواب: [0,1] ✅',
-code:`<span class="kw">function</span> <span class="fn">twoSum</span>(<span class="vr">nums</span>, <span class="vr">target</span>) {
+        {
+            id: 1, cat: 'arrays', catN: '📦 Arrays & Hashing', diff: 'easy',
+            en: 'Two Sum', ar: 'إيجاد إتنين أرقام مجموعهم = الهدف',
+            idea: 'تخيل عندك أسعار حاجات في السوبرماركت وعايز إتنين حاجات مجموعهم 100 جنيه. بدل ما تجرب كل الاحتمالات، بتحفظ كل رقم في HashMap وبتسأل "محتاج كام؟" — لو اللي محتاجه موجود، لقيناهم!',
+            ex: 'nums=[2,7,11,15], target=9\nشفنا 2 → محتاجين 7\nشفنا 7 → 7 موجود في الـ map!\nالجواب: [0,1] ✅',
+            code: `<span class="kw">function</span> <span class="fn">twoSum</span>(<span class="vr">nums</span>, <span class="vr">target</span>) {
   <span class="cm">// الـ map بيحفظ: الرقم → index بتاعه</span>
   <span class="kw">const</span> <span class="vr">map</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Map</span>();
 
@@ -232,13 +610,15 @@ code:`<span class="kw">function</span> <span class="fn">twoSum</span>(<span clas
   }
 
   <span class="kw">return</span> []; <span class="cm">// ما لقيناش</span>
-}`,time:'O(n)',space:'O(n)'},
+}`, time: 'O(n)', space: 'O(n)'
+        },
 
-{id:2,cat:'arrays',catN:'📦 Arrays & Hashing',diff:'medium',
-en:'Group Anagrams',ar:'تجميع الكلمات اللي حروفها متشابهة',
-idea:'تخيل كلمات: cat, tac, act — نفس الحروف بترتيب مختلف. بنرتب حروف كل كلمة أبجدياً ونستخدمها كـ key في HashMap. الكلمات اللي ليها نفس الـ key بتتحط في نفس المجموعة.',
-ex:'["eat","tea","tan","ate","nat","bat"]\neat,tea,ate → key:"aet"\ntan,nat → key:"ant"\nbat → key:"abt"\nالجواب: [["eat","tea","ate"],["tan","nat"],["bat"]] ✅',
-code:`<span class="kw">function</span> <span class="fn">groupAnagrams</span>(<span class="vr">strs</span>) {
+        {
+            id: 2, cat: 'arrays', catN: '📦 Arrays & Hashing', diff: 'medium',
+            en: 'Group Anagrams', ar: 'تجميع الكلمات اللي حروفها متشابهة',
+            idea: 'تخيل كلمات: cat, tac, act — نفس الحروف بترتيب مختلف. بنرتب حروف كل كلمة أبجدياً ونستخدمها كـ key في HashMap. الكلمات اللي ليها نفس الـ key بتتحط في نفس المجموعة.',
+            ex: '["eat","tea","tan","ate","nat","bat"]\neat,tea,ate → key:"aet"\ntan,nat → key:"ant"\nbat → key:"abt"\nالجواب: [["eat","tea","ate"],["tan","nat"],["bat"]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">groupAnagrams</span>(<span class="vr">strs</span>) {
   <span class="cm">// map: الـ sorted key → قائمة الكلمات</span>
   <span class="kw">const</span> <span class="vr">map</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Map</span>();
 
@@ -256,13 +636,15 @@ code:`<span class="kw">function</span> <span class="fn">groupAnagrams</span>(<sp
 
   <span class="cm">// ارجع كل القيم (المجموعات)</span>
   <span class="kw">return</span> [...<span class="vr">map</span>.<span class="fn">values</span>()];
-}`,time:'O(n × k log k)',space:'O(n)'},
+}`, time: 'O(n × k log k)', space: 'O(n)'
+        },
 
-{id:3,cat:'arrays',catN:'📦 Arrays & Hashing',diff:'medium',
-en:'Top K Frequent Elements',ar:'الأرقام الأكتر تكراراً',
-idea:'تخيل انتخابات وعايز تعرف أكتر K مرشحين أصواتاً. بتعد التكرار في HashMap، بعدين بتاخد أعلى K.',
-ex:'nums=[1,1,1,2,2,3], k=2\nتكرار: {1:3, 2:2, 3:1}\nأعلى 2: [1,2] ✅',
-code:`<span class="kw">function</span> <span class="fn">topKFrequent</span>(<span class="vr">nums</span>, <span class="vr">k</span>) {
+        {
+            id: 3, cat: 'arrays', catN: '📦 Arrays & Hashing', diff: 'medium',
+            en: 'Top K Frequent Elements', ar: 'الأرقام الأكتر تكراراً',
+            idea: 'تخيل انتخابات وعايز تعرف أكتر K مرشحين أصواتاً. بتعد التكرار في HashMap، بعدين بتاخد أعلى K.',
+            ex: 'nums=[1,1,1,2,2,3], k=2\nتكرار: {1:3, 2:2, 3:1}\nأعلى 2: [1,2] ✅',
+            code: `<span class="kw">function</span> <span class="fn">topKFrequent</span>(<span class="vr">nums</span>, <span class="vr">k</span>) {
   <span class="cm">// عد تكرار كل رقم</span>
   <span class="kw">const</span> <span class="vr">freq</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Map</span>();
   <span class="kw">for</span> (<span class="kw">const</span> <span class="vr">n</span> <span class="kw">of</span> <span class="vr">nums</span>) {
@@ -281,13 +663,15 @@ code:`<span class="kw">function</span> <span class="fn">topKFrequent</span>(<spa
     <span class="vr">res</span>.<span class="fn">push</span>(...<span class="vr">buckets</span>[<span class="vr">i</span>]);
   }
   <span class="kw">return</span> <span class="vr">res</span>.<span class="fn">slice</span>(<span class="num">0</span>, <span class="vr">k</span>);
-}`,time:'O(n)',space:'O(n)'},
+}`, time: 'O(n)', space: 'O(n)'
+        },
 
-{id:4,cat:'arrays',catN:'📦 Arrays & Hashing',diff:'medium',
-en:'Product of Array Except Self',ar:'ضرب كل العناصر إلا النفسه',
-idea:'كل عنصر = ضرب كل اللي شماله × ضرب كل اللي يمينه. بتحسب Prefix Product وبعدين Suffix Product — من غير قسمة!',
-ex:'nums=[1,2,3,4]\nPrefix: [1,1,2,6]\nSuffix: [24,12,4,1]\nالناتج: [24,12,8,6] ✅',
-code:`<span class="kw">function</span> <span class="fn">productExceptSelf</span>(<span class="vr">nums</span>) {
+        {
+            id: 4, cat: 'arrays', catN: '📦 Arrays & Hashing', diff: 'medium',
+            en: 'Product of Array Except Self', ar: 'ضرب كل العناصر إلا النفسه',
+            idea: 'كل عنصر = ضرب كل اللي شماله × ضرب كل اللي يمينه. بتحسب Prefix Product وبعدين Suffix Product — من غير قسمة!',
+            ex: 'nums=[1,2,3,4]\nPrefix: [1,1,2,6]\nSuffix: [24,12,4,1]\nالناتج: [24,12,8,6] ✅',
+            code: `<span class="kw">function</span> <span class="fn">productExceptSelf</span>(<span class="vr">nums</span>) {
   <span class="kw">const</span> <span class="vr">n</span> <span class="op">=</span> <span class="vr">nums</span>.<span class="vr">length</span>;
   <span class="kw">const</span> <span class="vr">res</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>).<span class="fn">fill</span>(<span class="num">1</span>);
 
@@ -306,14 +690,16 @@ code:`<span class="kw">function</span> <span class="fn">productExceptSelf</span>
   }
 
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n)',space:'O(1) extra'},
+}`, time: 'O(n)', space: 'O(1) extra'
+        },
 
 // ═══════════ TWO POINTERS ═══════════
-{id:5,cat:'twoptr',catN:'👆 Two Pointers',diff:'easy',
-en:'Valid Palindrome',ar:'هل الكلمة تقرأ نفسها من الاتجاهين؟',
-idea:'إصبع من الأول وإصبع من الآخر. بتتحركوا للوسط وبتقارنوا كل حرفين. لو أي حرفين مختلفين — مش palindrome.',
-ex:'"A man a plan a canal Panama"\nبعد إزالة المسافات والأرقام: "amanaplanacanalpanama"\nتقرأ نفسها ✅',
-code:`<span class="kw">function</span> <span class="fn">isPalindrome</span>(<span class="vr">s</span>) {
+        {
+            id: 5, cat: 'twoptr', catN: '👆 Two Pointers', diff: 'easy',
+            en: 'Valid Palindrome', ar: 'هل الكلمة تقرأ نفسها من الاتجاهين؟',
+            idea: 'إصبع من الأول وإصبع من الآخر. بتتحركوا للوسط وبتقارنوا كل حرفين. لو أي حرفين مختلفين — مش palindrome.',
+            ex: '"A man a plan a canal Panama"\nبعد إزالة المسافات والأرقام: "amanaplanacanalpanama"\nتقرأ نفسها ✅',
+            code: `<span class="kw">function</span> <span class="fn">isPalindrome</span>(<span class="vr">s</span>) {
   <span class="cm">// شيل كل حاجة غير حروف وأرقام، وحوّل لـ lowercase</span>
   <span class="vr">s</span> <span class="op">=</span> <span class="vr">s</span>.<span class="fn">toLowerCase</span>().<span class="fn">replace</span>(<span class="str">/[^a-z0-9]/g</span>, <span class="str">''</span>);
 
@@ -328,13 +714,15 @@ code:`<span class="kw">function</span> <span class="fn">isPalindrome</span>(<spa
   }
 
   <span class="kw">return</span> <span class="kw">true</span>; <span class="cm">// كل الأزواج متطابقين</span>
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-{id:6,cat:'twoptr',catN:'👆 Two Pointers',diff:'medium',
-en:'3Sum',ar:'إيجاد 3 أرقام مجموعها صفر',
-idea:'بترتب الأرقام. لكل رقم بتثبته وبتستخدم Two Pointers على الباقي. لو المجموع أكبر من 0 حرّك اليمين للشمال، لو أصغر حرّك الشمال لليمين.',
-ex:'[-1,0,1,2,-1,-4] → بعد الترتيب: [-4,-1,-1,0,1,2]\nثبّت -1 → Two Pointers على الباقي\nالجواب: [[-1,-1,2],[-1,0,1]] ✅',
-code:`<span class="kw">function</span> <span class="fn">threeSum</span>(<span class="vr">nums</span>) {
+        {
+            id: 6, cat: 'twoptr', catN: '👆 Two Pointers', diff: 'medium',
+            en: '3Sum', ar: 'إيجاد 3 أرقام مجموعها صفر',
+            idea: 'بترتب الأرقام. لكل رقم بتثبته وبتستخدم Two Pointers على الباقي. لو المجموع أكبر من 0 حرّك اليمين للشمال، لو أصغر حرّك الشمال لليمين.',
+            ex: '[-1,0,1,2,-1,-4] → بعد الترتيب: [-4,-1,-1,0,1,2]\nثبّت -1 → Two Pointers على الباقي\nالجواب: [[-1,-1,2],[-1,0,1]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">threeSum</span>(<span class="vr">nums</span>) {
   <span class="vr">nums</span>.<span class="fn">sort</span>((<span class="vr">a</span>,<span class="vr">b</span>) <span class="op">=&gt;</span> <span class="vr">a</span> <span class="op">-</span> <span class="vr">b</span>); <span class="cm">// الترتيب شرط أساسي</span>
   <span class="kw">const</span> <span class="vr">res</span> <span class="op">=</span> [];
 
@@ -361,14 +749,16 @@ code:`<span class="kw">function</span> <span class="fn">threeSum</span>(<span cl
     }
   }
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n²)',space:'O(1)'},
+}`, time: 'O(n²)', space: 'O(1)'
+        },
 
 // ═══════════ SLIDING WINDOW ═══════════
-{id:7,cat:'sliding',catN:'🪟 Sliding Window',diff:'easy',
-en:'Best Time to Buy & Sell Stock',ar:'أفضل وقت لشراء وبيع سهم',
-idea:'بنفضل نتذكر أرخص سعر شفناه، وبنحسب الربح لو بعنا النهارده. بنأخد أعلى ربح.',
-ex:'[7,1,5,3,6,4]\nأرخص سعر: 1 (يوم 2)\nأعلى ربح: 6-1=5 (بيع يوم 5) ✅',
-code:`<span class="kw">function</span> <span class="fn">maxProfit</span>(<span class="vr">prices</span>) {
+        {
+            id: 7, cat: 'sliding', catN: '🪟 Sliding Window', diff: 'easy',
+            en: 'Best Time to Buy & Sell Stock', ar: 'أفضل وقت لشراء وبيع سهم',
+            idea: 'بنفضل نتذكر أرخص سعر شفناه، وبنحسب الربح لو بعنا النهارده. بنأخد أعلى ربح.',
+            ex: '[7,1,5,3,6,4]\nأرخص سعر: 1 (يوم 2)\nأعلى ربح: 6-1=5 (بيع يوم 5) ✅',
+            code: `<span class="kw">function</span> <span class="fn">maxProfit</span>(<span class="vr">prices</span>) {
   <span class="kw">let</span> <span class="vr">minPrice</span> <span class="op">=</span> <span class="kw">Infinity</span>; <span class="cm">// أرخص سعر شفناه</span>
   <span class="kw">let</span> <span class="vr">maxProfit</span> <span class="op">=</span> <span class="num">0</span>;        <span class="cm">// أعلى ربح</span>
 
@@ -381,13 +771,15 @@ code:`<span class="kw">function</span> <span class="fn">maxProfit</span>(<span c
     }
   }
   <span class="kw">return</span> <span class="vr">maxProfit</span>;
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-{id:8,cat:'sliding',catN:'🪟 Sliding Window',diff:'medium',
-en:'Longest Substring Without Repeating Characters',ar:'أطول substring من غير تكرار',
-idea:'نافذة بـ left وright. بنوسع يمين، لو حرف موجود بالفعل بنضيّق شمال لحد ما يختفي.',
-ex:'"abcabcbb"\n[a] → [ab] → [abc] → a تكرر! → [bca] → أطول=3 ✅',
-code:`<span class="kw">function</span> <span class="fn">lengthOfLongestSubstring</span>(<span class="vr">s</span>) {
+        {
+            id: 8, cat: 'sliding', catN: '🪟 Sliding Window', diff: 'medium',
+            en: 'Longest Substring Without Repeating Characters', ar: 'أطول substring من غير تكرار',
+            idea: 'نافذة بـ left وright. بنوسع يمين، لو حرف موجود بالفعل بنضيّق شمال لحد ما يختفي.',
+            ex: '"abcabcbb"\n[a] → [ab] → [abc] → a تكرر! → [bca] → أطول=3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">lengthOfLongestSubstring</span>(<span class="vr">s</span>) {
   <span class="kw">const</span> <span class="vr">seen</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Set</span>(); <span class="cm">// الحروف في النافذة الحالية</span>
   <span class="kw">let</span> <span class="vr">left</span> <span class="op">=</span> <span class="num">0</span>, <span class="vr">max</span> <span class="op">=</span> <span class="num">0</span>;
 
@@ -401,14 +793,16 @@ code:`<span class="kw">function</span> <span class="fn">lengthOfLongestSubstring
     <span class="vr">max</span> <span class="op">=</span> <span class="fn">Math.max</span>(<span class="vr">max</span>, <span class="vr">right</span> <span class="op">-</span> <span class="vr">left</span> <span class="op">+</span> <span class="num">1</span>); <span class="cm">// حجم النافذة</span>
   }
   <span class="kw">return</span> <span class="vr">max</span>;
-}`,time:'O(n)',space:'O(min(n,26))'},
+}`, time: 'O(n)', space: 'O(min(n,26))'
+        },
 
 // ═══════════ STACK ═══════════
-{id:9,cat:'stack',catN:'📚 Stack',diff:'easy',
-en:'Valid Parentheses',ar:'الأقواس الصحيحة',
-idea:'كل قوس مفتوح بيتحط في الكومة. لما بنشوف قوس مغلق، لازم يطابق آخر حاجة في الكومة.',
-ex:'"({[]})"\n( → push\n{ → push\n[ → push\n] → pop [ ✅\n} → pop { ✅\n) → pop ( ✅\nكومة فاضية → صح ✅',
-code:`<span class="kw">function</span> <span class="fn">isValid</span>(<span class="vr">s</span>) {
+        {
+            id: 9, cat: 'stack', catN: '📚 Stack', diff: 'easy',
+            en: 'Valid Parentheses', ar: 'الأقواس الصحيحة',
+            idea: 'كل قوس مفتوح بيتحط في الكومة. لما بنشوف قوس مغلق، لازم يطابق آخر حاجة في الكومة.',
+            ex: '"({[]})"\n( → push\n{ → push\n[ → push\n] → pop [ ✅\n} → pop { ✅\n) → pop ( ✅\nكومة فاضية → صح ✅',
+            code: `<span class="kw">function</span> <span class="fn">isValid</span>(<span class="vr">s</span>) {
   <span class="kw">const</span> <span class="vr">stack</span> <span class="op">=</span> [];
   <span class="cm">// كل قوس مغلق → شريكه المفتوح</span>
   <span class="kw">const</span> <span class="vr">pairs</span> <span class="op">=</span> { <span class="str">')'</span>:<span class="str">'('</span>, <span class="str">'}'</span>:<span class="str">'{'</span>, <span class="str">']'</span>:<span class="str">'['</span> };
@@ -422,14 +816,16 @@ code:`<span class="kw">function</span> <span class="fn">isValid</span>(<span cla
     }
   }
   <span class="kw">return</span> <span class="vr">stack</span>.<span class="vr">length</span> <span class="op">===</span> <span class="num">0</span>; <span class="cm">// الكومة لازم فاضية</span>
-}`,time:'O(n)',space:'O(n)'},
+}`, time: 'O(n)', space: 'O(n)'
+        },
 
 // ═══════════ BINARY SEARCH ═══════════
-{id:10,cat:'bsearch',catN:'🔍 Binary Search',diff:'easy',
-en:'Binary Search',ar:'البحث الثنائي',
-idea:'قاموس مرتب. بتفتحه من النص. لو الرقم أصغر — النص الأيسر. لو أكبر — النص الأيمن.',
-ex:'[1,3,5,7,9], target=7\nmid=5: 5<7 → اليمين\nmid=7: لقيناه! → index=3 ✅',
-code:`<span class="kw">function</span> <span class="fn">search</span>(<span class="vr">nums</span>, <span class="vr">target</span>) {
+        {
+            id: 10, cat: 'bsearch', catN: '🔍 Binary Search', diff: 'easy',
+            en: 'Binary Search', ar: 'البحث الثنائي',
+            idea: 'قاموس مرتب. بتفتحه من النص. لو الرقم أصغر — النص الأيسر. لو أكبر — النص الأيمن.',
+            ex: '[1,3,5,7,9], target=7\nmid=5: 5<7 → اليمين\nmid=7: لقيناه! → index=3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">search</span>(<span class="vr">nums</span>, <span class="vr">target</span>) {
   <span class="kw">let</span> <span class="vr">l</span> <span class="op">=</span> <span class="num">0</span>, <span class="vr">r</span> <span class="op">=</span> <span class="vr">nums</span>.<span class="vr">length</span> <span class="op">-</span> <span class="num">1</span>;
 
   <span class="kw">while</span> (<span class="vr">l</span> <span class="op">&lt;=</span> <span class="vr">r</span>) {
@@ -441,14 +837,16 @@ code:`<span class="kw">function</span> <span class="fn">search</span>(<span clas
     <span class="kw">else</span>                            <span class="vr">r</span> <span class="op">=</span> <span class="vr">mid</span> <span class="op">-</span> <span class="num">1</span>; <span class="cm">// الـ target في الشمال</span>
   }
   <span class="kw">return</span> <span class="op">-</span><span class="num">1</span>; <span class="cm">// ما لقيناهوش</span>
-}`,time:'O(log n)',space:'O(1)'},
+}`, time: 'O(log n)', space: 'O(1)'
+        },
 
 // ═══════════ LINKED LIST ═══════════
-{id:11,cat:'linked',catN:'🔗 Linked List',diff:'easy',
-en:'Reverse Linked List',ar:'عكس القائمة المرتبطة',
-idea:'تخيل قطار. كل عربية بتشيل ربطها من الأمام وتربطها للخلف. بنمشي واحدة واحدة.',
-ex:'1→2→3→4→5\nبعد العكس: 5→4→3→2→1 ✅',
-code:`<span class="kw">function</span> <span class="fn">reverseList</span>(<span class="vr">head</span>) {
+        {
+            id: 11, cat: 'linked', catN: '🔗 Linked List', diff: 'easy',
+            en: 'Reverse Linked List', ar: 'عكس القائمة المرتبطة',
+            idea: 'تخيل قطار. كل عربية بتشيل ربطها من الأمام وتربطها للخلف. بنمشي واحدة واحدة.',
+            ex: '1→2→3→4→5\nبعد العكس: 5→4→3→2→1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">reverseList</span>(<span class="vr">head</span>) {
   <span class="kw">let</span> <span class="vr">prev</span> <span class="op">=</span> <span class="kw">null</span>;  <span class="cm">// العقدة السابقة (في البداية مفيش)</span>
   <span class="kw">let</span> <span class="vr">curr</span> <span class="op">=</span> <span class="vr">head</span>;  <span class="cm">// العقدة الحالية</span>
 
@@ -465,13 +863,15 @@ code:`<span class="kw">function</span> <span class="fn">reverseList</span>(<span
   }
 
   <span class="kw">return</span> <span class="vr">prev</span>; <span class="cm">// prev هو الـ head الجديد</span>
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-{id:12,cat:'linked',catN:'🔗 Linked List',diff:'medium',
-en:'Detect Cycle in Linked List',ar:'اكتشاف الحلقة في القائمة',
-idea:'عدّائَين: واحد سريع (خطوتين) وواحد بطيء (خطوة). لو فيه حلقة، السريع هيلحق البطيء. ده Floyd\'s Cycle Detection.',
-ex:'1→2→3→4→2 (حلقة)\nبطيء: 1,2,3,4,2...\nسريع: 1,3,2,4,3...\nهيلتقوا! → حلقة ✅',
-code:`<span class="kw">function</span> <span class="fn">hasCycle</span>(<span class="vr">head</span>) {
+        {
+            id: 12, cat: 'linked', catN: '🔗 Linked List', diff: 'medium',
+            en: 'Detect Cycle in Linked List', ar: 'اكتشاف الحلقة في القائمة',
+            idea: 'عدّائَين: واحد سريع (خطوتين) وواحد بطيء (خطوة). لو فيه حلقة، السريع هيلحق البطيء. ده Floyd\'s Cycle Detection.',
+            ex: '1→2→3→4→2 (حلقة)\nبطيء: 1,2,3,4,2...\nسريع: 1,3,2,4,3...\nهيلتقوا! → حلقة ✅',
+            code: `<span class="kw">function</span> <span class="fn">hasCycle</span>(<span class="vr">head</span>) {
   <span class="kw">let</span> <span class="vr">slow</span> <span class="op">=</span> <span class="vr">head</span>; <span class="cm">// العدّاء البطيء (خطوة)</span>
   <span class="kw">let</span> <span class="vr">fast</span> <span class="op">=</span> <span class="vr">head</span>; <span class="cm">// العدّاء السريع (خطوتين)</span>
 
@@ -484,14 +884,16 @@ code:`<span class="kw">function</span> <span class="fn">hasCycle</span>(<span cl
   }
 
   <span class="kw">return</span> <span class="kw">false</span>; <span class="cm">// fast وصل للآخر → مفيش حلقة</span>
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
 // ═══════════ TREES ═══════════
-{id:13,cat:'trees',catN:'🌳 Trees',diff:'easy',
-en:'Invert Binary Tree',ar:'عكس الشجرة الثنائية',
-idea:'كل عقدة بنبادل ابنها الأيمن بالأيسر. بنعمل نفس الشيء لكل العقد بالـ Recursion.',
-ex:'    4          4\n   / \\   →   / \\\n  2   7      7   2\n / \\ / \\  / \\ / \\\n1 3 6 9  9 6 3 1 ✅',
-code:`<span class="kw">function</span> <span class="fn">invertTree</span>(<span class="vr">root</span>) {
+        {
+            id: 13, cat: 'trees', catN: '🌳 Trees', diff: 'easy',
+            en: 'Invert Binary Tree', ar: 'عكس الشجرة الثنائية',
+            idea: 'كل عقدة بنبادل ابنها الأيمن بالأيسر. بنعمل نفس الشيء لكل العقد بالـ Recursion.',
+            ex: '    4          4\n   / \\   →   / \\\n  2   7      7   2\n / \\ / \\  / \\ / \\\n1 3 6 9  9 6 3 1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">invertTree</span>(<span class="vr">root</span>) {
   <span class="cm">// Base case: شجرة فاضية</span>
   <span class="kw">if</span> (<span class="op">!</span><span class="vr">root</span>) <span class="kw">return</span> <span class="kw">null</span>;
 
@@ -505,13 +907,15 @@ code:`<span class="kw">function</span> <span class="fn">invertTree</span>(<span 
   <span class="fn">invertTree</span>(<span class="vr">root</span>.<span class="vr">right</span>);
 
   <span class="kw">return</span> <span class="vr">root</span>;
-}`,time:'O(n)',space:'O(h)'},
+}`, time: 'O(n)', space: 'O(h)'
+        },
 
-{id:14,cat:'trees',catN:'🌳 Trees',diff:'easy',
-en:'Maximum Depth of Binary Tree',ar:'أقصى عمق للشجرة',
-idea:'العمق = 1 + أقصى عمق من الفرعين. Base case: شجرة فاضية = 0.',
-ex:'   3\n  / \\\n 9  20\n    / \\\n   15  7\nالعمق = 3 ✅',
-code:`<span class="kw">function</span> <span class="fn">maxDepth</span>(<span class="vr">root</span>) {
+        {
+            id: 14, cat: 'trees', catN: '🌳 Trees', diff: 'easy',
+            en: 'Maximum Depth of Binary Tree', ar: 'أقصى عمق للشجرة',
+            idea: 'العمق = 1 + أقصى عمق من الفرعين. Base case: شجرة فاضية = 0.',
+            ex: '   3\n  / \\\n 9  20\n    / \\\n   15  7\nالعمق = 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">maxDepth</span>(<span class="vr">root</span>) {
   <span class="cm">// Base case: ما فيش شجرة → عمق 0</span>
   <span class="kw">if</span> (<span class="op">!</span><span class="vr">root</span>) <span class="kw">return</span> <span class="num">0</span>;
 
@@ -521,13 +925,15 @@ code:`<span class="kw">function</span> <span class="fn">maxDepth</span>(<span cl
 
   <span class="cm">// العمق = 1 (العقدة الحالية) + أعمق فرع</span>
   <span class="kw">return</span> <span class="num">1</span> <span class="op">+</span> <span class="fn">Math.max</span>(<span class="vr">leftDepth</span>, <span class="vr">rightDepth</span>);
-}`,time:'O(n)',space:'O(h)'},
+}`, time: 'O(n)', space: 'O(h)'
+        },
 
-{id:15,cat:'trees',catN:'🌳 Trees',diff:'medium',
-en:'Level Order Traversal',ar:'قراءة الشجرة مستوى مستوى',
-idea:'BFS بـ Queue. بنحط الجذر، وبناخده وبنحط أبنائه، وبنكمل.',
-ex:'   3 → [[3],[9,20],[15,7]] ✅',
-code:`<span class="kw">function</span> <span class="fn">levelOrder</span>(<span class="vr">root</span>) {
+        {
+            id: 15, cat: 'trees', catN: '🌳 Trees', diff: 'medium',
+            en: 'Level Order Traversal', ar: 'قراءة الشجرة مستوى مستوى',
+            idea: 'BFS بـ Queue. بنحط الجذر، وبناخده وبنحط أبنائه، وبنكمل.',
+            ex: '   3 → [[3],[9,20],[15,7]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">levelOrder</span>(<span class="vr">root</span>) {
   <span class="kw">if</span> (<span class="op">!</span><span class="vr">root</span>) <span class="kw">return</span> [];
 
   <span class="kw">const</span> <span class="vr">result</span> <span class="op">=</span> [], <span class="vr">queue</span> <span class="op">=</span> [<span class="vr">root</span>];
@@ -546,13 +952,15 @@ code:`<span class="kw">function</span> <span class="fn">levelOrder</span>(<span 
     <span class="vr">result</span>.<span class="fn">push</span>(<span class="vr">level</span>); <span class="cm">// ضيف المستوى للنتيجة</span>
   }
   <span class="kw">return</span> <span class="vr">result</span>;
-}`,time:'O(n)',space:'O(w)'},
+}`, time: 'O(n)', space: 'O(w)'
+        },
 
-{id:16,cat:'trees',catN:'🌳 Trees',diff:'hard',
-en:'Binary Tree Maximum Path Sum',ar:'أعظم مجموع مسار',
-idea:'كل عقدة ممكن تكون جزء من مسار (فرع واحد) أو المحور (يمين + أنا + شمال). بنحسب الاتنين ونأخد الأعلى.',
-ex:'[-10, 9, 20, null, null, 15, 7]\n15+20+7 = 42 ✅',
-code:`<span class="kw">function</span> <span class="fn">maxPathSum</span>(<span class="vr">root</span>) {
+        {
+            id: 16, cat: 'trees', catN: '🌳 Trees', diff: 'hard',
+            en: 'Binary Tree Maximum Path Sum', ar: 'أعظم مجموع مسار',
+            idea: 'كل عقدة ممكن تكون جزء من مسار (فرع واحد) أو المحور (يمين + أنا + شمال). بنحسب الاتنين ونأخد الأعلى.',
+            ex: '[-10, 9, 20, null, null, 15, 7]\n15+20+7 = 42 ✅',
+            code: `<span class="kw">function</span> <span class="fn">maxPathSum</span>(<span class="vr">root</span>) {
   <span class="kw">let</span> <span class="vr">max</span> <span class="op">=</span> <span class="op">-</span><span class="kw">Infinity</span>;
 
   <span class="kw">function</span> <span class="fn">dfs</span>(<span class="vr">node</span>) {
@@ -571,14 +979,16 @@ code:`<span class="kw">function</span> <span class="fn">maxPathSum</span>(<span 
 
   <span class="fn">dfs</span>(<span class="vr">root</span>);
   <span class="kw">return</span> <span class="vr">max</span>;
-}`,time:'O(n)',space:'O(h)'},
+}`, time: 'O(n)', space: 'O(h)'
+        },
 
 // ═══════════ GRAPHS ═══════════
-{id:17,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',
-en:'Number of Islands',ar:'عد الجزر',
-idea:'كل ما بنلاقي أرض (1)، بنعمل DFS ونلوّن كل الجزيرة بـ 0 عشان ما نعدهاش تاني.',
-ex:'11110\n11010\n11000\nجزيرة واحدة → 1 ✅',
-code:`<span class="kw">function</span> <span class="fn">numIslands</span>(<span class="vr">grid</span>) {
+        {
+            id: 17, cat: 'graphs', catN: '🕸️ Graphs', diff: 'medium',
+            en: 'Number of Islands', ar: 'عد الجزر',
+            idea: 'كل ما بنلاقي أرض (1)، بنعمل DFS ونلوّن كل الجزيرة بـ 0 عشان ما نعدهاش تاني.',
+            ex: '11110\n11010\n11000\nجزيرة واحدة → 1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">numIslands</span>(<span class="vr">grid</span>) {
   <span class="kw">let</span> <span class="vr">count</span> <span class="op">=</span> <span class="num">0</span>;
 
   <span class="kw">function</span> <span class="fn">dfs</span>(<span class="vr">r</span>, <span class="vr">c</span>) {
@@ -594,13 +1004,15 @@ code:`<span class="kw">function</span> <span class="fn">numIslands</span>(<span 
     }
   }
   <span class="kw">return</span> <span class="vr">count</span>;
-}`,time:'O(n×m)',space:'O(n×m)'},
+}`, time: 'O(n×m)', space: 'O(n×m)'
+        },
 
-{id:18,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',
-en:'Course Schedule',ar:'هل تقدر تكمل كل الكورسات؟',
-idea:'لو فيه حلقة في الـ prerequisites → مستحيل. Topological Sort بـ Kahn\'s Algorithm.',
-ex:'2 كورسات: [[1,0]] → 0 قبل 1 → ممكن ✅\n[[1,0],[0,1]] → حلقة → مستحيل ❌',
-code:`<span class="kw">function</span> <span class="fn">canFinish</span>(<span class="vr">n</span>, <span class="vr">prereqs</span>) {
+        {
+            id: 18, cat: 'graphs', catN: '🕸️ Graphs', diff: 'medium',
+            en: 'Course Schedule', ar: 'هل تقدر تكمل كل الكورسات؟',
+            idea: 'لو فيه حلقة في الـ prerequisites → مستحيل. Topological Sort بـ Kahn\'s Algorithm.',
+            ex: '2 كورسات: [[1,0]] → 0 قبل 1 → ممكن ✅\n[[1,0],[0,1]] → حلقة → مستحيل ❌',
+            code: `<span class="kw">function</span> <span class="fn">canFinish</span>(<span class="vr">n</span>, <span class="vr">prereqs</span>) {
   <span class="kw">const</span> <span class="vr">adj</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>).<span class="fn">fill</span>(<span class="kw">null</span>).<span class="fn">map</span>(() <span class="op">=&gt;</span> []);
   <span class="kw">const</span> <span class="vr">deg</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>).<span class="fn">fill</span>(<span class="num">0</span>);
 
@@ -619,14 +1031,16 @@ code:`<span class="kw">function</span> <span class="fn">canFinish</span>(<span c
     }
   }
   <span class="kw">return</span> <span class="vr">done</span> <span class="op">===</span> <span class="vr">n</span>; <span class="cm">// لو خلصنا كل → مفيش حلقة</span>
-}`,time:'O(V+E)',space:'O(V+E)'},
+}`, time: 'O(V+E)', space: 'O(V+E)'
+        },
 
 // ═══════════ DYNAMIC PROGRAMMING ═══════════
-{id:19,cat:'dp',catN:'🧠 Dynamic Programming',diff:'easy',
-en:'Climbing Stairs',ar:'طلوع السلم',
-idea:'طرق الوصول لدرجة n = طرق n-1 (جيت بخطوة) + طرق n-2 (جيت بقفزة). زي فيبوناتشي!',
-ex:'n=4: dp[1]=1, dp[2]=2, dp[3]=3, dp[4]=5 ✅',
-code:`<span class="kw">function</span> <span class="fn">climbStairs</span>(<span class="vr">n</span>) {
+        {
+            id: 19, cat: 'dp', catN: '🧠 Dynamic Programming', diff: 'easy',
+            en: 'Climbing Stairs', ar: 'طلوع السلم',
+            idea: 'طرق الوصول لدرجة n = طرق n-1 (جيت بخطوة) + طرق n-2 (جيت بقفزة). زي فيبوناتشي!',
+            ex: 'n=4: dp[1]=1, dp[2]=2, dp[3]=3, dp[4]=5 ✅',
+            code: `<span class="kw">function</span> <span class="fn">climbStairs</span>(<span class="vr">n</span>) {
   <span class="kw">if</span> (<span class="vr">n</span> <span class="op">&lt;=</span> <span class="num">2</span>) <span class="kw">return</span> <span class="vr">n</span>; <span class="cm">// Base cases</span>
 
   <span class="kw">let</span> <span class="vr">a</span> <span class="op">=</span> <span class="num">1</span>, <span class="vr">b</span> <span class="op">=</span> <span class="num">2</span>; <span class="cm">// dp[1]=1, dp[2]=2</span>
@@ -638,13 +1052,15 @@ code:`<span class="kw">function</span> <span class="fn">climbStairs</span>(<span
     <span class="vr">b</span> <span class="op">=</span> <span class="vr">temp</span>; <span class="cm">// b بقى dp[i]</span>
   }
   <span class="kw">return</span> <span class="vr">b</span>;
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-{id:20,cat:'dp',catN:'🧠 Dynamic Programming',diff:'medium',
-en:'House Robber',ar:'حرامي البيوت',
-idea:'لكل بيت: اسرق هنا (+ بيتين قبل) أو اتخطى (+ بيت قبل). خد الأحسن.',
-ex:'[2,7,9,3,1]\ndp: [2,7,11,11,12]\nالجواب: 12 ✅',
-code:`<span class="kw">function</span> <span class="fn">rob</span>(<span class="vr">nums</span>) {
+        {
+            id: 20, cat: 'dp', catN: '🧠 Dynamic Programming', diff: 'medium',
+            en: 'House Robber', ar: 'حرامي البيوت',
+            idea: 'لكل بيت: اسرق هنا (+ بيتين قبل) أو اتخطى (+ بيت قبل). خد الأحسن.',
+            ex: '[2,7,9,3,1]\ndp: [2,7,11,11,12]\nالجواب: 12 ✅',
+            code: `<span class="kw">function</span> <span class="fn">rob</span>(<span class="vr">nums</span>) {
   <span class="kw">let</span> <span class="vr">prev2</span> <span class="op">=</span> <span class="num">0</span>; <span class="cm">// أقصى سرقة قبل البيت اللي قبلي بـ2</span>
   <span class="kw">let</span> <span class="vr">prev1</span> <span class="op">=</span> <span class="num">0</span>; <span class="cm">// أقصى سرقة في البيت اللي قبلي</span>
 
@@ -655,13 +1071,15 @@ code:`<span class="kw">function</span> <span class="fn">rob</span>(<span class="
     <span class="vr">prev1</span> <span class="op">=</span> <span class="vr">curr</span>;
   }
   <span class="kw">return</span> <span class="vr">prev1</span>;
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-{id:21,cat:'dp',catN:'🧠 Dynamic Programming',diff:'medium',
-en:'Coin Change',ar:'أقل عدد عملات لصرف مبلغ',
-idea:'لكل مبلغ من 1 للـ target: جرب كل عملة. dp[i] = min(dp[i], dp[i-coin]+1).',
-ex:'coins=[1,5,6,9], amount=11\ndp[11] = min ways = 2 (5+6) ✅',
-code:`<span class="kw">function</span> <span class="fn">coinChange</span>(<span class="vr">coins</span>, <span class="vr">amount</span>) {
+        {
+            id: 21, cat: 'dp', catN: '🧠 Dynamic Programming', diff: 'medium',
+            en: 'Coin Change', ar: 'أقل عدد عملات لصرف مبلغ',
+            idea: 'لكل مبلغ من 1 للـ target: جرب كل عملة. dp[i] = min(dp[i], dp[i-coin]+1).',
+            ex: 'coins=[1,5,6,9], amount=11\ndp[11] = min ways = 2 (5+6) ✅',
+            code: `<span class="kw">function</span> <span class="fn">coinChange</span>(<span class="vr">coins</span>, <span class="vr">amount</span>) {
   <span class="cm">// ملي بـ Infinity = "مستحيل" في البداية</span>
   <span class="kw">const</span> <span class="vr">dp</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">amount</span><span class="op">+</span><span class="num">1</span>).<span class="fn">fill</span>(<span class="kw">Infinity</span>);
   <span class="vr">dp</span>[<span class="num">0</span>] <span class="op">=</span> <span class="num">0</span>; <span class="cm">// مبلغ 0 = 0 عملات</span>
@@ -673,13 +1091,15 @@ code:`<span class="kw">function</span> <span class="fn">coinChange</span>(<span 
     }
   }
   <span class="kw">return</span> <span class="vr">dp</span>[<span class="vr">amount</span>] <span class="op">===</span> <span class="kw">Infinity</span> <span class="op">?</span> <span class="op">-</span><span class="num">1</span> <span class="op">:</span> <span class="vr">dp</span>[<span class="vr">amount</span>];
-}`,time:'O(amount×coins)',space:'O(amount)'},
+}`, time: 'O(amount×coins)', space: 'O(amount)'
+        },
 
-{id:22,cat:'dp',catN:'🧠 Dynamic Programming',diff:'medium',
-en:'Longest Increasing Subsequence',ar:'أطول تسلسل متزايد',
-idea:'لكل عنصر بنسأل: أطول تسلسل ينتهي بيّا؟ = 1 + أطول تسلسل قبله وأصغر منه.',
-ex:'[10,9,2,5,3,7,101,18]\nأطول تسلسل: [2,3,7,18] أو [2,3,7,101] = طول 4 ✅',
-code:`<span class="kw">function</span> <span class="fn">lengthOfLIS</span>(<span class="vr">nums</span>) {
+        {
+            id: 22, cat: 'dp', catN: '🧠 Dynamic Programming', diff: 'medium',
+            en: 'Longest Increasing Subsequence', ar: 'أطول تسلسل متزايد',
+            idea: 'لكل عنصر بنسأل: أطول تسلسل ينتهي بيّا؟ = 1 + أطول تسلسل قبله وأصغر منه.',
+            ex: '[10,9,2,5,3,7,101,18]\nأطول تسلسل: [2,3,7,18] أو [2,3,7,101] = طول 4 ✅',
+            code: `<span class="kw">function</span> <span class="fn">lengthOfLIS</span>(<span class="vr">nums</span>) {
   <span class="cm">// dp[i] = أطول تسلسل ينتهي بالعنصر i</span>
   <span class="kw">const</span> <span class="vr">dp</span> <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">nums</span>.<span class="vr">length</span>).<span class="fn">fill</span>(<span class="num">1</span>); <span class="cm">// على الأقل 1</span>
 
@@ -692,14 +1112,16 @@ code:`<span class="kw">function</span> <span class="fn">lengthOfLIS</span>(<span
     }
   }
   <span class="kw">return</span> <span class="fn">Math.max</span>(...<span class="vr">dp</span>); <span class="cm">// الأطول من الكل</span>
-}`,time:'O(n²)',space:'O(n)'},
+}`, time: 'O(n²)', space: 'O(n)'
+        },
 
 // ═══════════ INTERVALS ═══════════
-{id:23,cat:'intervals',catN:'📅 Intervals',diff:'medium',
-en:'Merge Intervals',ar:'دمج الفترات المتداخلة',
-idea:'رتّب بالبداية. لو نهاية الحالي >= بداية الجاي → ادمجهم.',
-ex:'[[1,3],[2,6],[8,10],[15,18]]\nبعد الدمج: [[1,6],[8,10],[15,18]] ✅',
-code:`<span class="kw">function</span> <span class="fn">merge</span>(<span class="vr">intervals</span>) {
+        {
+            id: 23, cat: 'intervals', catN: '📅 Intervals', diff: 'medium',
+            en: 'Merge Intervals', ar: 'دمج الفترات المتداخلة',
+            idea: 'رتّب بالبداية. لو نهاية الحالي >= بداية الجاي → ادمجهم.',
+            ex: '[[1,3],[2,6],[8,10],[15,18]]\nبعد الدمج: [[1,6],[8,10],[15,18]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">merge</span>(<span class="vr">intervals</span>) {
   <span class="cm">// رتّب حسب البداية</span>
   <span class="vr">intervals</span>.<span class="fn">sort</span>((<span class="vr">a</span>,<span class="vr">b</span>) <span class="op">=&gt;</span> <span class="vr">a</span>[<span class="num">0</span>] <span class="op">-</span> <span class="vr">b</span>[<span class="num">0</span>]);
 
@@ -718,14 +1140,16 @@ code:`<span class="kw">function</span> <span class="fn">merge</span>(<span class
     }
   }
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n log n)',space:'O(n)'},
+}`, time: 'O(n log n)', space: 'O(n)'
+        },
 
 // ═══════════ TRIE ═══════════
-{id:24,cat:'trie',catN:'🔤 Trie',diff:'medium',
-en:'Implement Trie',ar:'بناء شجرة البادئات',
-idea:'كل حرف = عقدة في الشجرة. cat وcar بيشتركوا في ca وبعدين بيتفرقوا. البحث سريع جداً!',
-ex:'ضيف "apple" ثم ابحث عن "app"\nالمسار: a→p→p موجود! ✅',
-code:`<span class="kw">class</span> <span class="fn">Trie</span> {
+        {
+            id: 24, cat: 'trie', catN: '🔤 Trie', diff: 'medium',
+            en: 'Implement Trie', ar: 'بناء شجرة البادئات',
+            idea: 'كل حرف = عقدة في الشجرة. cat وcar بيشتركوا في ca وبعدين بيتفرقوا. البحث سريع جداً!',
+            ex: 'ضيف "apple" ثم ابحث عن "app"\nالمسار: a→p→p موجود! ✅',
+            code: `<span class="kw">class</span> <span class="fn">Trie</span> {
   <span class="fn">constructor</span>() {
     <span class="cm">// كل عقدة ليها: أولاد (حروف) + علامة نهاية كلمة</span>
     <span class="kw">this</span>.<span class="vr">children</span> <span class="op">=</span> {};
@@ -759,14 +1183,16 @@ code:`<span class="kw">class</span> <span class="fn">Trie</span> {
     }
     <span class="kw">return</span> <span class="kw">true</span>; <span class="cm">// البادئة موجودة (مش لازم كلمة كاملة)</span>
   }
-}`,time:'O(m) كل عملية',space:'O(ALPHABET × n)'},
+}`, time: 'O(m) كل عملية', space: 'O(ALPHABET × n)'
+        },
 
 // ═══════════ HEAP ═══════════
-{id:25,cat:'heap',catN:'⛏️ Heap',diff:'medium',
-en:'Kth Largest Element',ar:'الـ K أكبر عنصر',
-idea:'Min Heap بحجم K. لو دخل عنصر أكبر من الأصغر فيه → شيل الأصغر وأضيف الجديد. الباقي = Kth largest.',
-ex:'[3,2,1,5,6,4], k=2\nMin Heap حجم 2: [5,6]\nأصغره = 5 = الثاني أكبر ✅',
-code:`<span class="kw">function</span> <span class="fn">findKthLargest</span>(<span class="vr">nums</span>, <span class="vr">k</span>) {
+        {
+            id: 25, cat: 'heap', catN: '⛏️ Heap', diff: 'medium',
+            en: 'Kth Largest Element', ar: 'الـ K أكبر عنصر',
+            idea: 'Min Heap بحجم K. لو دخل عنصر أكبر من الأصغر فيه → شيل الأصغر وأضيف الجديد. الباقي = Kth largest.',
+            ex: '[3,2,1,5,6,4], k=2\nMin Heap حجم 2: [5,6]\nأصغره = 5 = الثاني أكبر ✅',
+            code: `<span class="kw">function</span> <span class="fn">findKthLargest</span>(<span class="vr">nums</span>, <span class="vr">k</span>) {
   <span class="cm">// QuickSelect: O(n) average</span>
   <span class="kw">function</span> <span class="fn">partition</span>(<span class="vr">lo</span>, <span class="vr">hi</span>) {
     <span class="kw">const</span> <span class="vr">pivot</span> <span class="op">=</span> <span class="vr">nums</span>[<span class="vr">hi</span>]; <span class="cm">// آخر عنصر كـ pivot</span>
@@ -786,14 +1212,16 @@ code:`<span class="kw">function</span> <span class="fn">findKthLargest</span>(<s
     <span class="kw">else if</span> (<span class="vr">mid</span> <span class="op">&lt;</span>  <span class="vr">k</span><span class="op">-</span><span class="num">1</span>) <span class="vr">lo</span> <span class="op">=</span> <span class="vr">mid</span><span class="op">+</span><span class="num">1</span>;
     <span class="kw">else</span>                    <span class="vr">hi</span> <span class="op">=</span> <span class="vr">mid</span><span class="op">-</span><span class="num">1</span>;
   }
-}`,time:'O(n) avg',space:'O(1)'},
+}`, time: 'O(n) avg', space: 'O(1)'
+        },
 
 // ═══════════ BIT MANIPULATION ═══════════
-{id:26,cat:'bits',catN:'🔢 Bit Manipulation',diff:'easy',
-en:'Number of 1 Bits',ar:'عد الـ 1 في التمثيل الثنائي',
-idea:'n & (n-1) بتشيل أقصى يمين 1 في كل مرة. عدد المرات = عدد الـ 1.',
-ex:'n=11=1011\n11&10=1010 (شيل أول 1)\n1010&1001=1000 (شيل ثاني 1)\n1000&0111=0000 (شيل ثالث 1)\n3 مرات → 3 ✅',
-code:`<span class="kw">function</span> <span class="fn">hammingWeight</span>(<span class="vr">n</span>) {
+        {
+            id: 26, cat: 'bits', catN: '🔢 Bit Manipulation', diff: 'easy',
+            en: 'Number of 1 Bits', ar: 'عد الـ 1 في التمثيل الثنائي',
+            idea: 'n & (n-1) بتشيل أقصى يمين 1 في كل مرة. عدد المرات = عدد الـ 1.',
+            ex: 'n=11=1011\n11&10=1010 (شيل أول 1)\n1010&1001=1000 (شيل ثاني 1)\n1000&0111=0000 (شيل ثالث 1)\n3 مرات → 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">hammingWeight</span>(<span class="vr">n</span>) {
   <span class="kw">let</span> <span class="vr">count</span> <span class="op">=</span> <span class="num">0</span>;
 
   <span class="kw">while</span> (<span class="vr">n</span>) {
@@ -804,13 +1232,15 @@ code:`<span class="kw">function</span> <span class="fn">hammingWeight</span>(<sp
   }
 
   <span class="kw">return</span> <span class="vr">count</span>;
-}`,time:'O(k) k=عدد الـ1',space:'O(1)'},
+}`, time: 'O(k) k=عدد الـ1', space: 'O(1)'
+        },
 
-{id:27,cat:'bits',catN:'🔢 Bit Manipulation',diff:'easy',
-en:'Missing Number',ar:'إيجاد الرقم المفقود',
-idea:'مجموع 0..n = n(n+1)/2. اطرح مجموع الأرقام الموجودة. الفرق = الناقص.',
-ex:'[3,0,1]: n=3\nمجموع نظري = 6\nمجموع موجود = 4\nالناقص = 2 ✅',
-code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<span class="vr">nums</span>) {
+        {
+            id: 27, cat: 'bits', catN: '🔢 Bit Manipulation', diff: 'easy',
+            en: 'Missing Number', ar: 'إيجاد الرقم المفقود',
+            idea: 'مجموع 0..n = n(n+1)/2. اطرح مجموع الأرقام الموجودة. الفرق = الناقص.',
+            ex: '[3,0,1]: n=3\nمجموع نظري = 6\nمجموع موجود = 4\nالناقص = 2 ✅',
+            code: `<span class="kw">function</span> <span class="fn">missingNumber</span>(<span class="vr">nums</span>) {
   <span class="kw">const</span> <span class="vr">n</span> <span class="op">=</span> <span class="vr">nums</span>.<span class="vr">length</span>;
 
   <span class="cm">// المجموع النظري لو ما فيش ناقص</span>
@@ -821,9 +1251,19 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
 
   <span class="cm">// الفرق = الرقم الناقص</span>
   <span class="kw">return</span> <span class="vr">expected</span> <span class="op">-</span> <span class="vr">actual</span>;
-}`,time:'O(n)',space:'O(1)'},
+}`, time: 'O(n)', space: 'O(1)'
+        },
 
-,{id:28,cat:'arrays',catN:'📦 Arrays',diff:'hard',en:'Longest Consecutive Sequence',ar:'أطول تسلسل أرقام متتالية',idea:'حط كل الأرقام في HashSet. لو n-1 مش موجود → ابدأ عد من هنا.',ex:'[100,4,200,1,3,2] → 4 ✅',code:`<span class="kw">function</span> <span class="fn">longestConsecutive</span>(<span class="vr">nums</span>) {
+        , {
+            id: 28,
+            cat: 'arrays',
+            catN: '📦 Arrays',
+            diff: 'hard',
+            en: 'Longest Consecutive Sequence',
+            ar: 'أطول تسلسل أرقام متتالية',
+            idea: 'حط كل الأرقام في HashSet. لو n-1 مش موجود → ابدأ عد من هنا.',
+            ex: '[100,4,200,1,3,2] → 4 ✅',
+            code: `<span class="kw">function</span> <span class="fn">longestConsecutive</span>(<span class="vr">nums</span>) {
   <span class="kw">const</span> <span class="vr">s</span>=<span class="kw">new</span> <span class="fn">Set</span>(<span class="vr">nums</span>); <span class="kw">let</span> <span class="vr">b</span>=<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">n</span> <span class="kw">of</span> <span class="vr">s</span>) <span class="kw">if</span>(!<span class="vr">s</span>.<span class="fn">has</span>(<span class="vr">n</span>-<span class="num">1</span>)) {
     <span class="kw">let</span> <span class="vr">c</span>=<span class="vr">n</span>,<span class="vr">l</span>=<span class="num">1</span>;
@@ -831,18 +1271,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">b</span>=<span class="fn">Math.max</span>(<span class="vr">b</span>,<span class="vr">l</span>);
   }
   <span class="kw">return</span> <span class="vr">b</span>;
-}`,time:'O(n)',space:'O(n)'}
+}`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:29,cat:'arrays',catN:'📦 Arrays',diff:'hard',en:'Trapping Rain Water',ar:'كمية الأمطار المتجمعة',idea:'Two Pointers. lMax وrMax. المياه = min(lMax,rMax) - ارتفاع الحالي.',ex:'[0,1,0,2,1,0,1,3,2,1,2,1] → 6 ✅',code:`<span class="kw">function</span> <span class="fn">trap</span>(<span class="vr">h</span>) {
+        , {
+            id: 29,
+            cat: 'arrays',
+            catN: '📦 Arrays',
+            diff: 'hard',
+            en: 'Trapping Rain Water',
+            ar: 'كمية الأمطار المتجمعة',
+            idea: 'Two Pointers. lMax وrMax. المياه = min(lMax,rMax) - ارتفاع الحالي.',
+            ex: '[0,1,0,2,1,0,1,3,2,1,2,1] → 6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">trap</span>(<span class="vr">h</span>) {
   <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">r</span>=<span class="vr">h</span>.<span class="vr">length</span>-<span class="num">1</span>,<span class="vr">lm</span>=<span class="num">0</span>,<span class="vr">rm</span>=<span class="num">0</span>,<span class="vr">w</span>=<span class="num">0</span>;
   <span class="kw">while</span>(<span class="vr">l</span>&lt;<span class="vr">r</span>) {
     <span class="kw">if</span>(<span class="vr">h</span>[<span class="vr">l</span>]&lt;<span class="vr">h</span>[<span class="vr">r</span>]){<span class="vr">lm</span>=<span class="fn">Math.max</span>(<span class="vr">lm</span>,<span class="vr">h</span>[<span class="vr">l</span>]);<span class="vr">w</span>+=<span class="vr">lm</span>-<span class="vr">h</span>[<span class="vr">l</span>++];}
     <span class="kw">else</span>{<span class="vr">rm</span>=<span class="fn">Math.max</span>(<span class="vr">rm</span>,<span class="vr">h</span>[<span class="vr">r</span>]);<span class="vr">w</span>+=<span class="vr">rm</span>-<span class="vr">h</span>[<span class="vr">r</span>--];}
   }
   <span class="kw">return</span> <span class="vr">w</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:30,cat:'sliding',catN:'🪟 Sliding Window',diff:'hard',en:'Minimum Window Substring',ar:'أصغر نافذة تحوي كل الحروف',idea:'وسّع يمين حتى تجمع كل الحروف، ضيّق شمال وحدّث الأقصر.',ex:'s="ADOBECODEBANC",t="ABC" → "BANC" ✅',code:`<span class="kw">function</span> <span class="fn">minWindow</span>(<span class="vr">s</span>,<span class="vr">t</span>) {
+        , {
+            id: 30,
+            cat: 'sliding',
+            catN: '🪟 Sliding Window',
+            diff: 'hard',
+            en: 'Minimum Window Substring',
+            ar: 'أصغر نافذة تحوي كل الحروف',
+            idea: 'وسّع يمين حتى تجمع كل الحروف، ضيّق شمال وحدّث الأقصر.',
+            ex: 's="ADOBECODEBANC",t="ABC" → "BANC" ✅',
+            code: `<span class="kw">function</span> <span class="fn">minWindow</span>(<span class="vr">s</span>,<span class="vr">t</span>) {
   <span class="kw">const</span> <span class="vr">nd</span>=<span class="kw">new</span> <span class="fn">Map</span>(),<span class="vr">wn</span>=<span class="kw">new</span> <span class="fn">Map</span>();
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">c</span> <span class="kw">of</span> <span class="vr">t</span>) <span class="vr">nd</span>.<span class="fn">set</span>(<span class="vr">c</span>,(<span class="vr">nd</span>.<span class="fn">get</span>(<span class="vr">c</span>)||<span class="num">0</span>)+<span class="num">1</span>);
   <span class="kw">let</span> <span class="vr">hv</span>=<span class="num">0</span>,<span class="vr">req</span>=<span class="vr">nd</span>.<span class="vr">size</span>,<span class="vr">l</span>=<span class="num">0</span>,<span class="vr">res</span>=[-<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>];
@@ -856,15 +1320,39 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     }
   }
   <span class="kw">return</span> <span class="vr">res</span>[<span class="num">0</span>]===-<span class="num">1</span>?"":<span class="vr">s</span>.<span class="fn">slice</span>(<span class="vr">res</span>[<span class="num">1</span>],<span class="vr">res</span>[<span class="num">2</span>]+<span class="num">1</span>);
-}`,time:'O(n)',space:'O(k)'}
+}`,
+            time: 'O(n)',
+            space: 'O(k)'
+        }
 
-,{id:31,cat:'twoptr',catN:'👆 Two Pointers',diff:'medium',en:'Container With Most Water',ar:'أكبر حوض مياه',idea:'إصبعين من الطرفين. المساحة = عرض × أقصر حيط. حرّك الأقصر.',ex:'[1,8,6,2,5,4,8,3,7] → 49 ✅',code:`<span class="kw">function</span> <span class="fn">maxArea</span>(<span class="vr">h</span>) {
+        , {
+            id: 31,
+            cat: 'twoptr',
+            catN: '👆 Two Pointers',
+            diff: 'medium',
+            en: 'Container With Most Water',
+            ar: 'أكبر حوض مياه',
+            idea: 'إصبعين من الطرفين. المساحة = عرض × أقصر حيط. حرّك الأقصر.',
+            ex: '[1,8,6,2,5,4,8,3,7] → 49 ✅',
+            code: `<span class="kw">function</span> <span class="fn">maxArea</span>(<span class="vr">h</span>) {
   <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">r</span>=<span class="vr">h</span>.<span class="vr">length</span>-<span class="num">1</span>,<span class="vr">mx</span>=<span class="num">0</span>;
   <span class="kw">while</span>(<span class="vr">l</span>&lt;<span class="vr">r</span>){<span class="vr">mx</span>=<span class="fn">Math.max</span>(<span class="vr">mx</span>,(<span class="vr">r</span>-<span class="vr">l</span>)*<span class="fn">Math.min</span>(<span class="vr">h</span>[<span class="vr">l</span>],<span class="vr">h</span>[<span class="vr">r</span>]));<span class="vr">h</span>[<span class="vr">l</span>]&lt;<span class="vr">h</span>[<span class="vr">r</span>]?<span class="vr">l</span>++:<span class="vr">r</span>--;}
   <span class="kw">return</span> <span class="vr">mx</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:32,cat:'sliding',catN:'🪟 Sliding Window',diff:'medium',en:'Longest Repeating Character Replacement',ar:'أطول substring بعد تغيير k حروف',idea:'(حجم النافذة - أكثر حرف) > k → ضيّق.',ex:'"AABABBA",k=1 → 4 ✅',code:`<span class="kw">function</span> <span class="fn">characterReplacement</span>(<span class="vr">s</span>,<span class="vr">k</span>) {
+        , {
+            id: 32,
+            cat: 'sliding',
+            catN: '🪟 Sliding Window',
+            diff: 'medium',
+            en: 'Longest Repeating Character Replacement',
+            ar: 'أطول substring بعد تغيير k حروف',
+            idea: '(حجم النافذة - أكثر حرف) > k → ضيّق.',
+            ex: '"AABABBA",k=1 → 4 ✅',
+            code: `<span class="kw">function</span> <span class="fn">characterReplacement</span>(<span class="vr">s</span>,<span class="vr">k</span>) {
   <span class="kw">const</span> <span class="vr">f</span>={};
   <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">mf</span>=<span class="num">0</span>,<span class="vr">res</span>=<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">r</span>=<span class="num">0</span>;<span class="vr">r</span>&lt;<span class="vr">s</span>.<span class="vr">length</span>;<span class="vr">r</span>++){
@@ -873,9 +1361,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">res</span>=<span class="fn">Math.max</span>(<span class="vr">res</span>,<span class="vr">r</span>-<span class="vr">l</span>+<span class="num">1</span>);
   }
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:33,cat:'stack',catN:'📚 Stack',diff:'medium',en:'Min Stack',ar:'كومة مع getMin بـ O(1)',idea:'كومتين: عادية وكومة للـ min الحالي في كل لحظة.',ex:'push(5,3,7) → getMin()=3 ✅',code:`<span class="kw">class</span> <span class="fn">MinStack</span> {
+        , {
+            id: 33,
+            cat: 'stack',
+            catN: '📚 Stack',
+            diff: 'medium',
+            en: 'Min Stack',
+            ar: 'كومة مع getMin بـ O(1)',
+            idea: 'كومتين: عادية وكومة للـ min الحالي في كل لحظة.',
+            ex: 'push(5,3,7) → getMin()=3 ✅',
+            code: `<span class="kw">class</span> <span class="fn">MinStack</span> {
   <span class="fn">constructor</span>(){<span class="kw">this</span>.<span class="vr">s</span>=[];<span class="kw">this</span>.<span class="vr">m</span>=[];}
   <span class="fn">push</span>(<span class="vr">v</span>){
     <span class="kw">this</span>.<span class="vr">s</span>.<span class="fn">push</span>(<span class="vr">v</span>);
@@ -885,9 +1385,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   <span class="fn">pop</span>(){<span class="kw">this</span>.<span class="vr">s</span>.<span class="fn">pop</span>();<span class="kw">this</span>.<span class="vr">m</span>.<span class="fn">pop</span>();}
   <span class="fn">top</span>(){<span class="kw">return</span> <span class="kw">this</span>.<span class="vr">s</span>[<span class="kw">this</span>.<span class="vr">s</span>.<span class="vr">length</span>-<span class="num">1</span>];}
   <span class="fn">getMin</span>(){<span class="kw">return</span> <span class="kw">this</span>.<span class="vr">m</span>[<span class="kw">this</span>.<span class="vr">m</span>.<span class="vr">length</span>-<span class="num">1</span>];}
-}`,time:'O(1)',space:'O(n)'}
+}`,
+            time: 'O(1)',
+            space: 'O(n)'
+        }
 
-,{id:34,cat:'stack',catN:'📚 Stack',diff:'medium',en:'Evaluate Reverse Polish Notation',ar:'حساب التعبير البولندي',idea:'أرقام في كومة. عملية → خد آخر رقمين واحسب.',ex:'["2","1","+","3","*"] → 9 ✅',code:`<span class="kw">function</span> <span class="fn">evalRPN</span>(<span class="vr">t</span>) {
+        , {
+            id: 34,
+            cat: 'stack',
+            catN: '📚 Stack',
+            diff: 'medium',
+            en: 'Evaluate Reverse Polish Notation',
+            ar: 'حساب التعبير البولندي',
+            idea: 'أرقام في كومة. عملية → خد آخر رقمين واحسب.',
+            ex: '["2","1","+","3","*"] → 9 ✅',
+            code: `<span class="kw">function</span> <span class="fn">evalRPN</span>(<span class="vr">t</span>) {
   <span class="kw">const</span> <span class="vr">s</span>=[];
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">t</span>){
     <span class="kw">if</span>('+-*/'.includes(<span class="vr">x</span>)){
@@ -896,9 +1408,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     } <span class="kw">else</span> <span class="vr">s</span>.<span class="fn">push</span>(+<span class="vr">x</span>);
   }
   <span class="kw">return</span> <span class="vr">s</span>[<span class="num">0</span>];
-}`,time:'O(n)',space:'O(n)'}
+}`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:35,cat:'stack',catN:'📚 Stack',diff:'hard',en:'Largest Rectangle in Histogram',ar:'أكبر مستطيل في الهيستوجرام',idea:'Monotonic Stack. لما شريط أقصر من رأس الـ stack احسب مساحته.',ex:'[2,1,5,6,2,3] → 10 ✅',code:`<span class="kw">function</span> <span class="fn">largestRectangleArea</span>(<span class="vr">h</span>) {
+        , {
+            id: 35,
+            cat: 'stack',
+            catN: '📚 Stack',
+            diff: 'hard',
+            en: 'Largest Rectangle in Histogram',
+            ar: 'أكبر مستطيل في الهيستوجرام',
+            idea: 'Monotonic Stack. لما شريط أقصر من رأس الـ stack احسب مساحته.',
+            ex: '[2,1,5,6,2,3] → 10 ✅',
+            code: `<span class="kw">function</span> <span class="fn">largestRectangleArea</span>(<span class="vr">h</span>) {
   <span class="vr">h</span>.<span class="fn">push</span>(<span class="num">0</span>);
   <span class="kw">const</span> <span class="vr">st</span>=[-<span class="num">1</span>]; <span class="kw">let</span> <span class="vr">mx</span>=<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;<span class="vr">h</span>.<span class="vr">length</span>;<span class="vr">i</span>++){
@@ -909,9 +1433,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">st</span>.<span class="fn">push</span>(<span class="vr">i</span>);
   }
   <span class="kw">return</span> <span class="vr">mx</span>;
-}`,time:'O(n)',space:'O(n)'}
+}`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:36,cat:'bsearch',catN:'🔍 Binary Search',diff:'medium',en:'Search in Rotated Sorted Array',ar:'ابحث في array مدوّرة',idea:'فيه جزء مرتب دايماً. شوف أي جزء مرتب وقرر فين الـ target.',ex:'[4,5,6,7,0,1,2],target=0 → 4 ✅',code:`<span class="kw">function</span> <span class="fn">searchRot</span>(<span class="vr">n</span>,<span class="vr">t</span>) {
+        , {
+            id: 36,
+            cat: 'bsearch',
+            catN: '🔍 Binary Search',
+            diff: 'medium',
+            en: 'Search in Rotated Sorted Array',
+            ar: 'ابحث في array مدوّرة',
+            idea: 'فيه جزء مرتب دايماً. شوف أي جزء مرتب وقرر فين الـ target.',
+            ex: '[4,5,6,7,0,1,2],target=0 → 4 ✅',
+            code: `<span class="kw">function</span> <span class="fn">searchRot</span>(<span class="vr">n</span>,<span class="vr">t</span>) {
   <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">r</span>=<span class="vr">n</span>.<span class="vr">length</span>-<span class="num">1</span>;
   <span class="kw">while</span>(<span class="vr">l</span>&lt;=<span class="vr">r</span>){
     <span class="kw">const</span> <span class="vr">m</span>=<span class="vr">l</span>+<span class="vr">r</span>&gt;&gt;<span class="num">1</span>;
@@ -922,15 +1458,39 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
       <span class="vr">n</span>[<span class="vr">m</span>]&lt;<span class="vr">t</span>&&<span class="vr">t</span>&lt;=<span class="vr">n</span>[<span class="vr">r</span>]?<span class="vr">l</span>=<span class="vr">m</span>+<span class="num">1</span>:<span class="vr">r</span>=<span class="vr">m</span>-<span class="num">1</span>;
   }
   <span class="kw">return</span> -<span class="num">1</span>;
-}`,time:'O(log n)',space:'O(1)'}
+}`,
+            time: 'O(log n)',
+            space: 'O(1)'
+        }
 
-,{id:37,cat:'bsearch',catN:'🔍 Binary Search',diff:'medium',en:'Find Min in Rotated Sorted Array',ar:'أصغر قيمة في array مدوّرة',idea:'لو nums[m]>nums[r] → الأصغر في اليمين.',ex:'[3,4,5,1,2] → 1 ✅',code:`<span class="kw">function</span> <span class="fn">findMin</span>(<span class="vr">n</span>) {
+        , {
+            id: 37,
+            cat: 'bsearch',
+            catN: '🔍 Binary Search',
+            diff: 'medium',
+            en: 'Find Min in Rotated Sorted Array',
+            ar: 'أصغر قيمة في array مدوّرة',
+            idea: 'لو nums[m]>nums[r] → الأصغر في اليمين.',
+            ex: '[3,4,5,1,2] → 1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">findMin</span>(<span class="vr">n</span>) {
   <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">r</span>=<span class="vr">n</span>.<span class="vr">length</span>-<span class="num">1</span>;
   <span class="kw">while</span>(<span class="vr">l</span>&lt;<span class="vr">r</span>){<span class="kw">const</span> <span class="vr">m</span>=<span class="vr">l</span>+<span class="vr">r</span>&gt;&gt;<span class="num">1</span>;<span class="vr">n</span>[<span class="vr">m</span>]&gt;<span class="vr">n</span>[<span class="vr">r</span>]?<span class="vr">l</span>=<span class="vr">m</span>+<span class="num">1</span>:<span class="vr">r</span>=<span class="vr">m</span>;}
   <span class="kw">return</span> <span class="vr">n</span>[<span class="vr">l</span>];
-}`,time:'O(log n)',space:'O(1)'}
+}`,
+            time: 'O(log n)',
+            space: 'O(1)'
+        }
 
-,{id:38,cat:'linked',catN:'🔗 Linked List',diff:'easy',en:'Merge Two Sorted Lists',ar:'دمج قائمتين مرتبتين',idea:'قارن رأس الاتنين. خد الأصغر. dummy node.',ex:'1→3→5 و 2→4→6 → 1→2→3→4→5→6 ✅',code:`<span class="kw">function</span> <span class="fn">mergeLists</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
+        , {
+            id: 38,
+            cat: 'linked',
+            catN: '🔗 Linked List',
+            diff: 'easy',
+            en: 'Merge Two Sorted Lists',
+            ar: 'دمج قائمتين مرتبتين',
+            idea: 'قارن رأس الاتنين. خد الأصغر. dummy node.',
+            ex: '1→3→5 و 2→4→6 → 1→2→3→4→5→6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">mergeLists</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
   <span class="kw">const</span> <span class="vr">d</span>={<span class="vr">next</span>:<span class="kw">null</span>};<span class="kw">let</span> <span class="vr">c</span>=<span class="vr">d</span>;
   <span class="kw">while</span>(<span class="vr">a</span>&&<span class="vr">b</span>){
     <span class="kw">if</span>(<span class="vr">a</span>.<span class="vr">val</span>&lt;<span class="vr">b</span>.<span class="vr">val</span>){<span class="vr">c</span>.<span class="vr">next</span>=<span class="vr">a</span>;<span class="vr">a</span>=<span class="vr">a</span>.<span class="vr">next</span>;}
@@ -938,16 +1498,40 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">c</span>=<span class="vr">c</span>.<span class="vr">next</span>;
   }
   <span class="vr">c</span>.<span class="vr">next</span>=<span class="vr">a</span>||<span class="vr">b</span>;<span class="kw">return</span> <span class="vr">d</span>.<span class="vr">next</span>;
-}`,time:'O(n+m)',space:'O(1)'}
+}`,
+            time: 'O(n+m)',
+            space: 'O(1)'
+        }
 
-,{id:39,cat:'linked',catN:'🔗 Linked List',diff:'medium',en:'Remove Nth Node From End',ar:'شيل العنصر N من الآخر',idea:'Fast يتقدم N+1. بعدين كلاهما. لما Fast ينتهي Slow عند العقدة قبل المطلوبة.',ex:'1→2→3→4→5, n=2 → 1→2→3→5 ✅',code:`<span class="kw">function</span> <span class="fn">removeNth</span>(<span class="vr">h</span>,<span class="vr">n</span>) {
+        , {
+            id: 39,
+            cat: 'linked',
+            catN: '🔗 Linked List',
+            diff: 'medium',
+            en: 'Remove Nth Node From End',
+            ar: 'شيل العنصر N من الآخر',
+            idea: 'Fast يتقدم N+1. بعدين كلاهما. لما Fast ينتهي Slow عند العقدة قبل المطلوبة.',
+            ex: '1→2→3→4→5, n=2 → 1→2→3→5 ✅',
+            code: `<span class="kw">function</span> <span class="fn">removeNth</span>(<span class="vr">h</span>,<span class="vr">n</span>) {
   <span class="kw">const</span> <span class="vr">d</span>={<span class="vr">next</span>:<span class="vr">h</span>};<span class="kw">let</span> <span class="vr">f</span>=<span class="vr">d</span>,<span class="vr">s</span>=<span class="vr">d</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;=<span class="vr">n</span>;<span class="vr">i</span>++) <span class="vr">f</span>=<span class="vr">f</span>.<span class="vr">next</span>;
   <span class="kw">while</span>(<span class="vr">f</span>){<span class="vr">f</span>=<span class="vr">f</span>.<span class="vr">next</span>;<span class="vr">s</span>=<span class="vr">s</span>.<span class="vr">next</span>;}
   <span class="vr">s</span>.<span class="vr">next</span>=<span class="vr">s</span>.<span class="vr">next</span>.<span class="vr">next</span>;<span class="kw">return</span> <span class="vr">d</span>.<span class="vr">next</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:40,cat:'linked',catN:'🔗 Linked List',diff:'hard',en:'Merge K Sorted Lists',ar:'دمج K قوائم مرتبة',idea:'Divide & Conquer. ادمج كل اتنين حتى تفضل قائمة واحدة.',ex:'[1→4],[1→3],[2→6] → 1→1→2→3→4→6 ✅',code:`<span class="kw">function</span> <span class="fn">mergeKLists</span>(<span class="vr">ls</span>) {
+        , {
+            id: 40,
+            cat: 'linked',
+            catN: '🔗 Linked List',
+            diff: 'hard',
+            en: 'Merge K Sorted Lists',
+            ar: 'دمج K قوائم مرتبة',
+            idea: 'Divide & Conquer. ادمج كل اتنين حتى تفضل قائمة واحدة.',
+            ex: '[1→4],[1→3],[2→6] → 1→1→2→3→4→6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">mergeKLists</span>(<span class="vr">ls</span>) {
   <span class="kw">function</span> <span class="fn">m</span>(<span class="vr">a</span>,<span class="vr">b</span>){
     <span class="kw">if</span>(!<span class="vr">a</span>) <span class="kw">return</span> <span class="vr">b</span>;<span class="kw">if</span>(!<span class="vr">b</span>) <span class="kw">return</span> <span class="vr">a</span>;
     <span class="kw">if</span>(<span class="vr">a</span>.<span class="vr">val</span>&lt;<span class="vr">b</span>.<span class="vr">val</span>){<span class="vr">a</span>.<span class="vr">next</span>=<span class="fn">m</span>(<span class="vr">a</span>.<span class="vr">next</span>,<span class="vr">b</span>);<span class="kw">return</span> <span class="vr">a</span>;}
@@ -959,9 +1543,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">ls</span>=<span class="vr">t</span>;
   }
   <span class="kw">return</span> <span class="vr">ls</span>[<span class="num">0</span>]||<span class="kw">null</span>;
-}`,time:'O(n log k)',space:'O(1)'}
+}`,
+            time: 'O(n log k)',
+            space: 'O(1)'
+        }
 
-,{id:41,cat:'trees',catN:'🌳 Trees',diff:'easy',en:'Balanced Binary Tree',ar:'هل الشجرة متوازنة؟',idea:'DFS. لو فرق الأعماق > 1 → ارجع -1.',ex:'[3,9,20,null,null,15,7] → true ✅',code:`<span class="kw">function</span> <span class="fn">isBalanced</span>(<span class="vr">r</span>) {
+        , {
+            id: 41,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'easy',
+            en: 'Balanced Binary Tree',
+            ar: 'هل الشجرة متوازنة؟',
+            idea: 'DFS. لو فرق الأعماق > 1 → ارجع -1.',
+            ex: '[3,9,20,null,null,15,7] → true ✅',
+            code: `<span class="kw">function</span> <span class="fn">isBalanced</span>(<span class="vr">r</span>) {
   <span class="kw">function</span> <span class="fn">h</span>(<span class="vr">n</span>){
     <span class="kw">if</span>(!<span class="vr">n</span>) <span class="kw">return</span> <span class="num">0</span>;
     <span class="kw">const</span> <span class="vr">l</span>=<span class="fn">h</span>(<span class="vr">n</span>.<span class="vr">left</span>),<span class="vr">r</span>=<span class="fn">h</span>(<span class="vr">n</span>.<span class="vr">right</span>);
@@ -969,9 +1565,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">return</span> <span class="num">1</span>+<span class="fn">Math.max</span>(<span class="vr">l</span>,<span class="vr">r</span>);
   }
   <span class="kw">return</span> <span class="fn">h</span>(<span class="vr">r</span>)!==-<span class="num">1</span>;
-}`,time:'O(n)',space:'O(h)'}
+}`,
+            time: 'O(n)',
+            space: 'O(h)'
+        }
 
-,{id:42,cat:'trees',catN:'🌳 Trees',diff:'easy',en:'Diameter of Binary Tree',ar:'أطول مسار في الشجرة',idea:'لكل عقدة: المسار من خلالها = عمق يسار + عمق يمين.',ex:'[1,2,3,4,5] → 3 ✅',code:`<span class="kw">function</span> <span class="fn">diameter</span>(<span class="vr">r</span>) {
+        , {
+            id: 42,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'easy',
+            en: 'Diameter of Binary Tree',
+            ar: 'أطول مسار في الشجرة',
+            idea: 'لكل عقدة: المسار من خلالها = عمق يسار + عمق يمين.',
+            ex: '[1,2,3,4,5] → 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">diameter</span>(<span class="vr">r</span>) {
   <span class="kw">let</span> <span class="vr">mx</span>=<span class="num">0</span>;
   <span class="kw">function</span> <span class="fn">d</span>(<span class="vr">n</span>){
     <span class="kw">if</span>(!<span class="vr">n</span>) <span class="kw">return</span> <span class="num">0</span>;
@@ -980,18 +1588,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">return</span> <span class="num">1</span>+<span class="fn">Math.max</span>(<span class="vr">l</span>,<span class="vr">r</span>);
   }
   <span class="fn">d</span>(<span class="vr">r</span>);<span class="kw">return</span> <span class="vr">mx</span>;
-}`,time:'O(n)',space:'O(h)'}
+}`,
+            time: 'O(n)',
+            space: 'O(h)'
+        }
 
-,{id:43,cat:'trees',catN:'🌳 Trees',diff:'medium',en:'Validate BST',ar:'هل ده BST صحيح؟',idea:'لكل عقدة تكون بين lo وhi. اليسار: hi=الحالي. اليمين: lo=الحالي.',ex:'[5,1,4,null,null,3,6] → false ✅',code:`<span class="kw">function</span> <span class="fn">isValidBST</span>(<span class="vr">r</span>) {
+        , {
+            id: 43,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'medium',
+            en: 'Validate BST',
+            ar: 'هل ده BST صحيح؟',
+            idea: 'لكل عقدة تكون بين lo وhi. اليسار: hi=الحالي. اليمين: lo=الحالي.',
+            ex: '[5,1,4,null,null,3,6] → false ✅',
+            code: `<span class="kw">function</span> <span class="fn">isValidBST</span>(<span class="vr">r</span>) {
   <span class="kw">function</span> <span class="fn">v</span>(<span class="vr">n</span>,<span class="vr">lo</span>,<span class="vr">hi</span>){
     <span class="kw">if</span>(!<span class="vr">n</span>) <span class="kw">return</span> <span class="kw">true</span>;
     <span class="kw">if</span>(<span class="vr">n</span>.<span class="vr">val</span>&lt;=<span class="vr">lo</span>||<span class="vr">n</span>.<span class="vr">val</span>&gt;=<span class="vr">hi</span>) <span class="kw">return</span> <span class="kw">false</span>;
     <span class="kw">return</span> <span class="fn">v</span>(<span class="vr">n</span>.<span class="vr">left</span>,<span class="vr">lo</span>,<span class="vr">n</span>.<span class="vr">val</span>)&&<span class="fn">v</span>(<span class="vr">n</span>.<span class="vr">right</span>,<span class="vr">n</span>.<span class="vr">val</span>,<span class="vr">hi</span>);
   }
   <span class="kw">return</span> <span class="fn">v</span>(<span class="vr">r</span>,-Infinity,Infinity);
-}`,time:'O(n)',space:'O(h)'}
+}`,
+            time: 'O(n)',
+            space: 'O(h)'
+        }
 
-,{id:44,cat:'trees',catN:'🌳 Trees',diff:'medium',en:'Kth Smallest in BST',ar:'الـ K أصغر في BST',idea:'Inorder (يسار→حالي→يمين) يعطيك الأرقام مرتبة. خد الـ K منها.',ex:'[3,1,4,null,2],k=1 → 1 ✅',code:`<span class="kw">function</span> <span class="fn">kthSmallest</span>(<span class="vr">r</span>,<span class="vr">k</span>) {
+        , {
+            id: 44,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'medium',
+            en: 'Kth Smallest in BST',
+            ar: 'الـ K أصغر في BST',
+            idea: 'Inorder (يسار→حالي→يمين) يعطيك الأرقام مرتبة. خد الـ K منها.',
+            ex: '[3,1,4,null,2],k=1 → 1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">kthSmallest</span>(<span class="vr">r</span>,<span class="vr">k</span>) {
   <span class="kw">let</span> <span class="vr">cnt</span>=<span class="num">0</span>,<span class="vr">ans</span>=<span class="num">0</span>;
   <span class="kw">function</span> <span class="fn">go</span>(<span class="vr">n</span>){
     <span class="kw">if</span>(!<span class="vr">n</span>||<span class="vr">cnt</span>===<span class="vr">k</span>) <span class="kw">return</span>;
@@ -1000,18 +1632,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="fn">go</span>(<span class="vr">n</span>.<span class="vr">right</span>);
   }
   <span class="fn">go</span>(<span class="vr">r</span>);<span class="kw">return</span> <span class="vr">ans</span>;
-}`,time:'O(n)',space:'O(h)'}
+}`,
+            time: 'O(n)',
+            space: 'O(h)'
+        }
 
-,{id:45,cat:'trees',catN:'🌳 Trees',diff:'medium',en:'LCA of BST',ar:'أقرب جد مشترك في BST',idea:'لو القيمتين على جانبين مختلفين → أنت عند الجد.',ex:'[6,2,8],p=2,q=8 → 6 ✅',code:`<span class="kw">function</span> <span class="fn">lcaBST</span>(<span class="vr">r</span>,<span class="vr">p</span>,<span class="vr">q</span>) {
+        , {
+            id: 45,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'medium',
+            en: 'LCA of BST',
+            ar: 'أقرب جد مشترك في BST',
+            idea: 'لو القيمتين على جانبين مختلفين → أنت عند الجد.',
+            ex: '[6,2,8],p=2,q=8 → 6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">lcaBST</span>(<span class="vr">r</span>,<span class="vr">p</span>,<span class="vr">q</span>) {
   <span class="kw">let</span> <span class="vr">n</span>=<span class="vr">r</span>;
   <span class="kw">while</span>(<span class="vr">n</span>){
     <span class="kw">if</span>(<span class="vr">p</span>.<span class="vr">val</span>&lt;<span class="vr">n</span>.<span class="vr">val</span>&&<span class="vr">q</span>.<span class="vr">val</span>&lt;<span class="vr">n</span>.<span class="vr">val</span>) <span class="vr">n</span>=<span class="vr">n</span>.<span class="vr">left</span>;
     <span class="kw">else if</span>(<span class="vr">p</span>.<span class="vr">val</span>&gt;<span class="vr">n</span>.<span class="vr">val</span>&&<span class="vr">q</span>.<span class="vr">val</span>&gt;<span class="vr">n</span>.<span class="vr">val</span>) <span class="vr">n</span>=<span class="vr">n</span>.<span class="vr">right</span>;
     <span class="kw">else</span> <span class="kw">return</span> <span class="vr">n</span>;
   }
-}`,time:'O(log n)',space:'O(1)'}
+}`,
+            time: 'O(log n)',
+            space: 'O(1)'
+        }
 
-,{id:46,cat:'trees',catN:'🌳 Trees',diff:'medium',en:'Right Side View',ar:'الشجرة من الجانب الأيمن',idea:'BFS مستوى مستوى. آخر عقدة في كل مستوى هي اللي بنشوفها.',ex:'[1,2,3,null,5,null,4] → [1,3,4] ✅',code:`<span class="kw">function</span> <span class="fn">rightView</span>(<span class="vr">r</span>) {
+        , {
+            id: 46,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'medium',
+            en: 'Right Side View',
+            ar: 'الشجرة من الجانب الأيمن',
+            idea: 'BFS مستوى مستوى. آخر عقدة في كل مستوى هي اللي بنشوفها.',
+            ex: '[1,2,3,null,5,null,4] → [1,3,4] ✅',
+            code: `<span class="kw">function</span> <span class="fn">rightView</span>(<span class="vr">r</span>) {
   <span class="kw">if</span>(!<span class="vr">r</span>) <span class="kw">return</span> [];
   <span class="kw">const</span> <span class="vr">res</span>=[],<span class="vr">q</span>=[<span class="vr">r</span>];
   <span class="kw">while</span>(<span class="vr">q</span>.<span class="vr">length</span>){
@@ -1024,9 +1680,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     }
   }
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n)',space:'O(w)'}
+}`,
+            time: 'O(n)',
+            space: 'O(w)'
+        }
 
-,{id:47,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Clone Graph',ar:'نسخ الجراف',idea:'DFS + Map. نعمل نسخة لكل عقدة ونحفظها قبل الـ recursion.',ex:'1-2-3-4-1 → نسخة جديدة ✅',code:`<span class="kw">function</span> <span class="fn">cloneGraph</span>(<span class="vr">n</span>) {
+        , {
+            id: 47,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Clone Graph',
+            ar: 'نسخ الجراف',
+            idea: 'DFS + Map. نعمل نسخة لكل عقدة ونحفظها قبل الـ recursion.',
+            ex: '1-2-3-4-1 → نسخة جديدة ✅',
+            code: `<span class="kw">function</span> <span class="fn">cloneGraph</span>(<span class="vr">n</span>) {
   <span class="kw">const</span> <span class="vr">mp</span>=<span class="kw">new</span> <span class="fn">Map</span>();
   <span class="kw">function</span> <span class="fn">d</span>(<span class="vr">x</span>){
     <span class="kw">if</span>(!<span class="vr">x</span>) <span class="kw">return</span> <span class="kw">null</span>;
@@ -1037,9 +1705,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">return</span> <span class="vr">c</span>;
   }
   <span class="kw">return</span> <span class="fn">d</span>(<span class="vr">n</span>);
-}`,time:'O(V+E)',space:'O(V)'}
+}`,
+            time: 'O(V+E)',
+            space: 'O(V)'
+        }
 
-,{id:48,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Rotting Oranges',ar:'البرتقال الفاسد',idea:'Multi-source BFS. كل الفاسدة تدخل Queue معاً. كل مستوى = دقيقة.',ex:'[[2,1,1],[1,1,0],[0,1,1]] → 4 ✅',code:`<span class="kw">function</span> <span class="fn">rotOranges</span>(<span class="vr">g</span>) {
+        , {
+            id: 48,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Rotting Oranges',
+            ar: 'البرتقال الفاسد',
+            idea: 'Multi-source BFS. كل الفاسدة تدخل Queue معاً. كل مستوى = دقيقة.',
+            ex: '[[2,1,1],[1,1,0],[0,1,1]] → 4 ✅',
+            code: `<span class="kw">function</span> <span class="fn">rotOranges</span>(<span class="vr">g</span>) {
   <span class="kw">const</span> <span class="vr">R</span>=<span class="vr">g</span>.<span class="vr">length</span>,<span class="vr">C</span>=<span class="vr">g</span>[<span class="num">0</span>].<span class="vr">length</span>;
   <span class="kw">let</span> <span class="vr">fr</span>=<span class="num">0</span>,<span class="vr">mn</span>=<span class="num">0</span>;
   <span class="kw">const</span> <span class="vr">q</span>=[];
@@ -1060,9 +1740,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     }
   }
   <span class="kw">return</span> <span class="vr">fr</span>===<span class="num">0</span>?<span class="vr">mn</span>:-<span class="num">1</span>;
-}`,time:'O(n×m)',space:'O(n×m)'}
+}`,
+            time: 'O(n×m)',
+            space: 'O(n×m)'
+        }
 
-,{id:49,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Maximum Product Subarray',ar:'أعظم حاصل ضرب لجزء متتالي',idea:'بنحفظ أكبر وأصغر. الأصغر مهم لأن سالب × سالب = موجب.',ex:'[2,3,-2,4] → 6 ✅',code:`<span class="kw">function</span> <span class="fn">maxProduct</span>(<span class="vr">n</span>) {
+        , {
+            id: 49,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Maximum Product Subarray',
+            ar: 'أعظم حاصل ضرب لجزء متتالي',
+            idea: 'بنحفظ أكبر وأصغر. الأصغر مهم لأن سالب × سالب = موجب.',
+            ex: '[2,3,-2,4] → 6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">maxProduct</span>(<span class="vr">n</span>) {
   <span class="kw">let</span> <span class="vr">mx</span>=<span class="vr">n</span>[<span class="num">0</span>],<span class="vr">mn</span>=<span class="vr">n</span>[<span class="num">0</span>],<span class="vr">r</span>=<span class="vr">n</span>[<span class="num">0</span>];
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">1</span>;<span class="vr">i</span>&lt;<span class="vr">n</span>.<span class="vr">length</span>;<span class="vr">i</span>++){
     <span class="kw">const</span> <span class="vr">v</span>=<span class="vr">n</span>[<span class="vr">i</span>];
@@ -1070,9 +1762,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="vr">r</span>=<span class="fn">Math.max</span>(<span class="vr">r</span>,<span class="vr">mx</span>);
   }
   <span class="kw">return</span> <span class="vr">r</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:50,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Longest Palindromic Substring',ar:'أطول جزء يقرأ نفسه من الاتجاهين',idea:'لكل مركز نتوسع للخارج. فردي (حرف) وزوجي (حرفين).',ex:'"babad" → "bab" ✅',code:`<span class="kw">function</span> <span class="fn">longestPalin</span>(<span class="vr">s</span>) {
+        , {
+            id: 50,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Longest Palindromic Substring',
+            ar: 'أطول جزء يقرأ نفسه من الاتجاهين',
+            idea: 'لكل مركز نتوسع للخارج. فردي (حرف) وزوجي (حرفين).',
+            ex: '"babad" → "bab" ✅',
+            code: `<span class="kw">function</span> <span class="fn">longestPalin</span>(<span class="vr">s</span>) {
   <span class="kw">let</span> <span class="vr">r</span>='';
   <span class="kw">function</span> <span class="fn">ex</span>(<span class="vr">l</span>,<span class="vr">ri</span>){
     <span class="kw">while</span>(<span class="vr">l</span>&gt;=<span class="num">0</span>&&<span class="vr">ri</span>&lt;<span class="vr">s</span>.<span class="vr">length</span>&&<span class="vr">s</span>[<span class="vr">l</span>]===<span class="vr">s</span>[<span class="vr">ri</span>]){<span class="vr">l</span>--;<span class="vr">ri</span>++;}
@@ -1084,15 +1788,39 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">if</span>(<span class="vr">b</span>.<span class="vr">length</span>&gt;<span class="vr">r</span>.<span class="vr">length</span>) <span class="vr">r</span>=<span class="vr">b</span>;
   }
   <span class="kw">return</span> <span class="vr">r</span>;
-}`,time:'O(n²)',space:'O(1)'}
+}`,
+            time: 'O(n²)',
+            space: 'O(1)'
+        }
 
-,{id:51,cat:'dp',catN:'🧠 DP',diff:'medium',en:'House Robber II',ar:'حرامي البيوت - شارع دائري',idea:'حل مرتين: بدون الأول وبدون الآخر. خد الأعلى.',ex:'[2,3,2] → 3 ✅',code:`<span class="kw">function</span> <span class="fn">rob2</span>(<span class="vr">n</span>) {
+        , {
+            id: 51,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'House Robber II',
+            ar: 'حرامي البيوت - شارع دائري',
+            idea: 'حل مرتين: بدون الأول وبدون الآخر. خد الأعلى.',
+            ex: '[2,3,2] → 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">rob2</span>(<span class="vr">n</span>) {
   <span class="kw">if</span>(<span class="vr">n</span>.<span class="vr">length</span>===<span class="num">1</span>) <span class="kw">return</span> <span class="vr">n</span>[<span class="num">0</span>];
   <span class="kw">function</span> <span class="fn">r</span>(<span class="vr">a</span>){<span class="kw">let</span> <span class="vr">p</span>=<span class="num">0</span>,<span class="vr">c</span>=<span class="num">0</span>;<span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">a</span>)[<span class="vr">p</span>,<span class="vr">c</span>]=[<span class="vr">c</span>,<span class="fn">Math.max</span>(<span class="vr">c</span>,<span class="vr">p</span>+<span class="vr">x</span>)];<span class="kw">return</span> <span class="vr">c</span>;}
   <span class="kw">return</span> <span class="fn">Math.max</span>(<span class="fn">r</span>(<span class="vr">n</span>.<span class="fn">slice</span>(<span class="num">1</span>)),<span class="fn">r</span>(<span class="vr">n</span>.<span class="fn">slice</span>(<span class="num">0</span>,-<span class="num">1</span>)));
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:52,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Decode Ways',ar:'كام طريقة لفك الترميز؟',idea:'رقم واحد (لو مش 0) أو رقمين (10-26).',ex:'"226" → 3 ✅',code:`<span class="kw">function</span> <span class="fn">numDecodings</span>(<span class="vr">s</span>) {
+        , {
+            id: 52,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Decode Ways',
+            ar: 'كام طريقة لفك الترميز؟',
+            idea: 'رقم واحد (لو مش 0) أو رقمين (10-26).',
+            ex: '"226" → 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">numDecodings</span>(<span class="vr">s</span>) {
   <span class="kw">let</span> <span class="vr">p2</span>=<span class="num">1</span>,<span class="vr">p1</span>=<span class="vr">s</span>[<span class="num">0</span>]!=='0'?<span class="num">1</span>:<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">2</span>;<span class="vr">i</span>&lt;=<span class="vr">s</span>.<span class="vr">length</span>;<span class="vr">i</span>++){
     <span class="kw">let</span> <span class="vr">c</span>=<span class="num">0</span>;
@@ -1102,9 +1830,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     [<span class="vr">p2</span>,<span class="vr">p1</span>]=[<span class="vr">p1</span>,<span class="vr">c</span>];
   }
   <span class="kw">return</span> <span class="vr">p1</span>;
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:53,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Word Break',ar:'هل تقدر تقسم الكلمة؟',idea:'dp[i] = هل s[0..i] قابل للتقسيم؟',ex:'"leetcode",["leet","code"] → true ✅',code:`<span class="kw">function</span> <span class="fn">wordBreak</span>(<span class="vr">s</span>,<span class="vr">d</span>) {
+        , {
+            id: 53,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Word Break',
+            ar: 'هل تقدر تقسم الكلمة؟',
+            idea: 'dp[i] = هل s[0..i] قابل للتقسيم؟',
+            ex: '"leetcode",["leet","code"] → true ✅',
+            code: `<span class="kw">function</span> <span class="fn">wordBreak</span>(<span class="vr">s</span>,<span class="vr">d</span>) {
   <span class="kw">const</span> <span class="vr">ws</span>=<span class="kw">new</span> <span class="fn">Set</span>(<span class="vr">d</span>);
   <span class="kw">const</span> <span class="vr">dp</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">s</span>.<span class="vr">length</span>+<span class="num">1</span>).<span class="fn">fill</span>(<span class="kw">false</span>);
   <span class="vr">dp</span>[<span class="num">0</span>]=<span class="kw">true</span>;
@@ -1112,9 +1852,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">j</span>=<span class="num">0</span>;<span class="vr">j</span>&lt;<span class="vr">i</span>;<span class="vr">j</span>++)
       <span class="kw">if</span>(<span class="vr">dp</span>[<span class="vr">j</span>]&&<span class="vr">ws</span>.<span class="fn">has</span>(<span class="vr">s</span>.<span class="fn">slice</span>(<span class="vr">j</span>,<span class="vr">i</span>))){<span class="vr">dp</span>[<span class="vr">i</span>]=<span class="kw">true</span>;<span class="kw">break</span>;}
   <span class="kw">return</span> <span class="vr">dp</span>[<span class="vr">s</span>.<span class="vr">length</span>];
-}`,time:'O(n²)',space:'O(n)'}
+}`,
+            time: 'O(n²)',
+            space: 'O(n)'
+        }
 
-,{id:54,cat:'dp',catN:'🧠 DP',diff:'hard',en:'Partition Equal Subset Sum',ar:'تقسيم لنصفين متساويين',idea:'0/1 Knapsack. هل فيه subset مجموعه = totalSum/2؟',ex:'[1,5,11,5] → true ✅',code:`<span class="kw">function</span> <span class="fn">canPartition</span>(<span class="vr">n</span>) {
+        , {
+            id: 54,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'hard',
+            en: 'Partition Equal Subset Sum',
+            ar: 'تقسيم لنصفين متساويين',
+            idea: '0/1 Knapsack. هل فيه subset مجموعه = totalSum/2؟',
+            ex: '[1,5,11,5] → true ✅',
+            code: `<span class="kw">function</span> <span class="fn">canPartition</span>(<span class="vr">n</span>) {
   <span class="kw">const</span> <span class="vr">s</span>=<span class="vr">n</span>.<span class="fn">reduce</span>((<span class="vr">a</span>,<span class="vr">b</span>)=><span class="vr">a</span>+<span class="vr">b</span>,<span class="num">0</span>);
   <span class="kw">if</span>(<span class="vr">s</span>%<span class="num">2</span>) <span class="kw">return</span> <span class="kw">false</span>;
   <span class="kw">const</span> <span class="vr">t</span>=<span class="vr">s</span>/<span class="num">2</span>;
@@ -1123,9 +1875,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">n</span>)
     <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">j</span>=<span class="vr">t</span>;<span class="vr">j</span>&gt;=<span class="vr">x</span>;<span class="vr">j</span>--) <span class="vr">dp</span>[<span class="vr">j</span>]|=<span class="vr">dp</span>[<span class="vr">j</span>-<span class="vr">x</span>];
   <span class="kw">return</span> <span class="vr">dp</span>[<span class="vr">t</span>];
-}`,time:'O(n×t)',space:'O(t)'}
+}`,
+            time: 'O(n×t)',
+            space: 'O(t)'
+        }
 
-,{id:55,cat:'intervals',catN:'📅 Intervals',diff:'medium',en:'Insert Interval',ar:'أضيف فترة جديدة',idea:'3 مراحل: قبل + ادمج المتداخلة + بعد.',ex:'[[1,3],[6,9]],insert=[2,5] → [[1,5],[6,9]] ✅',code:`<span class="kw">function</span> <span class="fn">insertInterval</span>(<span class="vr">iv</span>,<span class="vr">nw</span>) {
+        , {
+            id: 55,
+            cat: 'intervals',
+            catN: '📅 Intervals',
+            diff: 'medium',
+            en: 'Insert Interval',
+            ar: 'أضيف فترة جديدة',
+            idea: '3 مراحل: قبل + ادمج المتداخلة + بعد.',
+            ex: '[[1,3],[6,9]],insert=[2,5] → [[1,5],[6,9]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">insertInterval</span>(<span class="vr">iv</span>,<span class="vr">nw</span>) {
   <span class="kw">const</span> <span class="vr">r</span>=[]; <span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;
   <span class="kw">while</span>(<span class="vr">i</span>&lt;<span class="vr">iv</span>.<span class="vr">length</span>&&<span class="vr">iv</span>[<span class="vr">i</span>][<span class="num">1</span>]&lt;<span class="vr">nw</span>[<span class="num">0</span>]) <span class="vr">r</span>.<span class="fn">push</span>(<span class="vr">iv</span>[<span class="vr">i</span>++]);
   <span class="kw">while</span>(<span class="vr">i</span>&lt;<span class="vr">iv</span>.<span class="vr">length</span>&&<span class="vr">iv</span>[<span class="vr">i</span>][<span class="num">0</span>]&lt;=<span class="vr">nw</span>[<span class="num">1</span>]){
@@ -1135,17 +1899,41 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   <span class="vr">r</span>.<span class="fn">push</span>(<span class="vr">nw</span>);
   <span class="kw">while</span>(<span class="vr">i</span>&lt;<span class="vr">iv</span>.<span class="vr">length</span>) <span class="vr">r</span>.<span class="fn">push</span>(<span class="vr">iv</span>[<span class="vr">i</span>++]);
   <span class="kw">return</span> <span class="vr">r</span>;
-}`,time:'O(n)',space:'O(n)'}
+}`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:56,cat:'intervals',catN:'📅 Intervals',diff:'medium',en:'Non-Overlapping Intervals',ar:'أقل فترات تشيلها لمنع التداخل',idea:'Greedy. رتّب بالنهاية. خد أكتر فترات بدون تداخل.',ex:'[[1,2],[2,3],[3,4],[1,3]] → 1 ✅',code:`<span class="kw">function</span> <span class="fn">eraseOverlap</span>(<span class="vr">iv</span>) {
+        , {
+            id: 56,
+            cat: 'intervals',
+            catN: '📅 Intervals',
+            diff: 'medium',
+            en: 'Non-Overlapping Intervals',
+            ar: 'أقل فترات تشيلها لمنع التداخل',
+            idea: 'Greedy. رتّب بالنهاية. خد أكتر فترات بدون تداخل.',
+            ex: '[[1,2],[2,3],[3,4],[1,3]] → 1 ✅',
+            code: `<span class="kw">function</span> <span class="fn">eraseOverlap</span>(<span class="vr">iv</span>) {
   <span class="vr">iv</span>.<span class="fn">sort</span>((<span class="vr">a</span>,<span class="vr">b</span>)=><span class="vr">a</span>[<span class="num">1</span>]-<span class="vr">b</span>[<span class="num">1</span>]);
   <span class="kw">let</span> <span class="vr">e</span>=-Infinity,<span class="vr">rm</span>=<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">const</span>[<span class="vr">s</span>,<span class="vr">en</span>] <span class="kw">of</span> <span class="vr">iv</span>)
     <span class="kw">if</span>(<span class="vr">s</span>&gt;=<span class="vr">e</span>) <span class="vr">e</span>=<span class="vr">en</span>; <span class="kw">else</span> <span class="vr">rm</span>++;
   <span class="kw">return</span> <span class="vr">rm</span>;
-}`,time:'O(n log n)',space:'O(1)'}
+}`,
+            time: 'O(n log n)',
+            space: 'O(1)'
+        }
 
-,{id:57,cat:'trie',catN:'🔤 Trie',diff:'medium',en:'Add and Search Words',ar:'قاموس مع wildcard',idea:'Trie عادي. عند "." نجرب كل الأولاد بـ DFS.',ex:'add("bad","mad") → search(".ad")=true ✅',code:`<span class="kw">class</span> <span class="fn">WordDictionary</span> {
+        , {
+            id: 57,
+            cat: 'trie',
+            catN: '🔤 Trie',
+            diff: 'medium',
+            en: 'Add and Search Words',
+            ar: 'قاموس مع wildcard',
+            idea: 'Trie عادي. عند "." نجرب كل الأولاد بـ DFS.',
+            ex: 'add("bad","mad") → search(".ad")=true ✅',
+            code: `<span class="kw">class</span> <span class="fn">WordDictionary</span> {
   <span class="fn">constructor</span>(){<span class="kw">this</span>.<span class="vr">c</span>={};<span class="kw">this</span>.<span class="vr">e</span>=<span class="kw">false</span>;}
   <span class="fn">addWord</span>(<span class="vr">w</span>){
     <span class="kw">let</span> <span class="vr">n</span>=<span class="kw">this</span>;
@@ -1160,9 +1948,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     }
     <span class="kw">return</span> <span class="fn">d</span>(<span class="num">0</span>,<span class="kw">this</span>);
   }
-}`,time:'O(m) add, O(26^m) search',space:'O(nm)'}
+}`,
+            time: 'O(m) add, O(26^m) search',
+            space: 'O(nm)'
+        }
 
-,{id:58,cat:'heap',catN:'⛏️ Heap',diff:'hard',en:'Find Median from Data Stream',ar:'الوسيط من بيانات متدفقة',idea:'Binary insertion للإدراج المرتب. الوسيط = العنصر الأوسط.',ex:'add(1,2,3) → median=2 ✅',code:`<span class="kw">class</span> <span class="fn">MedianFinder</span> {
+        , {
+            id: 58,
+            cat: 'heap',
+            catN: '⛏️ Heap',
+            diff: 'hard',
+            en: 'Find Median from Data Stream',
+            ar: 'الوسيط من بيانات متدفقة',
+            idea: 'Binary insertion للإدراج المرتب. الوسيط = العنصر الأوسط.',
+            ex: 'add(1,2,3) → median=2 ✅',
+            code: `<span class="kw">class</span> <span class="fn">MedianFinder</span> {
   <span class="fn">constructor</span>(){<span class="kw">this</span>.<span class="vr">d</span>=[];}
   <span class="fn">addNum</span>(<span class="vr">n</span>){
     <span class="kw">let</span> <span class="vr">l</span>=<span class="num">0</span>,<span class="vr">r</span>=<span class="kw">this</span>.<span class="vr">d</span>.<span class="vr">length</span>;
@@ -1173,45 +1973,117 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">const</span> <span class="vr">n</span>=<span class="kw">this</span>.<span class="vr">d</span>.<span class="vr">length</span>,<span class="vr">m</span>=<span class="vr">n</span>&gt;&gt;<span class="num">1</span>;
     <span class="kw">return</span> <span class="vr">n</span>%<span class="num">2</span>?<span class="kw">this</span>.<span class="vr">d</span>[<span class="vr">m</span>]:(<span class="kw">this</span>.<span class="vr">d</span>[<span class="vr">m</span>-<span class="num">1</span>]+<span class="kw">this</span>.<span class="vr">d</span>[<span class="vr">m</span>])/<span class="num">2</span>;
   }
-}`,time:'O(n) add',space:'O(n)'}
+}`,
+            time: 'O(n) add',
+            space: 'O(n)'
+        }
 
-,{id:59,cat:'heap',catN:'⛏️ Heap',diff:'medium',en:'Task Scheduler',ar:'جدولة المهام مع راحة',idea:'المهمة الأكتر تكراراً بتحدد الوقت الأدنى.',ex:'["A","A","A","B","B","B"],n=2 → 8 ✅',code:`<span class="kw">function</span> <span class="fn">leastInterval</span>(<span class="vr">t</span>,<span class="vr">n</span>) {
+        , {
+            id: 59,
+            cat: 'heap',
+            catN: '⛏️ Heap',
+            diff: 'medium',
+            en: 'Task Scheduler',
+            ar: 'جدولة المهام مع راحة',
+            idea: 'المهمة الأكتر تكراراً بتحدد الوقت الأدنى.',
+            ex: '["A","A","A","B","B","B"],n=2 → 8 ✅',
+            code: `<span class="kw">function</span> <span class="fn">leastInterval</span>(<span class="vr">t</span>,<span class="vr">n</span>) {
   <span class="kw">const</span> <span class="vr">f</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="num">26</span>).<span class="fn">fill</span>(<span class="num">0</span>);
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">t</span>) <span class="vr">f</span>[<span class="vr">x</span>.<span class="fn">charCodeAt</span>(<span class="num">0</span>)-<span class="num">65</span>]++;
   <span class="kw">const</span> <span class="vr">mf</span>=<span class="fn">Math.max</span>(...<span class="vr">f</span>),<span class="vr">mc</span>=<span class="vr">f</span>.<span class="fn">filter</span>(<span class="vr">x</span>=><span class="vr">x</span>===<span class="vr">mf</span>).<span class="vr">length</span>;
   <span class="kw">return</span> <span class="fn">Math.max</span>(<span class="vr">t</span>.<span class="vr">length</span>,(<span class="vr">mf</span>-<span class="num">1</span>)*(<span class="vr">n</span>+<span class="num">1</span>)+<span class="vr">mc</span>);
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:60,cat:'bits',catN:'🔢 Bits',diff:'easy',en:'Counting Bits',ar:'عد الـ 1 لكل رقم من 0 لـ n',idea:'dp[i] = dp[i>>1] + (i&1). نص الرقم + آخر bit.',ex:'n=5 → [0,1,1,2,1,2] ✅',code:`<span class="kw">function</span> <span class="fn">countBits</span>(<span class="vr">n</span>) {
+        , {
+            id: 60,
+            cat: 'bits',
+            catN: '🔢 Bits',
+            diff: 'easy',
+            en: 'Counting Bits',
+            ar: 'عد الـ 1 لكل رقم من 0 لـ n',
+            idea: 'dp[i] = dp[i>>1] + (i&1). نص الرقم + آخر bit.',
+            ex: 'n=5 → [0,1,1,2,1,2] ✅',
+            code: `<span class="kw">function</span> <span class="fn">countBits</span>(<span class="vr">n</span>) {
   <span class="kw">const</span> <span class="vr">dp</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>+<span class="num">1</span>).<span class="fn">fill</span>(<span class="num">0</span>);
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">1</span>;<span class="vr">i</span>&lt;=<span class="vr">n</span>;<span class="vr">i</span>++) <span class="vr">dp</span>[<span class="vr">i</span>]=<span class="vr">dp</span>[<span class="vr">i</span>&gt;&gt;<span class="num">1</span>]+(<span class="vr">i</span>&<span class="num">1</span>);
   <span class="kw">return</span> <span class="vr">dp</span>;
-}`,time:'O(n)',space:'O(n)'}
+}`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:61,cat:'bits',catN:'🔢 Bits',diff:'easy',en:'Reverse Bits',ar:'عكس الـ bits في 32-bit integer',idea:'ناخد آخر bit من n ونحطه في أول مكان في النتيجة. نكرر 32 مرة.',ex:'00000010... → 00111001... ✅',code:`<span class="kw">function</span> <span class="fn">reverseBits</span>(<span class="vr">n</span>) {
+        , {
+            id: 61,
+            cat: 'bits',
+            catN: '🔢 Bits',
+            diff: 'easy',
+            en: 'Reverse Bits',
+            ar: 'عكس الـ bits في 32-bit integer',
+            idea: 'ناخد آخر bit من n ونحطه في أول مكان في النتيجة. نكرر 32 مرة.',
+            ex: '00000010... → 00111001... ✅',
+            code: `<span class="kw">function</span> <span class="fn">reverseBits</span>(<span class="vr">n</span>) {
   <span class="kw">let</span> <span class="vr">r</span>=<span class="num">0</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;<span class="num">32</span>;<span class="vr">i</span>++){<span class="vr">r</span>=<span class="vr">r</span>*<span class="num">2</span>+(<span class="vr">n</span>&<span class="num">1</span>);<span class="vr">n</span>&gt;&gt;&gt;=<span class="num">1</span>;}
   <span class="kw">return</span> <span class="vr">r</span>&gt;&gt;&gt;<span class="num">0</span>;
-}`,time:'O(1)',space:'O(1)'}
+}`,
+            time: 'O(1)',
+            space: 'O(1)'
+        }
 
-,{id:62,cat:'bits',catN:'🔢 Bits',diff:'medium',en:'Sum of Two Integers Without +',ar:'جمع بدون علامة +',idea:'XOR = جمع بدون carry. AND+shift = الـ carry. نكرر لحد ما carry=0.',ex:'2+3: XOR=1,carry=4 → XOR=5 ✅',code:`<span class="kw">function</span> <span class="fn">getSum</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
+        , {
+            id: 62,
+            cat: 'bits',
+            catN: '🔢 Bits',
+            diff: 'medium',
+            en: 'Sum of Two Integers Without +',
+            ar: 'جمع بدون علامة +',
+            idea: 'XOR = جمع بدون carry. AND+shift = الـ carry. نكرر لحد ما carry=0.',
+            ex: '2+3: XOR=1,carry=4 → XOR=5 ✅',
+            code: `<span class="kw">function</span> <span class="fn">getSum</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
   <span class="kw">while</span>(<span class="vr">b</span>){
     <span class="kw">const</span> <span class="vr">c</span>=(<span class="vr">a</span>&<span class="vr">b</span>)&lt;&lt;<span class="num">1</span>;
     <span class="vr">a</span>=<span class="vr">a</span>^<span class="vr">b</span>;
     <span class="vr">b</span>=<span class="vr">c</span>;
   }
   <span class="kw">return</span> <span class="vr">a</span>;
-}`,time:'O(1)',space:'O(1)'}
+}`,
+            time: 'O(1)',
+            space: 'O(1)'
+        }
 
-,{id:63,cat:'arrays',catN:'🔢 Math',diff:'medium',en:'Rotate Image',ar:'تدوير المصفوفة 90 درجة',idea:'Transpose ثم اعكس كل صف.',ex:'[[1,2,3],[4,5,6],[7,8,9]] → [[7,4,1],[8,5,2],[9,6,3]] ✅',code:`<span class="kw">function</span> <span class="fn">rotate</span>(<span class="vr">m</span>) {
+        , {
+            id: 63,
+            cat: 'arrays',
+            catN: '🔢 Math',
+            diff: 'medium',
+            en: 'Rotate Image',
+            ar: 'تدوير المصفوفة 90 درجة',
+            idea: 'Transpose ثم اعكس كل صف.',
+            ex: '[[1,2,3],[4,5,6],[7,8,9]] → [[7,4,1],[8,5,2],[9,6,3]] ✅',
+            code: `<span class="kw">function</span> <span class="fn">rotate</span>(<span class="vr">m</span>) {
   <span class="kw">const</span> <span class="vr">n</span>=<span class="vr">m</span>.<span class="vr">length</span>;
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;<span class="vr">n</span>;<span class="vr">i</span>++)
     <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">j</span>=<span class="vr">i</span>+<span class="num">1</span>;<span class="vr">j</span>&lt;<span class="vr">n</span>;<span class="vr">j</span>++)
       [<span class="vr">m</span>[<span class="vr">i</span>][<span class="vr">j</span>],<span class="vr">m</span>[<span class="vr">j</span>][<span class="vr">i</span>]]=[<span class="vr">m</span>[<span class="vr">j</span>][<span class="vr">i</span>],<span class="vr">m</span>[<span class="vr">i</span>][<span class="vr">j</span>]];
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;<span class="vr">n</span>;<span class="vr">i</span>++) <span class="vr">m</span>[<span class="vr">i</span>].<span class="fn">reverse</span>();
-}`,time:'O(n²)',space:'O(1)'}
+}`,
+            time: 'O(n²)',
+            space: 'O(1)'
+        }
 
-,{id:64,cat:'arrays',catN:'🔢 Math',diff:'medium',en:'Spiral Matrix',ar:'قراءة المصفوفة بشكل حلزوني',idea:'نقرأ: يمين→تحت→شمال→فوق. بنضيق الحدود كل مرة.',ex:'[[1,2,3],[4,5,6],[7,8,9]] → [1,2,3,6,9,8,7,4,5] ✅',code:`<span class="kw">function</span> <span class="fn">spiralOrder</span>(<span class="vr">m</span>) {
+        , {
+            id: 64,
+            cat: 'arrays',
+            catN: '🔢 Math',
+            diff: 'medium',
+            en: 'Spiral Matrix',
+            ar: 'قراءة المصفوفة بشكل حلزوني',
+            idea: 'نقرأ: يمين→تحت→شمال→فوق. بنضيق الحدود كل مرة.',
+            ex: '[[1,2,3],[4,5,6],[7,8,9]] → [1,2,3,6,9,8,7,4,5] ✅',
+            code: `<span class="kw">function</span> <span class="fn">spiralOrder</span>(<span class="vr">m</span>) {
   <span class="kw">const</span> <span class="vr">r</span>=[];
   <span class="kw">let</span> <span class="vr">t</span>=<span class="num">0</span>,<span class="vr">b</span>=<span class="vr">m</span>.<span class="vr">length</span>-<span class="num">1</span>,<span class="vr">l</span>=<span class="num">0</span>,<span class="vr">ri</span>=<span class="vr">m</span>[<span class="num">0</span>].<span class="vr">length</span>-<span class="num">1</span>;
   <span class="kw">while</span>(<span class="vr">t</span>&lt;=<span class="vr">b</span>&&<span class="vr">l</span>&lt;=<span class="vr">ri</span>){
@@ -1221,18 +2093,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">if</span>(<span class="vr">l</span>&lt;=<span class="vr">ri</span>){<span class="kw">for</span>(<span class="kw">let</span> <span class="vr">row</span>=<span class="vr">b</span>;<span class="vr">row</span>&gt;=<span class="vr">t</span>;<span class="vr">row</span>--) <span class="vr">r</span>.<span class="fn">push</span>(<span class="vr">m</span>[<span class="vr">row</span>][<span class="vr">l</span>]); <span class="vr">l</span>++;}
   }
   <span class="kw">return</span> <span class="vr">r</span>;
-}`,time:'O(n×m)',space:'O(1)'}
+}`,
+            time: 'O(n×m)',
+            space: 'O(1)'
+        }
 
-,{id:65,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Longest Common Subsequence',ar:'أطول سلسلة مشتركة بين نصين',idea:'DP 2D. لو الحرفان متطابقان: +1. لو لأ: max من الجهتين.',ex:'"abcde" و "ace" → 3 ✅',code:`<span class="kw">function</span> <span class="fn">LCS</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
+        , {
+            id: 65,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Longest Common Subsequence',
+            ar: 'أطول سلسلة مشتركة بين نصين',
+            idea: 'DP 2D. لو الحرفان متطابقان: +1. لو لأ: max من الجهتين.',
+            ex: '"abcde" و "ace" → 3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">LCS</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
   <span class="kw">const</span> <span class="vr">m</span>=<span class="vr">a</span>.<span class="vr">length</span>,<span class="vr">n</span>=<span class="vr">b</span>.<span class="vr">length</span>;
   <span class="kw">const</span> <span class="vr">dp</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">m</span>+<span class="num">1</span>).<span class="fn">fill</span>(<span class="kw">null</span>).<span class="fn">map</span>(()=><span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>+<span class="num">1</span>).<span class="fn">fill</span>(<span class="num">0</span>));
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">1</span>;<span class="vr">i</span>&lt;=<span class="vr">m</span>;<span class="vr">i</span>++)
     <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">j</span>=<span class="num">1</span>;<span class="vr">j</span>&lt;=<span class="vr">n</span>;<span class="vr">j</span>++)
       <span class="vr">dp</span>[<span class="vr">i</span>][<span class="vr">j</span>]=<span class="vr">a</span>[<span class="vr">i</span>-<span class="num">1</span>]===<span class="vr">b</span>[<span class="vr">j</span>-<span class="num">1</span>]?<span class="num">1</span>+<span class="vr">dp</span>[<span class="vr">i</span>-<span class="num">1</span>][<span class="vr">j</span>-<span class="num">1</span>]:<span class="fn">Math.max</span>(<span class="vr">dp</span>[<span class="vr">i</span>-<span class="num">1</span>][<span class="vr">j</span>],<span class="vr">dp</span>[<span class="vr">i</span>][<span class="vr">j</span>-<span class="num">1</span>]);
   <span class="kw">return</span> <span class="vr">dp</span>[<span class="vr">m</span>][<span class="vr">n</span>];
-}`,time:'O(m×n)',space:'O(m×n)'}
+}`,
+            time: 'O(m×n)',
+            space: 'O(m×n)'
+        }
 
-,{id:66,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Course Schedule II',ar:'ترتيب الكورسات',idea:'Topological Sort (Kahn). كورس يُضاف بعد انتهاء كل prerequisites.',ex:'[[1,0],[2,0],[3,1],[3,2]] → [0,1,2,3] ✅',code:`<span class="kw">function</span> <span class="fn">findOrder</span>(<span class="vr">n</span>,<span class="vr">pre</span>) {
+        , {
+            id: 66,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Course Schedule II',
+            ar: 'ترتيب الكورسات',
+            idea: 'Topological Sort (Kahn). كورس يُضاف بعد انتهاء كل prerequisites.',
+            ex: '[[1,0],[2,0],[3,1],[3,2]] → [0,1,2,3] ✅',
+            code: `<span class="kw">function</span> <span class="fn">findOrder</span>(<span class="vr">n</span>,<span class="vr">pre</span>) {
   <span class="kw">const</span> <span class="vr">adj</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>).<span class="fn">fill</span>(<span class="kw">null</span>).<span class="fn">map</span>(()=>[]);
   <span class="kw">const</span> <span class="vr">deg</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>).<span class="fn">fill</span>(<span class="num">0</span>);
   <span class="kw">for</span>(<span class="kw">const</span>[<span class="vr">a</span>,<span class="vr">b</span>] <span class="kw">of</span> <span class="vr">pre</span>){<span class="vr">adj</span>[<span class="vr">b</span>].<span class="fn">push</span>(<span class="vr">a</span>);<span class="vr">deg</span>[<span class="vr">a</span>]++;}
@@ -1243,9 +2139,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">adj</span>[<span class="vr">c</span>]) <span class="kw">if</span>(--<span class="vr">deg</span>[<span class="vr">x</span>]===<span class="num">0</span>) <span class="vr">q</span>.<span class="fn">push</span>(<span class="vr">x</span>);
   }
   <span class="kw">return</span> <span class="vr">or</span>.<span class="vr">length</span>===<span class="vr">n</span>?<span class="vr">or</span>:[];
-}`,time:'O(V+E)',space:'O(V+E)'}
+}`,
+            time: 'O(V+E)',
+            space: 'O(V+E)'
+        }
 
-,{id:67,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Pacific Atlantic Water Flow',ar:'مياه تصل للمحيطين',idea:'BFS من الساحلين للداخل. الخلايا المشتركة = الجواب.',ex:'Grid 5×5 → الخلايا اللي مياهها تصل للمحيطين ✅',code:`<span class="kw">function</span> <span class="fn">pacificAtlantic</span>(<span class="vr">h</span>) {
+        , {
+            id: 67,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Pacific Atlantic Water Flow',
+            ar: 'مياه تصل للمحيطين',
+            idea: 'BFS من الساحلين للداخل. الخلايا المشتركة = الجواب.',
+            ex: 'Grid 5×5 → الخلايا اللي مياهها تصل للمحيطين ✅',
+            code: `<span class="kw">function</span> <span class="fn">pacificAtlantic</span>(<span class="vr">h</span>) {
   <span class="kw">const</span> <span class="vr">R</span>=<span class="vr">h</span>.<span class="vr">length</span>,<span class="vr">C</span>=<span class="vr">h</span>[<span class="num">0</span>].<span class="vr">length</span>;
   <span class="kw">const</span> <span class="vr">mk</span>=()=><span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">R</span>).<span class="fn">fill</span>(<span class="kw">null</span>).<span class="fn">map</span>(()=><span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">C</span>).<span class="fn">fill</span>(<span class="kw">false</span>));
   <span class="kw">const</span> <span class="vr">p</span>=<span class="fn">mk</span>(),<span class="vr">a</span>=<span class="fn">mk</span>();
@@ -1267,9 +2175,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   <span class="kw">const</span> <span class="vr">res</span>=[];
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">r</span>=<span class="num">0</span>;<span class="vr">r</span>&lt;<span class="vr">R</span>;<span class="vr">r</span>++) <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">c</span>=<span class="num">0</span>;<span class="vr">c</span>&lt;<span class="vr">C</span>;<span class="vr">c</span>++) <span class="kw">if</span>(<span class="vr">p</span>[<span class="vr">r</span>][<span class="vr">c</span>]&&<span class="vr">a</span>[<span class="vr">r</span>][<span class="vr">c</span>]) <span class="vr">res</span>.<span class="fn">push</span>([<span class="vr">r</span>,<span class="vr">c</span>]);
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(n×m)',space:'O(n×m)'}
+}`,
+            time: 'O(n×m)',
+            space: 'O(n×m)'
+        }
 
-,{id:68,cat:'trees',catN:'🌳 Trees',diff:'hard',en:'Serialize and Deserialize Binary Tree',ar:'تحويل الشجرة لنص وبالعكس',idea:'BFS للـ serialize. نفس الترتيب للـ deserialize.',ex:'[1,2,3] ↔ "1,2,3,null,null,null,null" ✅',code:`<span class="kw">const</span> <span class="vr">codec</span>={
+        , {
+            id: 68,
+            cat: 'trees',
+            catN: '🌳 Trees',
+            diff: 'hard',
+            en: 'Serialize and Deserialize Binary Tree',
+            ar: 'تحويل الشجرة لنص وبالعكس',
+            idea: 'BFS للـ serialize. نفس الترتيب للـ deserialize.',
+            ex: '[1,2,3] ↔ "1,2,3,null,null,null,null" ✅',
+            code: `<span class="kw">const</span> <span class="vr">codec</span>={
   <span class="fn">serialize</span>(<span class="vr">r</span>){
     <span class="kw">if</span>(!<span class="vr">r</span>) <span class="kw">return</span> '';
     <span class="kw">const</span> <span class="vr">res</span>=[],<span class="vr">q</span>=[<span class="vr">r</span>];
@@ -1288,9 +2208,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     }
     <span class="kw">return</span> <span class="vr">r</span>;
   }
-};`,time:'O(n)',space:'O(n)'}
+};`,
+            time: 'O(n)',
+            space: 'O(n)'
+        }
 
-,{id:69,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Surrounded Regions',ar:'تلوين المناطق المحاطة',idea:'DFS من الحواف للداخل واحمِ الـ O المتصلة. الباقي يتحول لـ X.',ex:'XXXX/XOOX/XXOX/XOXX → الـ O الداخلية تتحول X ✅',code:`<span class="kw">function</span> <span class="fn">solve</span>(<span class="vr">b</span>) {
+        , {
+            id: 69,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Surrounded Regions',
+            ar: 'تلوين المناطق المحاطة',
+            idea: 'DFS من الحواف للداخل واحمِ الـ O المتصلة. الباقي يتحول لـ X.',
+            ex: 'XXXX/XOOX/XXOX/XOXX → الـ O الداخلية تتحول X ✅',
+            code: `<span class="kw">function</span> <span class="fn">solve</span>(<span class="vr">b</span>) {
   <span class="kw">const</span> <span class="vr">R</span>=<span class="vr">b</span>.<span class="vr">length</span>,<span class="vr">C</span>=<span class="vr">b</span>[<span class="num">0</span>].<span class="vr">length</span>;
   <span class="kw">function</span> <span class="fn">dfs</span>(<span class="vr">r</span>,<span class="vr">c</span>){
     <span class="kw">if</span>(<span class="vr">r</span>&lt;<span class="num">0</span>||<span class="vr">r</span>&gt;=<span class="vr">R</span>||<span class="vr">c</span>&lt;<span class="num">0</span>||<span class="vr">c</span>&gt;=<span class="vr">C</span>||<span class="vr">b</span>[<span class="vr">r</span>][<span class="vr">c</span>]!=='O') <span class="kw">return</span>;
@@ -1301,9 +2233,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">c</span>=<span class="num">0</span>;<span class="vr">c</span>&lt;<span class="vr">C</span>;<span class="vr">c</span>++){<span class="fn">dfs</span>(<span class="num">0</span>,<span class="vr">c</span>);<span class="fn">dfs</span>(<span class="vr">R</span>-<span class="num">1</span>,<span class="vr">c</span>);}
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">r</span>=<span class="num">0</span>;<span class="vr">r</span>&lt;<span class="vr">R</span>;<span class="vr">r</span>++) <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">c</span>=<span class="num">0</span>;<span class="vr">c</span>&lt;<span class="vr">C</span>;<span class="vr">c</span>++)
     <span class="vr">b</span>[<span class="vr">r</span>][<span class="vr">c</span>]=<span class="vr">b</span>[<span class="vr">r</span>][<span class="vr">c</span>]==='S'?'O':'X';
-}`,time:'O(n×m)',space:'O(n×m)'}
+}`,
+            time: 'O(n×m)',
+            space: 'O(n×m)'
+        }
 
-,{id:70,cat:'graphs',catN:'🕸️ Graphs',diff:'hard',en:'Word Ladder',ar:'سلم الكلمات - أقصر تحويل',idea:'BFS. كل كلمة بنغير فيها حرف واحد في كل مستوى.',ex:'"hit"→"cog" : hit→hot→dot→dog→cog = 5 ✅',code:`<span class="kw">function</span> <span class="fn">ladderLength</span>(<span class="vr">bg</span>,<span class="vr">en</span>,<span class="vr">wl</span>) {
+        , {
+            id: 70,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'hard',
+            en: 'Word Ladder',
+            ar: 'سلم الكلمات - أقصر تحويل',
+            idea: 'BFS. كل كلمة بنغير فيها حرف واحد في كل مستوى.',
+            ex: '"hit"→"cog" : hit→hot→dot→dog→cog = 5 ✅',
+            code: `<span class="kw">function</span> <span class="fn">ladderLength</span>(<span class="vr">bg</span>,<span class="vr">en</span>,<span class="vr">wl</span>) {
   <span class="kw">const</span> <span class="vr">ws</span>=<span class="kw">new</span> <span class="fn">Set</span>(<span class="vr">wl</span>);
   <span class="kw">if</span>(!<span class="vr">ws</span>.<span class="fn">has</span>(<span class="vr">en</span>)) <span class="kw">return</span> <span class="num">0</span>;
   <span class="kw">const</span> <span class="vr">q</span>=[[<span class="vr">bg</span>,<span class="num">1</span>]],<span class="vr">seen</span>=<span class="kw">new</span> <span class="fn">Set</span>([<span class="vr">bg</span>]);
@@ -1317,18 +2261,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
       }
   }
   <span class="kw">return</span> <span class="num">0</span>;
-}`,time:'O(M²N)',space:'O(M²N)'}
+}`,
+            time: 'O(M²N)',
+            space: 'O(M²N)'
+        }
 
-,{id:71,cat:'dp',catN:'🧠 DP',diff:'medium',en:'Palindromic Substrings Count',ar:'عدد الـ substrings اللي palindrome',idea:'لكل مركز نتوسع ونعدّ. كل توسع ناجح = palindrome جديد.',ex:'"aaa" → 6 ✅',code:`<span class="kw">function</span> <span class="fn">countPalin</span>(<span class="vr">s</span>) {
+        , {
+            id: 71,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'medium',
+            en: 'Palindromic Substrings Count',
+            ar: 'عدد الـ substrings اللي palindrome',
+            idea: 'لكل مركز نتوسع ونعدّ. كل توسع ناجح = palindrome جديد.',
+            ex: '"aaa" → 6 ✅',
+            code: `<span class="kw">function</span> <span class="fn">countPalin</span>(<span class="vr">s</span>) {
   <span class="kw">let</span> <span class="vr">cnt</span>=<span class="num">0</span>;
   <span class="kw">function</span> <span class="fn">ex</span>(<span class="vr">l</span>,<span class="vr">r</span>){
     <span class="kw">while</span>(<span class="vr">l</span>&gt;=<span class="num">0</span>&&<span class="vr">r</span>&lt;<span class="vr">s</span>.<span class="vr">length</span>&&<span class="vr">s</span>[<span class="vr">l</span>]===<span class="vr">s</span>[<span class="vr">r</span>]){<span class="vr">cnt</span>++;<span class="vr">l</span>--;<span class="vr">r</span>++;}
   }
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">0</span>;<span class="vr">i</span>&lt;<span class="vr">s</span>.<span class="vr">length</span>;<span class="vr">i</span>++){<span class="fn">ex</span>(<span class="vr">i</span>,<span class="vr">i</span>);<span class="fn">ex</span>(<span class="vr">i</span>,<span class="vr">i</span>+<span class="num">1</span>);}
   <span class="kw">return</span> <span class="vr">cnt</span>;
-}`,time:'O(n²)',space:'O(1)'}
+}`,
+            time: 'O(n²)',
+            space: 'O(1)'
+        }
 
-,{id:72,cat:'dp',catN:'🧠 DP',diff:'hard',en:'Edit Distance',ar:'أقل عدد عمليات لتحويل كلمة لأخرى',idea:'DP 2D. عمليات: Insert, Delete, Replace.',ex:'"horse"→"ros" → 3 عمليات ✅',code:`<span class="kw">function</span> <span class="fn">minDistance</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
+        , {
+            id: 72,
+            cat: 'dp',
+            catN: '🧠 DP',
+            diff: 'hard',
+            en: 'Edit Distance',
+            ar: 'أقل عدد عمليات لتحويل كلمة لأخرى',
+            idea: 'DP 2D. عمليات: Insert, Delete, Replace.',
+            ex: '"horse"→"ros" → 3 عمليات ✅',
+            code: `<span class="kw">function</span> <span class="fn">minDistance</span>(<span class="vr">a</span>,<span class="vr">b</span>) {
   <span class="kw">const</span> <span class="vr">m</span>=<span class="vr">a</span>.<span class="vr">length</span>,<span class="vr">n</span>=<span class="vr">b</span>.<span class="vr">length</span>;
   <span class="kw">const</span> <span class="vr">dp</span>=<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">m</span>+<span class="num">1</span>).<span class="fn">fill</span>(<span class="kw">null</span>).<span class="fn">map</span>((_,<span class="vr">i</span>)=>[...<span class="kw">new</span> <span class="fn">Array</span>(<span class="vr">n</span>+<span class="num">1</span>)].<span class="fn">map</span>((_,<span class="vr">j</span>)=><span class="vr">i</span>||<span class="vr">j</span>));
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">i</span>=<span class="num">1</span>;<span class="vr">i</span>&lt;=<span class="vr">m</span>;<span class="vr">i</span>++)
@@ -1336,18 +2304,42 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
       <span class="vr">dp</span>[<span class="vr">i</span>][<span class="vr">j</span>]=<span class="vr">a</span>[<span class="vr">i</span>-<span class="num">1</span>]===<span class="vr">b</span>[<span class="vr">j</span>-<span class="num">1</span>]?<span class="vr">dp</span>[<span class="vr">i</span>-<span class="num">1</span>][<span class="vr">j</span>-<span class="num">1</span>]:
         <span class="num">1</span>+<span class="fn">Math.min</span>(<span class="vr">dp</span>[<span class="vr">i</span>-<span class="num">1</span>][<span class="vr">j</span>],<span class="vr">dp</span>[<span class="vr">i</span>][<span class="vr">j</span>-<span class="num">1</span>],<span class="vr">dp</span>[<span class="vr">i</span>-<span class="num">1</span>][<span class="vr">j</span>-<span class="num">1</span>]);
   <span class="kw">return</span> <span class="vr">dp</span>[<span class="vr">m</span>][<span class="vr">n</span>];
-}`,time:'O(m×n)',space:'O(m×n)'}
+}`,
+            time: 'O(m×n)',
+            space: 'O(m×n)'
+        }
 
-,{id:73,cat:'graphs',catN:'🕸️ Graphs',diff:'medium',en:'Reorder List',ar:'إعادة ترتيب القائمة',idea:'3 خطوات: لاقي النص، اعكس النصف الثاني، ادمج الاتنين.',ex:'1→2→3→4→5 → 1→5→2→4→3 ✅',code:`<span class="kw">function</span> <span class="fn">reorderList</span>(<span class="vr">h</span>) {
+        , {
+            id: 73,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'medium',
+            en: 'Reorder List',
+            ar: 'إعادة ترتيب القائمة',
+            idea: '3 خطوات: لاقي النص، اعكس النصف الثاني، ادمج الاتنين.',
+            ex: '1→2→3→4→5 → 1→5→2→4→3 ✅',
+            code: `<span class="kw">function</span> <span class="fn">reorderList</span>(<span class="vr">h</span>) {
   <span class="kw">let</span> <span class="vr">s</span>=<span class="vr">h</span>,<span class="vr">f</span>=<span class="vr">h</span>;
   <span class="kw">while</span>(<span class="vr">f</span>.<span class="vr">next</span>&&<span class="vr">f</span>.<span class="vr">next</span>.<span class="vr">next</span>){<span class="vr">s</span>=<span class="vr">s</span>.<span class="vr">next</span>;<span class="vr">f</span>=<span class="vr">f</span>.<span class="vr">next</span>.<span class="vr">next</span>;}
   <span class="kw">let</span> <span class="vr">sec</span>=<span class="vr">s</span>.<span class="vr">next</span>;<span class="vr">s</span>.<span class="vr">next</span>=<span class="kw">null</span>;<span class="kw">let</span> <span class="vr">pr</span>=<span class="kw">null</span>;
   <span class="kw">while</span>(<span class="vr">sec</span>){<span class="kw">const</span> <span class="vr">n</span>=<span class="vr">sec</span>.<span class="vr">next</span>;<span class="vr">sec</span>.<span class="vr">next</span>=<span class="vr">pr</span>;<span class="vr">pr</span>=<span class="vr">sec</span>;<span class="vr">sec</span>=<span class="vr">n</span>;}
   <span class="kw">let</span> <span class="vr">a</span>=<span class="vr">h</span>,<span class="vr">b</span>=<span class="vr">pr</span>;
   <span class="kw">while</span>(<span class="vr">b</span>){<span class="kw">const</span> <span class="vr">an</span>=<span class="vr">a</span>.<span class="vr">next</span>,<span class="vr">bn</span>=<span class="vr">b</span>.<span class="vr">next</span>;<span class="vr">a</span>.<span class="vr">next</span>=<span class="vr">b</span>;<span class="vr">b</span>.<span class="vr">next</span>=<span class="vr">an</span>;<span class="vr">a</span>=<span class="vr">an</span>;<span class="vr">b</span>=<span class="vr">bn</span>;}
-}`,time:'O(n)',space:'O(1)'}
+}`,
+            time: 'O(n)',
+            space: 'O(1)'
+        }
 
-,{id:74,cat:'graphs',catN:'🕸️ Graphs',diff:'hard',en:'Alien Dictionary',ar:'ترتيب الأبجدية في لغة غريبة',idea:'Topological Sort. نستنتج ترتيب الحروف من مقارنة الكلمات المتجاورة.',ex:'["wrt","wrf","er","ett","rftt"] → "wertf" ✅',code:`<span class="kw">function</span> <span class="fn">alienOrder</span>(<span class="vr">words</span>) {
+        , {
+            id: 74,
+            cat: 'graphs',
+            catN: '🕸️ Graphs',
+            diff: 'hard',
+            en: 'Alien Dictionary',
+            ar: 'ترتيب الأبجدية في لغة غريبة',
+            idea: 'Topological Sort. نستنتج ترتيب الحروف من مقارنة الكلمات المتجاورة.',
+            ex: '["wrt","wrf","er","ett","rftt"] → "wertf" ✅',
+            code: `<span class="kw">function</span> <span class="fn">alienOrder</span>(<span class="vr">words</span>) {
   <span class="kw">const</span> <span class="vr">adj</span>=<span class="kw">new</span> <span class="fn">Map</span>(),<span class="vr">deg</span>=<span class="kw">new</span> <span class="fn">Map</span>();
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">w</span> <span class="kw">of</span> <span class="vr">words</span>) <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">c</span> <span class="kw">of</span> <span class="vr">w</span>)
     {<span class="kw">if</span>(!<span class="vr">adj</span>.<span class="fn">has</span>(<span class="vr">c</span>)) <span class="vr">adj</span>.<span class="fn">set</span>(<span class="vr">c</span>,<span class="kw">new</span> <span class="fn">Set</span>());<span class="kw">if</span>(!<span class="vr">deg</span>.<span class="fn">has</span>(<span class="vr">c</span>)) <span class="vr">deg</span>.<span class="fn">set</span>(<span class="vr">c</span>,<span class="num">0</span>);}
@@ -1368,9 +2360,21 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
     <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">x</span> <span class="kw">of</span> <span class="vr">adj</span>.<span class="fn">get</span>(<span class="vr">c</span>)){<span class="vr">deg</span>.<span class="fn">set</span>(<span class="vr">x</span>,<span class="vr">deg</span>.<span class="fn">get</span>(<span class="vr">x</span>)-<span class="num">1</span>);<span class="kw">if</span>(<span class="vr">deg</span>.<span class="fn">get</span>(<span class="vr">x</span>)===<span class="num">0</span>) <span class="vr">q</span>.<span class="fn">push</span>(<span class="vr">x</span>);}
   }
   <span class="kw">return</span> <span class="vr">res</span>.<span class="vr">length</span>===<span class="vr">adj</span>.<span class="vr">size</span>?<span class="vr">res</span>:'';
-}`,time:'O(C)',space:'O(1)'}
+}`,
+            time: 'O(C)',
+            space: 'O(1)'
+        }
 
-,{id:75,cat:'trie',catN:'🔤 Trie',diff:'hard',en:'Word Search II',ar:'ابحث عن كل الكلمات في الجدول',idea:'Trie + DFS. نبني Trie من القاموس ونبحث في الجدول بـ DFS.',ex:'board مع words=["oath","pea","eat","rain"] → ["eat","oath"] ✅',code:`<span class="kw">function</span> <span class="fn">findWords</span>(<span class="vr">board</span>,<span class="vr">words</span>) {
+        , {
+            id: 75,
+            cat: 'trie',
+            catN: '🔤 Trie',
+            diff: 'hard',
+            en: 'Word Search II',
+            ar: 'ابحث عن كل الكلمات في الجدول',
+            idea: 'Trie + DFS. نبني Trie من القاموس ونبحث في الجدول بـ DFS.',
+            ex: 'board مع words=["oath","pea","eat","rain"] → ["eat","oath"] ✅',
+            code: `<span class="kw">function</span> <span class="fn">findWords</span>(<span class="vr">board</span>,<span class="vr">words</span>) {
   <span class="kw">const</span> <span class="vr">res</span>=[],<span class="vr">root</span>={};
   <span class="cm">// ابنِ Trie من القاموس</span>
   <span class="kw">for</span>(<span class="kw">const</span> <span class="vr">w</span> <span class="kw">of</span> <span class="vr">words</span>) {
@@ -1391,61 +2395,77 @@ code:`<span class="kw">function</span> <span class="fn">missingNumber</span>(<sp
   }
   <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">r</span>=<span class="num">0</span>;<span class="vr">r</span>&lt;<span class="vr">R</span>;<span class="vr">r</span>++) <span class="kw">for</span>(<span class="kw">let</span> <span class="vr">c</span>=<span class="num">0</span>;<span class="vr">c</span>&lt;<span class="vr">C</span>;<span class="vr">c</span>++) <span class="fn">dfs</span>(<span class="vr">r</span>,<span class="vr">c</span>,<span class="vr">root</span>);
   <span class="kw">return</span> <span class="vr">res</span>;
-}`,time:'O(M×4×3^(L-1))',space:'O(N×L)'}
-];
+}`,
+            time: 'O(M×4×3^(L-1))',
+            space: 'O(N×L)'
+        }
+    ];
 
-// ── Build categories ──
-const CATS = {all:'الكل', arrays:'📦 Arrays', twoptr:'👆 Two Pointers', sliding:'🪟 Sliding Window',
-  stack:'📚 Stack', bsearch:'🔍 Binary Search', linked:'🔗 Linked List', trees:'🌳 Trees',
-  graphs:'🕸️ Graphs', dp:'🧠 DP', intervals:'📅 Intervals', trie:'🔤 Trie', heap:'⛏️ Heap', bits:'🔢 Bits'};
+    // ── Build categories ──
+    const CATS = {
+        all: 'الكل', arrays: '📦 Arrays', twoptr: '👆 Two Pointers', sliding: '🪟 Sliding Window',
+        stack: '📚 Stack', bsearch: '🔍 Binary Search', linked: '🔗 Linked List', trees: '🌳 Trees',
+        graphs: '🕸️ Graphs', dp: '🧠 DP', intervals: '📅 Intervals', trie: '🔤 Trie', heap: '⛏️ Heap', bits: '🔢 Bits'
+    };
 
-// Build cat nav
-const nav = document.getElementById('catNav');
-Object.entries(CATS).forEach(([k,v]) => {
-  const b = document.createElement('button');
-  b.className = 'cbtn' + (k==='all'?' on':'');
-  b.textContent = v;
-  b.onclick = () => { curCat=k; document.querySelectorAll('.cbtn').forEach(x=>x.classList.remove('on')); b.classList.add('on'); render(); };
-  nav.appendChild(b);
-});
-
-function setDiff(d, btn) {
-  curDiff = d;
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  render();
-}
-
-function render() {
-  const q = document.getElementById('srch').value.toLowerCase();
-  const filtered = QS.filter(s => {
-    const mD = curDiff==='all' || s.diff===curDiff;
-    const mC = curCat==='all' || s.cat===curCat;
-    const mQ = !q || s.en.toLowerCase().includes(q) || s.ar.includes(q);
-    return mD && mC && mQ;
-  });
-
-  // group by catN
-  const groups = {};
-  filtered.forEach(s => { if(!groups[s.catN]) groups[s.catN]=[]; groups[s.catN].push(s); });
-
-  let html = '';
-  if (!filtered.length) { html = '<div class="no-res">😕 مفيش نتائج</div>'; }
-  else {
-    Object.entries(groups).forEach(([cat, qs]) => {
-      html += `<div class="cat-group"><div class="cat-title">${cat} <span class="cat-cnt">${qs.length} سؤال</span></div>`;
-      qs.forEach(s => { html += buildCard(s); });
-      html += '</div>';
+    // Build cat nav
+    const nav = document.getElementById('catNav');
+    Object.entries(CATS).forEach(([k, v]) => {
+        const b = document.createElement('button');
+        b.className = 'cbtn' + (k === 'all' ? ' on' : '');
+        b.textContent = v;
+        b.onclick = () => {
+            curCat = k;
+            document.querySelectorAll('.cbtn').forEach(x => x.classList.remove('on'));
+            b.classList.add('on');
+            render();
+        };
+        nav.appendChild(b);
     });
-  }
-  document.getElementById('main').innerHTML = html;
-  updateProg();
-}
 
-function buildCard(s) {
-  const dn = {easy:'سهل 🟢',medium:'متوسط 🟡',hard:'صعب 🔴'};
-  const done = solved.has(s.id);
-  return `
+    function setDiff(d, btn) {
+        curDiff = d;
+        document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        render();
+    }
+
+    function render() {
+        const q = document.getElementById('srch').value.toLowerCase();
+        const filtered = QS.filter(s => {
+            const mD = curDiff === 'all' || s.diff === curDiff;
+            const mC = curCat === 'all' || s.cat === curCat;
+            const mQ = !q || s.en.toLowerCase().includes(q) || s.ar.includes(q);
+            return mD && mC && mQ;
+        });
+
+        // group by catN
+        const groups = {};
+        filtered.forEach(s => {
+            if (!groups[s.catN]) groups[s.catN] = [];
+            groups[s.catN].push(s);
+        });
+
+        let html = '';
+        if (!filtered.length) {
+            html = '<div class="no-res">😕 مفيش نتائج</div>';
+        } else {
+            Object.entries(groups).forEach(([cat, qs]) => {
+                html += `<div class="cat-group"><div class="cat-title">${cat} <span class="cat-cnt">${qs.length} سؤال</span></div>`;
+                qs.forEach(s => {
+                    html += buildCard(s);
+                });
+                html += '</div>';
+            });
+        }
+        document.getElementById('main').innerHTML = html;
+        updateProg();
+    }
+
+    function buildCard(s) {
+        const dn = {easy: 'سهل 🟢', medium: 'متوسط 🟡', hard: 'صعب 🔴'};
+        const done = solved.has(s.id);
+        return `
 <div class="sol-card" id="sc${s.id}" onclick="toggleCard(${s.id},event)">
   <div class="sol-head">
     <div class="sol-num">#${s.id}</div>
@@ -1479,54 +2499,61 @@ function buildCard(s) {
           <span class="cx cx-s">💾 Space: ${s.space}</span>
         </div>
       </div>
-      <button class="mark-btn ${done?'done':''}" onclick="markDone(${s.id},event)">${done?'✅ تمت!':'○ علّمها حليت'}</button>
+      <button class="mark-btn ${done ? 'done' : ''}" onclick="markDone(${s.id},event)">${done ? '✅ تمت!' : '○ علّمها حليت'}</button>
     </div>
   </div>
 </div>`;
-}
+    }
 
-function toggleCard(id, e) {
-  if (e.target.closest('.tab,.mark-btn,.copy-btn')) return;
-  const c = document.getElementById('sc'+id);
-  const was = c.classList.contains('open');
-  document.querySelectorAll('.sol-card.open').forEach(x=>x.classList.remove('open'));
-  if (!was) c.classList.add('open');
-}
+    function toggleCard(id, e) {
+        if (e.target.closest('.tab,.mark-btn,.copy-btn')) return;
+        const c = document.getElementById('sc' + id);
+        const was = c.classList.contains('open');
+        document.querySelectorAll('.sol-card.open').forEach(x => x.classList.remove('open'));
+        if (!was) c.classList.add('open');
+    }
 
-function switchTab(id, tab, btn) {
-  document.getElementById('idea'+id).classList.remove('on');
-  document.getElementById('code'+id).classList.remove('on');
-  document.getElementById(tab+id).classList.add('on');
-  btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-}
+    function switchTab(id, tab, btn) {
+        document.getElementById('idea' + id).classList.remove('on');
+        document.getElementById('code' + id).classList.remove('on');
+        document.getElementById(tab + id).classList.add('on');
+        btn.closest('.tabs').querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+    }
 
-function markDone(id, e) {
-  e.stopPropagation();
-  solved.has(id) ? solved.delete(id) : solved.add(id);
-  const c = document.getElementById('sc'+id);
-  const wasOpen = c.classList.contains('open');
-  render();
-  if (wasOpen) { setTimeout(() => { const nc=document.getElementById('sc'+id); if(nc) nc.classList.add('open'); },10); }
-}
+    function markDone(id, e) {
+        e.stopPropagation();
+        solved.has(id) ? solved.delete(id) : solved.add(id);
+        const c = document.getElementById('sc' + id);
+        const wasOpen = c.classList.contains('open');
+        render();
+        if (wasOpen) {
+            setTimeout(() => {
+                const nc = document.getElementById('sc' + id);
+                if (nc) nc.classList.add('open');
+            }, 10);
+        }
+    }
 
-function copyCode(id, e) {
-  e.stopPropagation();
-  const pre = document.getElementById('pre'+id);
-  const text = pre.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    e.target.textContent = '✅ تم!';
-    setTimeout(() => { e.target.textContent = 'نسخ'; }, 1500);
-  });
-}
+    function copyCode(id, e) {
+        e.stopPropagation();
+        const pre = document.getElementById('pre' + id);
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            e.target.textContent = '✅ تم!';
+            setTimeout(() => {
+                e.target.textContent = 'نسخ';
+            }, 1500);
+        });
+    }
 
-function updateProg() {
-  const c = solved.size;
-  document.getElementById('pFill').style.width = (c/75*100)+'%';
-  document.getElementById('pCount').textContent = c;
-}
+    function updateProg() {
+        const c = solved.size;
+        document.getElementById('pFill').style.width = (c / 75 * 100) + '%';
+        document.getElementById('pCount').textContent = c;
+    }
 
-render();
+    render();
 </script>
 </body>
 </html>
