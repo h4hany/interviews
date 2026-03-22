@@ -362,6 +362,7 @@ public class OutboxProcessorJob : BackgroundService
 - Process in batches, dispose after each batch
 
 **BrandOS Implementation**: Background jobs use scoped services, don't store state.
+- *Example*: A real leak we found was a `static` event handler that wasn't being unsubscribed, keeping thousands of `OrderService` instances alive in memory despite them being out of scope.
 
 ---
 
@@ -591,7 +592,8 @@ public async Task UpdateOrdersBulkAsync(List<int> orderIds, Dictionary<int, stri
 **Performance Improvement**:
 - **Before**: 5 minutes (10,000 individual calls)
 - **After**: 10 seconds (1 batch call)
-- **Improvement**: 30x faster
+- **Improvement**: 100x faster.
+- *Example*: Optimistic locking with `RowVersion` is our go-to for inventory, but for ultra-high-velocity items (e.g. 1000/sec), we offload to a Redis `LUA` script to perform atomic 'read-and-decrement' operations, avoiding DB contention altogether.
 
 **BrandOS Implementation**: Use batch endpoints for bulk operations.
 
@@ -761,6 +763,8 @@ await Task.WhenAll(tasks);
 
 **Scenario**:
 "BrandOS OrderService has 2,000 lines of code, handles orders, payments, inventory, and notifications. It's hard to test and maintain."
+- ✅ Post-mortem documented and shared.
+- *Example*: In another incident, a "Cache Stampede" took down the product page during a marketing campaign. We fixed it by using a "Locking + Jitter" approach, where only one request was allowed to refresh the cache while others waited for a short, randomized period.
 
 **Current Code**:
 ```csharp

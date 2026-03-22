@@ -28,16 +28,15 @@ The key components of system design include:
 
 **Answer:**
 
-Load balancing is the process of distributing incoming network traffic across multiple servers to ensure no single
-server is overwhelmed. It improves the responsiveness and availability of applications by preventing any one server
-from becoming a bottleneck.
+Load balancing is the process of distributing incoming network traffic across multiple servers.
+- *Example*: Using **Nginx** or **AWS ALB** to distribute traffic between 5 instances of your web server. If one server crashes, the load balancer stops sending traffic to it, keeping your site online.
 
 ## 4. What is sharding in databases?
 
 **Answer:**
 
-Sharding is a database partitioning technique that divides a large database into smaller, more manageable parts called
-shards. Each shard is stored on a separate server instance to distribute the load and improve performance.
+Sharding is a database partitioning technique that divides a large database into smaller parts.
+- *Example*: In a global app, you might shard by region. Users in 'Europe' are stored on Server A, and users in 'Asia' are on Server B. This keeps the database size manageable and reduces latency for local users.
 
 ## 5. What is CAP theorem?
 
@@ -45,39 +44,9 @@ shards. Each shard is stored on a separate server instance to distribute the loa
 
 **Answer:**
 
-- **Consistency(C):** Every read receives the most recent write or an error.
-    - **Explanation:**
-        - All nodes in the distributed system see the same data at the same time.
-        - After a write operation completes, all subsequent reads will return that value.
-    - **Implications:**
-        - Consistency is achieved by updating all replicas before responding to read requests.
-        - This approach can lead to increased latency and reduced availability.
-        - Ensures data accuracy and reliability.
-        - Requires synchronization among nodes, which can introduce latency.
-- **Availability(A):** Every request receives a response, without guarantee that it contains the most recent write.
-    - **Explanation:**
-        - The system remains operational 100% of the time.
-        - Every node returns a response for every request without exceptions.
-    - **Implications:**
-        - Availability is achieved by allowing read and write operations to continue even in the presence of network
-          partitions.
-        - This approach can lead to eventual consistency.
-        - Essential for systems where responsiveness is critical.
-        - Focuses on the system's ability to respond to queries, even if the data is stale.
-- **Partition tolerance(P):** The system continues to operate despite an arbitrary number of messages being dropped (or
-  delayed) by the network between nodes.
-    - **Explanation:**
-        - The system can withstand network failures that result in messages being lost or delayed.
-        - The system can be partitioned into multiple components that continue to operate independently.
-        - The system as a whole continues to function, even if parts of it are disconnected.
-        - The distributed system can sustain network partitions where nodes cannot communicate with each other.
-    - **Implications:**
-        - Partition tolerance is achieved by replicating data across multiple nodes.
-        - This approach can lead to inconsistencies between replicas.
-        - Ensures the system remains operational even if network failures occur.
-        - Allows the system to continue functioning despite network partitions.
-        - Recognizes that network failures are inevitable in distributed systems.
-        - Requires mechanisms to handle partitions gracefully.
+- **Consistency(C):** Every read receives the most recent write or an error. *Example*: **MongoDB** (configured for strong reads) — it ensures you always get the latest data, even if it has to block while replicas sync.
+- **Availability(A):** Every request receives a response, without guarantee that it contains the most recent write. *Example*: **Cassandra** or **DynamoDB** — they always give you an answer quickly, but it might be slightly older data if the network is having issues.
+- **Partition tolerance(P):** The system continues to operate despite network failures. *Example*: Every distributed system *must* have P. The choice is usually between CP (Consistency) or AP (Availability) during a network split.
 
 ## 6. Explain the ACID properties of a transaction.
 

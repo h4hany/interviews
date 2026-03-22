@@ -137,6 +137,9 @@ This separation promotes maintainability by isolating concerns, making it easier
 - **Cassandra (NoSQL/Column-family):** Chosen for its high availability, linear scalability, and ability to handle massive amounts of data across distributed clusters with eventual consistency. Suitable for applications requiring high write throughput, large-scale data ingestion, and time-series data, like sensor data, IoT, or social media analytics (which aligns with Lucidya's domain).
 - **Redis (NoSQL/Key-value/In-memory):** Primarily used as a high-performance cache, message broker, or for real-time analytics due to its in-memory nature and extremely fast read/write speeds. Excellent for session management, leaderboards, real-time counters, and frequently accessed data that can tolerate some data loss on restart.
 
+> [!TIP]
+> **Antigravity Tip**: For a big data company like Lucidya, database tuning is critical. Mention **Cassandra's Compaction Strategy**. For social media feeds (Time-series heavy), `DateTieredCompactionStrategy` (DTCS) or `TimeWindowCompactionStrategy` (TWCS) is much better than the default `SizeTiered` (STCS) because it reduces disk I/O during heavy writes.
+
 **Difficulty:** Medium
 
 ### 5. Microservices
@@ -451,6 +454,9 @@ Technical debt is inevitable, especially in fast-paced environments, but it need
 - **Horizontal Scaling:** All components (Kafka, Flink, Cassandra, APIs) are designed for horizontal scaling.
 - **Decoupling:** Each layer is decoupled using message queues.
 - **Fault Tolerance:** Redundancy in Kafka/Kinesis, Cassandra, and Kubernetes ensures resilience.
+
+> [!TIP]
+> **Antigravity Tip**: When designing this ingestion system, mention **Bloom Filters**. When processing millions of social media posts, you need to quickly check if a post ID has already been seen. Using a Bloom Filter in memory before hitting Redis/Cassandra can save thousands of unnecessary disk reads per second.
 
 **Difficulty:** Hard
 

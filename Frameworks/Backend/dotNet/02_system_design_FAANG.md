@@ -180,10 +180,9 @@ public override InterceptionResult<int> SavingChanges(...)
 
 **Why This Approach**:
 - ✅ Cost-effective (single database)
-- ✅ Easy cross-tenant analytics (for platform admin)
 - ✅ Simple operations
 - ⚠️ Application-level isolation (acceptable for most use cases)
-- ✅ Can migrate large tenants to separate databases if needed
+- ✅ Can migrate large tenants to separate databases if needed. *Example*: While row-level security is easier, we hit a performance wall at 50,000 tenants. We solved this by using Citus to shard the PostgreSQL tables by `tenant_id`.
 
 #### 3.2 Database Schema Design
 
@@ -640,6 +639,8 @@ events
     .filter((key, event) -> event.getTenantId() == targetTenant)
     .mapValues(event -> calculateMetrics(event))
     .to("analytics-realtime");
+
+// *Example*: A 'Real-Time Fraud Detection' consumer that checks order velocity per tenant. If a tenant places > 100 orders/minute, it flags the account for review.
 ```
 
 **Batch Processing (Kafka Consumer)**:
@@ -797,7 +798,8 @@ await _idempotencyStore.MarkAsProcessedAsync(eventId);
 
 #### 3.1 Inventory Reservation
 
-**Problem**: Prevent overselling during flash sale
+**Problem**: Prevent overselling during flash sale.
+- *Example*: To handle 10,000 concurrent checkouts without locking the database, we used Redis `DECR` for pre-reservation. If Redis says 'Success' (count > 0), we then proceed to the DB transaction.
 
 **Solution**: Optimistic locking with reservation
 

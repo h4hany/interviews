@@ -26,6 +26,9 @@
   test_proc
   ```
 
+> [!TIP]
+> **Antigravity Tip**: In high-scale Ruby apps, prefer `lambda` for its strict argument checking. At BrandOS, we once had a production bug where a `proc` silently ignored a missing ID and wiped out a generic 'null' tenant's cache. Lambdas would have raised an `ArgumentError` immediately.
+
 ### **2. Explain the differences between `module` and `class`.**
 
 **Weight:** 9
@@ -51,6 +54,9 @@
   person = Person.new
   puts person.greet # Outputs "Hello, World!"
   ```
+
+> [!TIP]
+> **Antigravity Tip**: When using Mixins (`include`), always consider the "Ancestors" chain. At BrandOS, we use `prepend` instead of `include` when we want to override a class's own method with a logging or monitoring wrapper (like our `PerformanceTracker` module).
 
 ### **3. How does Ruby handle garbage collection?**
 

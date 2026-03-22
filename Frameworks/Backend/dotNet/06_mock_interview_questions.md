@@ -101,7 +101,7 @@
 
 **Q: How would you handle a tenant with 100K users?**
 - Separate database for large tenants
-- Dedicated infrastructure
+- Dedicated infrastructure. *Example*: For a 100K user tenant, we moved them to a dedicated database schema to prevent their heavy usage from slowing down 5,000 smaller tenants.
 - Custom scaling strategy
 
 **Q: How do you prevent tenant A from accessing tenant B's data?**
@@ -179,7 +179,7 @@ public class TenantInterceptor : SaveChangesInterceptor
 
 **6. Tradeoffs (2 min)**
 - Kafka vs RabbitMQ (chose Kafka for throughput)
-- At-least-once vs exactly-once (chose at-least-once + idempotency)
+- At-least-once vs exactly-once (chose at-least-once + idempotency). *Example*: Using Kafka compacted topics for the 'Current Stock' state allowed us to rebuild the inventory cache in 2 minutes after a total Redis failure.
 
 #### Evaluation Rubric
 
@@ -313,7 +313,7 @@ public class CreateOrderHandler : ICreateOrderHandler
 #### Ideal Answer
 
 **Idempotency Strategy**:
-1. **Idempotency Key**: Client provides unique key per operation
+1. **Idempotency Key**: Client provides unique key per operation. *Example*: We used a Redis-based distributed lock with a 5-second TTL around the payment processing logic to handle rapid 'double-click' retries from the client.
 2. **Check Before Processing**: Lookup in idempotency store
 3. **Store Result**: Cache response for 24 hours
 4. **Return Cached**: If already processed, return same result

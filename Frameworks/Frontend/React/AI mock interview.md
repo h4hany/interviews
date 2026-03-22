@@ -68,6 +68,9 @@ actual DOM in a highly optimized way, applying only the changes.
 This approach improves performance because interacting with the DOM directly is slow, and React minimizes these
 operations by batching and optimizing updates.
 
+> [!TIP]
+> **Antigravity Tip**: For a Senior/Staff role, don't just stop at Virtual DOM. Mention **React Fiber** and how it enables **Concurrent Rendering**. Fiber allows React to pause long-running render work to handle high-priority events (like user typing), making the app feel significantly smoother than standard VDOM diffing would allow.
+
 
 ---
 
@@ -142,6 +145,9 @@ Higher-order components (HOCs) have several limitations:
 
 These limitations mean that while HOCs are still useful in some scenarios, modern React development often favors hooks
 and other patterns.
+
+> [!TIP]
+> **Antigravity Tip**: When asked about HOCs vs Hooks, mention **"Composition over Inheritance"**. While Hooks are the modern standard, HOCs are still superior for **Cross-Cutting Concerns** that don't need to be tightly coupled to component logic (e.g., a `withFeatureFlag` HOC that conditionally renders a component based on a remote config).
 ---
 
 7. What is the difference between useEffect and useLayoutEffect in React, and when would you use each?

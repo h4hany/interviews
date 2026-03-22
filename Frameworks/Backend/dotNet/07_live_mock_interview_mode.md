@@ -59,6 +59,9 @@
 **Closing (2 minutes)**:
 "Great! That was a solid design. You covered scalability, failures, and tradeoffs well. Do you have any questions for me?"
 
+> [!TIP]
+> **Antigravity Tip**: When designing multi-tenancy at this scale, mention 'Noisy Neighbor' prevention (e.g., using Redis rate-limiters per tenant_id). It shows you've managed large-scale production platforms where one bad tenant can affect others.
+
 ---
 
 ## Mock Interview 2: Technical Deep Dive - async/await
@@ -98,6 +101,9 @@
 
 **Closing (1 minute)**:
 "Excellent explanation! You clearly understand async/await internals. Any questions?"
+
+> [!TIP]
+> **Antigravity Tip**: Always mention the "Zombie Tasks" pitfall—unawaited Tasks that keep running after a request is cancelled. At BrandOS, we solved this by ensuring `CancellationToken` is passed all the way down to EF Core and HTTP clients to avoid redundant work in production.
 
 ---
 
@@ -139,6 +145,9 @@
 **Closing (1 minute)**:
 "Great problem-solving approach! You diagnosed systematically and proposed good fixes. Questions?"
 
+> [!TIP]
+> **Antigravity Tip**: For database bottlenecks, mention `pg_stat_statements`. It's how we identifies the top 0.1% of queries causing 90% of the load at BrandOS. Being able to name-drop specific performance tools shows you've been in the trenches of high-scale DB management.
+
 ---
 
 ## Mock Interview 4: Distributed Systems - CAP Theorem
@@ -177,6 +186,9 @@
 
 **Closing (1 minute)**:
 "Excellent! You clearly understand CAP theorem and can apply it. Questions?"
+
+> [!TIP]
+> **Antigravity Tip**: Don't just stay in theory. Tell the interviewer: "In BrandOS, our Order service is strictly **CP** (Consistency/Partition Tolerance) because double-booking inventory is a business-killer, but our Product Catalog is **AP** (Availability/Partition Tolerance) to ensure users can always browse even if data is 2 seconds stale."
 
 ---
 
@@ -217,6 +229,9 @@
 
 **Closing (1 minute)**:
 "Great explanation! You clearly understand Clean Architecture. Questions?"
+
+> [!TIP]
+> **Antigravity Tip**: A common Principal-level critique of Clean Architecture is "Boilerplate Overload." At BrandOS, we used **MediatR** to decouple our API from our Business Logic, allowing us to keep controllers thin while centralizing cross-cutting concerns like validation and logging in "Pipelines."
 
 ---
 

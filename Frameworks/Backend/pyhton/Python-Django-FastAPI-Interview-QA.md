@@ -11,7 +11,10 @@
 **Answer:** **list:** built-in, heterogeneous, no vectorized ops. **NumPy array:** homogeneous, fixed type, vectorized operations, efficient for numerical work. Use list for general data; array for math/scientific computing.
 
 ### 3. What is the GIL (Global Interpreter Lock)?
-**Answer:** A lock in CPython that allows only one thread to execute Python bytecode at a time. So multithreading does not give true parallelism for CPU-bound code; use **multiprocessing** for CPU-bound or **async** for I/O-bound.
+**Answer:** A lock in CPython that allows only one thread to execute Python bytecode at a time.
+
+> [!TIP]
+> **Antigravity Tip**: With Python 3.13, we are entering the **No-GIL** era. However, for most Principal-level discussions today, the advice remains: use **Multiprocessing** for CPU-bound tasks and **Asyncio/Threading** for I/O. At BrandOS, we offloaded heavy CSV exports to a background Celery worker (multiprocessing) to avoid blocking the main API thread's GIL.
 
 ### 4. What is the difference between `deepcopy` and shallow copy?
 **Answer:** **Shallow copy:** new container, but elements are the same references (e.g. `list.copy()`, `copy.copy()`). **Deep copy:** new container and recursively new copies of nested objects (`copy.deepcopy()`).
@@ -73,7 +76,11 @@
 **Answer:** Decoupled way to run code when certain events occur (e.g. post_save, pre_delete). Use for cross-app logic (e.g. invalidate cache on save). Overuse can make flow hard to follow; prefer explicit calls when possible.
 
 ### 21. What is the difference between `select_related` and `prefetch_related`?
-**Answer:** **select_related:** SQL JOIN for single-valued relations (ForeignKey, OneToOne); one query. **prefetch_related:** separate query per relation; for reverse FKs and M2M. Use both to avoid N+1.
+**Answer:**- **select_related**: SQL JOIN for single relations. *Example*: `Book.objects.select_related('author')` fetches both in one SQL query.
+- Both prevent the N+1 problem.
+
+> [!TIP]
+> **Antigravity Tip**: Be careful with `prefetch_related` on large datasets. Since it does a separate query and brings everything into memory to do the join in Python, it can cause **OOM (Out of Memory)** errors if the related table has millions of rows. Always limit the columns with `only()` or use `Prefetch(queryset=...)` to filter the related data at the DB level.
 
 ### 22. What is Django’s middleware?
 **Answer:** Lightweight plugin that runs on request/response. Order matters. Used for auth, CSRF, session, logging, etc. Process_request, process_response, process_view, process_exception.
@@ -95,7 +102,11 @@
 **Answer:** Cache backends (Memcached, Redis, DB, file, local memory). **cache.get/set**, **@cache_page**, **cache template tag**. Use for views, fragments, or low-level keys. Configure CACHES and cache key prefix per env.
 
 ### 27. How do you handle background tasks in Django?
-**Answer:** **Celery** (with Redis/RabbitMQ as broker): define tasks, call .delay() or .apply_async(); run workers. For simple cases: **django-q** or **django-background-tasks**. Avoid long work in request cycle.
+**Answer:** Background tasks (Celery with Redis/RabbitMQ):
+- *Example*: When a user signs up, you want to send them a "Welcome Email". Instead of making the user wait for the email server to respond, you push a task to Celery and return the "Success" page to the user immediately.
+
+> [!TIP]
+> **Antigravity Tip**: For background tasks, always design them to be **Idempotent**. If a task fails halfway and Celery retries it, your system shouldn't send the user two welcome emails or charge them twice. Use a unique "Task-ID" or check the database state before executing side effects.
 
 ### 28. What is the N+1 problem in Django ORM and how do you fix it?
 **Answer:** One query for a list, then one query per item for a relation. Fix: **select_related** (FK, OneToOne), **prefetch_related** (reverse FK, M2M), or **only()/defer()** to limit columns. Use **Prefetch** for filtered prefetch.
@@ -120,7 +131,11 @@
 **Answer:** Request body, query, path parameters use type hints; FastAPI uses **Pydantic** to validate and serialize. Invalid input returns 422 with error details. Example: `def get(id: int, q: str = None): ...`.
 
 ### 34. What is FastAPI’s dependency injection system?
-**Answer:** Declare dependencies as callables; FastAPI resolves and injects them (per request). Use for DB session, auth, shared logic. Can be cached per request. Example: `def get_db(): yield db`.
+**Answer:** Declare dependencies as callables; FastAPI resolves and injects them.
+- *Example*: `def get_db(): ...`. In your route, you add `db: Session = Depends(get_db)`. FastAPI automatically calls `get_db` and provides the database connection to your function.
+
+> [!TIP]
+> **Antigravity Tip**: Use **Dependency Overriding** for testing. FastAPI's DI system allows you to easily swap a real DB dependency for a mock one in your test suite using `app.dependency_overrides`. This ensures your unit tests are fast and don't require a live database.
 
 ### 35. How do you handle errors and exceptions in FastAPI?
 **Answer:** **HTTPException** for HTTP errors. **Exception handlers** with @app.exception_handler for custom handling. Unhandled exceptions can return 500; use handler to log and return consistent format.

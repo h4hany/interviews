@@ -66,6 +66,9 @@ public async Task<Order> CreateOrderAsync(CreateOrderDto dto)
 }
 ```
 
+> [!TIP]
+> **Antigravity Tip**: For a Principal role, discuss **Local Object Heap (LOH) Fragmentation**. Large objects (>85KB) aren't compacted by default because moving them is expensive. At BrandOS, we avoided LOH fragmentation by using `ArrayPool<byte>.Shared.Rent()` for large image processing buffers, reusing the same memory instead of constantly allocating new 100KB+ arrays.
+
 **Memory Layout**:
 ```
 Stack (per thread):
@@ -157,6 +160,10 @@ int unboxed = (int)boxed; // Unboxing (copy from heap to stack)
   <ServerGarbageCollection>true</ServerGarbageCollection>
   <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
 </PropertyGroup>
+```
+
+> [!TIP]
+> **Antigravity Tip**: Mention **GC 'Sustained Low Latency' Mode**. For a real-time trading or auction system (hypothetically within BrandOS), you can temporarily put the GC into a mode that suppresses full Gen 2 collections during critical periods (like a 5-second auction window) to skip "Stop-the-World" pauses when it matters most.
 ```
 
 **GC Triggers**:
@@ -1455,6 +1462,7 @@ public async Task ProcessOrderAsync(Order order)
 // SlowQueryInterceptor logs queries > 1 second
 public class SlowQueryInterceptor : DbCommandInterceptor
 {
+    // *Example*: In production, this interceptor helped us find that the 'GetMonthlyReport' query was taking 12 seconds because a join was missing an index on the 'InvoiceDate' column.
     public override async ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
         DbCommand command,
         CommandEventData eventData,
@@ -1482,6 +1490,7 @@ public class SlowQueryInterceptor : DbCommandInterceptor
 // MetricsMiddleware tracks request duration
 public class MetricsMiddleware
 {
+    // *Example*: This middleware showed that 'POST /api/orders' was taking 800ms. We realized it was because it was sending a synchronous 'Confirmation Email' inside the request. We moved the email to a background job and dropped the latency to 50ms.
     public async Task InvokeAsync(HttpContext context)
     {
         var stopwatch = Stopwatch.StartNew();

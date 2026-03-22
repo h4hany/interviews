@@ -24,13 +24,14 @@ DevOps is a culture and set of practices that combines software development (Dev
 ## 4. What is Infrastructure as Code (IaC)?
 
 **Answer:**
-IaC manages and provisions infrastructure through machine-readable definition files (Terraform, CloudFormation, Ansible).
+IaC manages and provisions infrastructure through machine-readable definition files.
+- *Example*: Writing a **Terraform** script that defines a Virtual Private Cloud (VPC), two subnets, and a database. Running `terraform apply` creates all these resources in AWS automatically.
 
 ## 5. What is the difference between Configuration Management and Infrastructure Provisioning?
 
 **Answer:**
-- **Infrastructure Provisioning**: Creates infrastructure (Terraform, CloudFormation).
-- **Configuration Management**: Configures existing infrastructure (Ansible, Puppet, Chef).
+- **Infrastructure Provisioning**: Creates the hardware/cloud resources. *Example*: **Terraform** creates an EC2 instance (a "empty" server).
+- **Configuration Management**: Configures the software on that resource. *Example*: **Ansible** logs into that EC2 instance and installs Nginx and Node.js.
 
 ## 6. What is Containerization?
 
@@ -73,9 +74,9 @@ Version Control tracks changes to code over time, enabling collaboration and rol
 
 **Answer:**
 Branching strategies organize code development:
-- **Git Flow**: Feature, develop, release, hotfix branches
-- **GitHub Flow**: Simple, main branch + feature branches
-- **Trunk-based**: Short-lived feature branches
+- **Git Flow**: Feature, develop, release, hotfix branches (Structured, good for scheduled releases).
+- **GitHub Flow**: Simple, main branch + feature branches (Fast, good for CI/CD).
+- **Trunk-based**: Developers merge small updates to a single "trunk" (Main) multiple times a day (Highest speed, requires high test coverage).
 
 ## 14. What is Blue-Green Deployment?
 
@@ -213,7 +214,8 @@ GitOps uses Git as the single source of truth for infrastructure and application
 ## 39. What is Chaos Engineering?
 
 **Answer:**
-Chaos Engineering tests system resilience by intentionally introducing failures (Chaos Monkey, Gremlin).
+Chaos Engineering tests system resilience by intentionally introducing failures.
+- *Example*: **Netflix's Chaos Monkey** randomly shuts down production servers during business hours to ensure the system can handle unexpected failures without impacting users.
 
 ## 40. What is DevOps Best Practices?
 

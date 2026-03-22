@@ -35,12 +35,14 @@
         4. The async pipe is used in the view, or an`Observable`emits an event
 
         - If none of the above conditions are met, then Angular will skip that component on its change detection cycle.
+- *Example*: A heavy "Analytics Dashboard" component with hundreds of charts. Using `OnPush` ensures that moving the mouse or clicking a button in the *sidebar* doesn't trigger a slow re-render of all those charts.
 
 2- Guards and Resolvers:
 
 ### 1. **Guards**
 
 - **Purpose**: Guards control whether a route can be accessed or not.
+- *Example*: An `AuthGuard` that checks if a user is logged in. If they try to go to `/admin` without a token, the guard blocks the navigation and redirects them to `/login`.
 - **Use cases**: They are often used for authentication and authorization checks, ensuring that only certain users can
   access specific routes.
 - **Types of Guards**:
@@ -143,8 +145,8 @@ enhancing user experience with faster load times and smoother interactions.
     - Angular’s Ivy renderer offers faster compilation and runtime performance. Enabling `optimization` further reduces
       bundle size and enables AOT, dead code elimination, and minification.
 - **Use `trackBy` in `ngFor` Directives**
-    - For lists rendered with `ngFor`, using `trackBy` helps Angular identify list items by a unique property, reducing
-      DOM re-renders when items change.
+    - For lists rendered with `ngFor`, using `trackBy` helps Angular identify list items by a unique property.
+    - *Example*: In a list of 100 products, if you add 1 new product at the top, `trackBy` tells Angular to only add that 1 DOM element instead of destroying and recreating all 101 elements.
 - **Minimize the Bundle Size**
     - Use tools like `webpack-bundle-analyzer` to identify large dependencies. Reduce unused libraries or replace them
       with lighter alternatives.

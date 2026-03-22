@@ -214,7 +214,9 @@ const fileStructure = {
         "Behavioral & Leadership": "Resume-Career/behavioral-leadership-interview-prep.html",
         "Interview Master Cheatsheet": "Resume-Career/interview-master-cheatsheet.html",
         "Interview Preparation Masterguide": "Resume-Career/interview-preparation-masterguide.html",
-        "AI Engineering": "specialized/LLM/ai-engineering-interview-prep.html"
+        "AI Engineering": "specialized/LLM/ai-engineering-interview-prep.html",
+        "Prompt Engineering": "Prompet Engineer/master-prompt-library.html",
+        "Vibe Coding": "Prompet Engineer/vibe-coding-guide.html"
     }
 };
 
@@ -544,7 +546,32 @@ function showWelcome() {
                     </a>
                 </div>
             </div>
-
+          <div class="section">
+                <h2 class="section-title">Mock Interview</h2>
+                <p class="welcome-sub" style="margin-bottom:1rem;font-size:.875rem">Interactive prep for how to land job. Open in new tab.</p>
+                <div class="cards">
+                         <a href="${p('Resume-Career/interview-master-cheatsheet.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🧠</span>Interview Cheatsheet
+                    </a>
+                    <a href="${p('Resume-Career/interview-preparation-masterguide.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🗺️</span>Interview Masterguide
+                    </a>
+                </div>
+            </div>
+            
+                     <div class="section">
+                <h2 class="section-title">Prompt Engnieer & Vibe coding</h2>
+                <p class="welcome-sub" style="margin-bottom:1rem;font-size:.875rem">Interactive prep for prompt engnieer & vibe coding Open in new tab.</p>
+                <div class="cards">
+                         <a href="${p('Prompet Engineer/master-prompt-library.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🤖</span>Prompt Engnieer
+                    </a>    
+                       <a href="${p('Prompet Engineer/vibe-coding-guide.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🖥️</span>Vibe Coding
+                    </a>
+                 
+                </div>
+            </div>
             <div class="section">
                 <h2 class="section-title">Problem Solving & Code</h2>
                 <p class="welcome-sub" style="margin-bottom:1rem;font-size:.875rem">Open from the sidebar: <strong>Problem Solving</strong> → Overview, LeetCode solutions (.rb), Data Structures, HackerRank. Click any file to view code in-app.</p>
@@ -613,12 +640,7 @@ function showWelcome() {
                     <a href="${p('Resume-Career/behavioral-leadership-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">⭐</span>Behavioral
                     </a>
-                    <a href="${p('Resume-Career/interview-master-cheatsheet.html')}" target="_blank" rel="noopener" class="card">
-                        <span class="card-icon">🧠</span>Interview Cheatsheet
-                    </a>
-                    <a href="${p('Resume-Career/interview-preparation-masterguide.html')}" target="_blank" rel="noopener" class="card">
-                        <span class="card-icon">🗺️</span>Interview Masterguide
-                    </a>
+            
                 </div>
             </div>
         </div>

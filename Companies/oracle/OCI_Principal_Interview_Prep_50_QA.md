@@ -17,8 +17,14 @@
 1. **Q: Explain the design of a highly available, low-latency cross-cloud service that connects OCI with AWS/Azure/GCP.**  
 **A:** Use a multi-region active-passive or active-active architecture with edge gateways in each cloud, a control-plane in OCI that orchestrates data plane proxies, efficient protocols (gRPC over TLS), connection pooling, retries with exponential backoff, health checks, and consistent hashing for traffic distribution. Use CDN/edge for static assets and route control-plane traffic through private connectivity (VPN/Direct Connect/ExpressRoute/Interconnect) when possible. Monitor latency and circuit-break at service boundaries; use async work queues for non-critical flows. (Focus on SLA, security, and cost trade-offs.)
 
+> [!TIP]
+> **Antigravity Tip**: When discussing cross-cloud connectivity, mention **OCI Service Gateway**. It allows OCI resources to access public OCI services (like Object Storage) without exposing them to the public internet, which is a key security requirement for multicloud architectures.
+
 2. **Q: How would you design a global routing mechanism that minimizes cross-cloud egress cost while maintaining performance?**  
-**A:** Implement locality-aware routing: prefer same-cloud endpoints for most traffic, fall back to nearest cloud endpoint on failure. Use telemetry and cost metrics in the routing decision (weighted routing). Cache dynamic topology and use BGP/SD-WAN where possible. Add rate-limited failover and circuit-breakers to avoid ping-ponging across clouds.
+**A:** Implement locality-aware routing: prefer same-cloud endpoints for most traffic, fall back to nearest cloud endpoint on failure. Use telemetry and cost metrics in the routing decision (weighted routing). Cache dynamic topology and use BGP/SD-WAN where possiblmetrics). Add rate-limited failover and circuit-breakers to avoid ping-ponging across clouds.
+
+> [!TIP]
+> **Antigravity Tip**: For global routing, OCI's **Traffic Management Steering Policies** (like Load Balancer or Failover) are essential. Mentioning how you'd use "ASN-based steering" to route traffic from specific partner clouds (like AWS) directly to the nearest OCI region can show deep OCI-specific expertise.
 
 3. **Q: Describe how to design a control plane that manages virtual resources deployed across different clouds.**  
 **A:** Build an abstract resource model (CRDs) and a single control-plane API that translates into cloud-specific drivers (adapters). Keep idempotent reconciliation loops, store desired state in a central DB, and persist provider credentials encrypted. Use event-driven reconciler workers, rate limiting, backoff, and optimistic concurrency. Expose observability and audit logs. Secure secrets using Vault/KMS per cloud.

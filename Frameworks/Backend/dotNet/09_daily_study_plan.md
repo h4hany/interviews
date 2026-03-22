@@ -18,6 +18,9 @@
 - **Afternoon** (1-2 hours): Practice problems
 - **Evening** (1 hour): Review BrandOS codebase, mock interviews
 
+> [!TIP]
+> **Antigravity Tip**: Don't just study to "know." Study to "describe." Practice the "BrandOS Hook"—every time you explain a concept, immediately follow it with: "For example, in BrandOS, we used this to solve [specific problem]." This makes your answers un-fakeable and grounded in reality.
+
 ---
 
 ## Week 1: System Design Foundation

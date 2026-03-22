@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Prompt Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080909;
+  --s1: #0e1010;
+  --s2: #141616;
+  --s3: #1a1d1d;
+  --border: #1f2424;
+  --border2: #272d2d;
+  --c1: #00e5aa; /* teal */
+  --c2: #ff6b35; /* orange */
+  --c3: #7c3aed; /* purple */
+  --c4: #2563eb; /* blue */
+  --c5: #dc2626; /* red */
+  --c6: #ca8a04; /* amber */
+  --c7: #0891b2; /* cyan */
+  --c8: #db2777; /* pink */
+  --text: #e8eeee;
+  --dim: #5a6a6a;
+  --dimmer: #1f2a2a;
+  --r: 10px;
+  --sidebar-w: 280px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,170,0.008) 2px, rgba(0,229,170,0.008) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─────────────────────────────── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: 56px;
+  background: rgba(8,9,9,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+}
+
+.toggle-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border2);
+  background: var(--s2);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.toggle-btn:hover { border-color: var(--c1); }
+.toggle-btn span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--dim);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.header-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+}
+.logo-serif {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  color: var(--c1);
+  letter-spacing: -0.5px;
+}
+.logo-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  width: 200px;
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: var(--c1); }
+.search-bar input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  width: 100%;
+}
+.search-bar input::placeholder { color: var(--dim); }
+.search-icon { color: var(--dim); font-size: 13px; flex-shrink: 0; }
+
+.copy-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--c1);
+  background: rgba(0,229,170,0.08);
+  border: 1px solid rgba(0,229,170,0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ─── LAYOUT ─────────────────────────────── */
+.app {
+  display: flex;
+  min-height: calc(100vh - 56px);
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SIDEBAR ────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-inner { width: var(--sidebar-w); padding: 16px 0; }
+
+.nav-cat {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--dimmer);
+  padding: 14px 18px 6px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-cat::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dim);
+  border-left: 2px solid transparent;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.nav-item:hover { color: var(--text); background: var(--s1); }
+.nav-item.active { color: var(--c1); border-left-color: var(--c1); background: rgba(0,229,170,0.05); }
+.nav-item .ni { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-count {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--s3);
+  color: var(--dim);
+}
+
+/* ─── MAIN ───────────────────────────────── */
+main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* ─── PAGE ───────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── HOME PAGE ──────────────────────────── */
+.home-hero {
+  padding: clamp(32px, 5vw, 72px) clamp(20px, 5vw, 64px) clamp(28px, 4vw, 48px);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::before {
+  content: 'PROMPTS';
+  position: absolute;
+  right: -40px;
+  bottom: -20px;
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(80px, 15vw, 180px);
+  color: rgba(0,229,170,0.025);
+  letter-spacing: -5px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--c1);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--c1); opacity: 0.5; }
+
+.home-hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 5vw, 60px);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+.home-hero h1 em { font-style: italic; color: var(--c1); }
+
+.hero-desc {
+  color: var(--dim);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 580px;
+  margin-bottom: 36px;
+}
+
+.stat-row { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 32px; }
+.stat { display: flex; flex-direction: column; gap: 3px; }
+.stat-n { font-family: 'Instrument Serif', serif; font-size: 34px; color: var(--c1); }
+.stat-l { font-size: 11px; color: var(--dimmer); letter-spacing: 1px; text-transform: uppercase; }
+
+/* Category grid on home */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border);
+}
+.cat-card {
+  background: var(--bg);
+  padding: 28px 26px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.cat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cat-card:hover { background: var(--s1); }
+.cat-card:hover::after { opacity: 1; }
+.cc1::after { background: var(--c1); }
+.cc2::after { background: var(--c2); }
+.cc3::after { background: var(--c3); }
+.cc4::after { background: var(--c4); }
+.cc5::after { background: var(--c5); }
+.cc6::after { background: var(--c6); }
+.cc7::after { background: var(--c7); }
+.cc8::after { background: var(--c8); }
+
+.cat-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+.cat-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.cat-desc { font-size: 12px; color: var(--dim); line-height: 1.65; margin-bottom: 14px; }
+.cat-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* Section header */
+.sec-hdr {
+  padding: 28px clamp(20px, 5vw, 56px) 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.sec-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.sc1 { color: var(--c1); border-color: rgba(0,229,170,0.3); background: rgba(0,229,170,0.07); }
+.sc2 { color: var(--c2); border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.07); }
+.sc3 { color: var(--c3); border-color: rgba(124,58,237,0.3); background: rgba(124,58,237,0.07); }
+.sc4 { color: var(--c4); border-color: rgba(37,99,235,0.3); background: rgba(37,99,235,0.07); }
+.sc5 { color: var(--c5); border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.07); }
+.sc6 { color: var(--c6); border-color: rgba(202,138,4,0.3); background: rgba(202,138,4,0.07); }
+.sc7 { color: var(--c7); border-color: rgba(8,145,178,0.3); background: rgba(8,145,178,0.07); }
+.sec-title { font-size: 17px; font-weight: 700; }
+
+/* ─── PROMPT SECTION PAGE ────────────────── */
+.prompt-page-inner {
+  padding: clamp(24px, 4vw, 48px) clamp(20px, 5vw, 56px);
+  max-width: 1000px;
+}
+
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--c1);
+  margin-bottom: 10px;
+}
+.page-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(26px, 4vw, 40px);
+  line-height: 1.1;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+.page-subtitle {
+  color: var(--dim);
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 640px;
+  margin-bottom: 36px;
+}
+
+/* ─── PROMPT CARD ────────────────────────── */
+.prompt-group { margin-bottom: 48px; }
+.group-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.group-title::before { content: ''; width: 3px; height: 20px; border-radius: 2px; flex-shrink: 0; }
+.gt1::before { background: var(--c1); }
+.gt2::before { background: var(--c2); }
+.gt3::before { background: var(--c3); }
+.gt4::before { background: var(--c4); }
+.gt5::before { background: var(--c5); }
+.gt6::before { background: var(--c6); }
+.gt7::before { background: var(--c7); }
+.group-sub { color: var(--dim); font-size: 13px; margin-bottom: 18px; line-height: 1.65; }
+
+.prompt-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.prompt-card:hover { border-color: var(--border2); }
+
+.pc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pc-meta { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.pc-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--c1);
+}
+.pc-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.pc-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
+.ptag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--s3);
+  color: var(--dim);
+  border: 1px solid var(--border2);
+}
+.ptag.p1 { color: var(--c1); background: rgba(0,229,170,0.08); border-color: rgba(0,229,170,0.2); }
+.ptag.p2 { color: var(--c2); background: rgba(255,107,53,0.08); border-color: rgba(255,107,53,0.2); }
+.ptag.p3 { color: var(--c3); background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.2); }
+.ptag.p4 { color: var(--c4); background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); }
+.ptag.p6 { color: var(--c6); background: rgba(202,138,4,0.08); border-color: rgba(202,138,4,0.2); }
+
+.copy-prompt-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: var(--s3);
+  color: var(--dim);
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.copy-prompt-btn:hover { border-color: var(--c1); color: var(--c1); background: rgba(0,229,170,0.06); }
+.copy-prompt-btn.copied { border-color: var(--c1); color: var(--bg); background: var(--c1); }
+
+.pc-context {
+  padding: 12px 18px;
+  font-size: 12.5px;
+  color: var(--dim);
+  line-height: 1.75;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,229,170,0.02);
+}
+.pc-context strong { color: var(--c1); }
+
+.prompt-body {
+  padding: 20px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: #a8c8c0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.ph { color: var(--c2); font-weight: 500; } /* placeholder */
+.pv { color: var(--c1); } /* variable */
+.ps { color: var(--c6); } /* section header */
+.pa { color: #7dd3fc; } /* annotation */
+
+/* ─── INFO BOXES ─────────────────────────── */
+.tip-box {
+  background: rgba(0,229,170,0.04);
+  border: 1px solid rgba(0,229,170,0.15);
+  border-left: 3px solid var(--c1);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.8;
+}
+.tip-box strong { color: var(--c1); }
+.warn-box {
+  background: rgba(220,38,38,0.04);
+  border: 1px solid rgba(220,38,38,0.15);
+  border-left: 3px solid var(--c5);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.8;
+}
+.warn-box strong { color: var(--c5); }
+.orange-box {
+  background: rgba(255,107,53,0.04);
+  border: 1px solid rgba(255,107,53,0.15);
+  border-left: 3px solid var(--c2);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.8;
+}
+.orange-box strong { color: var(--c2); }
+
+/* ─── TABLE ──────────────────────────────── */
+.t { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.t th { text-align: left; padding: 10px 14px; background: var(--s2); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--dim); border-bottom: 1px solid var(--border); }
+.t td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--dim); vertical-align: top; line-height: 1.65; }
+.t tr:last-child td { border-bottom: none; }
+.t td:first-child { color: var(--c1); font-weight: 600; font-size: 13px; }
+.t tr:hover td { background: var(--s1); }
+
+/* ─── ACCORDION ──────────────────────────── */
+.acc { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.acc-item { background: var(--s1); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.acc-hdr { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; gap: 12px; transition: background 0.2s; }
+.acc-hdr:hover { background: var(--s2); }
+.acc-hdr-text { font-size: 14px; font-weight: 600; flex: 1; }
+.acc-arrow { color: var(--c1); font-family: 'DM Mono', monospace; font-size: 18px; transition: transform 0.2s; flex-shrink: 0; }
+.acc-arrow.open { transform: rotate(45deg); }
+.acc-body { display: none; padding: 0 18px 16px; font-size: 13px; color: var(--dim); line-height: 1.85; border-top: 1px solid var(--border); }
+.acc-body.open { display: block; }
+.acc-body li { padding-left: 16px; position: relative; margin-top: 6px; list-style: none; }
+.acc-body li::before { content: '→'; position: absolute; left: 0; color: var(--c1); font-size: 11px; }
+.acc-body strong { color: var(--text); }
+
+/* ─── NAVIGATION FOOTER ──────────────────── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.btn-nav {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--dim);
+  transition: all 0.2s;
+}
+.btn-nav:hover { border-color: var(--c1); color: var(--text); }
+.btn-nav.primary { background: var(--c1); color: var(--bg); border-color: var(--c1); }
+.btn-nav.primary:hover { box-shadow: 0 0 18px rgba(0,229,170,0.25); transform: translateY(-1px); }
+
+/* ─── RESPONSIVE ─────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    bottom: 0;
+    z-index: 150;
+    background: var(--bg);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+  }
+  .sidebar.collapsed { width: 0; }
+  .search-bar { width: 140px; }
+  .copy-count { display: none; }
+}
+
+@media (max-width: 480px) {
+  .search-bar { display: none; }
+  .stat-row { gap: 20px; }
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* Highlight searched prompts */
+.prompt-card.search-match { border-color: rgba(0,229,170,0.35); }
+.prompt-card.search-hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-logo">
+    <span class="logo-serif">Prompt Library</span>
+    <span class="logo-tag">// MASTER SOURCE</span>
+  </div>
+  <div class="header-right">
+    <div class="search-bar">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Search prompts..." oninput="searchPrompts(this.value)">
+    </div>
+    <div class="copy-count" id="copyCount">⚡ 0 copied</div>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+      <div class="nav-cat">Overview</div>
+      <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="ni">🏠</span>Home</div>
+
+      <div class="nav-cat">🎤 Interview</div>
+      <div class="nav-item" onclick="showPage('mock-coding')" id="nav-mock-coding"><span class="ni">💻</span>Coding Mock<span class="nav-count">4</span></div>
+      <div class="nav-item" onclick="showPage('mock-system')" id="nav-mock-system"><span class="ni">🏗️</span>System Design Mock<span class="nav-count">4</span></div>
+      <div class="nav-item" onclick="showPage('mock-behavioral')" id="nav-mock-behavioral"><span class="ni">🎭</span>Behavioral Mock<span class="nav-count">5</span></div>
+      <div class="nav-item" onclick="showPage('mock-hr')" id="nav-mock-hr"><span class="ni">🤝</span>HR & Culture Fit<span class="nav-count">3</span></div>
+      <div class="nav-item" onclick="showPage('mock-feedback')" id="nav-mock-feedback"><span class="ni">📊</span>Story & CV Critique<span class="nav-count">4</span></div>
+
+      <div class="nav-cat">🤖 AI Platforms</div>
+      <div class="nav-item" onclick="showPage('pe-fundamentals')" id="nav-pe-fundamentals"><span class="ni">📐</span>Prompt Fundamentals<span class="nav-count">6</span></div>
+      <div class="nav-item" onclick="showPage('pe-text')" id="nav-pe-text"><span class="ni">✍️</span>Text & Writing<span class="nav-count">5</span></div>
+      <div class="nav-item" onclick="showPage('pe-image')" id="nav-pe-image"><span class="ni">🎨</span>Image Generation<span class="nav-count">6</span></div>
+      <div class="nav-item" onclick="showPage('pe-video')" id="nav-pe-video"><span class="ni">🎬</span>Video Generation<span class="nav-count">5</span></div>
+      <div class="nav-item" onclick="showPage('pe-audio')" id="nav-pe-audio"><span class="ni">🎵</span>Music & Audio<span class="nav-count">4</span></div>
+      <div class="nav-item" onclick="showPage('pe-code')" id="nav-pe-code"><span class="ni">⚙️</span>Code & Dev<span class="nav-count">5</span></div>
+      <div class="nav-item" onclick="showPage('pe-research')" id="nav-pe-research"><span class="ni">🔬</span>Research & Analysis<span class="nav-count">4</span></div>
+
+      <div class="nav-cat">📋 Cheatsheets</div>
+      <div class="nav-item" onclick="showPage('cheat-all')" id="nav-cheat-all"><span class="ni">⚡</span>Quick Reference</div>
+    </div>
+  </nav>
+
+  <main id="mainArea">
+
+    <!-- ═══════════════════ HOME ═══════════════════ -->
+    <div id="home-page" class="page active">
+      <div class="home-hero">
+        <div class="hero-eyebrow">// SINGLE SOURCE OF TRUTH</div>
+        <h1>Master Prompt<br><em>Library</em></h1>
+        <p class="hero-desc">Every prompt you'll ever need — mock interviews for any tech stack, AI image/video/music generation, writing, research, and best-practice prompt engineering. Copy, paste, and go.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-n">50+</div><div class="stat-l">Prompts</div></div>
+          <div class="stat"><div class="stat-n">8</div><div class="stat-l">Categories</div></div>
+          <div class="stat"><div class="stat-n">5</div><div class="stat-l">AI Platforms</div></div>
+        </div>
+      </div>
+
+      <div class="sec-hdr"><span class="sec-chip sc1">🎤 MOCK INTERVIEW</span><span class="sec-title">Simulate any interview round</span></div>
+      <div class="cat-grid">
+        <div class="cat-card cc1" onclick="showPage('mock-coding')"><span class="cat-icon">💻</span><div class="cat-title">Coding Interview</div><div class="cat-desc">Full mock rounds: LeetCode, paired coding, live debugging, and solution critique.</div><span class="cat-count">4 prompts</span></div>
+        <div class="cat-card cc2" onclick="showPage('mock-system')"><span class="cat-icon">🏗️</span><div class="cat-title">System Design</div><div class="cat-desc">Design any system: URL shortener, feed, payments, chat — with probing follow-ups.</div><span class="cat-count">4 prompts</span></div>
+        <div class="cat-card cc3" onclick="showPage('mock-behavioral')"><span class="cat-icon">🎭</span><div class="cat-title">Behavioral Mock</div><div class="cat-desc">Amazon LP, Google, Meta values. STAR story coaching and feedback loop.</div><span class="cat-count">5 prompts</span></div>
+        <div class="cat-card cc4" onclick="showPage('mock-hr')"><span class="cat-icon">🤝</span><div class="cat-title">HR & Culture Fit</div><div class="cat-desc">Salary negotiation, "why this role", culture questions, and end-of-interview prep.</div><span class="cat-count">3 prompts</span></div>
+        <div class="cat-card cc5" onclick="showPage('mock-feedback')"><span class="cat-icon">📊</span><div class="cat-title">Story & CV Critique</div><div class="cat-desc">Get brutal honest feedback on your STAR stories, "tell me about yourself", and CV bullets.</div><span class="cat-count">4 prompts</span></div>
+      </div>
+
+      <div class="sec-hdr"><span class="sec-chip sc2">🤖 PROMPT ENGINEERING</span><span class="sec-title">Master any AI platform</span></div>
+      <div class="cat-grid">
+        <div class="cat-card cc1" onclick="showPage('pe-fundamentals')"><span class="cat-icon">📐</span><div class="cat-title">Prompt Fundamentals</div><div class="cat-desc">The frameworks, structures, and techniques that work across every AI model.</div><span class="cat-count">6 prompts</span></div>
+        <div class="cat-card cc6" onclick="showPage('pe-text')"><span class="cat-icon">✍️</span><div class="cat-title">Text & Writing</div><div class="cat-desc">Blog posts, emails, LinkedIn content, documentation — templates for everything.</div><span class="cat-count">5 prompts</span></div>
+        <div class="cat-card cc2" onclick="showPage('pe-image')"><span class="cat-icon">🎨</span><div class="cat-title">Image Generation</div><div class="cat-desc">Midjourney, DALL-E, Stable Diffusion, Flux. Full prompt formulas for any style.</div><span class="cat-count">6 prompts</span></div>
+        <div class="cat-card cc5" onclick="showPage('pe-video')"><span class="cat-icon">🎬</span><div class="cat-title">Video Generation</div><div class="cat-desc">Sora, Runway, Kling, Pika. Camera moves, scene direction, motion prompts.</div><span class="cat-count">5 prompts</span></div>
+        <div class="cat-card cc3" onclick="showPage('pe-audio')"><span class="cat-icon">🎵</span><div class="cat-title">Music & Audio</div><div class="cat-desc">Suno, Udio, ElevenLabs. Genre, mood, instrumentation, voiceover prompts.</div><span class="cat-count">4 prompts</span></div>
+        <div class="cat-card cc7" onclick="showPage('pe-code')"><span class="cat-icon">⚙️</span><div class="cat-title">Code & Dev</div><div class="cat-desc">Generate, review, refactor, and explain code. Architecture prompts for Cursor/Copilot.</div><span class="cat-count">5 prompts</span></div>
+        <div class="cat-card cc4" onclick="showPage('pe-research')"><span class="cat-icon">🔬</span><div class="cat-title">Research & Analysis</div><div class="cat-desc">Summarize papers, compare options, make decisions, run SWOT and competitive analysis.</div><span class="cat-count">4 prompts</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ CODING MOCK ═══════════════════ -->
+    <div id="mock-coding-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// MOCK INTERVIEW — CODING</div>
+        <div class="page-title">Coding Interview Prompts</div>
+        <div class="page-subtitle">Full simulation prompts for technical coding rounds. Replace the orange fields with your specifics, then paste into Claude, ChatGPT, or Gemini.</div>
+
+        <div class="tip-box"><strong>How to use:</strong> Copy the full prompt → paste into a new AI chat → respond as you would in a real interview. Don't ask for hints. Time yourself. When done, the AI will give detailed feedback.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt1">Full Coding Round Simulation</div>
+          <div class="group-sub">Complete 45-minute mock interview. One problem, interviewer behavior, timed feedback.</div>
+
+          <div class="prompt-card" data-tags="coding mock interview leet">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 01</div>
+                <div class="pc-title">Standard Coding Interview — Any Level</div>
+                <div class="pc-tags"><span class="ptag p1">ALL LEVELS</span><span class="ptag p2">45 MIN</span><span class="ptag">CLAUDE / GPT</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> Standard weekly coding practice. Works for junior through senior levels. Change the difficulty and language.</div>
+            <div class="prompt-body">You are a senior software engineer at <span class="ph">[COMPANY NAME e.g. Google, Meta, a fintech startup]</span> conducting a live coding interview. I am interviewing for a <span class="ph">[LEVEL e.g. Senior / Mid / Junior]</span> Software Engineer position.
+
+<span class="ps">═══ YOUR BEHAVIOR AS INTERVIEWER ═══</span>
+- Give me exactly ONE coding problem appropriate for <span class="ph">[LEVEL]</span> at <span class="ph">[COMPANY NAME]</span>
+- Do NOT give hints unless I say "I am completely stuck and need a hint"
+- Respond ONLY with brief, realistic interviewer-style replies
+- If I ask clarifying questions, answer them as a real interviewer would (sometimes say "that's a good question", sometimes redirect with "what do you think?")
+- Keep ALL responses short (2-4 lines max) until I say I'm done
+
+<span class="ps">═══ MY CONSTRAINTS ═══</span>
+- Language: <span class="ph">[Python / JavaScript / TypeScript / Java / Go]</span>
+- Target difficulty: <span class="ph">[Easy / Medium / Hard]</span>
+- Focus area (optional): <span class="ph">[arrays / trees / dynamic programming / graphs / any]</span>
+
+<span class="ps">═══ WHEN I SAY "DONE" ═══</span>
+Evaluate my solution on:
+1. Correctness — does it handle all cases?
+2. Time complexity — is it optimal? What is it?
+3. Space complexity — can it be improved?
+4. Edge cases I missed
+5. Code quality (naming, structure, readability)
+6. What a stronger answer would look like
+7. One follow-up question you'd ask in a real interview
+8. Overall signal: Strong Hire / Hire / No Hire / Strong No Hire
+
+<span class="ps">═══ START ═══</span>
+Introduce yourself as the interviewer in ONE sentence, then give me the problem. Do NOT explain it — state it the way a real interviewer would (concisely).</div>
+          </div>
+
+          <div class="prompt-card" data-tags="coding debug live pair">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 02</div>
+                <div class="pc-title">Live Debugging Session</div>
+                <div class="pc-tags"><span class="ptag p1">MID-SENIOR</span><span class="ptag p2">30 MIN</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> Some companies (Stripe, Shopify) give you broken code to debug. This simulates that format.</div>
+            <div class="prompt-body">You are a senior engineer at <span class="ph">[COMPANY]</span> running a debugging interview. I am a <span class="ph">[LEVEL]</span> candidate.
+
+<span class="ps">═══ FORMAT ═══</span>
+1. Give me a realistic code snippet in <span class="ph">[LANGUAGE]</span> that has 2-4 bugs
+2. Tell me what the code is SUPPOSED to do — but don't reveal the bugs
+3. I will diagnose and fix the issues
+4. Ask me questions as I debug: "what made you look there?", "how did you confirm that?"
+5. When I'm done: reveal all bugs, score my debugging approach, and give one improvement tip
+
+<span class="ps">═══ BUG TYPES ═══</span>
+Include bugs from: <span class="ph">[logic error / off-by-one / race condition / null handling / any]</span>
+
+<span class="ps">═══ CONTEXT ═══</span>
+This is production code. The stakes are realistic. Start now.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="coding solution review optimize">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 03</div>
+                <div class="pc-title">Solution Review & Optimization</div>
+                <div class="pc-tags"><span class="ptag p1">ALL LEVELS</span><span class="ptag">REVIEW</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> You already solved a problem and want deep feedback on your solution.</div>
+            <div class="prompt-body">I just solved a coding problem and want expert-level review as if I submitted this in a real interview.
+
+<span class="ps">═══ THE PROBLEM ═══</span>
+<span class="ph">[Paste the problem statement here]</span>
+
+<span class="ps">═══ MY SOLUTION ═══</span>
+<span class="ph">[Paste your code here]</span>
+
+<span class="ps">═══ EVALUATE ON ═══</span>
+1. Correctness — test it against: empty input, single element, duplicates, negative numbers, very large input
+2. Time complexity — what is it and can it be improved?
+3. Space complexity — can it be reduced?
+4. Edge cases my solution misses
+5. Code style — naming, structure, comments
+6. What the optimal solution looks like (show code if different from mine)
+7. Interview signal: Strong Hire / Hire / No Hire
+8. The one thing I should change first
+
+Be direct and specific. Line-number references preferred.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="coding pattern learn explain">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 04</div>
+                <div class="pc-title">Pattern Deep Dive & Teaching</div>
+                <div class="pc-tags"><span class="ptag p1">STUDY</span><span class="ptag p4">LEARNING</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Teach me the <span class="ph">[PATTERN NAME e.g. sliding window / two pointers / Dijkstra's / DP with memoization]</span> pattern so I can apply it in interviews.
+
+<span class="ps">═══ FORMAT ═══</span>
+1. What is this pattern? One-sentence definition
+2. When do you use it? What are the "signals" in a problem that tell you to use it?
+3. Template code in <span class="ph">[LANGUAGE]</span> — the skeleton I can apply to any problem using this pattern
+4. Walk me through ONE example problem using the template (explain every decision)
+5. Give me TWO practice problems to try myself (don't solve them)
+6. Common mistakes candidates make with this pattern
+7. Time/space complexity of the typical solution using this pattern
+
+After explaining, quiz me: ask me to identify whether a new problem uses this pattern and why.</div>
+          </div>
+        </div>
+
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('home')">← Home</button>
+          <button class="btn-nav primary" onclick="showPage('mock-system')">System Design →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ SYSTEM DESIGN MOCK ═══════════════════ -->
+    <div id="mock-system-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// MOCK INTERVIEW — SYSTEM DESIGN</div>
+        <div class="page-title">System Design Prompts</div>
+        <div class="page-subtitle">Simulate a 45-60 minute system design round with a probing senior interviewer. For senior and staff-level interviews.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt2">System Design Simulations</div>
+
+          <div class="prompt-card" data-tags="system design mock senior">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 01</div>
+                <div class="pc-title">Full System Design Round</div>
+                <div class="pc-tags"><span class="ptag p1">SENIOR+</span><span class="ptag p2">60 MIN</span><span class="ptag">STAFF LEVEL</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> Weekly system design practice. Most realistic simulation of a real system design round.</div>
+            <div class="prompt-body">You are a staff engineer at <span class="ph">[COMPANY e.g. Stripe, Netflix, Uber]</span> running a system design interview. I am a <span class="ph">[Senior / Staff / Principal]</span> candidate.
+
+<span class="ps">═══ YOUR BEHAVIOR ═══</span>
+- Give me ONE system design problem relevant to <span class="ph">[COMPANY]</span>'s domain
+- Be a REAL interviewer: terse, probing, skeptical where appropriate
+- Ask "why did you choose X over Y?" at least twice
+- Ask about: scale numbers, failure modes, bottlenecks, trade-offs
+- Do NOT volunteer information — make me think for it
+- If I go down a wrong path, ask "is that really the right approach here?" (don't correct outright)
+- Keep responses to 2-3 sentences
+
+<span class="ps">═══ MY BACKGROUND ═══</span>
+<span class="ph">[2-3 sentences about your experience level and what you've built]</span>
+
+<span class="ps">═══ AFTER I SAY "DONE" ═══</span>
+Score me on:
+1. Requirements gathering — did I ask the right questions?
+2. High-level design — was the architecture sound?
+3. Deep dives — did I go deep enough on the right components?
+4. Scale — did I think about bottlenecks and how to address them?
+5. Trade-offs — did I articulate WHY I made choices?
+6. What I missed (top 3 things)
+7. What a strong answer added that I didn't
+8. Verdict: Strong Hire / Hire / No Hire
+
+<span class="ps">═══ START ═══</span>
+State your name and the question in one sentence. No preamble.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="system design specific topic deep dive">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 02</div>
+                <div class="pc-title">Design a Specific System</div>
+                <div class="pc-tags"><span class="ptag p1">TARGETED</span><span class="ptag p2">PRACTICE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">I want to practice designing <span class="ph">[SYSTEM e.g. a URL shortener / a real-time chat app / a payment processing system / a social media feed / a ride-sharing dispatch system / a distributed rate limiter]</span>.
+
+<span class="ps">═══ ACT AS ═══</span>
+Act as an interviewer from a company that would plausibly build this. Give me the problem statement as a real interviewer would — short, with minimal detail.
+
+<span class="ps">═══ THEN ═══</span>
+Let me drive the interview. Ask probing questions every time I make a key design decision:
+- "What are the read/write patterns for that component?"
+- "How does that handle a datacenter outage?"
+- "What happens if that queue backs up?"
+- "Why not just use [simpler alternative]?"
+
+<span class="ps">═══ AFTER I'M DONE ═══</span>
+1. The key components I got right
+2. The most important thing I missed
+3. The one follow-up question that would separate a good answer from a great one
+4. A reference: "A strong senior answer would also mention..."</div>
+          </div>
+
+          <div class="prompt-card" data-tags="system design review critique feedback">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 03</div>
+                <div class="pc-title">System Design Critique</div>
+                <div class="pc-tags"><span class="ptag p1">REVIEW</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">I just completed a system design and want expert critique.
+
+<span class="ps">═══ THE QUESTION ═══</span>
+<span class="ph">[Paste the original question]</span>
+
+<span class="ps">═══ MY ANSWER ═══</span>
+<span class="ph">[Describe your design: components, data flow, technology choices, scale decisions]</span>
+
+<span class="ps">═══ EVALUATE AS A STAFF ENGINEER ═══</span>
+1. Requirements — what should I have clarified but didn't?
+2. Architecture — is it sound? What are the weaknesses?
+3. Scale — would this actually handle [realistic traffic]? Where would it break?
+4. Data model — is it right for the access patterns?
+5. Technology choices — are they appropriate? What would you swap?
+6. What I completely missed
+7. The single biggest improvement
+8. Senior vs Staff bar: does this answer pass senior? Staff?
+
+No softening. Be direct.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="system design trade-off architecture decision">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 04</div>
+                <div class="pc-title">Architecture Trade-off Advisor</div>
+                <div class="pc-tags"><span class="ptag p1">DECISION</span><span class="ptag p4">ANALYSIS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">I need to make an architecture decision and want to think through the trade-offs out loud.
+
+<span class="ps">═══ CONTEXT ═══</span>
+System: <span class="ph">[Brief description of the system you're designing]</span>
+Scale: <span class="ph">[Approximate users/requests/data volume]</span>
+Team: <span class="ph">[Team size and expertise]</span>
+Decision: <span class="ph">[e.g. SQL vs NoSQL / REST vs gRPC / microservices vs monolith / Kafka vs RabbitMQ]</span>
+
+<span class="ps">═══ WHAT I WANT ═══</span>
+1. Frame the decision as a set of competing constraints (not just "pros and cons")
+2. What questions should I be asking to make this decision well?
+3. For each option: when it's the right choice, when it's wrong
+4. What a senior engineer would ask before deciding
+5. Your recommendation given my context — and what would change your recommendation
+
+Be opinionated. Don't hedge everything.</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('mock-coding')">← Coding</button>
+          <button class="btn-nav primary" onclick="showPage('mock-behavioral')">Behavioral →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ BEHAVIORAL MOCK ═══════════════════ -->
+    <div id="mock-behavioral-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// MOCK INTERVIEW — BEHAVIORAL</div>
+        <div class="page-title">Behavioral Mock Prompts</div>
+        <div class="page-subtitle">Simulate behavioral interviews mapped to real company values — Amazon LPs, Google, Meta, and startup culture. Get your STAR stories scored by the interviewer.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt3">Behavioral Simulations</div>
+
+          <div class="prompt-card" data-tags="behavioral amazon LP leadership principles mock">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 01</div>
+                <div class="pc-title">Amazon Leadership Principles Full Loop</div>
+                <div class="pc-tags"><span class="ptag p3">AMAZON</span><span class="ptag p2">BAR RAISER</span><span class="ptag p1">60 MIN</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> Preparing for Amazon. Each Amazon interview focuses on 2-4 LPs. This simulates a full bar-raiser session.</div>
+            <div class="prompt-body">You are an Amazon bar-raiser conducting a behavioral interview. I am interviewing for <span class="ph">[ROLE e.g. Senior SDE / Principal Engineer / Senior PM]</span>.
+
+<span class="ps">═══ YOUR ASSIGNED LEADERSHIP PRINCIPLES ═══</span>
+Focus specifically on these LPs: <span class="ph">[e.g. Customer Obsession, Ownership, Dive Deep / OR type "choose 3 appropriate for my role"]</span>
+
+<span class="ps">═══ YOUR BEHAVIOR ═══</span>
+- Ask 4-5 behavioral questions total, one at a time
+- After each answer, dig with exactly ONE follow-up: "What exactly did YOU do?", "What was the data?", "What was the result?", "What would you do differently?"
+- Be skeptical — Amazon bar-raisers are trained to smell coached, vague, or team-credit answers
+- Penalize "we did" without "I specifically did"
+- Reward specificity, data, and honest reflection on mistakes
+
+<span class="ps">═══ MY BACKGROUND ═══</span>
+<span class="ph">[Your current role, years of experience, type of company]</span>
+
+<span class="ps">═══ AFTER ALL QUESTIONS ═══</span>
+Score me on EACH question:
+- Which LP it tested
+- Signal strength: Strong / Adequate / Weak / No Signal
+- What was missing from my answer
+- Whether this would pass the Amazon bar
+
+Overall verdict: Bar Raiser Approved / Approved / Not Approved
+The one LP where my stories were weakest</div>
+          </div>
+
+          <div class="prompt-card" data-tags="behavioral google meta startup culture mock">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 02</div>
+                <div class="pc-title">Company-Specific Behavioral Mock</div>
+                <div class="pc-tags"><span class="ptag p1">ANY COMPANY</span><span class="ptag">GOOGLE / META / STARTUP</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">You are an engineering manager at <span class="ph">[COMPANY e.g. Google / Meta / Stripe / a Series B startup]</span> conducting a behavioral interview for <span class="ph">[ROLE]</span>.
+
+<span class="ps">═══ COMPANY VALUES TO TEST ═══</span>
+<span class="ph">
+For Google: Googliness, Leadership, Problem-solving, Cognitive ability
+For Meta: Move fast, Build, Be direct, Care
+For Stripe: User focus, Rigor, Optimism, Kindness
+For Startup: Bias for action, Ownership, Growth mindset, Scrappiness
+OR specify your own: [VALUE 1, VALUE 2, VALUE 3]</span>
+
+<span class="ps">═══ FORMAT ═══</span>
+- Ask 4 questions — one at a time, wait for my full answer
+- After each: ONE probing follow-up question
+- Vary question types: one conflict story, one failure, one impact, one leadership
+
+<span class="ps">═══ AFTER ALL 4 ═══</span>
+1. Per question: value it tested + signal strength
+2. My strongest answer
+3. My weakest answer — what was missing
+4. Do I "sound like" someone at <span class="ph">[COMPANY]</span>? What's off?
+5. Recommendation: proceed to next round? Yes / No / Maybe</div>
+          </div>
+
+          <div class="prompt-card" data-tags="behavioral STAR story practice coaching">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 03</div>
+                <div class="pc-title">STAR Story Practice Loop</div>
+                <div class="pc-tags"><span class="ptag p1">STAR</span><span class="ptag p4">COACHING</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">I want to practice telling a STAR story out loud and get better with each iteration.
+
+<span class="ps">═══ THE QUESTION ═══</span>
+<span class="ph">[e.g. "Tell me about a time you disagreed with your manager" / "Describe a project you're most proud of" / "Tell me about a failure"]</span>
+
+<span class="ps">═══ MY CURRENT ANSWER ═══</span>
+<span class="ph">[Tell your story here — speak naturally, don't over-structure it yet]</span>
+
+<span class="ps">═══ EVALUATE ═══</span>
+Score each STAR component:
+- S (Situation): Is it clear? Too long? Too vague?
+- T (Task): Is YOUR specific role obvious? Or is it lost in "the team"?
+- A (Action): Is this the most detailed section? Do I explain my reasoning?
+- R (Result): Is it quantified? Does it land with impact?
+
+Then:
+- Timing estimate (would this be too short / too long in a real interview?)
+- The one sentence that most weakened the story
+- Rewrite the weakest section to show what a stronger version sounds like
+- Follow-up question an interviewer would ask
+
+Loop: ask me to tell it again after your feedback and re-score.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="behavioral leadership senior staff influence">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 04</div>
+                <div class="pc-title">Senior / Staff Leadership Questions</div>
+                <div class="pc-tags"><span class="ptag p1">SENIOR+</span><span class="ptag p3">LEADERSHIP</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">You are a VP of Engineering at <span class="ph">[COMPANY]</span> interviewing me for a <span class="ph">[Staff Engineer / Principal / Engineering Lead]</span> role.
+
+<span class="ps">═══ FOCUS AREAS ═══</span>
+Test me on: technical vision, influencing without authority, cross-team impact, mentoring, raising the bar, handling ambiguity at scale.
+
+<span class="ps">═══ ASK ME ═══</span>
+1. "Tell me about a time you shaped the technical direction of a team or organization."
+2. "How have you influenced people who don't report to you?"
+3. "Tell me about a time you had to make a decision that affected multiple teams with competing priorities."
+4. "How do you approach hiring? What are you looking for that others miss?"
+Then ask one follow-up on my weakest answer.
+
+<span class="ps">═══ EVALUATE ═══</span>
+For each answer: Did it demonstrate SCOPE (team vs org vs company)? Evidence of MULTIPLIER effect? Is the answer at the right ALTITUDE for <span class="ph">[LEVEL]</span>?
+Final: Does this feel like a senior IC or a staff-level leader?</div>
+          </div>
+
+          <div class="prompt-card" data-tags="behavioral failure weakness difficult">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 05</div>
+                <div class="pc-title">Hard Behavioral Questions (Failure, Conflict, Weakness)</div>
+                <div class="pc-tags"><span class="ptag p2">HARDEST QUESTIONS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Ask me the 5 hardest behavioral questions — the ones most candidates answer poorly. Don't soften them.
+
+1. "Tell me about your biggest professional failure."
+2. "Tell me about a time you received critical feedback you disagreed with. What did you do?"
+3. "What is your greatest weakness? A real one."
+4. "Tell me about a time you made a decision that turned out to be wrong. How did you handle it?"
+5. "Tell me about a time a project you led failed or was cancelled."
+
+<span class="ps">═══ FORMAT ═══</span>
+Ask one at a time. Wait for my full answer. After each:
+- Signal strength (1-5)
+- Whether it sounds coached vs genuine
+- What a genuine, impressive answer to this question sounds like
+
+After all 5:
+- Which question I handled worst
+- Which answer would most impress an interviewer
+- The trait that all 5 questions together reveal about me</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('mock-system')">← System Design</button>
+          <button class="btn-nav primary" onclick="showPage('mock-hr')">HR & Culture →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ HR & CULTURE ═══════════════════ -->
+    <div id="mock-hr-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// MOCK INTERVIEW — HR</div>
+        <div class="page-title">HR & Culture Fit Prompts</div>
+        <div class="page-subtitle">Salary negotiation, "why this role", career narrative, and smart questions to ask. The rounds most people under-prepare for.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt4">HR & Closing Rounds</div>
+
+          <div class="prompt-card" data-tags="hr salary negotiation offer">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 01</div>
+                <div class="pc-title">Salary Negotiation Roleplay</div>
+                <div class="pc-tags"><span class="ptag p6">HIGH VALUE</span><span class="ptag p2">NEGOTIATION</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>When to use:</strong> After receiving an offer. Practice until you can say your number without hesitation.</div>
+            <div class="prompt-body">Roleplay a salary negotiation with me. You are the recruiter from <span class="ph">[COMPANY]</span>.
+
+<span class="ps">═══ SCENARIO ═══</span>
+They just offered me: <span class="ph">[Base: $X / Equity: Y / Bonus: Z]</span>
+My current compensation: <span class="ph">[Your current package]</span>
+My target: <span class="ph">[What you want]</span>
+My competing offer (if any): <span class="ph">[Competing company and package OR "none"]</span>
+
+<span class="ps">═══ RECRUITER BEHAVIOR ═══</span>
+- Start by presenting the offer as "very competitive"
+- Push back once on my counter
+- Use tactics: "this is our best offer", "the equity is really where the value is", "let me check with the hiring manager"
+- Be realistic — don't capitulate immediately but also don't be impossible
+
+<span class="ps">═══ AFTER THE NEGOTIATION ═══</span>
+1. What I said that was strong
+2. What weakened my position
+3. The exact sentence that a skilled negotiator would have used instead
+4. Did I leave money on the table? How much?
+5. Overall outcome: did I negotiate well?
+
+Start the call now.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="hr culture fit why company role">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 02</div>
+                <div class="pc-title">Why This Company / Role Coaching</div>
+                <div class="pc-tags"><span class="ptag p1">ALWAYS ASKED</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Coach me on answering "Why do you want this role at this company?" for my specific situation.
+
+<span class="ps">═══ MY SITUATION ═══</span>
+Company: <span class="ph">[COMPANY NAME]</span>
+Role: <span class="ph">[ROLE TITLE AND LEVEL]</span>
+What I know about them: <span class="ph">[What you've researched — tech stack, recent news, product, team]</span>
+My honest reason for applying: <span class="ph">[Be real — even if partially about money or leaving bad situation]</span>
+My current answer: <span class="ph">[Write out what you'd say right now]</span>
+
+<span class="ps">═══ GIVE ME ═══</span>
+1. What's genuine and compelling in my current answer — keep this
+2. What sounds generic or rehearsed — cut this
+3. A rewrite using Present → Past → Future formula (90 seconds max)
+4. The ONE specific thing about this company I should reference that would make an interviewer feel seen
+5. What NOT to say (red flags for this specific company type)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="hr questions to ask interviewer smart">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 03</div>
+                <div class="pc-title">Questions to Ask the Interviewer</div>
+                <div class="pc-tags"><span class="ptag p1">END OF INTERVIEW</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Generate smart, specific questions I should ask at the end of my interview at <span class="ph">[COMPANY]</span> for a <span class="ph">[ROLE]</span> position, interviewing with <span class="ph">[their title e.g. engineering manager / staff engineer / VP of product]</span>.
+
+<span class="ps">═══ CONTEXT ═══</span>
+What I know about the team/company: <span class="ph">[recent news, product area, engineering blog post, anything specific]</span>
+What I genuinely want to know: <span class="ph">[e.g. team dynamics, technical challenges, growth path, on-call burden]</span>
+
+<span class="ps">═══ GIVE ME ═══</span>
+1. 3 questions that show I've done my research (company/team specific)
+2. 2 questions that signal senior-level thinking
+3. 2 questions that help ME evaluate if I actually want this job
+4. 1 question to ask the engineering manager specifically
+5. Questions to AVOID for this specific company and why
+
+For each question: explain what it signals to the interviewer and what a good answer from them looks like.</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('mock-behavioral')">← Behavioral</button>
+          <button class="btn-nav primary" onclick="showPage('mock-feedback')">Story Critique →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ STORY & CV CRITIQUE ═══════════════════ -->
+    <div id="mock-feedback-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// MOCK INTERVIEW — CRITIQUE</div>
+        <div class="page-title">Story & CV Critique</div>
+        <div class="page-subtitle">Get brutal, honest, line-by-line feedback on your "tell me about yourself", STAR stories, and CV bullets before they're tested in a real interview.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt5">Pre-Interview Critique</div>
+
+          <div class="prompt-card" data-tags="self intro tell me about yourself narrative">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 01</div>
+                <div class="pc-title">"Tell Me About Yourself" Builder</div>
+                <div class="pc-tags"><span class="ptag p1">ALWAYS FIRST</span><span class="ptag p2">HIGH IMPACT</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Build and critique my "Tell me about yourself" for an interview at <span class="ph">[COMPANY]</span> for <span class="ph">[ROLE + LEVEL]</span>.
+
+<span class="ps">═══ MY BACKGROUND ═══</span>
+Current role: <span class="ph">[Title + main responsibility + team size/scope]</span>
+Years of experience: <span class="ph">[X years]</span>
+Relevant past: <span class="ph">[2-3 key experiences that are most relevant to this role]</span>
+Why I'm looking: <span class="ph">[Honest reason — growth, new challenge, money, etc.]</span>
+Why this company: <span class="ph">[Your specific genuine reason]</span>
+
+<span class="ps">═══ MY CURRENT ANSWER (or "help me build one") ═══</span>
+<span class="ph">[Paste your current answer OR write "build from scratch using my background above"]</span>
+
+<span class="ps">═══ BUILD AND CRITIQUE ═══</span>
+1. Write a polished 90-second version using Present → Past → Future
+2. Tailor it to <span class="ph">[COMPANY]</span>'s culture and what they value
+3. Highlight the ONE sentence that will make an interviewer lean in
+4. Flag anything that sounds: generic / rehearsed / red-flag / too long
+5. Version 2: a shorter 45-second version for casual screens
+6. What to practice out loud (the transitions that feel awkward)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="star story critique feedback improve">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 02</div>
+                <div class="pc-title">STAR Story Deep Critique</div>
+                <div class="pc-tags"><span class="ptag p1">STAR</span><span class="ptag">ANY STORY TYPE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Brutally critique my STAR story. Be a senior interviewer, not a coach.
+
+<span class="ps">═══ THE QUESTION THIS ANSWERS ═══</span>
+<span class="ph">[e.g. "Tell me about a time you failed" / "Describe a conflict you resolved" / "Tell me about your biggest impact"]</span>
+
+<span class="ps">═══ MY STORY ═══</span>
+<span class="ph">[Tell your full story here. Write it conversationally.]</span>
+
+<span class="ps">═══ TARGET COMPANY / VALUES ═══</span>
+<span class="ph">[e.g. Amazon Ownership LP / Google Leadership / Meta Move Fast]</span>
+
+<span class="ps">═══ EVALUATE ═══</span>
+Score each section (0-10):
+- S: Is context clear and concise? (Under 15% of the answer?)
+- T: Is YOUR role unambiguous? Not "we"?
+- A: Is this detailed, specific, and reasoning-visible? (Over 60%?)
+- R: Quantified? Real business impact? (Not just "it went well"?)
+
+Then:
+- The exact phrase that would make an interviewer lose interest
+- The exact moment that would make an interviewer lean in
+- What this story reveals about you — is that what you want to project?
+- Rewrite the Action section to show what "strong" looks like
+- The LP/value this maps to — and whether it maps well</div>
+          </div>
+
+          <div class="prompt-card" data-tags="CV resume bullet impact metrics">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 03</div>
+                <div class="pc-title">CV Bullet Rewriter</div>
+                <div class="pc-tags"><span class="ptag p6">RESUME</span><span class="ptag p4">ATS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Rewrite my CV bullets to be stronger for a <span class="ph">[ROLE]</span> application at <span class="ph">[COMPANY TYPE e.g. FAANG / Series B startup / enterprise]</span>.
+
+<span class="ps">═══ MY CURRENT BULLETS ═══</span>
+<span class="ph">[Paste 5-10 CV bullets here]</span>
+
+<span class="ps">═══ MY ACTUAL ACHIEVEMENTS ═══</span>
+<span class="ph">[For each bullet, add context: what was the actual impact? What numbers can you attach? What was the before/after?]</span>
+
+<span class="ps">═══ REWRITE EACH BULLET ═══</span>
+Formula: [Strong verb] + [what you did] + [quantified result] + [business context if space allows]
+
+For each bullet:
+- Rewritten version
+- Why it's stronger
+- ATS keywords added
+- If no metric: suggest the metric to find ("check your analytics for X")
+
+Then: overall CV score for this role (0-10) and the #1 thing that's holding it back.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="story bank preparation coverage gaps">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">PROMPT 04</div>
+                <div class="pc-title">Story Bank Coverage Audit</div>
+                <div class="pc-tags"><span class="ptag p1">PREP</span><span class="ptag p3">GAPS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Audit my story bank for completeness before a <span class="ph">[COMPANY]</span> interview.
+
+<span class="ps">═══ MY STORIES (brief headlines) ═══</span>
+<span class="ph">
+Story 1: [1-line headline and type e.g. "CI/CD outage - failure/ownership"]
+Story 2: [headline + type]
+Story 3: [headline + type]
+... (list all your prepared stories)
+</span>
+
+<span class="ps">═══ TARGET ROLE ═══</span>
+<span class="ph">[Role + level + company]</span>
+
+<span class="ps">═══ AUDIT ═══</span>
+1. Map each story to interview question types it covers
+2. Identify gaps: what question types have NO strong story?
+3. For gaps: suggest what kind of experience from my background could fill it
+4. Which story is my strongest? Which is weakest?
+5. Are there stories that overlap too much? (Using same story for every question = red flag)
+6. For <span class="ph">[COMPANY]</span> specifically: which stories map to their stated values and which don't?</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('mock-hr')">← HR & Culture</button>
+          <button class="btn-nav primary" onclick="showPage('pe-fundamentals')">Prompt Engineering →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PROMPT FUNDAMENTALS ═══════════════════ -->
+    <div id="pe-fundamentals-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING</div>
+        <div class="page-title">Prompt Fundamentals</div>
+        <div class="page-subtitle">The principles that work across every AI model. Master these and you'll get better results from Claude, GPT-4, Gemini, and any future model.</div>
+
+        <div class="tip-box"><strong>The core insight:</strong> AI models are prediction engines. They predict the most likely continuation of your input. Better prompts create better context, which leads to better predictions. These fundamentals help you give better context.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt1">Core Techniques</div>
+          <div class="group-sub">These 6 techniques improve results across every use case.</div>
+
+          <div class="prompt-card" data-tags="fundamentals role persona context">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 01</div>
+                <div class="pc-title">Role + Context + Constraint Formula</div>
+                <div class="pc-tags"><span class="ptag p1">UNIVERSAL</span><span class="ptag p2">ALWAYS USE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>Why it works:</strong> AI performs dramatically better when given an explicit role and specific constraints. "Role priming" shifts the model's vocabulary, style, and depth of response toward the right persona.</div>
+            <div class="prompt-body"><span class="ps">THE FORMULA:</span>
+You are [SPECIFIC ROLE with seniority/expertise level].
+[CONTEXT: relevant background about the task or situation]
+[YOUR TASK: what you want, stated precisely]
+[CONSTRAINTS: format, length, tone, what to avoid]
+[OUTPUT FORMAT: how you want the answer structured]
+
+<span class="ps">EXAMPLE — WEAK PROMPT:</span>
+"Explain Kubernetes"
+
+<span class="ps">EXAMPLE — STRONG PROMPT:</span>
+You are a senior DevOps engineer with 8 years of Kubernetes production experience.
+I am a backend developer who understands Docker but has never used Kubernetes.
+Explain Kubernetes to me using analogies to Docker concepts I already know.
+Keep it under 400 words. Use bullet points for the key concepts.
+End with: the one thing I need to understand before anything else.
+
+<span class="ps">KEY RULES:</span>
+→ Be specific about the role's expertise level ("senior" > "expert" > nothing)
+→ Give context about the AUDIENCE (who is reading this answer)
+→ State what to AVOID, not just what to do
+→ Specify output structure when it matters
+→ One clear ask is better than three</div>
+          </div>
+
+          <div class="prompt-card" data-tags="fundamentals chain of thought reasoning step by step">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 02</div>
+                <div class="pc-title">Chain of Thought — Force Visible Reasoning</div>
+                <div class="pc-tags"><span class="ptag p1">LOGIC TASKS</span><span class="ptag p4">ANALYSIS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">WHEN TO USE:</span>
+Complex reasoning, math, code debugging, decision-making, multi-step problems.
+
+<span class="ps">TECHNIQUE:</span>
+Add one of these phrases to force visible reasoning:
+→ "Think step by step before answering."
+→ "Before giving your final answer, work through the problem out loud."
+→ "Reason through this first, then conclude."
+→ "Show your work."
+→ "What are the key considerations? Then answer."
+
+<span class="ps">EXAMPLE TEMPLATE:</span>
+[Your question or problem]
+
+Before answering, think through:
+1. What are the key factors in this decision?
+2. What would each option mean in practice?
+3. What am I possibly missing?
+
+Then give your recommendation.
+
+<span class="ps">WHY IT WORKS:</span>
+Models that "think out loud" make fewer logical errors. The reasoning tokens serve as working memory. For code: ask the model to explain the approach before writing it — the code quality improves significantly.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="fundamentals few shot examples format">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 03</div>
+                <div class="pc-title">Few-Shot Examples — Show Don't Tell</div>
+                <div class="pc-tags"><span class="ptag p1">FORMAT CONTROL</span><span class="ptag p6">STYLE MATCHING</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">WHEN TO USE:</span>
+When you want a specific format, tone, or style that's hard to describe in words.
+
+<span class="ps">TECHNIQUE:</span>
+Provide 1-3 examples of the output you want, then ask for more.
+
+<span class="ps">TEMPLATE:</span>
+I want you to write [CONTENT TYPE] in this exact style and format.
+
+Here are examples of what I want:
+
+Example 1:
+[Paste an example of the style/format you want]
+
+Example 2:
+[Another example if needed]
+
+Now write [YOUR SPECIFIC REQUEST] using this same style, format, and tone.
+Do not deviate from the pattern set by the examples.
+
+<span class="ps">WORKS GREAT FOR:</span>
+→ LinkedIn posts in your voice
+→ Code in your team's style
+→ Emails that match your tone
+→ Any content where "like this" is clearer than describing it</div>
+          </div>
+
+          <div class="prompt-card" data-tags="fundamentals output format structure JSON markdown">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 04</div>
+                <div class="pc-title">Output Format Control</div>
+                <div class="pc-tags"><span class="ptag p1">STRUCTURE</span><span class="ptag p4">JSON / MARKDOWN</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">CONTROL OUTPUT FORMAT WITH EXPLICIT INSTRUCTIONS:</span>
+
+<span class="ps">For structured data (JSON):</span>
+Respond ONLY with valid JSON. No preamble, no markdown code blocks, no explanation.
+Format:
+{
+  "field1": "...",
+  "field2": ["...", "..."],
+  "field3": { "nested": "..." }
+}
+
+<span class="ps">For markdown documents:</span>
+Format your response as a markdown document with:
+- H2 headers for main sections
+- Bullet points for lists
+- Bold for key terms
+- A TL;DR at the top
+
+<span class="ps">For tables:</span>
+Present this as a markdown table with columns: [COL1] | [COL2] | [COL3]
+Sort rows by [CRITERION].
+
+<span class="ps">For concise answers:</span>
+Answer in exactly [N] sentences.
+Answer in under [N] words.
+Use only bullet points — no prose.
+Give me ONLY the code, nothing else.
+
+<span class="ps">KEY INSIGHT:</span>
+If you say "answer in 3 bullet points" at the END of a long prompt, models often ignore it.
+Put FORMAT INSTRUCTIONS near the start, not the end.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="fundamentals negative instructions constraints avoid">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 05</div>
+                <div class="pc-title">Negative Instructions — What NOT to Do</div>
+                <div class="pc-tags"><span class="ptag p2">QUALITY CONTROL</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">MOST UNDER-USED TECHNIQUE:</span>
+Telling the AI what to AVOID is often more effective than telling it what to do.
+
+<span class="ps">COMMON NEGATIVES TO ADD:</span>
+→ "Do not use filler phrases like 'Great question!' or 'Certainly!'"
+→ "Do not add a disclaimer or caveat at the end."
+→ "Do not summarize what you just said."
+→ "Do not hedge every statement with 'it depends' — give me your actual recommendation."
+→ "Do not use passive voice."
+→ "Do not explain what you're about to do — just do it."
+→ "Do not repeat my question back to me."
+→ "Do not be diplomatic. Be direct."
+
+<span class="ps">TEMPLATE ADDITION:</span>
+Add a "Do NOT" section to any prompt:
+
+...your main prompt...
+
+DO NOT:
+- Start with "Certainly!" or any affirmation
+- Add a disclaimer about limitations
+- Use more than 3 sentences for the introduction
+- Use the word "utilize" (use "use" instead)
+- End with "I hope this helps!"</div>
+          </div>
+
+          <div class="prompt-card" data-tags="fundamentals iterative refinement follow up">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TECHNIQUE 06</div>
+                <div class="pc-title">Iterative Refinement — The Power of Follow-Ups</div>
+                <div class="pc-tags"><span class="ptag p1">WORKFLOW</span><span class="ptag p3">ADVANCED</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">PRINCIPLE:</span>
+The best output rarely comes from one prompt. Build iteratively.
+
+<span class="ps">THE ITERATIVE WORKFLOW:</span>
+
+Step 1 — Draft:
+Generate a [CONTENT TYPE] about [TOPIC]. Keep it rough.
+
+Step 2 — Critique:
+"What are the 3 weakest parts of what you just wrote?"
+
+Step 3 — Improve:
+"Rewrite focusing on fixing those 3 weaknesses."
+
+Step 4 — Constrain:
+"Now cut it to 50% of the length without losing the key points."
+
+Step 5 — Tone:
+"Make it [more direct / warmer / more technical / simpler]."
+
+<span class="ps">USEFUL FOLLOW-UP PROMPTS FOR ANY RESPONSE:</span>
+→ "Now make it 50% shorter."
+→ "Now make it more direct and less hedged."
+→ "Give me 3 alternative versions."
+→ "What did you leave out that might be important?"
+→ "Now write this from the opposite perspective."
+→ "Critique your own answer — what's weak about it?"
+→ "Now rewrite the introduction to be more compelling."
+→ "What would a skeptic say about this?"</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('mock-feedback')">← Story Critique</button>
+          <button class="btn-nav primary" onclick="showPage('pe-image')">Image Prompts →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ IMAGE GENERATION ═══════════════════ -->
+    <div id="pe-image-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — IMAGE</div>
+        <div class="page-title">Image Generation Prompts</div>
+        <div class="page-subtitle">Master formulas for Midjourney, DALL-E 3, Stable Diffusion, and Flux. Every image prompt has a structure — learn it once and apply to any subject.</div>
+
+        <div class="orange-box"><strong>The Image Prompt Formula:</strong> [Subject] + [Setting/Environment] + [Style/Medium] + [Lighting] + [Mood/Atmosphere] + [Technical parameters] — in roughly that order. The more specific each element, the more predictable and controllable the result.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt2">Image Prompt Templates</div>
+
+          <div class="prompt-card" data-tags="image midjourney photorealistic portrait">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">Photorealistic Portrait / Person</div>
+                <div class="pc-tags"><span class="ptag p2">MIDJOURNEY</span><span class="ptag p1">DALL-E 3</span><span class="ptag">FLUX</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>Platform notes:</strong> For Midjourney add --ar 2:3 --v 6.1 at the end. For DALL-E, describe naturally. For Flux, you can be more literal.</div>
+            <div class="prompt-body"><span class="ps">FORMULA:</span>
+[Subject description] in [location/setting], [lighting type] lighting, [mood adjectives], [camera/lens style], [color palette], photorealistic, ultra-detailed --ar [ratio] --v 6
+
+<span class="ps">EXAMPLE — PROFESSIONAL HEADSHOT:</span>
+A confident <span class="ph">[GENDER/AGE]</span> software engineer with <span class="ph">[HAIR DESCRIPTION]</span>, wearing a <span class="ph">[CLOTHING]</span>, seated in a modern tech office with blurred bokeh background, professional studio lighting with soft key light from the left, warm neutral tones, shot on a Sony A7R V with 85mm f/1.4 lens, sharp focus on eyes, photorealistic, LinkedIn headshot style --ar 1:1 --v 6.1
+
+<span class="ps">EXAMPLE — EDITORIAL PORTRAIT:</span>
+Close-up portrait of <span class="ph">[DESCRIPTION]</span>, golden hour sunlight streaming from behind, lens flare, cinematic color grading, warm amber and deep shadow tones, shot on medium format film, slight grain texture, editorial magazine style, Vogue aesthetic --ar 3:4 --v 6.1 --style raw
+
+<span class="ps">LIGHTING VOCABULARY:</span>
+→ Natural soft diffused light (overcast)
+→ Golden hour warm backlight
+→ Hard dramatic side lighting
+→ Studio three-point lighting
+→ Neon glow ambient light
+→ Rembrandt lighting (classic portrait)
+→ Cinematic motivated lighting
+
+<span class="ps">WHAT OFTEN GETS IGNORED BUT MATTERS:</span>
+→ Camera type + lens focal length (controls perspective/compression)
+→ Focus point ("sharp focus on eyes" vs "full body in focus")
+→ Film grain or digital clean
+→ Color grade ("desaturated teal and orange" vs "vibrant oversaturated")</div>
+          </div>
+
+          <div class="prompt-card" data-tags="image environment scene landscape architecture">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Environments, Scenes & Architecture</div>
+                <div class="pc-tags"><span class="ptag p2">MIDJOURNEY</span><span class="ptag p1">STABLE DIFFUSION</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">FORMULA:</span>
+[Scene type] of [location description], [time of day/weather], [style reference], [mood], [rendering quality descriptors]
+
+<span class="ps">EXAMPLE — FUTURISTIC CITY:</span>
+Aerial wide shot of a sprawling cyberpunk megacity at night, rain-slicked streets reflecting neon signs in red and cyan, massive holographic advertisements floating between skyscrapers, dense atmospheric fog at lower levels, inspired by Blade Runner 2049 aesthetic, photorealistic CGI render, dramatic cinematic composition, ultra-wide angle --ar 16:9 --v 6.1
+
+<span class="ps">EXAMPLE — NATURAL LANDSCAPE:</span>
+Misty mountain valley at dawn, ancient pine forest in the foreground, soft rays of golden light piercing through morning fog, traditional Japanese aesthetic, painted with the precision of Hiroshi Yoshida woodblock prints but in oil paint medium, serene and contemplative mood, wide establishing shot --ar 16:9 --style raw
+
+<span class="ps">EXAMPLE — INTERIOR ARCHITECTURE:</span>
+Interior of a brutalist concrete library, enormous floor-to-ceiling windows flooding the space with diffused northern light, minimalist Scandinavian furniture, books arranged by color creating gradient shelves, dramatic shadow geometry from window mullions, shot with a tilt-shift lens creating selective focus, architectural photography style --ar 4:3
+
+<span class="ps">STYLE REFERENCES THAT WORK WELL:</span>
+→ "shot on Hasselblad medium format" (architectural/product)
+→ "painted in the style of [artist]" (illustration)
+→ "Unreal Engine 5 render" (game/tech aesthetic)
+→ "analog film photography, Kodak Portra 400" (warm portraits/street)
+→ "Studio Ghibli inspired" (animated scenes)
+→ "NASA photo realistic" (space/technology)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="image product brand commercial marketing">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Product & Commercial Images</div>
+                <div class="pc-tags"><span class="ptag p1">DALL-E 3</span><span class="ptag p2">FLUX PRO</span><span class="ptag">MARKETING</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">FORMULA:</span>
+[Product name/description] on [surface/background], [lighting style], [style adjectives], product photography, [brand aesthetic], commercial quality
+
+<span class="ps">EXAMPLE — TECH PRODUCT:</span>
+A sleek <span class="ph">[PRODUCT e.g. wireless earbuds / smartphone / laptop]</span> floating on a pure white background, dramatic three-point studio lighting creating subtle shadows, ultra-sharp product photography, premium Apple-aesthetic minimalism, advertising campaign quality, 8K render --ar 1:1
+
+<span class="ps">EXAMPLE — FOOD & BEVERAGE:</span>
+<span class="ph">[DRINK e.g. craft coffee / cocktail / smoothie]</span> in a clear glass, condensation droplets visible on the surface, served on dark slate with scattered <span class="ph">[INGREDIENTS]</span> nearby, soft natural side lighting, bokeh background in warm green tones, food photography for high-end restaurant menu, shot from 45-degree angle --ar 4:5
+
+<span class="ps">EXAMPLE — APPAREL FLATLAY:</span>
+Premium flatlay of <span class="ph">[CLOTHING ITEMS]</span> arranged on <span class="ph">[SURFACE]</span>, overhead shot, balanced negative space, cohesive color story in <span class="ph">[COLOR PALETTE]</span>, editorial fashion photography, clean white natural light, shadows soft and directional --ar 1:1
+
+<span class="ps">IMPORTANT FOR PRODUCT SHOTS:</span>
+→ Always specify background explicitly (white / gradient / lifestyle)
+→ Mention where shadows should fall
+→ "No text or logos" if you want clean shots
+→ Specify camera angle (overhead/45°/straight-on/3/4 view)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="image illustration art concept digital">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Illustration & Concept Art</div>
+                <div class="pc-tags"><span class="ptag p3">MIDJOURNEY</span><span class="ptag p1">STABLE DIFFUSION</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">STYLES WITH EXAMPLE PROMPTS:</span>
+
+<span class="ps">Digital Illustration:</span>
+<span class="ph">[SUBJECT]</span>, digital illustration, clean vector-like lines, flat design with subtle gradients, modern tech company illustration style, limited palette of <span class="ph">[3 COLORS]</span>, geometric shapes, no photorealistic elements --ar 16:9
+
+<span class="ps">Concept Art / Fantasy:</span>
+Concept art of <span class="ph">[CHARACTER/CREATURE/ENVIRONMENT]</span>, detailed brush strokes, dramatic cinematic composition, professional video game concept art, painterly style with clean digital finish, by a senior concept artist at a AAA studio --ar 16:9 --v 6
+
+<span class="ps">Anime / Manga Aesthetic:</span>
+<span class="ph">[SUBJECT]</span>, anime illustration style, clean line art, cel-shading, vibrant saturated colors, inspired by Studio Ghibli / [specific anime], key visual quality --ar 2:3
+
+<span class="ps">Minimalist Icon / Graphic:</span>
+Minimal flat icon of <span class="ph">[OBJECT]</span>, single line weight, geometric simplification, one-color on transparent background, app icon quality, no gradients, bold and recognizable at 32px size --ar 1:1
+
+<span class="ps">NEGATIVE PROMPTS FOR ILLUSTRATION (Stable Diffusion):</span>
+Add to negative: ugly, blurry, distorted, watermark, signature, text, multiple hands, extra fingers, low quality, artifacts</div>
+          </div>
+
+          <div class="prompt-card" data-tags="image logo brand identity typography">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 05</div>
+                <div class="pc-title">Logo & Brand Identity</div>
+                <div class="pc-tags"><span class="ptag p1">DALL-E 3</span><span class="ptag p2">IDEOGRAM</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">NOTE:</span>
+AI image models are NOT reliable for exact text rendering (except Ideogram and DALL-E 3). Use these for concept/symbol exploration, not final logo production.
+
+<span class="ps">LOGO CONCEPT PROMPT:</span>
+Minimalist logo concept for <span class="ph">[COMPANY TYPE e.g. a fintech startup / a wellness brand / a dev tools company]</span> called "<span class="ph">[NAME]</span>". The logo should convey <span class="ph">[3 ADJECTIVES e.g. trust, speed, clarity]</span>. Symbol-only (no text), geometric shapes, single color on white background, vector clean lines, professional brand identity, inspired by <span class="ph">[REFERENCE BRAND e.g. Stripe / Linear / Notion]</span> aesthetic --ar 1:1
+
+<span class="ps">BRAND PATTERN/BACKGROUND:</span>
+Abstract brand pattern for <span class="ph">[BRAND]</span>, repeating geometric motif, <span class="ph">[COLOR PALETTE]</span>, seamless tile, modern tech company aesthetic, suitable for website background or packaging --ar 1:1
+
+<span class="ps">FOR TEXT IN IMAGES — USE IDEOGRAM:</span>
+At ideogram.ai: "[Your text]" in [font style] typography on [background], [style], [mood]
+Ideogram is specifically trained for text rendering and handles it far better than other models.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="image negative prompts quality modifiers midjourney parameters">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">REFERENCE</div>
+                <div class="pc-title">Quality Modifiers & Platform Parameters</div>
+                <div class="pc-tags"><span class="ptag p6">REFERENCE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">MIDJOURNEY PARAMETERS:</span>
+--v 6.1        → Latest version (most realistic)
+--style raw    → Less opinionated, more literal
+--ar 16:9      → Widescreen (also 1:1, 4:5, 2:3, 9:16)
+--q 2          → Higher quality (slower)
+--chaos 20     → More variation (0-100)
+--no [word]    → Negative prompt (--no text, --no watermark)
+--seed [n]     → Reproduce exact result
+--iw 1.5       → Image weight (with /blend or image URL)
+
+<span class="ps">UNIVERSAL QUALITY BOOSTERS (add to any prompt):</span>
+→ "masterpiece, best quality, ultra-detailed"
+→ "sharp focus, professional photography"
+→ "8K resolution, high dynamic range"
+→ "award-winning [photo/illustration/render]"
+→ "trending on ArtStation" (concept art)
+→ "shot on Phase One IQ4" (medium format photography feel)
+
+<span class="ps">UNIVERSAL NEGATIVE PROMPTS (Stable Diffusion):</span>
+ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, mutation, mutated, extra limbs, extra legs, extra arms, disfigured, deformed, cross-eye, body out of frame, blurry, bad art, bad anatomy, watermark, text, signature
+
+<span class="ps">PLATFORM QUICK GUIDE:</span>
+Midjourney → Best artistic quality, stylization
+DALL-E 3 (ChatGPT) → Best prompt following, text in images
+Stable Diffusion → Most controllable, free/open source
+Flux (Black Forest) → Photorealistic, good text
+Ideogram → Best for text-heavy images</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-fundamentals')">← Fundamentals</button>
+          <button class="btn-nav primary" onclick="showPage('pe-video')">Video Prompts →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ VIDEO GENERATION ═══════════════════ -->
+    <div id="pe-video-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — VIDEO</div>
+        <div class="page-title">Video Generation Prompts</div>
+        <div class="page-subtitle">Sora, Runway Gen-3, Kling, Pika, and Hailuo. Video prompts need camera direction, motion specifics, and temporal flow — different from image prompts.</div>
+
+        <div class="orange-box"><strong>Video Prompt Formula:</strong> [Camera move] + [Subject doing action] + [Setting] + [Lighting/time] + [Mood] + [Speed/style]. The key difference from image prompts: you must describe MOTION explicitly. What is moving? How fast? What direction?</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt2">Video Prompt Templates</div>
+
+          <div class="prompt-card" data-tags="video sora runway cinematic scene">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">Cinematic Scene Template</div>
+                <div class="pc-tags"><span class="ptag p2">SORA</span><span class="ptag p1">RUNWAY GEN-3</span><span class="ptag">KLING</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>Key difference:</strong> You must tell the model what the CAMERA does, not just what's in the scene.</div>
+            <div class="prompt-body"><span class="ps">FORMULA:</span>
+[CAMERA MOVEMENT], [SUBJECT description] [ACTION], [SETTING at TIME OF DAY], [LIGHTING details], [ATMOSPHERE/MOOD], cinematic, [FILM STYLE], [SPEED if relevant]
+
+<span class="ps">EXAMPLE — DRAMATIC OPENER:</span>
+Slow cinematic push-in shot, a lone figure in a dark overcoat walks away from camera down a rain-soaked cobblestone street at night, warm amber street lamps creating pools of reflected light, wisps of steam rising from grates, atmospheric fog, noir thriller aesthetic, shallow depth of field, 24fps film grain
+
+<span class="ps">EXAMPLE — NATURE/LANDSCAPE:</span>
+Sweeping aerial drone shot slowly rising above morning mist over ancient forests, golden sunrise light breaking over distant mountains, the mist swirling in slow motion as the camera ascends, photorealistic, hyper-detailed foliage, epic establishing shot style, no subjects
+
+<span class="ps">EXAMPLE — PRODUCT REVEAL:</span>
+Close-up macro shot, camera slowly orbiting a <span class="ph">[PRODUCT]</span> floating in a dark void, soft rim lighting from behind creating a halo effect, tiny dust particles suspended in the air lit by the product's glow, luxury product advertisement aesthetic, ultra slow motion
+
+<span class="ps">CAMERA VOCABULARY:</span>
+→ Slow push-in / pull-out
+→ Tracking shot (follows subject laterally)
+→ Dolly zoom (Hitchcock zoom — subject stable, background changes)
+→ Handheld slightly unstable
+→ Crane shot (rising/descending)
+→ Dutch angle (tilted frame)
+→ Circular orbit around subject
+→ POV (first-person perspective)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="video motion effect transform animation">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Motion Effects & Transformations</div>
+                <div class="pc-tags"><span class="ptag p2">RUNWAY</span><span class="ptag p1">PIKA</span><span class="ptag">HAILUO</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">MORPHING / TRANSFORMATION:</span>
+<span class="ph">[START STATE]</span> slowly transforms into <span class="ph">[END STATE]</span>, seamless morph transition, [time duration], cinematic quality, smooth continuous motion
+
+Example:
+A cracked desert landscape slowly transforms into a lush green forest as the camera watches, timelapse-style acceleration, seasons passing visibly, seamless transformation, magical realism aesthetic
+
+<span class="ps">PARTICLE / ABSTRACT MOTION:</span>
+<span class="ph">[OBJECT/TEXT]</span> dissolves into thousands of glowing <span class="ph">[PARTICLES: dust / sparks / petals / data streams]</span>, slow motion, the particles swirl and drift upward in a spiral, soft cinematic lighting, black background, dreamlike quality
+
+<span class="ps">SPEED RAMP:</span>
+<span class="ph">[ACTION]</span> shown in extreme slow motion, every detail hyper-visible: <span class="ph">[specific details like water droplets / fabric movement / expression]</span>, then suddenly ramping to real-time speed, dramatic music video aesthetic
+
+<span class="ps">LOOPING CINEMAGRAPH STYLE:</span>
+A still <span class="ph">[SCENE]</span> with only <span class="ph">[ONE ELEMENT]</span> moving subtly in a seamless loop: <span class="ph">[MOTION e.g. hair slowly blowing / candle flame flickering / rain on window]</span>, everything else perfectly frozen, serene and meditative, photorealistic</div>
+          </div>
+
+          <div class="prompt-card" data-tags="video social media content short form reels">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Social Content — Reels & Shorts</div>
+                <div class="pc-tags"><span class="ptag p1">PIKA</span><span class="ptag p2">RUNWAY</span><span class="ptag">VERTICAL 9:16</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">FOR INSTAGRAM REELS / TIKTOK (9:16):</span>
+Vertical format 9:16, <span class="ph">[SUBJECT]</span> in <span class="ph">[SETTING]</span>, dynamic motion, vibrant colors, [AESTHETIC: cottagecore / dark academia / Y2K / minimal luxury], engaging for social media, 3-5 seconds of smooth action, high energy
+
+<span class="ps">PRODUCT DEMO REEL:</span>
+Vertical 9:16 format, hands unboxing a <span class="ph">[PRODUCT]</span>, satisfying slow reveal, premium packaging, clean white surface, soft natural light, minimalist aesthetic, trending unboxing video style, smooth continuous motion
+
+<span class="ps">LIFESTYLE CONTENT:</span>
+Golden hour, <span class="ph">[PERSON/ACTIVITY]</span>, warm aesthetic, dreamy soft focus, slow motion moments interspersed with normal speed, lifestyle brand video feel, authentic not staged, vertical 9:16, transitions feel natural
+
+<span class="ps">TIPS FOR VIDEO PROMPTS:</span>
+→ Always specify aspect ratio (16:9 landscape or 9:16 vertical)
+→ Mention duration expectations ("3-second clip" vs "15-second scene")
+→ Sora handles complex narrative scenes best
+→ Runway Gen-3 is great for motion brush (animate specific parts of an image)
+→ Kling excels at physics-based realistic motion
+→ Pika is best for quick social content and text animation</div>
+          </div>
+
+          <div class="prompt-card" data-tags="video text to video AI story narrative">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Text-to-Video with Claude as Script Writer</div>
+                <div class="pc-tags"><span class="ptag p3">WORKFLOW</span><span class="ptag p4">MULTI-STEP</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">USE THIS IN CLAUDE/GPT FIRST, THEN PASTE OUTPUT INTO VIDEO TOOL:</span>
+
+You are a video director writing generation prompts for an AI video model.
+
+I want to create a <span class="ph">[DURATION e.g. 30-second / 60-second]</span> video about <span class="ph">[TOPIC/STORY]</span> for <span class="ph">[PLATFORM e.g. Instagram / YouTube / presentation]</span>.
+
+Audience: <span class="ph">[WHO WILL WATCH IT]</span>
+Mood: <span class="ph">[e.g. inspiring / dramatic / calm / energetic]</span>
+Style: <span class="ph">[e.g. cinematic / animated / documentary / product commercial]</span>
+
+Write me:
+1. A shot list: 5-7 individual shots (each 3-5 seconds)
+2. For each shot: a complete video generation prompt optimized for Sora/Runway
+3. Suggested transitions between shots
+4. Suggested background music mood/genre
+
+Each video prompt should follow the format: [Camera move] + [subject + action] + [setting] + [mood/lighting] + [style]</div>
+          </div>
+
+          <div class="prompt-card" data-tags="video platform comparison guide">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">REFERENCE</div>
+                <div class="pc-title">Platform Comparison & Best Practices</div>
+                <div class="pc-tags"><span class="ptag p6">REFERENCE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">PLATFORM STRENGTHS (2024-2025):</span>
+Sora (OpenAI)         → Complex scenes, physics, long clips, narrative
+Runway Gen-3 Alpha    → Artist control, motion brush, consistency
+Kling (Kuaishou)      → Realistic human motion, physics-accurate
+Pika 2.0              → Fast, social content, sound effects
+Hailuo (MiniMax)      → Character consistency, smooth motion
+Luma Dream Machine    → Good camera moves, accessible
+
+<span class="ps">UNIVERSAL VIDEO PROMPT TIPS:</span>
+→ Avoid too many subjects moving simultaneously — models struggle
+→ Keep complex interactions minimal (hands/faces moving = errors)
+→ Specify "no camera shake" or "smooth stabilized" if you want steady shots
+→ "Seamless loop" tells the model to end where it started
+→ "Photo-realistic" vs "cinematic" vs "animated" — always specify
+→ Physical actions are more reliable than emotional/facial expressions
+→ Lighting direction changes confuse models — keep it consistent
+→ Start simple, iterate — don't try to pack 30 seconds into one prompt
+
+<span class="ps">WHAT AI VIDEO IS BEST AT:</span>
+→ Nature scenes and environments
+→ Abstract and particle effects
+→ Simple product showcases
+→ Atmospheric establishing shots
+→ Timelapse and transition effects
+
+<span class="ps">WHAT AI VIDEO STRUGGLES WITH:</span>
+→ Hands and fingers
+→ Consistent face across multiple shots
+→ Text rendering in video
+→ Complex dialogue/lip sync (use dedicated tools)
+→ Multiple specific people interacting</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-image')">← Image</button>
+          <button class="btn-nav primary" onclick="showPage('pe-audio')">Music & Audio →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ MUSIC & AUDIO ═══════════════════ -->
+    <div id="pe-audio-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — AUDIO</div>
+        <div class="page-title">Music &amp; Audio Prompts</div>
+        <div class="page-subtitle">Suno, Udio for music generation. ElevenLabs for voice. The vocabulary that gets you the sound you hear in your head.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt3">Music & Voice Templates</div>
+
+          <div class="prompt-card" data-tags="music suno udio genre mood generation">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">Music Generation — Complete Formula</div>
+                <div class="pc-tags"><span class="ptag p3">SUNO</span><span class="ptag p1">UDIO</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="pc-context"><strong>Formula:</strong> [Genre + subgenre] + [Tempo/BPM] + [Key instruments] + [Mood adjectives] + [Vocal style if any] + [Structure hints] + [Reference artists]</div>
+            <div class="prompt-body"><span class="ps">COMPLETE MUSIC PROMPT TEMPLATE:</span>
+[GENRE e.g. dark synthwave / lo-fi hip hop / cinematic orchestral / acoustic indie folk]
+[BPM or tempo descriptor: 90 BPM / slow / driving / mid-tempo / uptempo]
+[KEY INSTRUMENTS: piano / distorted electric guitar /808 bass / strings / analog synth]
+[MOOD: melancholic / euphoric / tense / nostalgic / triumphant / eerie]
+[VOCAL STYLE if any: no vocals / female vocals soft whispery / male rap / choir harmonies]
+[REFERENCE SOUND: inspired by [ARTIST 1] x [ARTIST 2] style]
+
+<span class="ps">EXAMPLE — CINEMATIC BACKGROUND:</span>
+Cinematic orchestral score, slow 60 BPM, rising strings and subtle piano, building tension with distant brass swells, no vocals, Hans Zimmer x Ennio Morricone inspired, suitable for a dramatic film trailer, starts sparse and builds to full orchestra crescendo
+
+<span class="ps">EXAMPLE — STUDY/WORK MUSIC:</span>
+Lo-fi hip hop, 85 BPM, mellow jazzy chords, soft vinyl crackle, warm bass, no vocals, nostalgic Tokyo evening atmosphere, inspired by Nujabes and Jinsang, perfect for focus sessions
+
+<span class="ps">EXAMPLE — ENERGETIC OPENER:</span>
+Dark synthwave, 128 BPM, heavy analog bass, arpeggiated synth leads, punchy 808 drums, dystopian but euphoric, Carpenter Brut x Perturbator, cyberpunk aesthetic, for use as intro music
+
+<span class="ps">MUSIC VOCABULARY BY MOOD:</span>
+→ Tense/Thriller: staccato strings, sparse piano, dissonant intervals
+→ Uplifting/Victory: major key, rising motifs, brass fanfare
+→ Nostalgic/Sad: minor key, slow tempo, piano and cello
+→ Mysterious: reverb-heavy, sparse, tritone intervals
+→ High energy: fast tempo, punchy drums, distorted elements</div>
+          </div>
+
+          <div class="prompt-card" data-tags="music lyrics songwriting structure">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Lyrics & Song Structure (for Suno)</div>
+                <div class="pc-tags"><span class="ptag p3">SUNO</span><span class="ptag p1">LYRICS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">SUNO ACCEPTS STRUCTURED LYRICS WITH TAGS:</span>
+
+[Intro]
+(no lyrics, just music)
+
+[Verse 1]
+<span class="ph">[YOUR LYRICS LINE 1]
+[YOUR LYRICS LINE 2]
+[YOUR LYRICS LINE 3]
+[YOUR LYRICS LINE 4]</span>
+
+[Pre-Chorus]
+<span class="ph">[BUILD-UP LYRICS]</span>
+
+[Chorus]
+<span class="ph">[MAIN HOOK - YOUR MOST MEMORABLE LINES]
+[REPEAT OR VARIATION]</span>
+
+[Verse 2]
+<span class="ph">[SECOND VERSE LYRICS]</span>
+
+[Chorus]
+<span class="ph">[REPEAT CHORUS]</span>
+
+[Bridge]
+<span class="ph">[CONTRASTING SECTION]</span>
+
+[Outro]
+(fade out)
+
+<span class="ps">TIPS FOR SUNO LYRICS:</span>
+→ Shorter, simpler lyrics work better than complex poetry
+→ Repeated phrases in chorus = catchier results
+→ Mark instrumental sections with "(no lyrics, instrumental)"
+→ Use [Verse] [Chorus] [Bridge] tags — they affect the structure significantly
+→ The Style box and the Lyrics box work together — be consistent in tone</div>
+          </div>
+
+          <div class="prompt-card" data-tags="voice elevenlabs TTS voiceover narration">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Voiceover & TTS (ElevenLabs)</div>
+                <div class="pc-tags"><span class="ptag p2">ELEVENLABS</span><span class="ptag p1">TTS</span><span class="ptag">NARRATION</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">ELEVENLABS VOICE SETTINGS:</span>
+Stability: 0.3-0.5 = more expressive / 0.7-0.9 = more consistent
+Similarity Boost: higher = stays closer to original voice
+Style: 0 = neutral / 0.5+ = more expressive/emotive
+Speaker Boost: enable for cleaner output
+
+<span class="ps">WRITING TEXT FOR BETTER TTS OUTPUT:</span>
+
+For dramatic pauses: use "..." or em dash — 
+For emphasis: CAPITALIZE the word (not full sentences)
+For slower pacing: add commas where you want breath
+For fast sections: remove punctuation and write it out naturally
+
+<span class="ps">EXAMPLE — DOCUMENTARY NARRATION STYLE:</span>
+<span class="ph">"In the summer of 2019... everything changed.
+What began as a small experiment — a single line of code — would eventually reshape how millions of people interact with technology.
+This is that story."</span>
+
+<span class="ps">EXAMPLE — SALES/EXPLAINER ENERGY:</span>
+<span class="ph">"Here's the problem with every tool you've tried: they're built for everyone, which means they're optimized for NO ONE. What if there was something different? What if the tool actually LEARNED how you work?"</span>
+
+<span class="ps">USE CLAUDE/GPT TO WRITE YOUR VOICEOVER SCRIPT:</span>
+Write a [30-second / 60-second] voiceover script for a [TYPE] video about [TOPIC]. Tone: [confident / warm / urgent / authoritative]. Include natural pauses (...). Avoid overly formal language. Optimize for spoken delivery, not reading.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="sound design sfx ambient audio">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Sound Design & Ambient Audio</div>
+                <div class="pc-tags"><span class="ptag p1">ELEVENLABS SOUND</span><span class="ptag p2">UDIO</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">FOR ELEVENLABS SOUND EFFECTS:</span>
+[Specific sound] + [acoustic environment] + [distance/perspective] + [duration/loop]
+
+Examples:
+→ "Heavy rainfall on a tin roof, medium distance, light thunder rumble in background, seamless loop"
+→ "Busy coffee shop ambience, low chatter, espresso machine sounds, jazz music barely audible, morning atmosphere"
+→ "Deep space ambient hum, low frequency drone, occasional distant metallic clang, eerie and vast"
+→ "Dense jungle at dawn, birds calling, insects, distant waterfall, peaceful"
+→ "Server room hum, cooling fans, occasional hard drive activity, technical professional environment"
+
+<span class="ps">FOR NOTIFICATION/UI SOUNDS:</span>
+→ "Short 0.3 second notification sound, friendly and light, ascending two-tone ding"
+→ "Error sound, brief, slightly harsh, descending tone, not alarming"
+→ "Success sound, warm major chord, satisfying resolution, 0.5 seconds"
+
+<span class="ps">FOR UDIO AMBIENT MUSIC:</span>
+ambient drone, [KEY: A minor], [BPM: 60], generative texture, no melody, [MOOD: contemplative / tense / peaceful], reverb-heavy, suitable for background, 10+ minutes seamless loop</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-video')">← Video</button>
+          <button class="btn-nav primary" onclick="showPage('pe-code')">Code Prompts →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ CODE & DEV ═══════════════════ -->
+    <div id="pe-code-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — CODE</div>
+        <div class="page-title">Code &amp; Development Prompts</div>
+        <div class="page-subtitle">Generate, review, refactor, debug, and architect. The prompts that make Cursor, Copilot, and Claude work at 10x for development.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt7">Code Prompt Templates</div>
+
+          <div class="prompt-card" data-tags="code generate feature implementation cursor">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">Feature Implementation Request</div>
+                <div class="pc-tags"><span class="ptag p1">CURSOR</span><span class="ptag p4">COPILOT</span><span class="ptag">GENERATION</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">FORMULA FOR BEST CODE GENERATION:</span>
+
+You are a senior <span class="ph">[LANGUAGE e.g. TypeScript / Python / Go]</span> developer.
+
+<span class="ps">CONTEXT:</span>
+- Stack: <span class="ph">[Framework, DB, key libraries — e.g. Next.js 14, PostgreSQL, Prisma, tRPC]</span>
+- Code style: <span class="ph">[e.g. functional, no classes / OOP / existing conventions in codebase]</span>
+- Existing relevant code: <span class="ph">[Paste any interfaces, types, or functions this new code must work with]</span>
+
+<span class="ps">TASK:</span>
+Implement <span class="ph">[SPECIFIC FEATURE — be precise]</span>
+
+<span class="ps">REQUIREMENTS:</span>
+- <span class="ph">[Requirement 1]</span>
+- <span class="ph">[Requirement 2]</span>
+- Handle edge cases: <span class="ph">[empty input / null / concurrent access / network failure]</span>
+- Write tests for: <span class="ph">[specify what to test]</span>
+
+<span class="ps">DO NOT:</span>
+- Add functionality not in requirements
+- Change existing interfaces I didn't ask to change
+- Use deprecated APIs
+- Add unnecessary comments explaining obvious code
+
+<span class="ps">OUTPUT FORMAT:</span>
+1. Implementation code
+2. Unit tests
+3. Any types/interfaces needed
+4. Brief note on any important decisions made</div>
+          </div>
+
+          <div class="prompt-card" data-tags="code review security performance bugs">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Code Review — Security, Performance, Quality</div>
+                <div class="pc-tags"><span class="ptag p1">REVIEW</span><span class="ptag p2">SECURITY</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">You are a senior engineer conducting a thorough code review. Be direct — no diplomatic softening.
+
+<span class="ps">CODE TO REVIEW:</span>
+<span class="ph">[Paste your code here]</span>
+
+<span class="ps">CONTEXT:</span>
+Language/Framework: <span class="ph">[e.g. Node.js/Express API endpoint]</span>
+What it does: <span class="ph">[Brief description of intent]</span>
+Environment: <span class="ph">[production / internal tool / user-facing]</span>
+
+<span class="ps">REVIEW FOR:</span>
+1. 🔴 Critical bugs — logic errors, off-by-ones, race conditions
+2. 🔴 Security vulnerabilities — injection, auth bypass, data exposure, unvalidated input
+3. 🟡 Performance issues — N+1 queries, unnecessary operations, memory leaks
+4. 🟡 Error handling — what happens when X fails?
+5. 🟢 Code quality — naming, structure, readability, DRY violations
+6. 🟢 Missing tests — what edge cases are untested?
+
+<span class="ps">FORMAT YOUR RESPONSE AS:</span>
+[SEVERITY] Line X: [Issue] → [Fix]
+
+Then: Overall score (1-10) and the #1 thing to fix before shipping.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="code refactor clean architecture improve">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Refactoring & Architecture Improvement</div>
+                <div class="pc-tags"><span class="ptag p1">REFACTOR</span><span class="ptag p3">ARCHITECTURE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Refactor this code to improve <span class="ph">[GOAL: readability / performance / testability / scalability / all]</span>.
+
+<span class="ps">CURRENT CODE:</span>
+<span class="ph">[Paste code here]</span>
+
+<span class="ps">CONSTRAINTS:</span>
+- Must maintain same public interface (inputs and outputs unchanged)
+- Must maintain same behavior for all current inputs
+- Can change: internal structure, naming, algorithms, abstractions
+- Cannot change: <span class="ph">[anything that must stay the same]</span>
+- Target: <span class="ph">[e.g. make it testable / reduce complexity / split into smaller functions]</span>
+
+<span class="ps">SHOW ME:</span>
+1. Refactored code
+2. Diff: what changed and why (one sentence per significant change)
+3. What the refactor doesn't fix (honest limitations)
+4. One follow-up refactor I should consider next</div>
+          </div>
+
+          <div class="prompt-card" data-tags="code debug error explain understand">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Debug & Explain Error</div>
+                <div class="pc-tags"><span class="ptag p2">DEBUG</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Debug this error and explain it so I understand the root cause, not just the fix.
+
+<span class="ps">THE ERROR:</span>
+<span class="ph">[Paste the full error message / stack trace]</span>
+
+<span class="ps">MY CODE:</span>
+<span class="ph">[Paste the relevant code]</span>
+
+<span class="ps">CONTEXT:</span>
+- When does it happen: <span class="ph">[always / on specific input / intermittently / after X time]</span>
+- Environment: <span class="ph">[language, framework, version numbers]</span>
+- What I've already tried: <span class="ph">[your attempted fixes]</span>
+
+<span class="ps">TELL ME:</span>
+1. Root cause — WHY this error occurs (not just what it says)
+2. The fix
+3. How to prevent this class of error in the future
+4. Are there related bugs I might have but haven't hit yet?</div>
+          </div>
+
+          <div class="prompt-card" data-tags="code architecture design system cursor rules">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 05</div>
+                <div class="pc-title">Cursor Rules / System Prompt for Project</div>
+                <div class="pc-tags"><span class="ptag p1">CURSOR RULES</span><span class="ptag p3">PROJECT SETUP</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body"><span class="ps">USE THIS IN CURSOR'S .cursorrules FILE OR PROJECT SYSTEM PROMPT:</span>
+
+You are an expert <span class="ph">[LANGUAGE/FRAMEWORK]</span> developer working on <span class="ph">[PROJECT NAME]</span>.
+
+<span class="ps">PROJECT CONTEXT:</span>
+- Stack: <span class="ph">[Full tech stack]</span>
+- Architecture: <span class="ph">[e.g. feature-based monolith / microservices / serverless]</span>
+- Key conventions: <span class="ph">[naming, file structure, state management approach]</span>
+
+<span class="ps">CODING STANDARDS:</span>
+- Always use TypeScript strict mode (no `any`)
+- Functional components and hooks only (no class components)
+- Error handling: always handle async errors, never swallow exceptions
+- Testing: write tests alongside implementation
+- Comments: explain WHY, not WHAT
+
+<span class="ps">WHEN WRITING CODE:</span>
+1. Check if a similar utility already exists before creating new ones
+2. Prefer composition over inheritance
+3. Keep functions under 30 lines — extract if longer
+4. All user-facing strings should be in i18n files
+5. Never hardcode URLs, credentials, or environment-specific values
+
+<span class="ps">WHEN REVIEWING MY CODE:</span>
+Flag if I: use `any`, forget error handling, have N+1 query risk, hardcode values.
+
+<span class="ps">RESPONSE FORMAT:</span>
+- Lead with the code, not with explanations
+- Include imports
+- Add types for all function parameters and returns
+- Mark TODO comments where follow-up work is needed</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-audio')">← Audio</button>
+          <button class="btn-nav primary" onclick="showPage('pe-research')">Research →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ RESEARCH & ANALYSIS ═══════════════════ -->
+    <div id="pe-research-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — RESEARCH</div>
+        <div class="page-title">Research &amp; Analysis Prompts</div>
+        <div class="page-subtitle">Competitive analysis, decision frameworks, document summarization, and knowledge synthesis. AI as your research assistant.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt4">Research Templates</div>
+
+          <div class="prompt-card" data-tags="research comparison decision analysis">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">Decision Framework — Compare Options</div>
+                <div class="pc-tags"><span class="ptag p4">DECISION MAKING</span><span class="ptag p1">ANALYSIS</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">I need to make a decision between: <span class="ph">[OPTION A] vs [OPTION B] vs [OPTION C if any]</span>
+
+<span class="ps">CONTEXT:</span>
+What I'm trying to achieve: <span class="ph">[Your goal]</span>
+My constraints: <span class="ph">[budget / time / team size / tech knowledge / etc.]</span>
+What I've already ruled out: <span class="ph">[options you won't consider and why]</span>
+My current leaning: <span class="ph">[what you currently think and why]</span>
+
+<span class="ps">EVALUATE ON:</span>
+1. How well each option serves my ACTUAL goal (not just features)
+2. Hidden costs and risks for each (what salespeople don't tell you)
+3. Where each option FAILS — what's its critical weakness?
+4. The decision that maximizes optionality (easiest to change later)
+5. What most people overlook when making this choice
+
+<span class="ps">DO NOT:</span>
+- Give me a generic "it depends" answer
+- List features without saying which actually matter for MY context
+- Be balanced just to be diplomatic — tell me your actual recommendation
+
+<span class="ps">END WITH:</span>
+Your recommendation + what would change it (what new information would flip your answer?)</div>
+          </div>
+
+          <div class="prompt-card" data-tags="research summarize document paper article">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Document / Paper Summarizer</div>
+                <div class="pc-tags"><span class="ptag p1">SUMMARIZE</span><span class="ptag p4">RESEARCH</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Summarize the following <span class="ph">[document type: research paper / article / documentation / report]</span> for a <span class="ph">[AUDIENCE: software engineer / non-technical executive / student]</span>.
+
+<span class="ps">DOCUMENT:</span>
+<span class="ph">[Paste the text or describe it with a URL if using web-enabled AI]</span>
+
+<span class="ps">SUMMARY FORMAT:</span>
+1. TL;DR: 2 sentences max — what is this, and what should I do with this information?
+2. Key findings: 3-5 bullet points (most important, in plain language)
+3. What this means for me specifically as a <span class="ph">[YOUR ROLE]</span>
+4. What it doesn't cover or what questions it leaves open
+5. Credibility note: Is the source reliable? Any obvious bias or limitations?
+
+<span class="ps">AFTER SUMMARIZING:</span>
+Ask me 3 questions that would help me get more out of this document if I read it in full.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="research competitive analysis market landscape">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Competitive Analysis Framework</div>
+                <div class="pc-tags"><span class="ptag p2">COMPETITIVE</span><span class="ptag p3">STRATEGY</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Run a competitive analysis for <span class="ph">[YOUR PRODUCT/COMPANY]</span> against <span class="ph">[COMPETITOR(S)]</span> in the <span class="ph">[MARKET/SPACE]</span>.
+
+<span class="ps">CONTEXT:</span>
+My product: <span class="ph">[What it does, who uses it, pricing]</span>
+Competitors: <span class="ph">[List them]</span>
+My audience: <span class="ph">[Who am I trying to win customers from]</span>
+
+<span class="ps">ANALYZE:</span>
+1. For each competitor: their actual strengths (not marketing spin)
+2. For each competitor: their most common complaint (check G2/Capterra/Reddit)
+3. Where I am clearly better
+4. Where I am clearly worse
+5. The gap no one is filling well (opportunity)
+6. The messaging that would resonate with customers unhappy with each competitor
+
+<span class="ps">DO NOT:</span>
+Be generic — use actual knowledge about these specific companies/products.
+Tell me "it depends on your needs" — I want specific insights.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="research learning study topic breakdown">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Learn Any Topic Fast — Expert Breakdown</div>
+                <div class="pc-tags"><span class="ptag p1">LEARNING</span><span class="ptag p4">DEEP DIVE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Teach me <span class="ph">[TOPIC]</span> as if I'm an intelligent person with <span class="ph">[BACKGROUND: software engineering / marketing / finance / no specific background]</span> who has never studied this before.
+
+<span class="ps">MY GOAL:</span>
+<span class="ph">[e.g. understand it well enough to use it in interviews / implement it / make a decision about it / discuss it intelligently]</span>
+
+<span class="ps">FORMAT:</span>
+1. The core idea in 2 sentences (like explaining to a smart 10-year-old)
+2. The mental model — what does this RESEMBLE that I already understand?
+3. The key components / concepts (5 max) — each in 2-3 sentences
+4. Where this is used in practice (real examples)
+5. The common misconceptions people have about this topic
+6. The 20% of knowledge that gives you 80% of understanding
+7. If I want to go deeper: the 3 best resources (book / article / course)
+
+After this overview:
+Quiz me with 3 questions to test whether I actually understood the core concept.</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-code')">← Code</button>
+          <button class="btn-nav primary" onclick="showPage('cheat-all')">Quick Reference →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ CHEATSHEET ═══════════════════ -->
+    <div id="cheat-all-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// QUICK REFERENCE</div>
+        <div class="page-title">Cheatsheet — All Prompts</div>
+        <div class="page-subtitle">The one-page overview. When you need a prompt fast and don't want to scroll.</div>
+
+        <div class="prompt-group">
+          <div class="group-title gt1">Interview — Quick Select</div>
+          <table class="t">
+            <tr><th>Prompt</th><th>Use When</th><th>Page</th></tr>
+            <tr><td>Coding Interview Simulation</td><td>Weekly coding practice, any level</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-coding')">→ Coding</span></td></tr>
+            <tr><td>Live Debugging Session</td><td>Companies that give broken code</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-coding')">→ Coding</span></td></tr>
+            <tr><td>Solution Review</td><td>After solving a problem, want deep feedback</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-coding')">→ Coding</span></td></tr>
+            <tr><td>System Design Mock</td><td>Senior/staff practice — any company</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-system')">→ System Design</span></td></tr>
+            <tr><td>Amazon LP Full Loop</td><td>Amazon interviews</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-behavioral')">→ Behavioral</span></td></tr>
+            <tr><td>STAR Story Practice Loop</td><td>Refine one specific story with feedback</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-behavioral')">→ Behavioral</span></td></tr>
+            <tr><td>Salary Negotiation Roleplay</td><td>After receiving an offer</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-hr')">→ HR</span></td></tr>
+            <tr><td>"Tell Me About Yourself" Builder</td><td>Before first interview at any company</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-feedback')">→ Critique</span></td></tr>
+            <tr><td>Story Bank Coverage Audit</td><td>1 week before interview — find gaps</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('mock-feedback')">→ Critique</span></td></tr>
+          </table>
+
+          <div class="group-title gt2" style="margin-top:32px">Prompt Engineering — Quick Select</div>
+          <table class="t">
+            <tr><th>Prompt</th><th>Platform</th><th>Page</th></tr>
+            <tr><td>Role + Context + Constraint Formula</td><td>All AI</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-fundamentals')">→ Fundamentals</span></td></tr>
+            <tr><td>Chain of Thought</td><td>All AI</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-fundamentals')">→ Fundamentals</span></td></tr>
+            <tr><td>Photorealistic Portrait</td><td>Midjourney / Flux</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-image')">→ Image</span></td></tr>
+            <tr><td>Product Photography</td><td>DALL-E 3 / Flux Pro</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-image')">→ Image</span></td></tr>
+            <tr><td>Cinematic Scene</td><td>Sora / Runway Gen-3</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-video')">→ Video</span></td></tr>
+            <tr><td>Music Generation Formula</td><td>Suno / Udio</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-audio')">→ Audio</span></td></tr>
+            <tr><td>Voiceover Script + TTS</td><td>ElevenLabs</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-audio')">→ Audio</span></td></tr>
+            <tr><td>Feature Implementation Request</td><td>Cursor / Copilot</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-code')">→ Code</span></td></tr>
+            <tr><td>Code Review</td><td>Claude / GPT</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-code')">→ Code</span></td></tr>
+            <tr><td>Decision Framework</td><td>All AI</td><td><span style="color:var(--c1);cursor:pointer" onclick="showPage('pe-research')">→ Research</span></td></tr>
+          </table>
+
+          <div class="group-title gt1" style="margin-top:32px">The 6 Universal Prompt Rules</div>
+          <div class="acc">
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">1. Give the AI a SPECIFIC role with seniority level</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">"You are a senior X" outperforms "you are an expert X" which outperforms nothing. The more specific the role, the more the model draws on relevant knowledge patterns. Add the context of WHO is asking (audience) not just WHO is answering.</div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">2. State CONSTRAINTS, not just goals</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">Tell the AI what NOT to do. "Do not add disclaimers", "Do not summarize what you just wrote", "Do not hedge every statement". Negative constraints are often more powerful than positive instructions because they prevent the AI's default filler behavior.</div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">3. Specify the OUTPUT FORMAT explicitly</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">Without format instructions, AI defaults to markdown with headers and bullets. Specify: plain prose / JSON / numbered list / table / code only / one-sentence answer. Put format instructions NEAR THE TOP of the prompt, not buried at the end where they get ignored.</div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">4. Use "Think step by step" for complex reasoning</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">Chain-of-thought prompting (asking the AI to reason visibly before answering) significantly reduces logical errors. For code: "explain your approach before writing it". For decisions: "list key considerations, then recommend". The reasoning tokens serve as working memory.</div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">5. Show examples (few-shot) when words aren't enough</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">When you want a specific style, tone, or format that's hard to describe — show 1-3 examples first. "Write more like this: [example]" is more powerful than 5 sentences trying to describe the style. This is especially true for creative content and specific writing voices.</div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-hdr" onclick="toggleAcc(this)"><span class="acc-hdr-text">6. Iterate — one prompt is rarely your best result</span><span class="acc-arrow">+</span></div>
+              <div class="acc-body">The best output comes from iteration. Draft → critique ("what are the 3 weakest parts?") → improve → shorten → tone-adjust. Build a workflow, not a single prompt. Save prompts that work well. Build a library (this one) rather than starting from scratch each time.</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('pe-research')">← Research</button>
+          <button class="btn-nav primary" onclick="showPage('home')">🏠 Home</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT & WRITING (stub for nav completeness) -->
+    <div id="pe-text-page" class="page">
+      <div class="prompt-page-inner">
+        <div class="page-eyebrow">// PROMPT ENGINEERING — WRITING</div>
+        <div class="page-title">Text &amp; Writing Prompts</div>
+        <div class="page-subtitle">Templates for blog posts, LinkedIn content, emails, documentation, and any long-form writing.</div>
+        <div class="prompt-group">
+          <div class="group-title gt6">Writing Templates</div>
+
+          <div class="prompt-card" data-tags="writing linkedin post content professional">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 01</div>
+                <div class="pc-title">LinkedIn Post Generator</div>
+                <div class="pc-tags"><span class="ptag p6">LINKEDIN</span><span class="ptag p1">CONTENT</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Write a LinkedIn post about <span class="ph">[TOPIC/STORY]</span> that I can publish as myself.
+
+<span class="ps">MY CONTEXT:</span>
+My role: <span class="ph">[Your title and company type]</span>
+My audience: <span class="ph">[Who follows you — developers / founders / marketers / etc.]</span>
+Key message: <span class="ph">[The one thing I want people to take away]</span>
+My authentic voice: <span class="ph">[2-3 words: e.g. direct, practical, slightly humorous / warm, empathetic, no jargon]</span>
+
+<span class="ps">POST STRUCTURE:</span>
+1. Hook: First line that stops the scroll (don't start with "I" or "Today I")
+2. Body: 3-5 short paragraphs, each with a line break
+3. Insight: The specific, counterintuitive thing I want to share
+4. Call to action or reflection question at the end
+
+<span class="ps">DO NOT:</span>
+- Use "Excited to share...", "Humbled by...", "Grateful for..."
+- Use inspirational platitudes ("Success is a journey...")
+- Add 20 hashtags — max 3 targeted ones
+- Sound like it was written by AI
+
+Length: 150-250 words. Punchy. Specific. Real.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="writing email professional clear concise">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 02</div>
+                <div class="pc-title">Professional Email — Any Situation</div>
+                <div class="pc-tags"><span class="ptag p4">EMAIL</span><span class="ptag p1">PROFESSIONAL</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Write a professional email for this situation:
+
+<span class="ps">SITUATION:</span>
+<span class="ph">[e.g. Following up after interview / Declining a job offer / Asking for a raise / Escalating a delayed project / Introducing myself to a new team / Saying no to a request politely]</span>
+
+<span class="ps">CONTEXT:</span>
+From: <span class="ph">[Your role/title]</span>
+To: <span class="ph">[Recipient's role and relationship to you]</span>
+Key information to include: <span class="ph">[Any specifics]</span>
+Tone: <span class="ph">[Formal / professional-but-warm / direct / diplomatic]</span>
+
+<span class="ps">REQUIREMENTS:</span>
+- Subject line that gets opened
+- Under 150 words for the body (unless detail is genuinely needed)
+- Clear ask or next step in the last sentence
+- No filler phrases ("I hope this email finds you well")
+
+<span class="ps">ALSO GIVE ME:</span>
+2 alternative versions: one more direct, one more diplomatic</div>
+          </div>
+
+          <div class="prompt-card" data-tags="writing documentation technical README API docs">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 03</div>
+                <div class="pc-title">Technical Documentation</div>
+                <div class="pc-tags"><span class="ptag p1">DOCS</span><span class="ptag p4">TECHNICAL</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Write technical documentation for <span class="ph">[WHAT: an API endpoint / a library / a system / a feature]</span>.
+
+<span class="ps">AUDIENCE:</span> <span class="ph">[e.g. developers using our API / internal engineers / new team members]</span>
+<span class="ps">CONTEXT (paste relevant code/spec):</span>
+<span class="ph">[Your code, API spec, or description of what you're documenting]</span>
+
+<span class="ps">INCLUDE:</span>
+1. Overview: what it does in 1-2 sentences
+2. When to use it (and when NOT to use it)
+3. Prerequisites / dependencies
+4. Complete usage examples (code)
+5. All parameters / options with types and defaults
+6. Return values / response format
+7. Error codes and what they mean
+8. Common gotchas / things that confuse people
+
+<span class="ps">FORMAT:</span> Clean markdown, suitable for a README or docs site.
+<span class="ps">STYLE:</span> Stripe-style clarity — precise, example-first, no filler.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="writing blog post article long form content">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 04</div>
+                <div class="pc-title">Blog Post / Article Outline + Draft</div>
+                <div class="pc-tags"><span class="ptag p6">BLOG</span><span class="ptag p2">LONG FORM</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Write a <span class="ph">[LENGTH: 800 / 1200 / 2000 word]</span> blog post about <span class="ph">[TOPIC]</span> for <span class="ph">[PUBLICATION/AUDIENCE]</span>.
+
+<span class="ps">MY TAKE:</span>
+The unique angle I want to argue: <span class="ph">[Your specific perspective — not just a general overview]</span>
+What I want readers to feel or do after reading: <span class="ph">[Specific outcome]</span>
+
+<span class="ps">STRUCTURE:</span>
+1. Hook (first 2 sentences must earn the read)
+2. The problem / setup
+3. Your argument / insight (the meat)
+4. Evidence / examples (real, specific)
+5. Counter-argument (address the obvious objection)
+6. Actionable conclusion
+
+<span class="ps">STYLE RULES:</span>
+- Short paragraphs (2-4 sentences)
+- Subheadings every ~300 words
+- At least 2 concrete examples (not hypothetical)
+- End with something memorable, not "in conclusion..."
+- Sound like a person with opinions, not a content machine
+
+<span class="ps">AFTER THE DRAFT:</span>
+Identify the 2 weakest paragraphs and rewrite them.</div>
+          </div>
+
+          <div class="prompt-card" data-tags="writing prompt improve rewrite edit">
+            <div class="pc-header">
+              <div class="pc-meta">
+                <div class="pc-label">TEMPLATE 05</div>
+                <div class="pc-title">Rewrite / Improve Any Text</div>
+                <div class="pc-tags"><span class="ptag p1">EDIT</span><span class="ptag p2">REWRITE</span></div>
+              </div>
+              <button class="copy-prompt-btn" onclick="copyCard(this)">📋 Copy Prompt</button>
+            </div>
+            <div class="prompt-body">Rewrite this text to be <span class="ph">[GOAL: clearer / more concise / more direct / more engaging / more professional / simpler]</span>.
+
+<span class="ps">ORIGINAL TEXT:</span>
+<span class="ph">[Paste your text here]</span>
+
+<span class="ps">CONSTRAINTS:</span>
+- Preserve all key information
+- Maintain my voice (don't make it sound like marketing copy)
+- Target length: <span class="ph">[shorter / same / specify word count]</span>
+- Reading level: <span class="ph">[6th grade simple / professional / technical]</span>
+
+<span class="ps">ALSO GIVE ME:</span>
+1. The rewritten version
+2. A list of what you changed and why (3-5 items)
+3. The one phrase from the original that was weakest and why</div>
+          </div>
+        </div>
+        <div class="page-nav">
+          <button class="btn-nav" onclick="showPage('home')">← Home</button>
+          <button class="btn-nav primary" onclick="showPage('pe-image')">Image Prompts →</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── STATE ─────────────────────────────────
+let sidebarOpen = window.innerWidth > 768;
+let copyCount = 0;
+const PAGES = ['home','mock-coding','mock-system','mock-behavioral','mock-hr','mock-feedback','pe-fundamentals','pe-text','pe-image','pe-video','pe-audio','pe-code','pe-research','cheat-all'];
+
+// ─── SIDEBAR ────────────────────────────────
+function initSidebar() {
+  if (window.innerWidth <= 768) {
+    sidebarOpen = false;
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
+}
+
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebarOpen = !sidebarOpen;
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('collapsed', !sidebarOpen);
+});
+
+// Close sidebar on mobile when clicking outside
+document.getElementById('mainArea').addEventListener('click', () => {
+  if (window.innerWidth <= 768 && sidebarOpen) {
+    sidebarOpen = false;
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768 && !sidebarOpen) {
+    sidebarOpen = true;
+    document.getElementById('sidebar').classList.remove('collapsed');
+  }
+});
+
+// ─── NAVIGATION ─────────────────────────────
+function showPage(id) {
+  PAGES.forEach(p => {
+    const el = document.getElementById(p + '-page');
+    if (el) el.classList.remove('active');
+    const nav = document.getElementById('nav-' + p);
+    if (nav) nav.classList.remove('active');
+  });
+  const pg = document.getElementById(id + '-page');
+  if (pg) pg.classList.add('active');
+  const nav = document.getElementById('nav-' + id);
+  if (nav) nav.classList.add('active');
+  document.getElementById('mainArea').scrollTo(0, 0);
+  window.scrollTo(0, 0);
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth <= 768) {
+    sidebarOpen = false;
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
+}
+
+// ─── COPY PROMPT ────────────────────────────
+function copyCard(btn) {
+  const card = btn.closest('.prompt-card');
+  const body = card.querySelector('.prompt-body');
+  const text = body.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    copyCount++;
+    document.getElementById('copyCount').textContent = `⚡ ${copyCount} copied`;
+    setTimeout(() => {
+      btn.textContent = '📋 Copy Prompt';
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy Prompt'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// ─── ACCORDION ──────────────────────────────
+function toggleAcc(hdr) {
+  const arrow = hdr.querySelector('.acc-arrow');
+  const body = hdr.nextElementSibling;
+  arrow.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ─── SEARCH ─────────────────────────────────
+function searchPrompts(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('.prompt-card');
+  cards.forEach(card => {
+    if (!q) {
+      card.classList.remove('search-hidden', 'search-match');
+      return;
+    }
+    const tags = (card.dataset.tags || '').toLowerCase();
+    const title = (card.querySelector('.pc-title')?.textContent || '').toLowerCase();
+    const body = (card.querySelector('.prompt-body')?.textContent || '').toLowerCase();
+    const match = tags.includes(q) || title.includes(q) || body.includes(q);
+    card.classList.toggle('search-match', match);
+    card.classList.toggle('search-hidden', !match);
+  });
+  // If searching, show the page that has matches
+  if (q) {
+    const visiblePages = new Set();
+    cards.forEach(card => {
+      if (!card.classList.contains('search-hidden')) {
+        const page = card.closest('.page');
+        if (page) visiblePages.add(page.id.replace('-page', ''));
+      }
+    });
+    if (visiblePages.size > 0) {
+      showPage([...visiblePages][0]);
+    }
+  } else {
+    // Clear search - remove all filters
+    cards.forEach(c => { c.classList.remove('search-hidden', 'search-match'); });
+  }
+}
+
+// ─── INIT ───────────────────────────────────
+initSidebar();
+</script>
+</body>
+</html>

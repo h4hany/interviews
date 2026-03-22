@@ -18,7 +18,10 @@ Go is an open-source programming language developed by Google. It's statically t
 ## 3. What is a goroutine?
 
 **Answer:**
-A goroutine is a lightweight thread managed by the Go runtime. Goroutines are cheaper than OS threads and enable concurrent execution.
+- A goroutine is a lightweight thread managed by the Go runtime.
+
+> [!TIP]
+> **Antigravity Tip**: Beware of **Goroutine Leaks**. A common Principal-level bug is starting a goroutine that waits on a channel that is never closed. This goroutine will stay in memory forever. At BrandOS, we always pass a `context.Context` to our background workers and use a `select` statement with `ctx.Done()` to ensure they terminate gracefully.
 
 ### Example:
 ```go
@@ -30,7 +33,8 @@ go func() {
 ## 4. What is a channel in Go?
 
 **Answer:**
-A channel is a typed conduit for communication between goroutines. It enables safe data sharing and synchronization.
+A channel is a typed conduit for communication between goroutines.
+- *Example*: A "Producer" goroutine scrapes data from a website and sends it into a channel; a "Consumer" goroutine reads from that channel and saves it to a database. The channel coordinates the hand-off safely.
 
 ### Example:
 ```go
@@ -103,20 +107,16 @@ type Writer interface {
 ## 12. What is error handling in Go?
 
 **Answer:**
-Go uses explicit error returns instead of exceptions. Functions return `error` as the last return value.
+Go uses explicit error returns instead of exceptions.
 
-### Example:
-```go
-result, err := doSomething()
-if err != nil {
-    return err
-}
-```
+> [!TIP]
+> **Antigravity Tip**: Use **Error Wrapping** (`fmt.Errorf("... %w", err)`) to preserve the error chain. In a microservices environment like BrandOS, knowing that a "User Not Found" error actually started as a "Connection Timeout" to the database is critical for debugging. Wrapping allows you to use `errors.Is()` or `errors.As()` to check the root cause while providing high-level context.
 
 ## 13. What is `defer` in Go?
 
 **Answer:**
-`defer` schedules a function call to run after the surrounding function returns, useful for cleanup.
+`defer` schedules a function call to run after the surrounding function returns.
+- *Example*: Opening a database connection and immediately calling `defer db.Close()`. This ensures the connection is closed even if the function encounters an error or returns early.
 
 ### Example:
 ```go
@@ -182,7 +182,10 @@ func (p Person) String() string {
 ## 19. What is `context` in Go?
 
 **Answer:**
-`context` package provides cancellation, deadlines, and request-scoped values across API boundaries.
+`context` package provides cancellation, deadlines, and request-scoped values.
+
+> [!TIP]
+> **Antigravity Tip**: **Never pass `context.Background()`** in your application logic. Always propagate the incoming request context. This ensures that if a user cancels a request at the Load Balancer, the cancellation "signal" travels through your Go service, to the SQL driver, and eventually cancels the query on the database itself, freeing up expensive resources immediately.
 
 ### Example:
 ```go

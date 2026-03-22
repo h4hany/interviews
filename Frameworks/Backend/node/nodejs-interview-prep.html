@@ -56,9 +56,38 @@
     background: rgba(10,10,15,0.92);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    padding: 0 24px;
+    padding: 0 16px 0 12px;
     display: flex; align-items: center; justify-content: space-between;
-    height: 60px;
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    min-height: 60px;
+    height: auto;
+  }
+
+  .nav-toggle {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-right: 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--accent);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .nav-toggle:hover {
+    border-color: var(--accent);
+    background: rgba(0,255,136,0.08);
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .logo {
@@ -70,7 +99,8 @@
   .logo span { color: var(--text-dim); }
 
   .progress-bar-wrap {
-    flex: 1; max-width: 300px; margin: 0 24px;
+    flex: 1; max-width: 300px; margin: 0 16px;
+    min-width: 80px;
     height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
   }
   .progress-bar-fill {
@@ -89,23 +119,103 @@
     border-radius: 20px;
   }
 
-  /* LAYOUT */
+  /* LAYOUT — mobile: overlay drawer; desktop (769px+): sidebar column beside main */
   .app {
-    display: grid;
-    grid-template-columns: 260px 1fr;
+    display: block;
     min-height: calc(100vh - 60px);
-    position: relative; z-index: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sidebar-shell {
+    min-width: 0;
+  }
+
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    top: 60px;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+    pointer-events: none;
+  }
+
+  .app.sidebar-open .sidebar-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   /* SIDEBAR */
   nav.sidebar {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    width: min(280px, 88vw);
+    height: calc(100vh - 60px);
+    max-height: calc(100vh - 60px);
     border-right: 1px solid var(--border);
     padding: 20px 0;
-    position: sticky; top: 60px;
-    height: calc(100vh - 60px);
+    background: var(--surface);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
+    z-index: 160;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .app.sidebar-open nav.sidebar {
+    transform: translateX(0);
+  }
+
+  @media (min-width: 769px) {
+    .app {
+      display: grid;
+      grid-template-columns: 0px minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+      align-items: start;
+      transition: grid-template-columns 0.25s ease;
+    }
+    .app.sidebar-open {
+      grid-template-columns: min(280px, 32vw) minmax(0, 1fr);
+    }
+    .sidebar-shell {
+      display: block;
+      overflow: hidden;
+      align-self: stretch;
+      min-height: calc(100vh - 60px);
+    }
+    .sidebar-backdrop {
+      display: none !important;
+    }
+    nav.sidebar {
+      position: sticky;
+      top: 60px;
+      left: auto;
+      width: 100%;
+      max-width: min(280px, 32vw);
+      transform: none !important;
+      box-shadow: none;
+      z-index: 1;
+    }
+    .app:not(.sidebar-open) nav.sidebar {
+      pointer-events: none;
+      visibility: hidden;
+    }
+    .app.sidebar-open nav.sidebar {
+      pointer-events: auto;
+      visibility: visible;
+    }
+    main {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
   }
 
   .nav-section-title {
@@ -684,10 +794,21 @@
 
   /* RESPONSIVE */
   @media (max-width: 768px) {
-    .app { grid-template-columns: 1fr; }
-    nav.sidebar { display: none; }
+    .sidebar-shell { display: contents; }
     .hero { padding: 32px 20px; }
     .lesson-page { padding: 24px 20px; }
+    .logo { font-size: 12px; letter-spacing: 1px; }
+    .logo span:last-child { display: none; }
+  }
+
+  @media (max-width: 520px) {
+    header { padding: 8px 10px; flex-wrap: nowrap; }
+    .progress-bar-wrap {
+      max-width: min(140px, 28vw);
+      margin: 0 8px;
+      min-width: 48px;
+    }
+    .xp-badge { padding: 4px 8px; font-size: 10px; }
   }
 
   /* Animations */
@@ -769,6 +890,7 @@
 <body>
 
 <header>
+  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu" aria-expanded="false" aria-controls="sidebarNav">☰</button>
   <div class="logo">JS<span>·</span>NODE <span>// INTERVIEW PREP</span></div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="globalProgress"></div>
@@ -776,9 +898,11 @@
   <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 
-<div class="app">
+<div class="app" id="appRoot">
+  <div class="sidebar-shell">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
   <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <nav class="sidebar" id="sidebarNav" aria-label="Topics">
     <div class="nav-section-title">Start Here</div>
     <div class="nav-item active" onclick="showPage('home')" id="nav-home">
       <span class="icon">🏠</span> Home
@@ -866,6 +990,7 @@
       <span class="done-dot"></span>
     </div>
   </nav>
+  </div>
 
   <!-- MAIN -->
   <main id="mainContent">
@@ -2681,6 +2806,30 @@ const state = {
   totalTopics: 15
 };
 
+// ====== SIDEBAR (off-canvas, collapsed by default) ======
+function setSidebarOpen(open) {
+  const root = document.getElementById('appRoot');
+  const btn = document.getElementById('navToggle');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if (!root || !btn) return;
+  root.classList.toggle('sidebar-open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.setAttribute('aria-label', open ? 'Close topics menu' : 'Open topics menu');
+  if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+  const overlayMobile = window.matchMedia('(max-width: 768px)').matches;
+  document.body.style.overflow = open && overlayMobile ? 'hidden' : '';
+}
+
+function toggleSidebar() {
+  const root = document.getElementById('appRoot');
+  if (!root) return;
+  setSidebarOpen(!root.classList.contains('sidebar-open'));
+}
+
+function closeSidebar() {
+  setSidebarOpen(false);
+}
+
 // ====== NAVIGATION ======
 function showPage(page) {
   document.getElementById('home-page').style.display = (page === 'home') ? 'block' : 'none';
@@ -2690,6 +2839,7 @@ function showPage(page) {
   if (page === 'home') {
     document.getElementById('nav-home').classList.add('active');
   }
+  closeSidebar();
   updateXP();
 }
 
@@ -2704,6 +2854,7 @@ function showLesson(id) {
   const navItem = document.getElementById('nav-' + id);
   if (navItem) navItem.classList.add('active');
 
+  closeSidebar();
   window.scrollTo(0, 0);
   main.scrollTo(0, 0);
 }
@@ -2795,6 +2946,17 @@ function init() {
 
 // Fix: get main element
 const main = document.querySelector('main');
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSidebar();
+});
+
+window.addEventListener('resize', () => {
+  const root = document.getElementById('appRoot');
+  if (!root || !root.classList.contains('sidebar-open')) return;
+  const overlayMobile = window.matchMedia('(max-width: 768px)').matches;
+  document.body.style.overflow = overlayMobile ? 'hidden' : '';
+});
 
 init();
 </script>

@@ -26,6 +26,9 @@ description.
       cloud provider tools (e.g., AWS Cost Explorer, Azure Cost Management) to identify areas for improvement. I also
       advocate for tagging resources for better cost allocation and visibility.
 
+> [!TIP]
+> **Antigravity Tip**: For R&D workloads involving large-scale data processing (like genomics), mention **Spot Instances** (AWS) or **Preemptible VMs** (GCP). At BrandOS (hypothetically), we saved 70% on batch processing by designing workloads to be "interruptible" and using SQS to resume progress after a spot reclamation.
+
 3. **Question:** Explain the concept of cloud security best practices. How do you apply them in your projects?
     * **Answer:** Cloud security best practices involve a shared responsibility model between the cloud provider and the
       user. Key practices I apply include: implementing Identity and Access Management (IAM) with the principle of least
@@ -108,6 +111,9 @@ description.
     * **Idempotent Operations** to handle retries safely. For critical operations requiring immediate consistency, I
       might consider a two-phase commit or a centralized transaction coordinator, though these are generally avoided in
       pure microservice architectures due to their complexity.
+
+> [!TIP]
+> **Antigravity Tip**: In Health Tech R&D, data consistency isn't just technical—it's regulatory. Mention **Audit Trails** combined with the **Outbox Pattern**. Every state change in a microservice must be atomically recorded with an audit log to meet compliance (like HIPAA/GDPR) before the event is published to other services.
 
 ### CI/CD Practices and DevOps Principles
 

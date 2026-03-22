@@ -55,6 +55,7 @@ Time O(n).
 ## 12. Rate Limiter (Sliding Window)
 **Answer:** Store timestamps in Redis sorted set, remove expired, count remaining.  
 Use token bucket for burst.
+- *Example*: A **Sliding Window Log** ensures that if the limit is 100 requests/sec, a user cannot send 100 requests at `0.9s` and another 100 at `1.1s` (the 'spike' problem with fixed windows).
 
 ## 13. Merge Sort
 **Answer:** Divide & merge. Stable sort.  
@@ -88,6 +89,7 @@ Time O(n).
 
 ## 21. Subscription Billing
 **Answer:** Event-driven architecture, idempotent billing, ledger, retry, proration, multi-currency, strong audit.
+- *Example*: **Proration**: If a user upgrades from a $10/mo plan to a $30/mo plan exactly mid-month, the system calculates they owe ($30-$10)/2 = $10 extra, ensuring fair billing.
 
 ## 22. Distributed Job Scheduler
 **Answer:** Leader election, job queue, retry, idempotent execution, heartbeat, failover.
@@ -106,7 +108,11 @@ Time O(n).
 
 ## 27. Shopping Cart
 **Answer:** Eventual consistency, inventory locking, pricing snapshot, checkout Saga.
+## 105. Oracle Autonomous Database vs Manual Tuning
+**Answer:** Autonomous DB handles patching, tuning, and indexing automatically using ML. Principal engineers choose it to reduce operational toil, but must understand when to override it for specific high-performance workloads.
 
+> [!TIP]
+> **Antigravity Tip**: Mention **OCI Auto-Indexing**. It's a game-changer for large schemas where identifying missing indexes is hard. At BrandOS (hypothetically), we would have saved 20 hours of DBA time per month by letting the DB "learn" our query patterns and create its own indexes.
 ## 28. Distributed Cache
 **Answer:** Sharding, consistent hashing, replication, eviction policy, cache invalidation.
 

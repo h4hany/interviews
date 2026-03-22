@@ -24,7 +24,7 @@ Amazon places significant emphasis on their Leadership Principles during intervi
 - **Situation**: "While working at Andela-Kinship, we had a critical issue with our pet health monitoring system that was affecting thousands of users."
 - **Task**: "I needed to identify and fix the performance bottleneck in our PostgreSQL database that was causing slow response times for pet parents trying to access veterinary services."
 - **Action**: "I worked outside regular hours to analyze query patterns, implemented advanced indexing strategies, and optimized the database architecture."
-- **Result**: "This resulted in a 40% improvement in query execution time, significantly enhancing user experience. I also implemented a monitoring system to proactively identify similar issues before they impacted customers."
+- **Result**: "This resulted in a 40% improvement in query execution time. *Example*: Emergency vet bookings dropped from 10 seconds to 2 seconds, which was critical for pet parents in high-stress situations. I also implemented a monitoring system to catch slow queries before they affected users."
 - **Connection to Amazon**: "This experience taught me the importance of working backwards from customer needs, which aligns with Amazon's customer obsession principle."
 
 #### 2. Ownership
@@ -34,7 +34,7 @@ Amazon places significant emphasis on their Leadership Principles during intervi
 - **Situation**: "At IdearRating, we were experiencing data inconsistency issues across our microservices architecture."
 - **Task**: "Although I was primarily responsible for frontend development, I recognized that this cross-cutting issue needed immediate attention."
 - **Action**: "I volunteered to lead a task force to address the problem, engineered reusable code libraries and APIs in Node.js, and implemented a comprehensive solution."
-- **Result**: "The solution resolved data inconsistency issues and improved system reliability. My initiative was recognized by leadership and led to my promotion to Team Leader at VOOOM."
+- **Result**: "The solution resolved data inconsistency issues and improved system reliability. *Example*: We eliminated 'ghost orders' that were costing the company $500/week and saved the team ~15 hours of manual data fixing every month."
 - **Connection to Amazon**: "This experience demonstrates my commitment to taking ownership of problems regardless of formal responsibilities, which I understand is crucial at Amazon."
 
 #### 3. Invent and Simplify
@@ -44,7 +44,7 @@ Amazon places significant emphasis on their Leadership Principles during intervi
 - **Situation**: "At Andela-Litmus, we faced complex integration challenges with external APIs that were causing reliability issues."
 - **Task**: "I needed to design a solution that would ensure seamless data exchange without requiring extensive rework of our existing systems."
 - **Action**: "I designed a lightweight middleware layer that standardized error handling and data transformation, effectively decoupling our core systems from external API changes."
-- **Result**: "This simplified approach reduced integration failures by 95% and allowed us to onboard new API partners in days rather than weeks."
+- **Result**: "This simplified approach reduced integration failures by 95%. *Example*: Instead of writing 100+ lines of custom logic for every new carrier API, we now only needed a 10-line configuration file."
 - **Connection to Amazon**: "This experience taught me the value of finding elegant, simple solutions to complex problems, which I understand is a key aspect of Amazon's engineering culture."
 
 #### 4. Learn and Be Curious

@@ -19,6 +19,9 @@
 4. **Cost Optimization**: Not explicitly considered
 5. **Long-term Evolution**: Limited migration strategies
 
+> [!TIP]
+> **Antigravity Tip**: When discussing these gaps in an interview, don't frame them as "bad code." Frame them as "Prudent Startup Debt." Explain that at BrandOS, we prioritized **Time-to-Market** over **Hyper-Scale Features** (like sharding) because we hadn't hit the traffic limits where that cost would be justified. This shows you balance engineering with business value.
+
 ---
 
 ## Strengths

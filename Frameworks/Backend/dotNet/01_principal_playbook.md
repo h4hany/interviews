@@ -46,6 +46,9 @@
 - **Makes decisions with incomplete information**
 - **Thinks in systems, not just code**
 
+> [!TIP]
+> **Antigravity Tip**: The strongest signal of a Principal Engineer is **knowing when NOT to build**. If a business problem can be solved by a process change, a third-party SaaS, or a simpler architectural trade-off (like using a Cron job instead of a complex K8s Operator), a Principal will advocate for the cheaper, faster, and more maintainable path every time.
+
 ### Core Principles
 
 1. **Systems Thinking**: Every decision impacts the entire system
@@ -256,7 +259,7 @@ For every system component, identify:
 
 #### 1. Database (PostgreSQL)
 
-**SPOF**: Single database instance
+**SPOF**: Single database instance. *Example*: A primary database instance with 99.0% uptime could mean 3.6 days of downtime per year. We added a hot standby (read replica) to bring this to 99.99%.
 
 **Failure Scenarios**:
 - Database crash → All requests fail
@@ -365,7 +368,7 @@ await _cacheService.SetAsync(
 | **CDN + Redis** | ~$200/month | 50x faster for global users | High |
 
 **Decision Rationale**:
-- **Current**: Redis is cost-effective for permission caching
+- **Current**: Redis is cost-effective. *Example*: "Using Redis saved us from having to upgrade our primary SQL server from a 4-core to a 16-core instance, saving ~$1,200/month."
 - **Future**: If global scale, add CDN for static data
 - **Tradeoff**: In-memory cache is faster but doesn't scale horizontally
 

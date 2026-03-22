@@ -19,8 +19,11 @@ C# is a modern, object-oriented programming language developed by Microsoft, par
 ## 4. What is the difference between `value types` and `reference types` in C#?
 
 **Answer:**
-- **Value Types**: Stored on stack, copied when assigned (int, bool, struct, enum).
-- **Reference Types**: Stored on heap, reference copied when assigned (class, interface, delegate, array).
+- **Value Types**: Stored on stack, copied when assigned.
+- **Reference Types**: Stored on heap, reference copied.
+
+> [!TIP]
+> **Antigravity Tip**: For extremely high-performance scenarios (like BrandOS's real-time price engine), use **`Span<T>`** or **`Memory<T>`**. These allow you to work with slices of memory without allocating new objects on the heap, significantly reducing Garbage Collection pressure and avoiding the cost of copying large value types.
 
 ## 5. What is the difference between `struct` and `class` in C#?
 
@@ -50,8 +53,11 @@ int j = (int)o;      // Unboxing
 ## 8. What is the difference between `string` and `StringBuilder`?
 
 **Answer:**
-- **`string`**: Immutable, creates new object on each modification (inefficient for many operations).
-- **`StringBuilder`**: Mutable, efficient for string concatenation operations.
+- **`string`**: Immutable, creates new object on each modification.
+- **`StringBuilder`**: Mutable, efficient for concatenation.
+
+> [!TIP]
+> **Antigravity Tip**: If you are building a string within a single method and performance is critical, consider **`stackalloc`** with a `Span<char>` for small strings. For large-scale concatenation across many methods, `StringBuilder` is standard, but always initialize it with an estimated capacity to avoid multiple internal buffer resizes.
 
 ## 9. What are access modifiers in C#?
 
@@ -103,7 +109,8 @@ async Task<string> GetDataAsync()
 ## 15. What is LINQ?
 
 **Answer:**
-LINQ (Language Integrated Query) provides query capabilities directly in C# for querying collections, databases, XML, etc.
+LINQ (Language Integrated Query) provides query capabilities directly in C#.
+- *Example*: Finding all "VIP" customers from a list of 10,000 users: `users.Where(u => u.IsVip).ToList()`. This is much more readable than writing nested `foreach` loops.
 
 ### Example:
 ```csharp
@@ -126,9 +133,12 @@ Dependency Injection is a design pattern where dependencies are provided to a cl
 ## 18. What is the difference between `AddSingleton`, `AddScoped`, and `AddTransient`?
 
 **Answer:**
-- **`AddSingleton`**: One instance for entire application lifetime.
-- **`AddScoped`**: One instance per HTTP request/scope.
+- **`AddSingleton`**: One instance for entire lifecycle.
+- **`AddScoped`**: One instance per HTTP request.
 - **`AddTransient`**: New instance every time.
+
+> [!TIP]
+> **Antigravity Tip**: Watch out for **Captive Dependencies**. This happens when you inject a **Scoped** service into a **Singleton** service. Since the Singleton lives forever, the Scoped service (like a DB context) will also live forever, which can cause memory leaks or "DbContext was disposed" errors. .NET Core's default provider checks for this in 'Development' mode, but be vigilant in production.
 
 ## 19. What is Entity Framework?
 

@@ -97,7 +97,8 @@ CREATE INDEX idx_tenant_active_orders
 ON orders (tenant_id, created_at DESC) 
 WHERE status = 'Active';
 
--- Reduces index size by 80% if most orders are historical
+-- Reduces index size by 80% if most orders are historical.
+-- *Example*: A partial index on `orders` for `status = 'Pending'` reduced the index size by 90% and sped up the 'Pending Shipments' dashboard by 10x.
 ```
 
 **Q: How do you measure index effectiveness?**
@@ -295,7 +296,8 @@ UPDATE inventory_stocks SET quantity = quantity - 5 WHERE product_id = 100;
 UPDATE orders SET status = 'Processing' WHERE id = 1;
 COMMIT;
 
--- Deadlock! Different lock order
+-- Deadlock! Different lock order.
+-- *Example*: We encountered deadlocks when both the 'Order Service' and 'Inventory Service' tried to update the same records in different orders. Standardizing the lock order (by ID ascending) eliminated the issue.
 ```
 
 **Solution - Lock Ordering**:

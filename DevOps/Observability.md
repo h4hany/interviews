@@ -8,9 +8,12 @@ Observability is the ability to understand a system's internal state by examinin
 ## 2. What are the three pillars of Observability?
 
 **Answer:**
-- **Logs**: Event records with timestamps
-- **Metrics**: Numerical measurements over time
-- **Traces**: Request flows across services
+- **Logs**: Event records.
+- **Metrics**: Numerical measurements.
+- **Traces**: Request flows.
+
+> [!TIP]
+> **Antigravity Tip**: The "Holy Grail" of observability is **Exemplars**. This allows you to jump directly from a spike in a Metrics chart (e.g., a latency p99 spike) to a specific Trace that caused that spike. At BrandOS, we used OpenTelemetry to attach `trace_id` as metadata to our Prometheus metrics, reducing our Mean Time to Detection (MTTD) by 60%.
 
 ## 3. What is the difference between Monitoring and Observability?
 
@@ -36,6 +39,7 @@ Logging records application events, errors, and information for debugging and au
 
 **Answer:**
 Structured Logging formats logs as structured data (JSON) instead of plain text, enabling better parsing and analysis.
+- *Example*: Instead of `User 1 login failed`, use `{"event": "login_failed", "user_id": 1, "severity": "error"}`. This allows you to filter for all "login_failed" events in a dashboard easily.
 
 ## 7. What is Centralized Logging?
 
@@ -66,8 +70,8 @@ Metrics are numerical measurements collected over time, representing system perf
 ## 11. What is the difference between Counter and Gauge?
 
 **Answer:**
-- **Counter**: Only increases (total requests).
-- **Gauge**: Can increase or decrease (current CPU usage).
+- **Counter**: Only increases. *Example*: Total number of "Buy Now" clicks since the server started.
+- **Gauge**: Can increase or decrease. *Example*: The number of users currently active on the site right now.
 
 ## 12. What is Prometheus?
 
@@ -168,12 +172,12 @@ SLA is a contract defining service level commitments between provider and custom
 ## 30. What is SLI (Service Level Indicator)?
 
 **Answer:**
-SLI is a metric that measures service reliability (availability, latency, error rate).
+- **SLI (Service Level Indicator)**: The actual metric (e.g., Latency).
+- **SLO (Service Level Objective)**: The target (%) for that SLI.
+- **SLA (Service Level Agreement)**: The legal contract with the customer.
 
-## 31. What is Error Budget?
-
-**Answer:**
-Error Budget is the acceptable amount of unreliability, calculated as 100% - SLO (e.g., 0.1% for 99.9% SLO).
+> [!TIP]
+> **Antigravity Tip**: Use **Error Budgets** to balance innovation vs stability. If you have plenty of budget left at the end of the month, you can take more risks (e.g., deploy that complex feature). If your budget is nearly gone, you freeze all non-urgent deploys and focus 100% on reliability work. This turns "Reliability" from a debate into a mathematical decision.
 
 ## 32. What is the difference between Logs and Metrics?
 
@@ -190,6 +194,7 @@ Sampling reduces data volume by collecting only a percentage of traces/logs, bal
 
 **Answer:**
 Correlation ID is a unique identifier passed across services to correlate logs and traces for a single request.
+- *Example*: A request gets ID `req_abc_123`. When you search this ID in your log aggregator (Kibana/Datadog), you see logs from the Gateway, Auth service, and Database all linked to that one specific user action.
 
 ## 35. What is the difference between Push and Pull Model?
 

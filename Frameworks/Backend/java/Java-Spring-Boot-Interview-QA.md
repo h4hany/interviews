@@ -42,7 +42,10 @@
 **Answer:** **HashMap:** allows null key/value (one null key), not thread-safe, preferred. **Hashtable:** no nulls, thread-safe (synchronized). For concurrent use prefer `ConcurrentHashMap`.
 
 ### 12. How does `HashMap` work internally?
-**Answer:** Array of buckets; each bucket can be a list or (from Java 8) tree (if list size &gt; 8). Key’s `hashCode()` and then `equals()` determine bucket and key match. Load factor (default 0.75) triggers resize when exceeded.
+**Answer:** Array of buckets; each bucket can be a list or (from Java 8) tree (if list size > 8).
+
+> [!TIP]
+> **Antigravity Tip**: In a Principal interview, mention **Hash Collision Attacks**. If an attacker knows your hash function, they can send keys that all map to the same bucket, turning your O(1) map into O(n). This is why Java 8+ switches to **Balanced Trees** (Red-Black trees) for large buckets—keeping performance at O(log n) even under attack.
 
 ### 13. What is the difference between `HashSet` and `TreeSet`?
 **Answer:** **HashSet:** hash-based; O(1) add/contains; unordered. **TreeSet:** red-black tree; O(log n) add/contains; sorted by natural order or Comparator.
@@ -86,7 +89,10 @@
 **Answer:** Opinionated framework on top of Spring; auto-configuration, embedded server, starter dependencies, production-ready features (actuator, metrics). Reduces boilerplate and gets an app running quickly.
 
 ### 24. What is dependency injection (DI) and inversion of control (IoC)?
-**Answer:** **IoC:** framework controls flow and creates/manages objects. **DI:** dependencies are injected (constructor/setter/field) instead of created inside the class. Enables loose coupling and testability.
+**Answer:** **IoC:** framework controls flow and creates/manages objects. **DI:** dependencies are injected instead of created.
+
+> [!TIP]
+> **Antigravity Tip**: Always advocate for **Constructor Injection** over Field Injection (`@Autowired` on variables). Constructor injection makes your beans immutable, prevents circular dependencies at compile-time (rather than runtime), and makes unit testing much simpler because you don't need `ReflectionTestUtils` or Mockito's `@InjectMocks`—you just use the `new` keyword.
 
 ### 25. What are the different types of dependency injection in Spring?
 **Answer:** Constructor (preferred; required dependencies, immutability), setter (optional), field (not recommended; hard to test). Constructor injection is the default in Spring’s recommendation.
@@ -123,7 +129,10 @@
 **Answer:** **@ExceptionHandler** in a controller for that controller. **@ControllerAdvice** (or @RestControllerAdvice) for global handling. Return ResponseEntity or custom error DTO with status and body.
 
 ### 35. What is the purpose of `@Transactional`?
-**Answer:** Declarative transaction management; method runs in a transaction (begin, commit/rollback on exception). Propagation (e.g. REQUIRED, REQUIRED_NEW) and isolation can be configured.
+**Answer:** Declarative transaction management; method runs in a transaction (begin, commit/rollback).
+
+> [!TIP]
+> **Antigravity Tip**: Beware of **Self-Invocation**! If you call a `@Transactional` method from another method within the same class, the transaction **will not start** because Spring uses AOP proxies. To fix this, move the transactional logic to a separate service or inject the service into itself (though the latter is a code smell). This is a common bug in complex Rails/Java systems.
 
 ### 36. What is the difference between `@RequestParam` and `@RequestBody`?
 **Answer:** **@RequestParam:** one or more query/form parameters. **@RequestBody:** deserializes request body (e.g. JSON) into an object.
@@ -139,7 +148,8 @@
 **Answer:** **findById():** returns Optional; hits DB immediately. **getOne():** returns a lazy proxy; DB access when entity is first used. Prefer findById for simple lookups.
 
 ### 39. What is the N+1 problem and how do you fix it?
-**Answer:** One query for a list, then N queries for associations (e.g. orders per user). Fix: **fetch join** (JPQL), **@EntityGraph**, or **@BatchSize**; or use DTOs/projections with a single query.
+**Answer:** One query for a list, then N queries for associations.
+- *Example*: You fetch 10 `Post` objects. If you then loop through them to print each `Author` name, and JPA triggers 10 separate SQL queries for those authors, you have the N+1 problem. Fix it using `JOIN FETCH` to get Posts and Authors in one query.
 
 ### 40. What is the difference between `CrudRepository` and `JpaRepository`?
 **Answer:** **CrudRepository:** basic CRUD. **JpaRepository:** extends PagingAndSortingRepository and adds flush, batch delete, etc. Use JpaRepository when you need JPA-specific features.

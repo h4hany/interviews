@@ -23,7 +23,11 @@ A comprehensive collection of Node.js interview questions and answers, from fund
 
 ### 1. What is Node.js?
 **Answer:**  
-Node.js is a runtime environment built on Chrome's V8 JavaScript engine. It allows JavaScript to be executed server-side, enabling full-stack JavaScript development. It uses a **non-blocking, event-driven I/O model** and runs on a **single thread** (with optional worker threads and clustering for CPU/multi-core use). Key traits: async by default, npm ecosystem, and use of `libuv` for I/O and the event loop.  
+- **V8 Engine**: Chrome's V8 compiles JS to machine code for speed.
+- **Non-blocking I/O**: Operations are offloaded to the system, allowing many connections at once.
+
+> [!TIP]
+> **Antigravity Tip**: For a Principal role, emphasize the **Event Loop Lag**. At scale, if your loop lag exceeds 50-100ms, your service is effectively "down" even if CPU is low. We used `clinic.js` at BrandOS to identify that a heavy `JSON.parse` on a 10MB payload was blocking the loop; we fixed it by using a streaming parser or moving the work to a Worker Thread.
 **Priority: 5**
 
 ---
@@ -77,7 +81,10 @@ Node.js uses **libuv** for I/O: network and some OS APIs use **non-blocking** sy
 
 ### 7. Explain the concept of middleware in Express.js.
 **Answer:**
-Middleware are functions that have access to `req`, `res`, and `next()`. They can modify requests/responses, execute code, or terminate request-response cycles. They are used for tasks like logging, authentication, or error handling.  
+Middleware are functions that have access to `req`, `res`, and `next()`.
+
+> [!TIP]
+> **Antigravity Tip**: Beyond just Auth/Logging, mention **Middleware for Observability**. At BrandOS, we implemented a global "Request-ID" middleware that uses `AsyncLocalStorage` to ensure every log line, even in deeply nested async calls, carries the same ID. This is critical for debugging distributed systems where multiple microservices interact.
 **Priority: 5**
 
 ### 8. What is the difference between `app.use()` and `app.get()` in Express.js?
@@ -164,7 +171,10 @@ Use middleware like `passport.js` or JWTs with `jsonwebtoken`. Validate credenti
 
 ### 21. What is CORS and how do you handle it in Express.js?
 **Answer:**
-CORS (Cross-Origin Resource Sharing) is a browser security feature. Use the `cors` middleware to allow or restrict origins in Express.  
+CORS (Cross-Origin Resource Sharing) is a browser security feature.
+
+> [!TIP]
+> **Antigravity Tip**: Don't just "enable CORS." Discuss **CORS Preflight (OPTIONS)** caching. For high-traffic APIs, the extra preflight request can double your latency. Setting `maxAge` in your CORS configuration tells the browser to cache the preflight result, significantly improving the perception of speed for mobile/web clients.
 **Priority: 5**
 
 ### 22. What is the difference between `req.params`, `req.query`, and `req.body`?
@@ -457,9 +467,9 @@ Blocking: long **synchronous** CPU work (heavy loops, `JSON.parse` on huge paylo
 
 ### 73. When would you use Worker Threads vs Cluster vs child_process?
 **Answer:**  
-- **worker_threads**: Same process, shared memory (SharedArrayBuffer), best for **CPU-bound** JS work (hashing, image processing, heavy computation).  
-- **cluster**: Multiple **processes** sharing a port; good for scaling **I/O-bound** HTTP servers across CPU cores.  
-- **child_process**: Run other programs or scripts; **spawn** for streaming/long-lived, **exec** for short commands with buffered output; no shared memory.  
+- **worker_threads**: Same process, shared memory. *Example*: Offloading heavy **image resizing** or **PDF generation** so it doesn't freeze the main web server.
+- **cluster**: Multiple processes sharing a port. *Example*: Running 4 copies of your Express app on an 8-core server to double your request throughput.
+- **child_process**: Run other programs. *Example*: Calling a Python script or a system command like `git clone` from your Node app.
 **Priority: 5**
 
 ### 74. What is backpressure in streams, and how do you handle it?

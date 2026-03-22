@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding — Idea to Shipped</title>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a;--s1:#090c12;--s2:#0e1219;--s3:#141a24;--border:#1a2233;--border2:#222d40;
+  --lime:#a3e635;--lime2:#84cc16;--cyan:#22d3ee;--purple:#a855f7;--orange:#f97316;
+  --pink:#ec4899;--blue:#3b82f6;--yellow:#eab308;--red:#ef4444;--green:#22c55e;
+  --text:#dde8f0;--dim:#4a6080;--dimmer:#141e2e;
+  --r:10px;--sw:270px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 600px 400px at 5% 10%,rgba(163,230,53,.04) 0%,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 95% 85%,rgba(168,85,247,.04) 0%,transparent 70%),
+  radial-gradient(ellipse 400px 300px at 50% 50%,rgba(34,211,238,.02) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:200;height:54px;background:rgba(5,6,10,.96);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px}
+.hbtn{width:34px;height:34px;background:var(--s2);border:1px solid var(--border2);border-radius:7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.5px;flex-shrink:0;transition:border-color .2s}
+.hbtn:hover{border-color:var(--lime)}
+.hbtn span{display:block;width:15px;height:1.5px;background:var(--dim);border-radius:2px;transition:all .3s}
+.hlogo{display:flex;align-items:center;gap:8px;flex:1}
+.hlogo-mark{width:28px;height:28px;background:var(--lime);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--bg)}
+.hlogo-text{font-family:'Familjen Grotesk',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.3px}
+.hlogo-text em{font-style:italic;color:var(--lime)}
+.hmono{font-family:'Fira Code',monospace;font-size:10px;color:var(--dim);letter-spacing:1px}
+.hright{display:flex;align-items:center;gap:8px}
+.hsearch{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:5px 11px;width:180px;transition:border-color .2s}
+.hsearch:focus-within{border-color:var(--lime)}
+.hsearch input{background:none;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;width:100%}
+.hsearch input::placeholder{color:var(--dim)}
+.hbadge{font-family:'Fira Code',monospace;font-size:10px;color:var(--lime);background:rgba(163,230,53,.08);border:1px solid rgba(163,230,53,.2);padding:3px 10px;border-radius:20px;white-space:nowrap}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:calc(100vh - 54px);position:relative;z-index:1}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sw);flex-shrink:0;border-right:1px solid var(--border);position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;overflow-x:hidden;transition:width .3s cubic-bezier(.4,0,.2,1),opacity .2s;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sidebar.collapsed{width:0;opacity:0;pointer-events:none}
+.sb-inner{width:var(--sw);padding:14px 0}
+.scat{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:3px;color:var(--dimmer);padding:14px 16px 5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.scat::after{content:'';flex:1;height:1px;background:var(--border)}
+.sitem{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--dim);border-left:2px solid transparent;transition:all .15s;white-space:nowrap}
+.sitem:hover{color:var(--text);background:var(--s1)}
+.sitem.active{color:var(--lime);border-left-color:var(--lime);background:rgba(163,230,53,.05)}
+.sitem .si{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.snum{margin-left:auto;font-family:'Fira Code',monospace;font-size:9px;padding:1px 6px;border-radius:10px;background:var(--s3);color:var(--dim)}
+
+/* ── MAIN ── */
+main{flex:1;overflow-y:auto;min-width:0}
+.page{display:none}
+.page.active{display:block;animation:fu .25s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO ── */
+.hero{padding:clamp(28px,5vw,64px) clamp(18px,5vw,56px);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::after{content:'VIBE';position:absolute;right:-20px;bottom:-30px;font-family:'Familjen Grotesk',sans-serif;font-size:clamp(80px,18vw,200px);font-weight:700;color:rgba(163,230,53,.025);letter-spacing:-5px;pointer-events:none;line-height:1}
+.heyebrow{font-family:'Fira Code',monospace;font-size:10px;letter-spacing:4px;color:var(--lime);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.heyebrow::before{content:'';width:24px;height:1px;background:var(--lime);opacity:.5}
+.hero h1{font-family:'Familjen Grotesk',sans-serif;font-size:clamp(28px,5vw,56px);font-weight:700;line-height:1.08;margin-bottom:14px;letter-spacing:-1px}
+.hero h1 .gl{color:var(--lime)}.hero h1 .gc{color:var(--cyan)}.hero h1 .gp{color:var(--purple)}
+.hero-sub{color:var(--dim);font-size:14px;line-height:1.8;max-width:560px;margin-bottom:28px}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:3px}
+.stn{font-family:'Familjen Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lime)}
+.stl{font-size:10px;color:var(--dimmer);letter-spacing:1px;text-transform:uppercase}
+
+/* ── PHASE TIMELINE ── */
+.phase-timeline{display:flex;flex-direction:column;gap:0;position:relative;padding:8px 0 8px 0;margin:20px 0}
+.phase-timeline::before{content:'';position:absolute;left:22px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--lime),var(--cyan),var(--purple),var(--orange),var(--pink));opacity:.25}
+.ptl-item{display:flex;gap:18px;padding-bottom:24px;position:relative}
+.ptl-dot{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;z-index:1;font-family:'Fira Code',monospace;font-size:13px;font-weight:600}
+.pd-lime{background:rgba(163,230,53,.15);border:1px solid rgba(163,230,53,.4);color:var(--lime)}
+.pd-cyan{background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.4);color:var(--cyan)}
+.pd-purple{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);color:var(--purple)}
+.pd-orange{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.4);color:var(--orange)}
+.pd-pink{background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.4);color:var(--pink)}
+.pd-blue{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.4);color:var(--blue)}
+.ptl-content{flex:1;padding-top:8px}
+.ptl-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.ptl-desc{font-size:13px;color:var(--dim);line-height:1.75}
+.ptl-desc strong{color:var(--text)}
+.ptl-sub{margin-top:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:5px}
+.ptl-li{font-size:12.5px;color:var(--dim);display:flex;gap:8px;line-height:1.6}
+.ptl-li::before{content:'→';color:var(--lime);flex-shrink:0;font-family:'Fira Code',monospace;font-size:11px}
+
+/* ── CARD GRID ── */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--border)}
+.ccard{background:var(--bg);padding:24px;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.ccard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .25s}
+.ccard:hover{background:var(--s1)}
+.ccard:hover::after{opacity:1}
+.cl::after{background:var(--lime)}.cc::after{background:var(--cyan)}.cp::after{background:var(--purple)}
+.co::after{background:var(--orange)}.ck::after{background:var(--pink)}.cb::after{background:var(--blue)}
+.ccard-icon{font-size:28px;margin-bottom:10px}
+.ccard-title{font-size:14px;font-weight:700;margin-bottom:5px}
+.ccard-desc{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:12px}
+.ccnt{font-family:'Fira Code',monospace;font-size:9px;color:var(--dim);background:var(--s2);border:1px solid var(--border2);padding:2px 9px;border-radius:20px;display:inline-block}
+
+/* ── SEC HEADER ── */
+.sechdr{padding:24px clamp(18px,5vw,56px) 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.schip{font-family:'Fira Code',monospace;font-size:10px;letter-spacing:2px;padding:4px 11px;border-radius:4px;border:1px solid}
+.ch-l{color:var(--lime);border-color:rgba(163,230,53,.3);background:rgba(163,230,53,.07)}
+.ch-c{color:var(--cyan);border-color:rgba(34,211,238,.3);background:rgba(34,211,238,.07)}
+.ch-p{color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.07)}
+.ch-o{color:var(--orange);border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.07)}
+.ch-k{color:var(--pink);border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.07)}
+.ch-b{color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.07)}
+.sectitle{font-size:16px;font-weight:700}
+
+/* ── PAGE INNER ── */
+.pinner{padding:clamp(20px,4vw,44px) clamp(18px,5vw,56px);max-width:980px}
+.peyebrow{font-family:'Fira Code',monospace;font-size:10px;letter-spacing:3px;color:var(--lime);margin-bottom:8px}
+.ptitle{font-family:'Familjen Grotesk',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:700;line-height:1.1;margin-bottom:10px;letter-spacing:-.5px}
+.psub{color:var(--dim);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:32px}
+
+/* ── PROMPT CARDS ── */
+.pgroup{margin-bottom:44px}
+.gtitle{font-size:17px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.gtitle::before{content:'';width:3px;height:19px;border-radius:2px;flex-shrink:0}
+.gtl::before{background:var(--lime)}.gtc::before{background:var(--cyan)}.gtp::before{background:var(--purple)}
+.gto::before{background:var(--orange)}.gtk::before{background:var(--pink)}.gtb::before{background:var(--blue)}
+.gsub{color:var(--dim);font-size:13px;line-height:1.65;margin-bottom:16px}
+
+.pcard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;transition:border-color .2s}
+.pcard:hover{border-color:var(--border2)}
+.pcard-hdr{display:flex;align-items:flex-start;justify-content:space-between;padding:13px 16px;background:var(--s2);border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.pcard-meta{display:flex;flex-direction:column;gap:3px;flex:1}
+.plabel{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:2px;color:var(--lime)}
+.pcard-title{font-size:14px;font-weight:700;color:var(--text)}
+.ptags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+.ptag{font-family:'Fira Code',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:var(--s3);color:var(--dim);border:1px solid var(--border2)}
+.ptag.tl{color:var(--lime);background:rgba(163,230,53,.08);border-color:rgba(163,230,53,.2)}
+.ptag.tc{color:var(--cyan);background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.2)}
+.ptag.tp{color:var(--purple);background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2)}
+.ptag.to{color:var(--orange);background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2)}
+.ptag.tk{color:var(--pink);background:rgba(236,72,153,.08);border-color:rgba(236,72,153,.2)}
+.ptag.tb{color:var(--blue);background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2)}
+
+.cpbtn{display:flex;align-items:center;gap:6px;font-family:'Fira Code',monospace;font-size:10px;padding:6px 14px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:var(--s3);color:var(--dim);transition:all .2s;white-space:nowrap;flex-shrink:0}
+.cpbtn:hover{border-color:var(--lime);color:var(--lime);background:rgba(163,230,53,.06)}
+.cpbtn.ok{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+
+.pctx{padding:10px 16px;font-size:12.5px;color:var(--dim);line-height:1.75;border-bottom:1px solid var(--border);background:rgba(163,230,53,.02)}
+.pctx strong{color:var(--lime)}
+
+.pbody{padding:18px 16px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.9;color:#8fb8d0;white-space:pre-wrap;word-break:break-word}
+.ph{color:var(--orange);font-weight:500}
+.pv{color:var(--lime)}
+.ps{color:var(--cyan);font-weight:600}
+.pa{color:#6b8fa8}
+.py{color:var(--yellow)}
+
+/* ── INFO BOXES ── */
+.ibox{border-radius:0 var(--r) var(--r) 0;padding:13px 17px;margin:14px 0;font-size:13px;color:var(--dim);line-height:1.8;border-left:3px solid;border:1px solid}
+.ib-l{background:rgba(163,230,53,.03);border-color:rgba(163,230,53,.15);border-left-color:var(--lime)}.ib-l strong{color:var(--lime)}
+.ib-c{background:rgba(34,211,238,.03);border-color:rgba(34,211,238,.15);border-left-color:var(--cyan)}.ib-c strong{color:var(--cyan)}
+.ib-o{background:rgba(249,115,22,.03);border-color:rgba(249,115,22,.15);border-left-color:var(--orange)}.ib-o strong{color:var(--orange)}
+.ib-r{background:rgba(239,68,68,.03);border-color:rgba(239,68,68,.15);border-left-color:var(--red)}.ib-r strong{color:var(--red)}
+.ib-y{background:rgba(234,179,8,.03);border-color:rgba(234,179,8,.15);border-left-color:var(--yellow)}.ib-y strong{color:var(--yellow)}
+
+/* ── TABLE ── */
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+.t th{text-align:left;padding:9px 12px;background:var(--s2);font-family:'Fira Code',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border-bottom:1px solid var(--border)}
+.t td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--dim);vertical-align:top;line-height:1.6}
+.t tr:last-child td{border-bottom:none}
+.t td:first-child{color:var(--lime);font-weight:600}
+.t tr:hover td{background:var(--s1)}
+
+/* ── ACCORDION ── */
+.acc{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.aitem{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ahdr{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px;transition:background .18s}
+.ahdr:hover{background:var(--s2)}
+.atext{font-size:13.5px;font-weight:600;flex:1}
+.aarrow{color:var(--lime);font-family:'Fira Code',monospace;font-size:16px;transition:transform .2s;flex-shrink:0}
+.aarrow.open{transform:rotate(45deg)}
+.abody{display:none;padding:0 16px 14px;font-size:13px;color:var(--dim);line-height:1.85;border-top:1px solid var(--border)}
+.abody.open{display:block}
+.abody li{padding-left:14px;position:relative;margin-top:5px;list-style:none}
+.abody li::before{content:'→';position:absolute;left:0;color:var(--lime);font-size:10px;font-family:'Fira Code',monospace}
+.abody strong{color:var(--text)}
+.abody .ch{color:var(--cyan)}.abody .lh{color:var(--lime)}.abody .oh{color:var(--orange)}.abody .ph2{color:var(--purple)}
+
+/* ── NAV ── */
+.pnav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-top:1px solid var(--border);margin-top:44px;flex-wrap:wrap;gap:10px}
+.navbtn{font-family:'Fira Code',monospace;font-size:11px;letter-spacing:1px;padding:9px 20px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--dim);transition:all .2s}
+.navbtn:hover{border-color:var(--lime);color:var(--text)}
+.navbtn.primary{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+.navbtn.primary:hover{box-shadow:0 0 16px rgba(163,230,53,.25);transform:translateY(-1px)}
+
+/* ── TOOL GRID ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:14px 0}
+.tcard{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:border-color .2s}
+.tcard:hover{border-color:var(--border2)}
+.tcard-icon{font-size:24px;margin-bottom:8px}
+.tcard-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.tcard-badge{font-family:'Fira Code',monospace;font-size:9px;padding:2px 8px;border-radius:3px;margin-bottom:8px;display:inline-block}
+.tb-free{color:var(--lime);background:rgba(163,230,53,.1);border:1px solid rgba(163,230,53,.2)}
+.tb-paid{color:var(--orange);background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2)}
+.tb-both{color:var(--cyan);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2)}
+.tcard-desc{font-size:11.5px;color:var(--dim);line-height:1.65;margin-bottom:8px}
+.tcard-best{font-size:11px;color:var(--dimmer);line-height:1.5}
+.tcard-best strong{color:var(--lime)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{position:fixed;top:54px;left:0;bottom:0;z-index:150;background:var(--bg);box-shadow:4px 0 24px rgba(0,0,0,.5)}
+  .sidebar.collapsed{width:0}
+  .hsearch{width:120px}
+  .hbadge{display:none}
+}
+@media(max-width:480px){.hsearch{display:none}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn" id="sbToggle"><span></span><span></span><span></span></button>
+  <div class="hlogo">
+    <div class="hlogo-mark">VC</div>
+    <span class="hlogo-text">Vibe <em>Coding</em></span>
+    <span class="hmono" style="margin-left:8px">// IDEA → SHIPPED</span>
+  </div>
+  <div class="hright">
+    <div class="hsearch"><span style="color:var(--dim);font-size:12px">⌕</span><input type="text" placeholder="Search..." oninput="doSearch(this.value)" id="srch"></div>
+    <div class="hbadge" id="copyCnt">📋 0 copied</div>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="sidebar" id="sb">
+    <div class="sb-inner">
+      <div class="scat">Start</div>
+      <div class="sitem active" onclick="go('home')" id="n-home"><span class="si">🏠</span>Overview</div>
+
+      <div class="scat">💡 Phase 1 — Idea</div>
+      <div class="sitem" onclick="go('idea-capture')" id="n-idea-capture"><span class="si">💡</span>Idea Capture<span class="snum">3</span></div>
+      <div class="sitem" onclick="go('prd')" id="n-prd"><span class="si">📄</span>PRD Document<span class="snum">4</span></div>
+      <div class="sitem" onclick="go('phases')" id="n-phases"><span class="si">🗂️</span>Phase Planning<span class="snum">4</span></div>
+
+      <div class="scat">🏗️ Phase 2 — Build</div>
+      <div class="sitem" onclick="go('project-init')" id="n-project-init"><span class="si">⚡</span>Project Init<span class="snum">5</span></div>
+      <div class="sitem" onclick="go('backend')" id="n-backend"><span class="si">🖥️</span>Backend Prompts<span class="snum">4</span></div>
+      <div class="sitem" onclick="go('frontend')" id="n-frontend"><span class="si">🎨</span>Frontend Prompts<span class="snum">4</span></div>
+      <div class="sitem" onclick="go('integration')" id="n-integration"><span class="si">🔌</span>Integration<span class="snum">3</span></div>
+      <div class="sitem" onclick="go('database')" id="n-database"><span class="si">🗄️</span>Database & Schema<span class="snum">3</span></div>
+
+      <div class="scat">🎨 Phase 3 — Design</div>
+      <div class="sitem" onclick="go('ui-design')" id="n-ui-design"><span class="si">🖼️</span>UI Design Prompts<span class="snum">5</span></div>
+      <div class="sitem" onclick="go('figma')" id="n-figma"><span class="si">✏️</span>Figma + Google Stitch<span class="snum">4</span></div>
+
+      <div class="scat">🚀 Phase 4 — Ship</div>
+      <div class="sitem" onclick="go('testing')" id="n-testing"><span class="si">🧪</span>Testing & QA<span class="snum">3</span></div>
+      <div class="sitem" onclick="go('deploy')" id="n-deploy"><span class="si">🚀</span>Deploy & DevOps<span class="snum">3</span></div>
+      <div class="sitem" onclick="go('debug')" id="n-debug"><span class="si">🐛</span>Debug & Refactor<span class="snum">3</span></div>
+
+      <div class="scat">🛠️ Tools</div>
+      <div class="sitem" onclick="go('tools')" id="n-tools"><span class="si">🛠️</span>Free vs Paid Tools</div>
+      <div class="sitem" onclick="go('models')" id="n-models"><span class="si">🤖</span>Which Model to Use</div>
+      <div class="sitem" onclick="go('cheat')" id="n-cheat"><span class="si">⚡</span>Quick Reference</div>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- ══════════════════════════ HOME ══════════════════════════ -->
+    <div id="home-page" class="page active">
+      <div class="hero">
+        <div class="heyebrow">// FROM IDEA TO SHIPPED PRODUCT</div>
+        <h1>Master <span class="gl">Vibe</span><br><span class="gc">Coding</span> <span class="gp">Guide</span></h1>
+        <p class="hero-sub">The complete playbook for turning any idea into a shipped full-stack product using AI code agents. Idea → PRD → Phases → Code → Design → Deploy — every prompt you need, in order.</p>
+        <div class="stats">
+          <div class="stat"><div class="stn">7</div><div class="stl">Phases</div></div>
+          <div class="stat"><div class="stn">50+</div><div class="stl">Prompts</div></div>
+          <div class="stat"><div class="stn">20+</div><div class="stl">AI Tools</div></div>
+          <div class="stat"><div class="stn">∞</div><div class="stl">Ideas</div></div>
+        </div>
+      </div>
+
+      <div class="sechdr"><span class="schip ch-l">THE FLOW</span><span class="sectitle">Complete Idea → Shipped Pipeline</span></div>
+      <div style="padding:clamp(16px,3vw,36px) clamp(18px,5vw,56px)">
+        <div class="phase-timeline">
+          <div class="ptl-item">
+            <div class="ptl-dot pd-lime">01</div>
+            <div class="ptl-content">
+              <div class="ptl-title">💡 Idea Capture & Validation</div>
+              <div class="ptl-desc">Raw idea → structured concept. Use AI to stress-test the idea, identify the core problem, define the user, and scope what's actually MVP vs nice-to-have. <strong>Output: 1-page idea brief.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-cyan">02</div>
+            <div class="ptl-content">
+              <div class="ptl-title">📄 PRD — Product Requirements Document</div>
+              <div class="ptl-desc">Idea brief → full PRD. The document that AI agents read to understand what they're building. Covers features, user stories, data models, API surface, tech stack decision. <strong>Output: PRD.md file.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-purple">03</div>
+            <div class="ptl-content">
+              <div class="ptl-title">🗂️ Phase Planning — Split into Milestones</div>
+              <div class="ptl-desc">PRD → phased execution plan. Each phase is a shippable increment. Phases are stored as individual .md files that you feed to your AI agent one at a time. <strong>Output: PHASE-1.md, PHASE-2.md, etc.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-orange">04</div>
+            <div class="ptl-content">
+              <div class="ptl-title">⚡ Project Initialization</div>
+              <div class="ptl-desc">Tell Cursor/Claude/Windsurf to bootstrap the project. Create the folder structure, install dependencies, set up configs, create the database schema. <strong>The agent sets up the entire project skeleton.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-pink">05</div>
+            <div class="ptl-content">
+              <div class="ptl-title">🏗️ Build — Backend → Frontend → Integration</div>
+              <div class="ptl-desc">Phase-by-phase execution. Backend first (all endpoints), then frontend (all screens), then wire them together. Each has dedicated prompts to stay in context and not lose track. <strong>The agent codes the full feature.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-lime">06</div>
+            <div class="ptl-content">
+              <div class="ptl-title">🎨 Design — UI, Figma, Google Stitch</div>
+              <div class="ptl-desc">Prompts for AI design tools to create screens, components, and UI systems. Google Stitch for quick mockups, Figma AI plugins, v0.dev for React components. <strong>From wireframe to pixel-perfect.</strong></div>
+            </div>
+          </div>
+          <div class="ptl-item">
+            <div class="ptl-dot pd-blue">07</div>
+            <div class="ptl-content">
+              <div class="ptl-title">🚀 Test, Debug & Deploy</div>
+              <div class="ptl-desc">Testing prompts, debugging sessions, and deployment commands. Vercel, Railway, Fly.io, Docker — agent writes the config. <strong>Shipped and running.</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sechdr"><span class="schip ch-c">PHASES</span><span class="sectitle">Jump to Any Phase</span></div>
+      <div class="cgrid">
+        <div class="ccard cl" onclick="go('idea-capture')"><div class="ccard-icon">💡</div><div class="ccard-title">Idea Capture</div><div class="ccard-desc">Stress-test your idea, define scope, create the idea brief.</div><span class="ccnt">3 prompts</span></div>
+        <div class="ccard cc" onclick="go('prd')"><div class="ccard-icon">📄</div><div class="ccard-title">PRD Document</div><div class="ccard-desc">Generate a complete PRD.md the AI agent can read and execute from.</div><span class="ccnt">4 prompts</span></div>
+        <div class="ccard cp" onclick="go('phases')"><div class="ccard-icon">🗂️</div><div class="ccard-title">Phase Planning</div><div class="ccard-desc">Break the PRD into executable phase files. Feed one at a time.</div><span class="ccnt">4 prompts</span></div>
+        <div class="ccard co" onclick="go('project-init')"><div class="ccard-icon">⚡</div><div class="ccard-title">Project Init</div><div class="ccard-desc">Bootstrap full-stack, backend-only, or frontend-only projects.</div><span class="ccnt">5 prompts</span></div>
+        <div class="ccard ck" onclick="go('backend')"><div class="ccard-icon">🖥️</div><div class="ccard-title">Backend Build</div><div class="ccard-desc">All endpoints, auth, DB models, and business logic.</div><span class="ccnt">4 prompts</span></div>
+        <div class="ccard cl" onclick="go('frontend')"><div class="ccard-icon">🎨</div><div class="ccard-title">Frontend Build</div><div class="ccard-desc">All screens, components, state, routing, and forms.</div><span class="ccnt">4 prompts</span></div>
+        <div class="ccard cc" onclick="go('integration')"><div class="ccard-icon">🔌</div><div class="ccard-title">Integration</div><div class="ccard-desc">Wire frontend to backend. API calls, auth flow, error states.</div><span class="ccnt">3 prompts</span></div>
+        <div class="ccard cp" onclick="go('ui-design')"><div class="ccard-icon">🖼️</div><div class="ccard-title">UI Design</div><div class="ccard-desc">v0.dev, Locofy, component generation from description.</div><span class="ccnt">5 prompts</span></div>
+        <div class="ccard co" onclick="go('figma')"><div class="ccard-icon">✏️</div><div class="ccard-title">Figma + Stitch</div><div class="ccard-desc">Google Stitch for mockups, Figma AI plugins for design systems.</div><span class="ccnt">4 prompts</span></div>
+        <div class="ccard ck" onclick="go('tools')"><div class="ccard-icon">🛠️</div><div class="ccard-title">Free vs Paid Tools</div><div class="ccard-desc">Every AI coding tool compared: what it costs and when to use it.</div><span class="ccnt">Guide</span></div>
+        <div class="ccard cl" onclick="go('models')"><div class="ccard-icon">🤖</div><div class="ccard-title">Which Model</div><div class="ccard-desc">Claude 3.5 vs GPT-4o vs Gemini vs DeepSeek — for which task.</div><span class="ccnt">Guide</span></div>
+        <div class="ccard cb" onclick="go('cheat')"><div class="ccard-icon">⚡</div><div class="ccard-title">Quick Reference</div><div class="ccard-desc">All prompts in one scrollable page for fast copy-paste.</div><span class="ccnt">All</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ IDEA CAPTURE ══════════════════ -->
+    <div id="idea-capture-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 1 — IDEA</div>
+        <div class="ptitle">💡 Idea Capture & Validation</div>
+        <div class="psub">Before writing a single line of code — or even a PRD — use AI to pressure-test your idea. Most failed projects fail at this step: the scope wasn't clear, the user wasn't defined, or the MVP wasn't minimal enough.</div>
+
+        <div class="ibox ib-l"><strong>Rule:</strong> Don't touch a keyboard for code until you can answer: Who is the user? What exact pain does this solve? What is the smallest version that proves the idea works?</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtl">Idea Validation & Scoping</div>
+
+          <div class="pcard" data-tags="idea validate scope problem user">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Idea Stress Test & Problem Fit</div>
+                <div class="ptags"><span class="ptag tl">FIRST STEP</span><span class="ptag tc">CLAUDE / GPT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>When to use:</strong> You have a vague idea and want to pressure-test it before spending time planning it.</div>
+            <div class="pbody">I have an app idea and I want you to help me validate and sharpen it before I start building.
+
+<span class="ps">MY IDEA:</span>
+<span class="ph">[Describe your idea in 2-5 sentences. Be rough — this is brainstorm stage.]</span>
+
+<span class="ps">HELP ME ANSWER THESE QUESTIONS:</span>
+1. <span class="pv">The Problem:</span> What specific pain point does this solve? Who feels this pain the most? How do they solve it today (manually, competitor, don't solve it)?
+2. <span class="pv">The User:</span> Who is the primary user? Describe them precisely (role, context, tech literacy, budget).
+3. <span class="pv">The Value:</span> What does the user gain? Time saved? Money saved? Status? Fun?
+4. <span class="pv">The Risk:</span> What's the #1 reason this could fail? What has to be true for this to work?
+5. <span class="pv">The Scope Trap:</span> What am I probably trying to build that's NOT actually the core idea? What should I cut for v1?
+6. <span class="pv">The MVP Test:</span> What is the SMALLEST possible version that proves this is worth building?
+
+<span class="ps">THEN:</span>
+Give me a sharpened 3-sentence description of the idea that I can use as the foundation for a PRD.
+Be direct and critical — I want honest pushback, not encouragement.</div>
+          </div>
+
+          <div class="pcard" data-tags="idea competitive landscape market existing solutions">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Competitive Landscape — What Already Exists</div>
+                <div class="ptags"><span class="ptag tl">RESEARCH</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">I'm building <span class="ph">[YOUR SHARPENED IDEA — use output from Prompt 01]</span>.
+
+Before I write a PRD, help me understand what already exists.
+
+<span class="ps">GIVE ME:</span>
+1. <span class="pv">Existing solutions:</span> List 3-5 tools/apps that already solve this (or adjacent problems). For each: what they do well, what they do poorly, what their users complain about.
+2. <span class="pv">My differentiation:</span> Based on the gaps, what angle could I take that none of them own?
+3. <span class="pv">Build vs buy:</span> Are there APIs, SDKs, or no-code tools I should use instead of building from scratch? (e.g. Stripe for payments, Auth0 for auth, Algolia for search)
+4. <span class="pv">Tech risk:</span> Is there any part of this that's technically hard or uncertain? Flag it.
+5. <span class="pv">Time estimate:</span> Rough estimate — how long would this take a solo developer working with AI assistance?
+
+Be honest about whether this is worth building vs buying/adapting.</div>
+          </div>
+
+          <div class="pcard" data-tags="idea brief one page concept document">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Generate Idea Brief — The Foundation Doc</div>
+                <div class="ptags"><span class="ptag tl">OUTPUT: IDEA.md</span><span class="ptag tc">FEEDS INTO PRD</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Output:</strong> Save this as IDEA.md. It's the input to all subsequent prompts.</div>
+            <div class="pbody">Based on everything we've discussed, write a clean Idea Brief document I'll save as IDEA.md.
+
+<span class="ps">IF STARTING FRESH, include answers to:</span>
+- App name (working title): <span class="ph">[NAME]</span>
+- The problem: <span class="ph">[One precise sentence]</span>
+- The user: <span class="ph">[Specific person, context, pain]</span>
+- The solution: <span class="ph">[What the app does in one sentence]</span>
+- The MVP scope: <span class="ph">[Exactly what's in v1 — bullet list]</span>
+- NOT in v1: <span class="ph">[What you explicitly cut]</span>
+- Tech stack preference: <span class="ph">[e.g. Next.js + Supabase / FastAPI + React / Node + Postgres / whatever fits]</span>
+- Solo or team: <span class="ph">[Who is building this]</span>
+
+<span class="ps">FORMAT AS:</span>
+A clean markdown document with these exact sections:
+# [App Name] — Idea Brief
+## The Problem
+## The User
+## The Solution
+## MVP Scope
+## Out of Scope (v1)
+## Tech Stack
+## Success Metric (how do I know v1 worked?)</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('home')">← Overview</button>
+          <button class="navbtn primary" onclick="go('prd')">PRD Document →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PRD ══════════════════ -->
+    <div id="prd-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 1 — DOCUMENT</div>
+        <div class="ptitle">📄 PRD — Product Requirements Document</div>
+        <div class="psub">The PRD is what your AI agent reads to understand the entire product. A great PRD means the agent makes fewer wrong assumptions, asks fewer clarifying questions, and writes better code. This is the most important document you'll create.</div>
+
+        <div class="ibox ib-c"><strong>Why PRD first?</strong> When you give Cursor or Claude a well-structured PRD, it can: understand all features holistically, make consistent naming decisions, avoid building things that conflict with each other, and generate the right database schema from day one. Without a PRD, agents build features in isolation and create a mess.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtc">PRD Generation Prompts</div>
+
+          <div class="pcard" data-tags="PRD product requirements document generate full">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Generate Full PRD from Idea Brief</div>
+                <div class="ptags"><span class="ptag tl">OUTPUT: PRD.md</span><span class="ptag tc">MOST IMPORTANT PROMPT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Input:</strong> Paste your IDEA.md content after the prompt. <strong>Output:</strong> Save as PRD.md — this feeds everything else.</div>
+            <div class="pbody">You are a senior product manager and technical architect. Read the Idea Brief below and generate a complete Product Requirements Document (PRD.md) I will use to instruct an AI code agent to build this product.
+
+<span class="ps">IDEA BRIEF:</span>
+<span class="ph">[Paste your IDEA.md content here]</span>
+
+<span class="ps">GENERATE A PRD WITH THESE EXACT SECTIONS:</span>
+
+<span class="pv">## 1. Overview</span>
+Product name, one-paragraph description, primary user persona, core value proposition.
+
+<span class="pv">## 2. User Stories</span>
+All user stories in format: "As a [user], I want to [action] so that [benefit]."
+Group by feature area. Include happy path AND error cases.
+
+<span class="pv">## 3. Features — MVP</span>
+Every feature in the MVP. For each:
+- Feature name
+- Description (what it does, not how)
+- Acceptance criteria (bullet list — how do I know it's done?)
+- Priority: P0 (must ship) / P1 (should ship) / P2 (nice to have)
+
+<span class="pv">## 4. Data Models</span>
+Every entity in the system. For each:
+- Entity name
+- Fields with types (id, name: string, email: string, createdAt: timestamp, etc.)
+- Relationships (User has many Posts, etc.)
+
+<span class="pv">## 5. API Surface</span>
+Every API endpoint needed. Format:
+METHOD /path — Description
+Request body (if any)
+Response shape
+
+<span class="pv">## 6. Tech Stack Decision</span>
+Recommended stack with reasoning. Include:
+- Frontend framework + why
+- Backend framework + why
+- Database + why
+- Auth solution + why
+- Deployment target + why
+- Any key third-party services (payments, email, storage, etc.)
+
+<span class="pv">## 7. Non-Functional Requirements</span>
+Performance, security, scalability expectations for MVP.
+
+<span class="pv">## 8. Out of Scope</span>
+Explicitly list what is NOT in v1.
+
+<span class="pv">## 9. Open Questions</span>
+Any decisions that need to be made before building starts.
+
+<span class="ps">IMPORTANT:</span>
+Be specific and complete. Vague PRDs produce vague code. Every feature should be precise enough that a developer could build it without asking questions.</div>
+          </div>
+
+          <div class="pcard" data-tags="PRD review improve gaps missing">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">PRD Review — Find Gaps Before Building</div>
+                <div class="ptags"><span class="ptag tl">QUALITY CHECK</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Review this PRD as a senior engineer about to build it. Find every gap, ambiguity, or missing decision that would cause problems during development.
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste your PRD.md]</span>
+
+<span class="ps">CHECK FOR:</span>
+1. <span class="pv">Missing user flows</span> — what happens when X fails? What's the empty state? What's the error state?
+2. <span class="pv">Undefined data</span> — are there fields referenced in the UI that aren't in the data model?
+3. <span class="pv">Auth gaps</span> — which endpoints are public vs authenticated? What permissions exist?
+4. <span class="pv">Edge cases</span> — what happens with empty lists, duplicate entries, concurrent edits?
+5. <span class="pv">Missing endpoints</span> — does every user story have the API call it needs?
+6. <span class="pv">Tech conflicts</span> — does the chosen stack actually work well together for this use case?
+7. <span class="pv">Scope creep signals</span> — anything in the PRD that's clearly out of MVP scope but snuck in?
+
+Output: numbered list of issues with suggested resolutions. Then rate the PRD 1-10 for buildability.</div>
+          </div>
+
+          <div class="pcard" data-tags="PRD tech stack decision architecture choose">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Tech Stack Decision Helper</div>
+                <div class="ptags"><span class="ptag tc">ARCHITECTURE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Help me choose the right tech stack for this project.
+
+<span class="ps">PROJECT CONTEXT:</span>
+- What it does: <span class="ph">[2 sentences]</span>
+- Who uses it: <span class="ph">[user type and scale expectation]</span>
+- My current skills: <span class="ph">[languages/frameworks you know]</span>
+- Team size: <span class="ph">[solo / 2 devs / team]</span>
+- Budget for infrastructure: <span class="ph">[free tier / small budget / enterprise]</span>
+- Time to MVP: <span class="ph">[1 week / 1 month / 3 months]</span>
+- AI agent I'll use: <span class="ph">[Cursor / Claude / Windsurf / other]</span>
+
+<span class="ps">RECOMMEND A STACK ACROSS:</span>
+1. Frontend (framework, styling, state management)
+2. Backend (language, framework, OR BaaS like Supabase/Firebase)
+3. Database (type, specific product, why)
+4. Auth (custom / Auth0 / NextAuth / Supabase Auth / Clerk)
+5. File storage (if needed)
+6. Deployment (Vercel / Railway / Fly.io / etc.)
+7. Key third-party APIs (payments, email, etc.)
+
+For each choice: the alternative you didn't pick and why you ruled it out.
+Also: what would make you change this recommendation?</div>
+          </div>
+
+          <div class="pcard" data-tags="PRD user stories acceptance criteria feature spec">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">Expand a Feature into Full Spec</div>
+                <div class="ptags"><span class="ptag tl">FEATURE DEPTH</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Expand this feature from the PRD into a fully specified implementation ready for an AI code agent.
+
+<span class="ps">FEATURE:</span>
+<span class="ph">[Paste the feature description from your PRD]</span>
+
+<span class="ps">EXPAND INTO:</span>
+1. <span class="pv">User flow</span> — step by step what the user does (numbered)
+2. <span class="pv">Happy path</span> — the ideal successful scenario
+3. <span class="pv">Error states</span> — every way this can fail and what the user sees
+4. <span class="pv">Edge cases</span> — empty state, duplicate, permission denied, network failure
+5. <span class="pv">UI components needed</span> — list every component this feature requires
+6. <span class="pv">API calls</span> — every backend call this feature makes, with request/response
+7. <span class="pv">DB operations</span> — what reads/writes/deletes happen
+8. <span class="pv">Validation rules</span> — what's validated on frontend? Backend?
+9. <span class="pv">Success criteria</span> — how do I know this feature is done and working?
+
+Format as a spec section I can add to the PRD or give directly to an AI agent.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('idea-capture')">← Idea Capture</button>
+          <button class="navbtn primary" onclick="go('phases')">Phase Planning →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PHASES ══════════════════ -->
+    <div id="phases-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 1 — PLANNING</div>
+        <div class="ptitle">🗂️ Phase Planning — Split PRD into Milestones</div>
+        <div class="psub">The PRD tells the agent WHAT to build. Phases tell it WHEN and IN WHAT ORDER. Each phase is a .md file you feed to the agent when you start that phase. This prevents context overflow and keeps each session focused.</div>
+
+        <div class="ibox ib-o"><strong>Why phases matter:</strong> AI agents have context limits. If you feed them the entire PRD and say "build everything", they lose track. Phases solve this: each session = one phase file + specific instructions. The agent finishes phase 1 completely before you start phase 2.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gto">Phase Generation Prompts</div>
+
+          <div class="pcard" data-tags="phases split plan milestone execution order">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Generate All Phase Files from PRD</div>
+                <div class="ptags"><span class="ptag to">OUTPUT: PHASE-1.md → PHASE-N.md</span><span class="ptag tl">KEY PROMPT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Output:</strong> Multiple .md files — one per phase. Each is a self-contained instruction set for the AI agent.</div>
+            <div class="pbody">Read this PRD and split it into execution phases. Each phase should be a self-contained, shippable increment that I can give to an AI code agent as a focused task.
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste your PRD.md]</span>
+
+<span class="ps">RULES FOR PHASES:</span>
+- Each phase must be independently testable (I can run the app and verify it works)
+- Backend comes before frontend for each feature area
+- Infrastructure (auth, DB, config) is always Phase 1
+- No phase should take more than 2-3 days of AI-assisted coding
+- Each phase builds on the previous — no orphaned features
+
+<span class="ps">FOR EACH PHASE, OUTPUT A MARKDOWN FILE:</span>
+
+<span class="pv"># PHASE-[N]: [Name]
+## Goal
+One sentence: what works at the end of this phase.
+
+## What to Build
+Numbered list of specific tasks the agent must complete.
+
+## Files to Create
+List every file that should exist after this phase.
+
+## API Endpoints (if backend work)
+METHOD /path — description for each endpoint in this phase.
+
+## Database Changes (if any)
+Tables/columns to create or modify.
+
+## Success Criteria
+How I verify this phase is complete (checklist).
+
+## Dependencies
+Which previous phases must be done first.</span>
+
+Generate all phases now. Aim for 4-6 phases for an MVP.</div>
+          </div>
+
+          <div class="pcard" data-tags="phase start prompt agent begin cursor windsurf">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Start a Phase — Agent Kickoff Prompt</div>
+                <div class="ptags"><span class="ptag tl">USE IN CURSOR</span><span class="ptag tc">WINDSURF / CLAUDE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>When to use:</strong> At the start of each new AI coding session. Feed the agent the PRD + current phase file together.</div>
+            <div class="pbody">You are building a <span class="ph">[APP NAME]</span> application. You have full context from the PRD and are now executing Phase <span class="ph">[N]</span>.
+
+<span class="ps">FULL PRD (for context):</span>
+<span class="ph">[Paste PRD.md]</span>
+
+<span class="ps">CURRENT PHASE:</span>
+<span class="ph">[Paste PHASE-N.md]</span>
+
+<span class="ps">INSTRUCTIONS:</span>
+1. Read the PRD to understand the full system before writing any code
+2. Execute ONLY the tasks listed in the current phase — do not add features from future phases
+3. Follow the tech stack defined in the PRD exactly
+4. For every file you create, add a brief comment at the top explaining its purpose
+5. After completing each task, confirm it before moving to the next
+6. If you find a bug or conflict with the PRD, flag it before proceeding
+7. When the phase is complete, list all files created/modified
+
+<span class="ps">CURRENT PROJECT STATE:</span>
+<span class="ph">[Describe what's already built: "Phase 1 and 2 are complete. The auth system and user model are working. The frontend Next.js app is set up with the design system."]</span>
+
+Begin with Task 1. Confirm before starting each subsequent task.</div>
+          </div>
+
+          <div class="pcard" data-tags="phase handoff context summary between sessions">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Context Handoff — Between Sessions</div>
+                <div class="ptags"><span class="ptag tc">SESSION CONTINUITY</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Before we end this session, create a handoff summary I can paste into the next session to restore context.
+
+<span class="ps">GENERATE A CONTEXT FILE (save as CONTEXT.md):</span>
+
+<span class="pv">## Session Summary
+## What Was Built This Session</span>
+- Files created: [list]
+- Files modified: [list]
+- Endpoints added: [list]
+
+<span class="pv">## Current Project State</span>
+What works right now? What can I test?
+
+<span class="pv">## Decisions Made</span>
+Any architectural or implementation decisions made that future sessions should know.
+
+<span class="pv">## Known Issues</span>
+Any bugs, TODOs, or workarounds left in the code.
+
+<span class="pv">## Next Session Should Start With</span>
+Exact task to pick up from. Which phase file. What to test first.
+
+<span class="pv">## Environment Setup</span>
+Any env variables added, services configured, or setup steps needed for a fresh environment.</div>
+          </div>
+
+          <div class="pcard" data-tags="phase review progress check status">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">Phase Completion Check</div>
+                <div class="ptags"><span class="ptag tl">VERIFICATION</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Phase <span class="ph">[N]</span> is supposed to be done. Verify everything against the success criteria before I mark it complete.
+
+<span class="ps">PHASE SPEC:</span>
+<span class="ph">[Paste the PHASE-N.md]</span>
+
+<span class="ps">VERIFY:</span>
+1. Check every task in the phase — done or not done?
+2. Check every success criterion — passing or failing?
+3. Check every file that should exist — present or missing?
+4. Are there any console errors, TypeScript errors, or obvious bugs?
+5. Does the feature actually work end-to-end (not just "code is written")?
+
+<span class="ps">OUTPUT:</span>
+- ✅ Done items
+- ❌ Not done / broken items
+- ⚠️ Done but has issues
+- Verdict: Phase complete / Phase needs work
+- If needs work: exactly what to fix</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('prd')">← PRD</button>
+          <button class="navbtn primary" onclick="go('project-init')">Project Init →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PROJECT INIT ══════════════════ -->
+    <div id="project-init-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 2 — BUILD</div>
+        <div class="ptitle">⚡ Project Initialization</div>
+        <div class="psub">Tell the AI agent to bootstrap the entire project structure, install dependencies, configure everything, and create the database schema. This sets the foundation everything else builds on.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtl">Init Prompts by Stack</div>
+
+          <div class="pcard" data-tags="init fullstack nextjs supabase bootstrap setup">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Full-Stack Init — Next.js + Supabase (Most Common)</div>
+                <div class="ptags"><span class="ptag tl">FULL-STACK</span><span class="ptag tc">NEXT.JS</span><span class="ptag">SUPABASE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Bootstrap a full-stack Next.js + Supabase project from scratch. I will paste the PRD after these instructions — read it first before creating any files.
+
+<span class="ps">TECH STACK:</span>
+- Framework: Next.js 14 (App Router)
+- Database & Auth: Supabase
+- Styling: Tailwind CSS + shadcn/ui
+- Language: TypeScript (strict mode)
+- Package manager: pnpm
+
+<span class="ps">CREATE THIS FOLDER STRUCTURE:</span>
+<span class="pv">
+/app              — Next.js app router pages
+/app/api          — API route handlers
+/components       — Shared UI components
+/components/ui    — shadcn/ui components
+/lib              — Utilities, helpers, constants
+/lib/supabase.ts  — Supabase client setup
+/types            — TypeScript type definitions
+/hooks            — Custom React hooks
+.env.local        — Environment variables (template)
+middleware.ts     — Auth middleware
+</span>
+
+<span class="ps">ALSO DO:</span>
+1. Initialize Next.js with TypeScript and Tailwind
+2. Install and configure shadcn/ui
+3. Set up Supabase client (browser + server)
+4. Create auth middleware protecting routes defined in the PRD
+5. Create the database schema from the PRD data models (SQL migration file)
+6. Create types/index.ts with TypeScript types matching every entity in the PRD
+7. Set up environment variable template (.env.local.example)
+8. Create a basic README.md with setup instructions
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste PRD.md here]</span>
+
+Start with folder structure, then go through each step in order. Confirm each step before moving to the next.</div>
+          </div>
+
+          <div class="pcard" data-tags="init backend fastapi node express api only">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Backend-Only Init — FastAPI or Node/Express</div>
+                <div class="ptags"><span class="ptag to">BACKEND ONLY</span><span class="ptag">FASTAPI / NODE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Bootstrap a backend API project. I'll specify the framework — read the PRD to understand all the endpoints you need to scaffold.
+
+<span class="ps">FRAMEWORK:</span> <span class="ph">[FastAPI (Python) OR Express (Node.js) OR NestJS OR Hono]</span>
+
+<span class="ps">CREATE:</span>
+<span class="pv">
+/src
+  /routes        — One file per resource (users.py, posts.py, etc.)
+  /models        — Database models / schemas
+  /services      — Business logic (separate from routes)
+  /middleware    — Auth, logging, error handling
+  /utils         — Shared helpers
+  /config        — Environment, database connection
+main.py / index.ts — Entry point
+requirements.txt / package.json
+.env.example
+README.md
+</span>
+
+<span class="ps">SETUP:</span>
+1. Install all dependencies from the PRD tech stack
+2. Configure database connection (read PRD for DB choice)
+3. Create ALL database models/schemas from PRD data models
+4. Scaffold ALL routes from the PRD API surface (empty handlers with correct paths/methods)
+5. Add auth middleware for protected routes
+6. Add request validation for every endpoint
+7. Add standardized error responses
+8. Add health check endpoint (GET /health)
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste PRD.md]</span></div>
+          </div>
+
+          <div class="pcard" data-tags="init frontend react vue standalone SPA">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Frontend-Only Init — React/Vue SPA</div>
+                <div class="ptags"><span class="ptag tc">FRONTEND ONLY</span><span class="ptag">REACT / VUE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Bootstrap a frontend-only SPA. The backend API already exists (or I'll connect it later). Read the PRD for all the screens and components to scaffold.
+
+<span class="ps">FRAMEWORK:</span> <span class="ph">[React + Vite / Next.js / Vue / Angular]</span>
+<span class="ps">STYLING:</span> <span class="ph">[Tailwind / CSS Modules / Styled Components / shadcn/ui]</span>
+<span class="ps">STATE:</span> <span class="ph">[Zustand / Redux / Jotai / React Query / Context]</span>
+
+<span class="ps">CREATE:</span>
+<span class="pv">
+/src
+  /pages (or /app) — One file per page/route from PRD
+  /components      — Shared components
+  /components/ui   — Design system primitives
+  /hooks           — Data fetching, auth, shared logic
+  /lib             — API client, utils
+  /store           — State management
+  /types           — TypeScript interfaces
+</span>
+
+<span class="ps">SETUP:</span>
+1. Create all routes/pages defined in the PRD user flows
+2. Create placeholder page components (correct route, basic layout)
+3. Set up routing with protected routes
+4. Create API client with all endpoints from the PRD
+5. Set up auth state management
+6. Create the design system: color tokens, typography, spacing in Tailwind config
+7. Scaffold all reusable components mentioned in the PRD
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste PRD.md]</span></div>
+          </div>
+
+          <div class="pcard" data-tags="init cursor rules project rules AI instructions">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">Generate .cursorrules for the Project</div>
+                <div class="ptags"><span class="ptag tl">CURSOR RULES</span><span class="ptag">WINDSURF RULES</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Save as:</strong> .cursorrules (Cursor) or .windsurfrules (Windsurf) in project root. The agent reads this before every response.</div>
+            <div class="pbody">Generate a .cursorrules file for this project that I'll place in the root directory. This file will be read by the AI code agent before every interaction.
+
+<span class="ps">PRD (for context):</span>
+<span class="ph">[Paste PRD.md]</span>
+
+<span class="ps">GENERATE A RULES FILE THAT INCLUDES:</span>
+1. Project overview (1 paragraph — what it is)
+2. Tech stack summary (exact versions and libraries in use)
+3. Folder structure (what goes where)
+4. Coding conventions (naming, file structure, comment style)
+5. TypeScript rules (no any, strict mode, interface naming)
+6. Component rules (functional only, naming, file size limits)
+7. API conventions (response format, error format, auth pattern)
+8. Database rules (ORM style, query patterns, migration approach)
+9. What NOT to do (common mistakes to avoid for this specific stack)
+10. Before writing code checklist:
+    - Does this file already exist?
+    - Does this utility already exist somewhere?
+    - Am I following the PRD or adding new scope?
+
+Make it specific to this project, not generic. The agent should be able to read this and have full context about conventions.</div>
+          </div>
+
+          <div class="pcard" data-tags="init monorepo turbo nx structure workspace">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 05</div>
+                <div class="pcard-title">Monorepo Setup (Backend + Frontend Together)</div>
+                <div class="ptags"><span class="ptag tp">MONOREPO</span><span class="ptag">TURBO / NX</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Set up a monorepo containing both the frontend and backend for this project.
+
+<span class="ps">STRUCTURE:</span>
+<span class="pv">
+/apps
+  /web        — Next.js / React frontend
+  /api        — Express / FastAPI backend
+/packages
+  /shared     — Shared TypeScript types used by both apps
+  /ui         — Shared component library (optional)
+turbo.json OR nx.json — Monorepo config
+package.json (root) — Workspace config
+</span>
+
+<span class="ps">SETUP:</span>
+1. Initialize with <span class="ph">[Turborepo / Nx]</span>
+2. Create /packages/shared with all TypeScript types from PRD data models
+   — Both frontend and backend import types from here
+   — This ensures frontend and backend always agree on data shapes
+3. Configure build pipeline (api builds before web if needed)
+4. Shared environment variable handling
+5. Single install from root (pnpm install)
+6. Dev script that starts both apps simultaneously
+
+<span class="ps">WHY THIS MATTERS:</span>
+The shared types package means when you change the backend API response shape, TypeScript will immediately error in the frontend — no runtime surprises.
+
+<span class="ps">PRD:</span>
+<span class="ph">[Paste PRD.md]</span></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('phases')">← Phases</button>
+          <button class="navbtn primary" onclick="go('backend')">Backend Build →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ BACKEND ══════════════════ -->
+    <div id="backend-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 2 — BUILD</div>
+        <div class="ptitle">🖥️ Backend Build Prompts</div>
+        <div class="psub">Build the backend first. All endpoints, authentication, database operations, and business logic — before touching the frontend. This gives you a stable API contract the frontend can rely on.</div>
+
+        <div class="ibox ib-c"><strong>Order matters:</strong> Backend first → test with Postman/REST client → then build frontend against working endpoints. Never build frontend and backend simultaneously — you'll spend all your time debugging which side has the bug.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtc">Backend Prompts</div>
+
+          <div class="pcard" data-tags="backend all endpoints implement feature CRUD">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Implement All Endpoints for a Feature</div>
+                <div class="ptags"><span class="ptag tc">ENDPOINTS</span><span class="ptag tl">FULL FEATURE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Implement all backend endpoints for the <span class="ph">[FEATURE NAME e.g. User Authentication / Post Management / Payment Processing]</span> feature.
+
+<span class="ps">CONTEXT FROM PRD:</span>
+<span class="ph">[Paste the relevant section of the PRD — user stories, API surface, data models for this feature]</span>
+
+<span class="ps">IMPLEMENT:</span>
+1. All CRUD endpoints listed in the PRD for this feature
+2. Request validation on every endpoint (use <span class="ph">[Zod / Pydantic / Joi / class-validator]</span>)
+3. Auth middleware on protected routes
+4. Proper HTTP status codes (201 for created, 204 for deleted, 422 for validation errors)
+5. Consistent error response format: { error: string, details?: any }
+6. Service layer (business logic separate from route handler)
+7. Database queries using <span class="ph">[Prisma / Drizzle / SQLAlchemy / raw SQL]</span>
+
+<span class="ps">FOR EACH ENDPOINT:</span>
+- Add a JSDoc/docstring comment describing what it does
+- Handle the happy path
+- Handle all error cases from the PRD
+- Log errors (use existing logger if set up)
+
+<span class="ps">TEST COMMANDS:</span>
+After each endpoint, show me the curl command or REST file to test it.
+
+<span class="ps">DO NOT:</span>
+Add features not in the PRD. Keep each endpoint focused on one operation.</div>
+          </div>
+
+          <div class="pcard" data-tags="backend auth JWT OAuth session login register">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Implement Authentication System</div>
+                <div class="ptags"><span class="ptag tc">AUTH</span><span class="ptag">JWT / SESSION / OAUTH</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Implement a complete authentication system for this project.
+
+<span class="ps">AUTH TYPE:</span> <span class="ph">[JWT (stateless) / Session-based / Supabase Auth / NextAuth / Clerk]</span>
+
+<span class="ps">IMPLEMENT:</span>
+1. POST /auth/register — Create user, hash password (bcrypt), return token
+2. POST /auth/login — Verify credentials, return access + refresh token
+3. POST /auth/refresh — Rotate access token using refresh token
+4. POST /auth/logout — Invalidate refresh token
+5. GET /auth/me — Return current user from token
+
+<span class="ps">AUTH MIDDLEWARE:</span>
+- Extract and verify JWT from Authorization header
+- Attach user to request object
+- Return 401 for missing/invalid tokens
+- Return 403 for insufficient permissions
+
+<span class="ps">SECURITY REQUIREMENTS:</span>
+- Passwords: bcrypt with salt rounds ≥ 12
+- Access token: 15 minute expiry
+- Refresh token: 7 day expiry, stored in httpOnly cookie
+- No sensitive data in JWT payload (no passwords, minimal user info)
+- Rate limit login endpoint (5 attempts per 15 minutes)
+
+<span class="ps">ALSO CREATE:</span>
+- Role-based access control if the PRD requires it
+- Password reset flow if in PRD
+- Email verification if in PRD
+
+Test each endpoint with curl examples after implementation.</div>
+          </div>
+
+          <div class="pcard" data-tags="backend database schema migration seed">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Database Schema & Migrations</div>
+                <div class="ptags"><span class="ptag tp">DATABASE</span><span class="ptag">PRISMA / DRIZZLE / SQL</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Create the complete database schema from the PRD data models.
+
+<span class="ps">ORM / TOOL:</span> <span class="ph">[Prisma / Drizzle / SQLAlchemy / raw SQL migrations]</span>
+<span class="ps">DATABASE:</span> <span class="ph">[PostgreSQL / MySQL / SQLite / MongoDB]</span>
+
+<span class="ps">PRD DATA MODELS:</span>
+<span class="ph">[Paste the Data Models section from PRD.md]</span>
+
+<span class="ps">CREATE:</span>
+1. Complete schema with ALL entities from the PRD
+2. Proper data types (don't use TEXT for everything — use VARCHAR with limits, INTEGER, BOOLEAN, TIMESTAMP, etc.)
+3. Primary keys (UUID preferred over auto-increment for distributed systems)
+4. Foreign key relationships matching the PRD
+5. Indexes on: every foreign key, every field used in WHERE clauses, every field used for sorting
+6. created_at and updated_at timestamps on every table
+7. Soft delete (deleted_at) if the PRD requires data retention
+8. Migration file(s) — runnable from scratch to current state
+9. Seed file with realistic test data (at least 5 rows per major table)
+
+<span class="ps">ALSO CREATE:</span>
+TypeScript types / Python dataclasses matching the schema exactly, to use in the rest of the codebase.</div>
+          </div>
+
+          <div class="pcard" data-tags="backend API documentation OpenAPI swagger postman">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">API Documentation & Test Collection</div>
+                <div class="ptags"><span class="ptag tb">OPENAPI</span><span class="ptag">POSTMAN / HOPPSCOTCH</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Generate API documentation and a test collection for all implemented endpoints.
+
+<span class="ps">GENERATE:</span>
+
+1. <span class="pv">OpenAPI 3.0 spec (openapi.yaml)</span> — Full spec with all endpoints, request/response schemas, auth requirements, error responses. This auto-generates Swagger UI.
+
+2. <span class="pv">Postman collection (or Hoppscotch JSON)</span> — Ready-to-import collection with:
+   - All endpoints pre-configured
+   - Example request bodies
+   - Auth token set up as a collection variable
+   - Tests for happy path (status code 200/201) and error cases (400, 401, 404)
+
+3. <span class="pv">REST file (for VS Code REST Client)</span> — .http file with all endpoints and example calls I can run directly from VS Code.
+
+<span class="ps">CONTEXT:</span>
+<span class="ph">[List your endpoints or paste the API section from PRD.md]</span>
+
+<span class="ps">BASE URL:</span> <span class="ph">[http://localhost:3000/api OR your production URL]</span></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('project-init')">← Project Init</button>
+          <button class="navbtn primary" onclick="go('frontend')">Frontend Build →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ FRONTEND ══════════════════ -->
+    <div id="frontend-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 2 — BUILD</div>
+        <div class="ptitle">🎨 Frontend Build Prompts</div>
+        <div class="psub">Build every screen and component described in the PRD. The backend API should already exist — you're connecting the UI to working endpoints, not building them simultaneously.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtk">Frontend Prompts</div>
+
+          <div class="pcard" data-tags="frontend all screens pages scaffold UI layout">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Scaffold All Screens from PRD User Flows</div>
+                <div class="ptags"><span class="ptag tk">ALL SCREENS</span><span class="ptag tl">SCAFFOLD FIRST</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Strategy:</strong> Scaffold ALL screens first (correct route, basic layout, no logic), then implement one screen at a time with full functionality.</div>
+            <div class="pbody">Scaffold all screens/pages for this application. Create the correct files and routing — but don't implement any data fetching or business logic yet. Focus on structure.
+
+<span class="ps">PRD USER FLOWS & FEATURES:</span>
+<span class="ph">[Paste the User Stories and Features sections from PRD.md]</span>
+
+<span class="ps">CURRENT TECH STACK:</span>
+<span class="ph">[e.g. Next.js 14 App Router + Tailwind + shadcn/ui]</span>
+
+<span class="ps">FOR EACH SCREEN:</span>
+1. Create the file at the correct route (matching PRD navigation)
+2. Add a placeholder layout with: page title, correct URL params in the signature
+3. Add a TODO comment listing what data this page needs and from which endpoints
+4. Add a TODO comment listing what actions this page performs
+5. Set up protected vs public route (matching auth requirements in PRD)
+
+<span class="ps">ALSO CREATE:</span>
+- Shared layout files (navbar, sidebar, footer)
+- A navigation map component showing all routes
+- Loading skeleton components for each page type
+- Error boundary component
+
+<span class="ps">OUTPUT:</span> List every file created with its route path after completion.</div>
+          </div>
+
+          <div class="pcard" data-tags="frontend implement screen feature complete page">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Implement a Complete Screen</div>
+                <div class="ptags"><span class="ptag tk">FULL SCREEN</span><span class="ptag tc">DATA + UI + LOGIC</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Implement the <span class="ph">[PAGE/SCREEN NAME e.g. Dashboard / User Profile / Create Post / Checkout]</span> screen completely.
+
+<span class="ps">SCREEN SPEC FROM PRD:</span>
+<span class="ph">[Paste the relevant user story + feature spec + acceptance criteria for this screen]</span>
+
+<span class="ps">API ENDPOINTS THIS SCREEN USES:</span>
+<span class="ph">[List the endpoints: GET /api/posts, POST /api/posts, etc.]</span>
+
+<span class="ps">IMPLEMENT:</span>
+1. <span class="pv">Data fetching</span> — fetch all data this screen needs. Handle loading, error, and empty states for each.
+2. <span class="pv">UI layout</span> — match the design from the PRD. Use shadcn/ui components + Tailwind.
+3. <span class="pv">User interactions</span> — all buttons, forms, and actions this screen requires.
+4. <span class="pv">Form handling</span> — use React Hook Form + Zod for any forms. Show inline validation errors.
+5. <span class="pv">Optimistic updates</span> — where appropriate, update UI before server confirms.
+6. <span class="pv">Error handling</span> — toast notifications for success/failure. Don't silently swallow errors.
+7. <span class="pv">Mobile responsive</span> — works correctly on mobile, tablet, desktop.
+8. <span class="pv">Accessibility</span> — correct semantic HTML, aria labels on interactive elements.
+
+<span class="ps">DO NOT:</span>
+Use placeholder/mock data. Call the real API endpoints.</div>
+          </div>
+
+          <div class="pcard" data-tags="frontend component design system reusable UI kit">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Build Reusable Component</div>
+                <div class="ptags"><span class="ptag tl">COMPONENTS</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Build a reusable <span class="ph">[COMPONENT NAME e.g. DataTable / UserAvatar / StatusBadge / ConfirmModal / InfiniteList]</span> component.
+
+<span class="ps">REQUIREMENTS:</span>
+<span class="ph">[Describe what the component should do, what props it accepts, what states it has]</span>
+
+<span class="ps">BUILD WITH:</span>
+1. TypeScript interface for all props (with JSDoc comments)
+2. Sensible prop defaults
+3. All visual variants/states (loading, empty, error, disabled, active, selected)
+4. Forwarded refs where appropriate
+5. Keyboard navigation support
+6. ARIA attributes for accessibility
+7. Storybook stories (if Storybook is set up) OR usage examples in comments
+
+<span class="ps">NAMING CONVENTION:</span>
+- Component file: PascalCase (DataTable.tsx)
+- Props interface: [ComponentName]Props
+- Export: named export + default export
+
+<span class="ps">DOCUMENT:</span>
+Inline JSDoc for all props. Usage example in a comment at the top of the file.</div>
+          </div>
+
+          <div class="pcard" data-tags="frontend state management store global auth user">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">State Management — Auth + App State</div>
+                <div class="ptags"><span class="ptag tp">STATE</span><span class="ptag">ZUSTAND / JOTAI / CONTEXT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Set up the complete state management layer for this application.
+
+<span class="ps">LIBRARY:</span> <span class="ph">[Zustand / Jotai / Redux Toolkit / TanStack Query + Context]</span>
+
+<span class="ps">CREATE THESE STORES/ATOMS:</span>
+
+<span class="pv">1. Auth Store:</span>
+- currentUser (null | User type from PRD)
+- isLoading boolean
+- isAuthenticated boolean
+- login(credentials) → calls API, stores user + token
+- logout() → clears state, invalidates token, redirects
+- refreshToken() → silent token refresh
+- hydrate() → restore session on page load from localStorage/cookie
+
+<span class="pv">2. App-level state:</span>
+<span class="ph">[Describe any other global state your app needs: cart items, notifications, active workspace, theme, etc.]</span>
+
+<span class="ps">INTEGRATION:</span>
+- Create useAuth() hook that exposes the auth store
+- Set up auth state hydration in the root layout
+- Create ProtectedRoute component that uses auth store
+- Handle token expiry: auto-refresh, then redirect to login if refresh fails
+
+<span class="ps">PRD CONTEXT:</span>
+<span class="ph">[Paste relevant sections from PRD]</span></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('backend')">← Backend</button>
+          <button class="navbtn primary" onclick="go('integration')">Integration →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ INTEGRATION ══════════════════ -->
+    <div id="integration-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 2 — BUILD</div>
+        <div class="ptitle">🔌 Frontend ↔ Backend Integration</div>
+        <div class="psub">Wire the frontend to the backend. Create the API client, handle auth tokens, connect every screen to its real endpoints, and handle every error state.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtb">Integration Prompts</div>
+
+          <div class="pcard" data-tags="integration API client axios fetch wrapper typed">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Create Typed API Client</div>
+                <div class="ptags"><span class="ptag tb">API CLIENT</span><span class="ptag tc">TYPE SAFE</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Create a type-safe API client that wraps all backend calls for the frontend.
+
+<span class="ps">PRD API SURFACE:</span>
+<span class="ph">[Paste the API Surface section from PRD.md]</span>
+
+<span class="ps">CREATE /lib/api.ts (or /lib/api/index.ts):</span>
+
+<span class="pv">Base configuration:</span>
+- Base URL from environment variable
+- Auth token injection (read from auth store / cookie)
+- Request timeout (10 seconds default)
+- Automatic token refresh on 401 response
+- Retry logic (max 3 retries for network errors, not 4xx)
+
+<span class="pv">For EVERY endpoint in the PRD:</span>
+- A typed function: api.users.getAll() / api.posts.create(data: CreatePostInput) etc.
+- Input type matching the PRD request body
+- Return type matching the PRD response shape (using types from /types/index.ts)
+- Error handling: throws typed ApiError with status code and message
+
+<span class="pv">Utility:</span>
+- Handle file uploads separately (multipart/form-data)
+- Helper for building query strings (pagination, filtering)
+
+<span class="ps">EXAMPLE OUTPUT:</span>
+<span class="pa">// api.ts exports should look like:
+// await api.auth.login({ email, password }) → { user, token }
+// await api.posts.create({ title, content }) → Post
+// await api.posts.list({ page, limit }) → PaginatedResponse&lt;Post&gt;</span></div>
+          </div>
+
+          <div class="pcard" data-tags="integration connect screen wire endpoint data hook">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Wire Screen to Real API Endpoints</div>
+                <div class="ptags"><span class="ptag tb">WIRE UP</span><span class="ptag tl">TANSTACK QUERY</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Connect the <span class="ph">[SCREEN NAME]</span> screen to its real backend endpoints. Replace any mock data with live API calls.
+
+<span class="ps">SCREEN CONTEXT:</span>
+<span class="ph">[Describe what the screen does and which endpoints it needs]</span>
+
+<span class="ps">ENDPOINTS TO CONNECT:</span>
+<span class="ph">[List the endpoints: GET /api/posts?page=1, POST /api/posts, DELETE /api/posts/:id]</span>
+
+<span class="ps">IMPLEMENT USING TANSTACK QUERY (or SWR):</span>
+1. Create a custom hook for each data fetch:
+   - useQuery for reads (with proper queryKey for caching)
+   - useMutation for writes (with optimistic updates where appropriate)
+2. Handle every state in the UI:
+   - isLoading → skeleton/spinner
+   - isError → error message with retry button
+   - isEmpty → empty state with CTA
+   - data → normal render
+3. Invalidate relevant queries after mutations (so lists refresh after create/delete)
+4. Show toast notifications on mutation success and failure
+5. Handle pagination if this endpoint is paginated
+
+<span class="ps">DO NOT:</span>
+Leave any console.log statements. Handle all errors — never let them silently fail.</div>
+          </div>
+
+          <div class="pcard" data-tags="integration end to end E2E test full flow auth">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Full Integration Audit — Find All Gaps</div>
+                <div class="ptags"><span class="ptag to">AUDIT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Audit the integration between frontend and backend. Find every gap, inconsistency, or missing piece.
+
+<span class="ps">CHECK:</span>
+1. <span class="pv">Endpoint coverage:</span> For every endpoint in the PRD API surface, does the frontend call it? List uncalled endpoints.
+2. <span class="pv">Error handling coverage:</span> For every API call in the frontend, is there error handling? List unhandled errors.
+3. <span class="pv">Type consistency:</span> Do the TypeScript types used in API calls match what the backend actually returns?
+4. <span class="pv">Auth gaps:</span> Are all protected routes actually protected on both frontend (redirect) and backend (401)?
+5. <span class="pv">Loading states:</span> Does every async operation show a loading indicator?
+6. <span class="pv">Empty states:</span> Does every list/data display handle the empty case gracefully?
+7. <span class="pv">Optimistic updates:</span> Are any mutations that should be optimistic still doing pessimistic updates?
+8. <span class="pv">Console errors:</span> Are there TypeScript errors, missing env variables, or console warnings?
+
+<span class="ps">OUTPUT:</span>
+Numbered list of issues with severity (🔴 Critical / 🟡 Warning / 🟢 Minor) and exact fix for each.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('frontend')">← Frontend</button>
+          <button class="navbtn primary" onclick="go('ui-design')">UI Design →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ DATABASE ══════════════════ -->
+    <div id="database-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 2 — BUILD</div>
+        <div class="ptitle">🗄️ Database & Schema Prompts</div>
+        <div class="psub">Advanced database prompts — query optimization, indexing strategy, migrations, and data access patterns.</div>
+        <div class="pgroup">
+          <div class="gtitle gtp">Database Prompts</div>
+          <div class="pcard" data-tags="database query optimize index performance slow">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 01</div><div class="pcard-title">Optimize Slow Query & Add Indexes</div><div class="ptags"><span class="ptag tp">PERFORMANCE</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Optimize this query and tell me what indexes to add.
+
+<span class="ps">QUERY:</span>
+<span class="ph">[Paste the slow query]</span>
+
+<span class="ps">TABLE SCHEMA:</span>
+<span class="ph">[Paste the relevant table definitions]</span>
+
+<span class="ps">CONTEXT:</span>
+- Expected data volume: <span class="ph">[e.g. 1M users, 10M posts]</span>
+- How often this runs: <span class="ph">[every page load / background job / once daily]</span>
+- Current execution time: <span class="ph">[e.g. 800ms]</span>
+- Target execution time: <span class="ph">[e.g. under 50ms]</span>
+
+<span class="ps">GIVE ME:</span>
+1. Explanation of why the query is slow
+2. Optimized query (rewrite if needed)
+3. Exact CREATE INDEX statements to run
+4. EXPLAIN ANALYZE output to expect after optimization
+5. Any denormalization worth considering for this access pattern</div>
+          </div>
+          <div class="pcard" data-tags="database migration alter table schema change">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 02</div><div class="pcard-title">Create Safe Database Migration</div><div class="ptags"><span class="ptag tp">MIGRATION</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Create a safe database migration for this schema change.
+
+<span class="ps">CHANGE NEEDED:</span>
+<span class="ph">[Describe what needs to change: add column, rename column, change type, add table, etc.]</span>
+
+<span class="ps">CURRENT SCHEMA:</span>
+<span class="ph">[Paste current table definition]</span>
+
+<span class="ps">CREATE:</span>
+1. Up migration (apply the change) — safe for production (no data loss, no table locks)
+2. Down migration (rollback the change)
+3. If renaming or changing type: data migration step to preserve existing data
+4. Warning: flag any migration that will lock the table (requires maintenance window)
+5. Testing: how to verify the migration worked correctly
+
+<span class="ps">USE:</span> <span class="ph">[Prisma / Drizzle / Alembic / raw SQL / Flyway]</span></div>
+          </div>
+          <div class="pcard" data-tags="database seed fake data test realistic">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 03</div><div class="pcard-title">Generate Realistic Seed Data</div><div class="ptags"><span class="ptag tl">SEED DATA</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Generate a seed file with realistic test data for development and demo purposes.
+
+<span class="ps">SCHEMA:</span>
+<span class="ph">[Paste your database schema / Prisma schema / models]</span>
+
+<span class="ps">REQUIREMENTS:</span>
+- Create data for: <span class="ph">[list tables/models that need seed data]</span>
+- Volume: <span class="ph">[e.g. 20 users, 100 posts, 500 comments]</span>
+- Include: a test admin user (admin@test.com / password123), a test regular user (user@test.com / password123)
+- Make data REALISTIC — not "User 1", "Post 2" — use real-sounding names, content, dates
+- Create relationships that make sense (posts belong to users, comments on posts they'd realistically comment on)
+- Include edge cases: some users with no posts, some posts with no comments, some deleted_at entries if applicable
+
+<span class="ps">ORM:</span> <span class="ph">[Prisma seed.ts / Drizzle / SQLAlchemy fixtures / SQL INSERT statements]</span></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('integration')">← Integration</button>
+          <button class="navbtn primary" onclick="go('ui-design')">UI Design →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ UI DESIGN ══════════════════ -->
+    <div id="ui-design-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 3 — DESIGN</div>
+        <div class="ptitle">🖼️ UI Design Prompts</div>
+        <div class="psub">Generate UI components, design systems, and screen layouts using AI design tools — v0.dev, Locofy, Galileo, and component generation from description.</div>
+
+        <div class="ibox ib-l"><strong>Recommended workflow:</strong> (1) Design in Google Stitch or v0.dev → (2) Export to code → (3) Paste into Cursor for integration. Or: give the screen description prompt directly to Cursor to generate both design and code together.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtl">UI Generation Prompts</div>
+
+          <div class="pcard" data-tags="UI component v0 generate React screen layout">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Generate Screen in v0.dev / Cursor</div>
+                <div class="ptags"><span class="ptag tl">V0.DEV</span><span class="ptag tc">CURSOR</span><span class="ptag">REACT</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Use at:</strong> v0.dev (free tier available) or paste directly into Cursor for immediate implementation.</div>
+            <div class="pbody">Create a complete, production-quality React component for the <span class="ph">[SCREEN NAME]</span> screen.
+
+<span class="ps">SCREEN PURPOSE:</span>
+<span class="ph">[What this screen does and who uses it]</span>
+
+<span class="ps">LAYOUT:</span>
+<span class="ph">[Describe the layout: sidebar + main content / full-width table / card grid / split panel / dashboard with widgets]</span>
+
+<span class="ps">SECTIONS TO INCLUDE:</span>
+<span class="ph">[List each section: header with title + action button / filter bar / data table with sort + pagination / empty state / loading skeleton]</span>
+
+<span class="ps">DESIGN REQUIREMENTS:</span>
+- Style: <span class="ph">[Modern SaaS / Consumer app / Admin panel / Landing page / Dark mode]</span>
+- Component library: <span class="ph">[shadcn/ui + Tailwind / MUI / Chakra / custom]</span>
+- Color scheme: <span class="ph">[Use CSS variables from existing design system OR specify: primary=#3b82f6, neutral grays]</span>
+- Spacing: generous whitespace, not cramped
+- Typography: clear hierarchy (page title, section titles, body, captions)
+
+<span class="ps">DATA SHAPE:</span>
+<span class="ph">[Show the TypeScript type of the data this component displays]</span>
+
+<span class="ps">INTERACTIVE STATES:</span>
+Show: loading skeleton, empty state, error state, and data-populated state all in the same component (use a prop to switch between them for demo purposes).</div>
+          </div>
+
+          <div class="pcard" data-tags="UI design system tokens colors typography spacing">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Generate Design System / Theme</div>
+                <div class="ptags"><span class="ptag tl">DESIGN TOKENS</span><span class="ptag">TAILWIND CONFIG</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Generate a complete design system for this application based on the brand description.
+
+<span class="ps">APP TYPE:</span> <span class="ph">[SaaS dashboard / Consumer mobile app / Developer tool / E-commerce / Marketing site]</span>
+<span class="ps">BRAND FEELING:</span> <span class="ph">[Professional & trustworthy / Bold & energetic / Minimal & clean / Warm & friendly / Technical & precise]</span>
+<span class="ps">REFERENCE APPS:</span> <span class="ph">[2-3 apps whose aesthetic you want to be close to, e.g. Linear, Vercel, Notion, Stripe]</span>
+<span class="ps">COLOR PREFERENCES:</span> <span class="ph">[Any colors you want included or excluded]</span>
+
+<span class="ps">GENERATE:</span>
+
+<span class="pv">1. tailwind.config.ts extensions:</span>
+- Primary color scale (50-950)
+- Neutral/gray scale
+- Semantic tokens (background, foreground, border, muted, accent, destructive)
+- Font families
+- Custom spacing if needed
+- Border radius scale
+
+<span class="pv">2. CSS variables (globals.css):</span>
+- Light mode + dark mode variables
+- All shadcn/ui compatible variable names
+
+<span class="pv">3. Typography scale:</span>
+- Heading sizes (h1-h4) with line heights
+- Body sizes (sm, md, lg)
+- Code/mono font
+
+<span class="pv">4. Component defaults to customize:</span>
+- Button variants
+- Card style
+- Input style
+- Badge variants</div>
+          </div>
+
+          <div class="pcard" data-tags="UI landing page hero marketing conversion">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Landing Page / Hero Section</div>
+                <div class="ptags"><span class="ptag tk">LANDING PAGE</span><span class="ptag tl">MARKETING</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Build a high-converting landing page for this product.
+
+<span class="ps">PRODUCT:</span>
+<span class="ph">[App name + one-sentence description from IDEA.md]</span>
+
+<span class="ps">PRIMARY AUDIENCE:</span>
+<span class="ph">[Who is this for — developer / small business / enterprise / consumer]</span>
+
+<span class="ps">BUILD THESE SECTIONS:</span>
+1. <span class="pv">Hero</span> — headline (problem-focused), sub-headline (solution), primary CTA button, secondary CTA, hero image placeholder
+2. <span class="pv">Social proof</span> — "Trusted by X" logos row OR testimonials
+3. <span class="pv">Features</span> — 3 key benefits with icon + title + description
+4. <span class="pv">How it works</span> — 3-step numbered flow
+5. <span class="pv">Pricing</span> (if relevant) — 2-3 tier pricing table
+6. <span class="pv">FAQ</span> — 5 most common questions as accordion
+7. <span class="pv">Final CTA</span> — repeat the CTA with urgency
+8. <span class="pv">Footer</span> — links, social, legal
+
+<span class="ps">STYLE:</span>
+<span class="ph">[e.g. Dark mode with gradient accents / Clean white with bold typography / Gradient hero with card sections]</span>
+
+<span class="ps">TECH:</span> Next.js + Tailwind + shadcn/ui. Fully responsive. Optimized for Core Web Vitals.</div>
+          </div>
+
+          <div class="pcard" data-tags="UI dashboard admin analytics widgets">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">Dashboard / Admin Panel Layout</div>
+                <div class="ptags"><span class="ptag tb">DASHBOARD</span><span class="ptag tc">ANALYTICS</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Build the main dashboard layout for this application.
+
+<span class="ps">DASHBOARD METRICS TO SHOW:</span>
+<span class="ph">[List 4-6 key metrics from your PRD e.g. Total users, Revenue, Active sessions, Conversion rate]</span>
+
+<span class="ps">CHARTS/GRAPHS:</span>
+<span class="ph">[e.g. Line chart of signups over 30 days / Bar chart of revenue by month / Pie chart of user types]</span>
+
+<span class="ps">DATA TABLES:</span>
+<span class="ph">[e.g. Recent orders table / Latest signups / Top performing content]</span>
+
+<span class="ps">SIDEBAR NAVIGATION:</span>
+<span class="ph">[List all nav items from your PRD]</span>
+
+<span class="ps">BUILD:</span>
+1. Responsive sidebar (collapsible on mobile)
+2. Stats cards row with trend indicators (up/down arrow + percentage)
+3. Chart components using <span class="ph">[Recharts / Chart.js / Tremor]</span>
+4. Data tables with sort, filter, and pagination
+5. Loading skeletons for all dynamic content
+6. Mobile-responsive layout (sidebar becomes bottom nav or hamburger)
+
+Use real-looking mock data in the component so it looks complete, but structure the data as props so it can be replaced with real API data.</div>
+          </div>
+
+          <div class="pcard" data-tags="UI mobile responsive app native feel">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 05</div>
+                <div class="pcard-title">Mobile-First UI — App-like Experience</div>
+                <div class="ptags"><span class="ptag tk">MOBILE</span><span class="ptag tl">PWA</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Build a mobile-first UI that feels like a native app for <span class="ph">[SCREEN]</span>.
+
+<span class="ps">TARGET:</span> Mobile (375px primary) with tablet/desktop as secondary
+<span class="ps">FEEL:</span> <span class="ph">[iOS-like clean / Material Design / Custom brand feel]</span>
+
+<span class="ps">MOBILE UI PATTERNS TO USE:</span>
+1. Bottom navigation bar (4-5 items max)
+2. Pull-to-refresh on list views
+3. Swipe actions on list items (swipe left to delete, right to archive)
+4. Sheet/drawer for secondary actions (instead of modals)
+5. Sticky headers with scroll blur effect
+6. Touch-friendly tap targets (min 44px)
+7. Haptic-like feedback states (scale on press)
+8. Safe area insets for notch/home indicator
+
+<span class="ps">COMPONENT:</span>
+Build the <span class="ph">[SPECIFIC SCREEN]</span> screen with these mobile patterns applied.
+Make it feel native, not like a desktop app squeezed onto a phone screen.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('integration')">← Integration</button>
+          <button class="navbtn primary" onclick="go('figma')">Figma + Stitch →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ FIGMA + STITCH ══════════════════ -->
+    <div id="figma-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 3 — DESIGN TOOLS</div>
+        <div class="ptitle">✏️ Figma + Google Stitch</div>
+        <div class="psub">Prompts for AI-powered design tools. Google Stitch generates screens from text. Figma AI plugins accelerate design. Use these before or alongside coding to visualize what you're building.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtp">Design Tool Prompts</div>
+
+          <div class="pcard" data-tags="figma google stitch mockup wireframe screen generate">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 01</div>
+                <div class="pcard-title">Google Stitch — Generate Screen Mockups</div>
+                <div class="ptags"><span class="ptag tp">GOOGLE STITCH</span><span class="ptag tl">FREE</span><span class="ptag">MOCKUPS</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>Tool:</strong> stitch.withgoogle.com — Free. Generates mobile/web UI mockups from text descriptions. Export as PNG or Figma.</div>
+            <div class="pbody"><span class="ps">USE THESE PROMPT FORMULAS IN GOOGLE STITCH:</span>
+
+<span class="pv">Formula:</span>
+[App type] [screen name] screen, [style], [key elements], [color scheme]
+
+<span class="pv">EXAMPLE PROMPTS:</span>
+
+Mobile app dashboard screen showing user stats cards, recent activity feed, and bottom navigation bar, modern iOS design style, clean white background with blue accent color, card-based layout
+
+SaaS web app settings page with sidebar navigation, profile section with avatar upload, notification preferences toggles, security section with 2FA toggle, and save button, minimal design similar to Linear, light mode
+
+E-commerce product listing page with filter sidebar on left, grid of product cards with image/price/rating, sort dropdown at top, pagination at bottom, clean white background with subtle shadows
+
+Mobile onboarding flow screen 2 of 4, asking user for their name and role, progress bar at top, large input fields, skip button top right, continue button bottom, gradient background from purple to blue
+
+<span class="ps">TIPS FOR STITCH:</span>
+→ Be specific about the number of elements ("3 stat cards", "5 navigation items")
+→ Mention the device ("mobile app" vs "web app" vs "tablet")
+→ Reference design styles by name (Material Design, iOS, Fluent, SaaS-style)
+→ Iterate: generate → describe what you want different → generate again
+→ Export as Figma file to refine further</div>
+          </div>
+
+          <div class="pcard" data-tags="figma AI plugin design system generate component auto">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 02</div>
+                <div class="pcard-title">Figma — AI Plugin Prompts (Figma AI / Magician)</div>
+                <div class="ptags"><span class="ptag tp">FIGMA</span><span class="ptag">FIGMA AI</span><span class="ptag to">PAID</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody"><span class="ps">FIGMA AI (built-in, Figma Enterprise) — USE FOR:</span>
+
+<span class="pv">Generate from prompt (select frame → AI → Generate):</span>
+Mobile app settings screen with profile section, notification toggles, and logout button
+
+Web dashboard sidebar navigation with icons for: Dashboard, Projects, Team, Analytics, Settings, with user avatar at bottom
+
+Onboarding modal for a project management tool with 3 step progress, illustrated hero image area, heading and subtext, and two buttons
+
+<span class="pv">Rename layers (AI → Rename layers):</span>
+Select all → Rename → "Use descriptive names based on content" → AI renames Frame1, Group47 to meaningful names
+
+<span class="pv">Generate copy placeholder:</span>
+Select a text layer → AI → "Generate realistic placeholder copy for a dashboard welcome message"
+
+<span class="ps">MAGICIAN PLUGIN (freemium):</span>
+Select an empty frame → "Generate UI" → 
+<span class="ph">[Use same formulas as Google Stitch above]</span>
+
+"Generate icon set for: Home, Search, Notifications, Profile, Settings"
+
+<span class="ps">USEFUL FOR RAPID ITERATION:</span>
+1. Generate 4 variations of the same screen (use Figma AI "Generate variations")
+2. Pick the best layout
+3. Refine manually or with another AI pass
+4. Hand off to Cursor for implementation</div>
+          </div>
+
+          <div class="pcard" data-tags="figma to code locofy anima export component">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 03</div>
+                <div class="pcard-title">Figma → Code Export (Locofy / Anima)</div>
+                <div class="ptags"><span class="ptag tp">FIGMA TO CODE</span><span class="ptag to">LOCOFY</span><span class="ptag">ANIMA</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody"><span class="ps">LOCOFY (locofy.ai) — Figma → React/Next.js/Vue:</span>
+
+<span class="pv">Step 1: In Figma, install Locofy plugin</span>
+<span class="pv">Step 2: Select your frame and run Locofy</span>
+<span class="pv">Step 3: Tag interactive elements:</span>
+- Buttons → mark as "Button" with onClick handler name
+- Inputs → mark as "Input" with state variable name
+- Lists → mark as "List" with array data binding
+
+<span class="pv">Step 4: Export settings for best results:</span>
+- Framework: React + TypeScript
+- Styling: Tailwind CSS (NOT inline styles)
+- Components: "Extract reusable components" ON
+- Responsive: "Make responsive" ON
+
+<span class="pv">Step 5: After export, use this Cursor prompt:</span>
+I just exported a Figma design to React components using Locofy. The components are in /src/components/generated/. Help me:
+1. Clean up the generated CSS and convert to proper Tailwind classes
+2. Replace hardcoded dimensions with responsive Tailwind classes
+3. Wire up the onClick handlers and form inputs to the actual API calls
+4. Extract repeated patterns into proper reusable components
+
+<span class="ps">ANIMA — Better for complex designs:</span>
+Similar workflow. Better handling of complex auto-layout. Export as CSS Modules or Styled Components.</div>
+          </div>
+
+          <div class="pcard" data-tags="UI design review feedback iterate improve AI">
+            <div class="pcard-hdr">
+              <div class="pcard-meta">
+                <div class="plabel">PROMPT 04</div>
+                <div class="pcard-title">AI Design Review — Improve Any Screen</div>
+                <div class="ptags"><span class="ptag tl">DESIGN REVIEW</span><span class="ptag tc">CLAUDE / GPT-4V</span></div>
+              </div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pctx"><strong>How to use:</strong> Take a screenshot of your screen, attach to Claude or GPT-4o, and use this prompt.</div>
+            <div class="pbody">Review this UI screen and give me specific, actionable improvements.
+
+<span class="ps">WHAT THIS SCREEN IS:</span>
+<span class="ph">[Describe the screen: what it does, who uses it, what's the goal]</span>
+
+<span class="ps">EVALUATE:</span>
+1. <span class="pv">Visual hierarchy</span> — Is it clear what to look at first? Second? What actions are primary?
+2. <span class="pv">Spacing & density</span> — Is it cramped or too sparse? Are related elements grouped?
+3. <span class="pv">Typography</span> — Is there a clear font size hierarchy? Is anything hard to read?
+4. <span class="pv">Color</span> — Is the color usage purposeful or decorative? Sufficient contrast for accessibility?
+5. <span class="pv">Navigation</span> — Is it obvious how to get to this screen and how to navigate away?
+6. <span class="pv">Empty/loading states</span> — What would this look like with no data? On slow connection?
+7. <span class="pv">Mobile</span> — Would this work on a 375px screen? What breaks?
+8. <span class="pv">Cognitive load</span> — Is the user being asked to process too much at once?
+
+<span class="ps">GIVE ME:</span>
+Top 5 specific changes that would have the biggest impact on usability. For each: describe exactly what to change and why.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('ui-design')">← UI Design</button>
+          <button class="navbtn primary" onclick="go('testing')">Testing →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ TESTING ══════════════════ -->
+    <div id="testing-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 4 — SHIP</div>
+        <div class="ptitle">🧪 Testing & QA Prompts</div>
+        <div class="psub">Write tests, find bugs, and verify your app works before shipping. AI agents are excellent at generating comprehensive test suites.</div>
+        <div class="pgroup">
+          <div class="gtitle gtk">Testing Prompts</div>
+          <div class="pcard" data-tags="testing unit integration test jest vitest generate">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 01</div><div class="pcard-title">Generate Test Suite for a Feature</div><div class="ptags"><span class="ptag tk">JEST / VITEST</span><span class="ptag tl">UNIT + INTEGRATION</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Write a comprehensive test suite for this feature.
+
+<span class="ps">FEATURE CODE:</span>
+<span class="ph">[Paste the implementation code to test]</span>
+
+<span class="ps">TEST FRAMEWORK:</span> <span class="ph">[Jest / Vitest / pytest / Go test]</span>
+
+<span class="ps">WRITE TESTS FOR:</span>
+1. <span class="pv">Happy path</span> — the ideal flow with valid inputs
+2. <span class="pv">Input validation</span> — every validation rule: missing required fields, wrong types, out-of-range values
+3. <span class="pv">Error cases</span> — database errors, network failures, third-party API failures
+4. <span class="pv">Edge cases</span> — empty arrays, null values, very large inputs, concurrent calls
+5. <span class="pv">Security cases</span> — SQL injection attempt, unauthorized access, rate limit exceeded
+6. <span class="pv">Integration</span> — the full flow from API call → business logic → database → response
+
+<span class="ps">FOR EACH TEST:</span>
+- Descriptive test name (reads like a sentence: "should return 404 when user not found")
+- AAA pattern: Arrange → Act → Assert
+- Mock external dependencies (database, email, third-party APIs)
+
+<span class="ps">TARGET COVERAGE:</span> All branches covered. Aim for &gt;80% code coverage on this file.</div>
+          </div>
+          <div class="pcard" data-tags="testing E2E playwright cypress automated browser">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 02</div><div class="pcard-title">E2E Tests with Playwright</div><div class="ptags"><span class="ptag to">PLAYWRIGHT</span><span class="ptag">E2E</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Write Playwright E2E tests for these user flows.
+
+<span class="ps">USER FLOWS TO TEST:</span>
+<span class="ph">[List the critical user journeys: e.g. "Complete signup and create first project" / "Add item to cart and checkout" / "Login and update profile"]</span>
+
+<span class="ps">APP URL:</span> <span class="ph">[http://localhost:3000]</span>
+<span class="ps">TEST USER CREDENTIALS:</span> <span class="ph">[admin@test.com / password123]</span>
+
+<span class="ps">FOR EACH FLOW, WRITE:</span>
+1. Test that completes the entire happy path
+2. Test that verifies the error state (wrong credentials, form validation, etc.)
+3. Assertions on: URL changes, visible text, element states, API responses
+
+<span class="ps">ALSO ADD:</span>
+- beforeEach: login and set up test state
+- afterEach: cleanup (delete test data if needed)
+- Screenshot on failure
+- Visual regression test for the main screens
+
+<span class="ps">USE BEST PRACTICES:</span>
+- Page Object Model for reusable selectors
+- data-testid attributes for stable selectors (list which elements need data-testid added)
+- Never use sleep() — use waitForSelector/waitForResponse</div>
+          </div>
+          <div class="pcard" data-tags="testing QA checklist manual pre-launch ship">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 03</div><div class="pcard-title">Pre-Launch QA Checklist</div><div class="ptags"><span class="ptag tl">PRE-LAUNCH</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Generate a comprehensive pre-launch QA checklist for this application.
+
+<span class="ps">APP TYPE:</span> <span class="ph">[SaaS web app / Mobile app / API / E-commerce]</span>
+<span class="ps">PRD:</span> <span class="ph">[Paste your PRD or list the main features]</span>
+
+<span class="ps">GENERATE A CHECKLIST COVERING:</span>
+1. <span class="pv">Functionality</span> — Every PRD feature tested end-to-end
+2. <span class="pv">Auth flows</span> — Register, login, logout, password reset, session expiry
+3. <span class="pv">Form validation</span> — Every form: required fields, format validation, error messages
+4. <span class="pv">Error handling</span> — Disconnect from internet, API returns 500, empty responses
+5. <span class="pv">Responsive design</span> — 375px mobile, 768px tablet, 1440px desktop
+6. <span class="pv">Performance</span> — Lighthouse score &gt;90, no obvious memory leaks, no infinite loading
+7. <span class="pv">Security</span> — No API keys in client code, no sensitive data in console.log, HTTPS
+8. <span class="pv">Cross-browser</span> — Chrome, Firefox, Safari, Edge
+9. <span class="pv">Accessibility</span> — Keyboard navigation, screen reader basics, color contrast
+10. <span class="pv">Data</span> — Create, read, update, delete all entities. Verify data persists after refresh.
+
+Format as a markdown checklist I can copy to a Notion/Linear task.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('figma')">← Design</button>
+          <button class="navbtn primary" onclick="go('deploy')">Deploy →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ DEPLOY ══════════════════ -->
+    <div id="deploy-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 4 — SHIP</div>
+        <div class="ptitle">🚀 Deploy & DevOps Prompts</div>
+        <div class="psub">Get your app running in production. CI/CD, environment variables, Docker, and platform-specific deployment configs.</div>
+        <div class="pgroup">
+          <div class="gtitle gtb">Deployment Prompts</div>
+          <div class="pcard" data-tags="deploy vercel railway fly.io production environment">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 01</div><div class="pcard-title">Deploy Full-Stack App to Production</div><div class="ptags"><span class="ptag tb">VERCEL</span><span class="ptag tl">RAILWAY</span><span class="ptag">FLY.IO</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Set up production deployment for this application.
+
+<span class="ps">DEPLOYMENT TARGETS:</span>
+- Frontend: <span class="ph">[Vercel / Netlify / Cloudflare Pages]</span>
+- Backend: <span class="ph">[Railway / Fly.io / Render / DigitalOcean / AWS]</span>
+- Database: <span class="ph">[Supabase / PlanetScale / Neon / Railway Postgres]</span>
+
+<span class="ps">TECH STACK:</span>
+<span class="ph">[Frontend framework + Backend framework from PRD]</span>
+
+<span class="ps">CREATE:</span>
+1. <span class="pv">GitHub Actions CI/CD (.github/workflows/deploy.yml):</span>
+   - On push to main: run tests → build → deploy
+   - On PR: run tests + type check only (no deploy)
+   - Environment variables from GitHub Secrets
+   - Separate staging and production environments
+
+2. <span class="pv">Dockerfile (if using containers):</span>
+   - Multi-stage build (builder + production)
+   - Non-root user
+   - Health check endpoint
+   - Minimal final image size
+
+3. <span class="pv">Environment variables checklist:</span>
+   - List every env var the app needs in production
+   - Which are secrets (never commit) vs non-secret config
+
+4. <span class="pv">Database migration on deploy:</span>
+   - Run migrations automatically before app starts
+   - How to rollback if migration fails
+
+5. <span class="pv">README deployment section:</span>
+   - Step-by-step guide to deploy from scratch
+
+<span class="ps">PRD STACK:</span>
+<span class="ph">[Paste the tech stack section from PRD]</span></div>
+          </div>
+          <div class="pcard" data-tags="deploy docker containerize compose orchestrate">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 02</div><div class="pcard-title">Dockerize the Application</div><div class="ptags"><span class="ptag tp">DOCKER</span><span class="ptag">COMPOSE</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Containerize this application with Docker.
+
+<span class="ps">SERVICES TO CONTAINERIZE:</span>
+<span class="ph">[e.g. Next.js frontend / Node.js API / PostgreSQL / Redis]</span>
+
+<span class="ps">CREATE:</span>
+1. <span class="pv">Dockerfile for each service</span> — Multi-stage build, production-optimized
+2. <span class="pv">docker-compose.yml</span> — All services, networking, volumes, health checks
+3. <span class="pv">docker-compose.dev.yml</span> — Development overrides (hot reload, volume mounts, dev env vars)
+4. <span class="pv">.dockerignore</span> — Exclude node_modules, .env, build artifacts
+5. <span class="pv">Makefile or scripts</span>:
+   - make dev → start all services in dev mode
+   - make build → build production images
+   - make migrate → run DB migrations in container
+   - make logs → tail all service logs
+
+<span class="ps">STACK:</span>
+<span class="ph">[Your stack from PRD.md]</span>
+
+<span class="ps">REQUIREMENTS:</span>
+- No secrets hardcoded — all from .env file
+- Health checks on all services
+- Proper dependency order (DB starts before API, API before frontend)
+- Persistent volumes for database data</div>
+          </div>
+          <div class="pcard" data-tags="deploy monitoring logging error alerting production">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 03</div><div class="pcard-title">Production Monitoring Setup</div><div class="ptags"><span class="ptag tl">MONITORING</span><span class="ptag tb">LOGGING</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Set up production monitoring and error tracking for this application.
+
+<span class="ps">FREE TOOLS TO INTEGRATE:</span>
+1. <span class="pv">Sentry</span> (free tier) — Error tracking and performance monitoring
+   - Set up in both frontend and backend
+   - Capture unhandled errors and promise rejections
+   - Add user context (user ID, email) to errors when authenticated
+   - Set up error rate alerts
+
+2. <span class="pv">Structured logging</span> — Every API request logged with:
+   - Request ID, method, path, status code, duration
+   - User ID if authenticated
+   - Error stack trace if failed
+   - Use pino (Node) or structlog (Python) for JSON logs
+
+3. <span class="pv">Health check endpoint</span> (GET /health):
+   - Returns: status, version, database connection status, uptime
+   - Used by deployment platforms to know when app is ready
+
+4. <span class="pv">Performance budgets</span>:
+   - Alert if any endpoint takes &gt;2 seconds
+   - Alert if error rate exceeds 1%
+   - Alert if database connection pool is exhausted
+
+<span class="ps">TECH STACK:</span>
+<span class="ph">[Your backend framework]</span>
+
+Implement all four. Show the code changes needed in each relevant file.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('testing')">← Testing</button>
+          <button class="navbtn primary" onclick="go('debug')">Debug & Refactor →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ DEBUG ══════════════════ -->
+    <div id="debug-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// PHASE 4 — MAINTAIN</div>
+        <div class="ptitle">🐛 Debug & Refactor Prompts</div>
+        <div class="psub">When something breaks or you need to clean up the codebase. These prompts get you unstuck fast.</div>
+        <div class="pgroup">
+          <div class="gtitle gto">Debug Prompts</div>
+          <div class="pcard" data-tags="debug stuck unstuck fix error solve broken">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 01</div><div class="pcard-title">I'm Completely Stuck — Get Unstuck</div><div class="ptags"><span class="ptag to">UNSTUCK</span><span class="ptag tl">DEBUGGING</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">I'm stuck on a bug and need help debugging it systematically.
+
+<span class="ps">WHAT SHOULD HAPPEN:</span>
+<span class="ph">[Describe the expected behavior]</span>
+
+<span class="ps">WHAT ACTUALLY HAPPENS:</span>
+<span class="ph">[Describe the actual behavior — exactly what you see, including error messages]</span>
+
+<span class="ps">ERROR MESSAGE / STACK TRACE:</span>
+<span class="ph">[Paste the full error output]</span>
+
+<span class="ps">RELEVANT CODE:</span>
+<span class="ph">[Paste the code that's failing]</span>
+
+<span class="ps">WHAT I'VE TRIED:</span>
+<span class="ph">[List your attempted fixes]</span>
+
+<span class="ps">ENVIRONMENT:</span>
+<span class="ph">[OS, language version, framework version, any recent changes]</span>
+
+<span class="ps">HELP ME:</span>
+1. Diagnose the root cause (not just the symptom)
+2. Show me the fix with explanation of WHY it works
+3. Tell me how to prevent this class of bug in the future
+4. Are there related bugs nearby that I should also fix?
+
+If you need more information to diagnose, ask me the most important question first.</div>
+          </div>
+          <div class="pcard" data-tags="refactor clean code improve structure technical debt">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 02</div><div class="pcard-title">Codebase Health Check & Refactor Plan</div><div class="ptags"><span class="ptag tl">REFACTOR</span><span class="ptag tc">TECH DEBT</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">Audit this code for technical debt and generate a prioritized refactor plan.
+
+<span class="ps">CODEBASE OVERVIEW:</span>
+<span class="ph">[Describe what the codebase does and paste the key files or folder structure]</span>
+
+<span class="ps">AUDIT FOR:</span>
+1. <span class="pv">Code smells</span> — Functions too long, deeply nested if/else, magic numbers, duplicated logic
+2. <span class="pv">Type safety gaps</span> — any usage, implicit any, missing error types
+3. <span class="pv">Error handling</span> — Unhandled promise rejections, silent catches, missing error boundaries
+4. <span class="pv">Performance issues</span> — N+1 queries, missing memoization, unnecessary re-renders, large bundles
+5. <span class="pv">Security issues</span> — Unsanitized input, exposed secrets, missing auth checks
+6. <span class="pv">Test coverage gaps</span> — Critical paths with no tests
+7. <span class="pv">Naming</span> — Confusing names, inconsistent conventions
+
+<span class="ps">OUTPUT:</span>
+Prioritized list: 🔴 Fix now (bugs/security) / 🟡 Fix before next feature / 🟢 Nice to have
+For each issue: what it is, where it is, how to fix it, how long it should take.</div>
+          </div>
+          <div class="pcard" data-tags="AI agent lost context reset restart fresh">
+            <div class="pcard-hdr">
+              <div class="pcard-meta"><div class="plabel">PROMPT 03</div><div class="pcard-title">Agent Got Lost — Reset & Restart</div><div class="ptags"><span class="ptag to">CONTEXT RESET</span></div></div>
+              <button class="cpbtn" onclick="cp(this)">📋 Copy</button>
+            </div>
+            <div class="pbody">The AI agent made a mess. I need to reset and rebuild cleanly.
+
+<span class="ps">WHAT HAPPENED:</span>
+<span class="ph">[Describe what went wrong — agent went in wrong direction, created conflicting files, broke something that was working, etc.]</span>
+
+<span class="ps">CURRENT STATE:</span>
+<span class="ph">[What files exist, what works, what's broken]</span>
+
+<span class="ps">ORIGINAL GOAL:</span>
+<span class="ph">[What you were trying to build]</span>
+
+<span class="ps">HELP ME:</span>
+1. <span class="pv">Audit what's salvageable</span> — what code is correct and should be kept
+2. <span class="pv">Identify what to delete</span> — what the agent created that's wrong or conflicting
+3. <span class="pv">Create a clean plan</span> — step-by-step approach to reach the original goal correctly
+4. <span class="pv">Prevent recurrence</span> — what instructions should I give the agent upfront next time to avoid this
+
+<span class="ps">RULE FOR THIS SESSION:</span>
+Don't write any code until we've agreed on the exact approach. Confirm each step before executing.</div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('deploy')">← Deploy</button>
+          <button class="navbtn primary" onclick="go('tools')">Tools Guide →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ TOOLS ══════════════════ -->
+    <div id="tools-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// TOOLS GUIDE</div>
+        <div class="ptitle">🛠️ Free vs Paid AI Coding Tools</div>
+        <div class="psub">Every major AI coding tool compared — what it costs, what it's best at, and when to use it. Start free, upgrade when you need to.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtl">AI Code Editors & Agents</div>
+          <div class="tgrid">
+            <div class="tcard"><div class="tcard-icon">⚡</div><div class="tcard-name">Cursor</div><span class="tcard-badge tb-both">Free + $20/mo</span><div class="tcard-desc">VS Code fork with AI deeply integrated. Best-in-class for multi-file editing, codebase understanding, and agent mode.</div><div class="tcard-best"><strong>Best for:</strong> Primary IDE for any project. The daily driver.</div></div>
+            <div class="tcard"><div class="tcard-icon">🌊</div><div class="tcard-name">Windsurf (Codeium)</div><span class="tcard-badge tb-both">Free + $15/mo</span><div class="tcard-desc">Cursor competitor. Cascade agent is very strong for autonomous multi-step tasks. Slightly better at not breaking existing code.</div><div class="tcard-best"><strong>Best for:</strong> Long autonomous coding sessions. Good free tier.</div></div>
+            <div class="tcard"><div class="tcard-icon">🤖</div><div class="tcard-name">Claude.ai (Claude 3.5/3.7)</div><span class="tcard-badge tb-both">Free + $20/mo</span><div class="tcard-desc">Best model for complex reasoning about code architecture. Use for PRD generation, architecture decisions, and reviewing agent output.</div><div class="tcard-best"><strong>Best for:</strong> PRD, architecture, reviewing Cursor's work.</div></div>
+            <div class="tcard"><div class="tcard-icon">🧠</div><div class="tcard-name">GitHub Copilot</div><span class="tcard-badge tb-both">Free (limited) + $10/mo</span><div class="tcard-desc">Native in VS Code and JetBrains. Good autocomplete. Copilot Chat for Q&A. Less powerful than Cursor for full agent tasks.</div><div class="tcard-best"><strong>Best for:</strong> If you prefer VS Code/JetBrains and need inline autocomplete.</div></div>
+            <div class="tcard"><div class="tcard-icon">🔓</div><div class="tcard-name">Aider</div><span class="tcard-badge tb-free">Free (open source)</span><div class="tcard-desc">CLI-based AI coding. Works with any model (Claude, GPT-4, Gemini). Excellent for precise file editing with your own API keys.</div><div class="tcard-best"><strong>Best for:</strong> Power users. Cheapest option at scale (pay per token).</div></div>
+            <div class="tcard"><div class="tcard-icon">🦙</div><div class="tcard-name">Continue.dev</div><span class="tcard-badge tb-free">Free (open source)</span><div class="tcard-desc">Open source Copilot alternative. Connect any model. Works in VS Code and JetBrains. Full control over which model to use.</div><div class="tcard-best"><strong>Best for:</strong> Teams that want open source + bring-your-own-model.</div></div>
+          </div>
+
+          <div class="gtitle gtc" style="margin-top:28px">Design & UI Tools</div>
+          <div class="tgrid">
+            <div class="tcard"><div class="tcard-icon">🎨</div><div class="tcard-name">v0.dev (Vercel)</div><span class="tcard-badge tb-both">Free tier + credits</span><div class="tcard-desc">Best AI → React component generator. Describes UI in natural language, outputs shadcn/ui components. One-click copy to clipboard.</div><div class="tcard-best"><strong>Best for:</strong> Generating any React UI component fast.</div></div>
+            <div class="tcard"><div class="tcard-icon">🖼️</div><div class="tcard-name">Google Stitch</div><span class="tcard-badge tb-free">Free</span><div class="tcard-desc">Google's Gemini-powered UI mockup generator. Text → app screen mockup. Export to Figma or PNG. Good for rapid concept visualization.</div><div class="tcard-best"><strong>Best for:</strong> Quick wireframes. Free alternative to Figma AI.</div></div>
+            <div class="tcard"><div class="tcard-icon">✏️</div><div class="tcard-name">Figma AI</div><span class="tcard-badge tb-paid">Figma Plan ($15+/mo)</span><div class="tcard-desc">Built into Figma. Generate screens, rename layers, auto-layout assistance, and first-draft components from prompts.</div><div class="tcard-best"><strong>Best for:</strong> Teams already on Figma who want AI acceleration.</div></div>
+            <div class="tcard"><div class="tcard-icon">🔤</div><div class="tcard-name">Ideogram</div><span class="tcard-badge tb-both">Free + $7/mo</span><div class="tcard-desc">Best for UI screenshots with text, app mockups with readable labels, and icon sets. Better text rendering than Midjourney.</div><div class="tcard-best"><strong>Best for:</strong> App store screenshots, marketing mockups.</div></div>
+            <div class="tcard"><div class="tcard-icon">🚀</div><div class="tcard-name">Locofy.ai</div><span class="tcard-badge tb-both">Free trial + $16/mo</span><div class="tcard-desc">Figma → React/Next.js code. Best Figma-to-code tool available. Handles responsive layouts and component extraction well.</div><div class="tcard-best"><strong>Best for:</strong> When you have a Figma design and need production React code.</div></div>
+            <div class="tcard"><div class="tcard-icon">⚡</div><div class="tcard-name">bolt.new (StackBlitz)</div><span class="tcard-badge tb-both">Free + $20/mo</span><div class="tcard-desc">Full-stack app generator in the browser. Describe an app, it scaffolds and runs it instantly. Good for quick prototypes.</div><div class="tcard-best"><strong>Best for:</strong> Rapid prototypes, demos, proving an idea works.</div></div>
+          </div>
+
+          <div class="gtitle gtp" style="margin-top:28px">Backend & Infrastructure Tools</div>
+          <div class="tgrid">
+            <div class="tcard"><div class="tcard-icon">💚</div><div class="tcard-name">Supabase</div><span class="tcard-badge tb-both">Free + $25/mo</span><div class="tcard-desc">Postgres + Auth + Storage + Realtime + Edge Functions. The fastest way to get a backend running. Has excellent AI assistant for SQL.</div><div class="tcard-best"><strong>Best for:</strong> Most projects. Replace custom backend for MVPs.</div></div>
+            <div class="tcard"><div class="tcard-icon">🚂</div><div class="tcard-name">Railway</div><span class="tcard-badge tb-both">$5 free credit + usage</span><div class="tcard-desc">Deploy any backend in minutes. Postgres, Redis, and custom Dockerfiles. Git-push to deploy. Best UX of any PaaS.</div><div class="tcard-best"><strong>Best for:</strong> Deploying Node/Python/Go APIs without DevOps complexity.</div></div>
+            <div class="tcard"><div class="tcard-icon">🦋</div><div class="tcard-name">Neon (Serverless Postgres)</div><span class="tcard-badge tb-both">Free + $19/mo</span><div class="tcard-desc">Serverless Postgres with branching. Create a branch per PR. Auto-pause when idle (free tier friendly). Excellent for solo projects.</div><div class="tcard-best"><strong>Best for:</strong> Postgres that scales down to zero on free tier.</div></div>
+            <div class="tcard"><div class="tcard-icon">🔐</div><div class="tcard-name">Clerk</div><span class="tcard-badge tb-both">Free (10K MAU) + $25/mo</span><div class="tcard-desc">Complete auth in minutes. Drop-in components for login, signup, user profile. Better DX than rolling your own auth.</div><div class="tcard-best"><strong>Best for:</strong> Any project where auth is not your competitive advantage.</div></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('debug')">← Debug</button>
+          <button class="navbtn primary" onclick="go('models')">Which Model →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ MODELS ══════════════════ -->
+    <div id="models-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// MODEL GUIDE</div>
+        <div class="ptitle">🤖 Which Model to Use — When</div>
+        <div class="psub">The right model for the right task. Model choice matters — the wrong model costs more, runs slower, and makes more mistakes for certain task types.</div>
+
+        <table class="t">
+          <tr><th>Task</th><th>Best Model</th><th>Why</th></tr>
+          <tr><td>PRD & Architecture design</td><td>Claude 3.7 Sonnet / Opus</td><td>Best long-document reasoning, follows complex instructions precisely</td></tr>
+          <tr><td>Multi-file feature implementation</td><td>Claude 3.5 Sonnet (in Cursor)</td><td>Best code quality + follows constraints. Less likely to break existing code</td></tr>
+          <tr><td>Quick component generation</td><td>GPT-4o or Claude 3.5 Haiku</td><td>Fast, cheap, good enough for isolated components</td></tr>
+          <tr><td>Debugging complex issues</td><td>Claude 3.7 / o1 / o3-mini</td><td>Extended thinking catches non-obvious bugs. Worth the slower speed</td></tr>
+          <tr><td>Large codebase understanding</td><td>Gemini 1.5 Pro / 2.0 Flash</td><td>2M token context — can read the entire codebase at once</td></tr>
+          <tr><td>UI/Component generation (v0)</td><td>GPT-4o (v0 uses this)</td><td>v0 is specifically tuned for React component output</td></tr>
+          <tr><td>Database schema & SQL</td><td>Claude 3.5 Sonnet</td><td>Best understanding of data modeling trade-offs</td></tr>
+          <tr><td>Test writing</td><td>Claude 3.5 Haiku (fast + cheap)</td><td>Repetitive task — doesn't need the most powerful model</td></tr>
+          <tr><td>Documentation writing</td><td>Claude 3.5 Sonnet</td><td>Best technical writing quality</td></tr>
+          <tr><td>Cost-sensitive bulk tasks</td><td>DeepSeek V3 / Gemini Flash</td><td>90% quality at 10% cost. Good for seed data, migrations, boilerplate</td></tr>
+          <tr><td>Local / offline development</td><td>Ollama + Qwen2.5-Coder 32B</td><td>Free, private, surprisingly capable for a local model</td></tr>
+        </table>
+
+        <div class="pgroup" style="margin-top:28px">
+          <div class="gtitle gtl">Cursor Model Settings</div>
+          <div class="ibox ib-l"><strong>Recommended Cursor setup:</strong> Default model = claude-3-5-sonnet-20241022 for daily coding. Switch to claude-3-7-sonnet for complex architectural work. Use cursor-fast (Claude Haiku) for autocomplete to save credits.</div>
+          <div class="acc">
+            <div class="aitem">
+              <div class="ahdr" onclick="acc(this)"><span class="atext">When to switch models mid-project</span><span class="aarrow">+</span></div>
+              <div class="abody">
+                <ul>
+                  <li><strong>Stuck on a bug for 30+ min:</strong> switch to o1 or Claude 3.7 with extended thinking. The extra cost is worth the breakthrough.</li>
+                  <li><strong>Adding a big new feature:</strong> start a new Cursor chat with fresh context. Feed it the PRD + current CONTEXT.md + the phase file.</li>
+                  <li><strong>Agent keeps breaking things:</strong> switch to a more conservative model (Claude 3.5 Sonnet is safer than Claude 3.7 Sonnet for not over-engineering).</li>
+                  <li><strong>Running low on credits:</strong> switch to Gemini 2.0 Flash or DeepSeek V3 via Cursor's "Use API key" for cheap continuation.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="aitem">
+              <div class="ahdr" onclick="acc(this)"><span class="atext">Context window matters — what this means in practice</span><span class="aarrow">+</span></div>
+              <div class="abody">
+                <ul>
+                  <li><strong>Claude 3.5/3.7:</strong> 200K tokens (~150K words). Can read your entire medium-sized codebase in one context window.</li>
+                  <li><strong>GPT-4o:</strong> 128K tokens. Smaller context = more summarization needed for large projects.</li>
+                  <li><strong>Gemini 1.5/2.0:</strong> 1-2M tokens. Best choice when you need to give the model the entire codebase at once.</li>
+                  <li><strong>Practical rule:</strong> Use Cursor's file attachment selectively. Only include files directly relevant to the current task. Too much context confuses the model — more is not always better.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('tools')">← Tools</button>
+          <button class="navbtn primary" onclick="go('cheat')">Quick Reference →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CHEATSHEET ══════════════════ -->
+    <div id="cheat-page" class="page">
+      <div class="pinner">
+        <div class="peyebrow">// QUICK REFERENCE</div>
+        <div class="ptitle">⚡ Quick Reference</div>
+        <div class="psub">The complete idea-to-shipped checklist. Bookmark this page.</div>
+
+        <div class="pgroup">
+          <div class="gtitle gtl">The 10-Step Vibe Coding Checklist</div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:16px 0">
+            <table style="width:100%;border-collapse:collapse">
+              <tr style="background:var(--s2)"><th style="padding:9px 14px;text-align:left;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border-bottom:1px solid var(--border)">Step</th><th style="padding:9px 14px;text-align:left;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border-bottom:1px solid var(--border)">What to do</th><th style="padding:9px 14px;text-align:left;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border-bottom:1px solid var(--border)">Output</th><th style="padding:9px 14px;text-align:left;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border-bottom:1px solid var(--border)">Go to</th></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">01</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Capture & validate the idea</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">IDEA.md</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('idea-capture')">→ Idea Capture</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">02</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Generate PRD from idea brief</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">PRD.md</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('prd')">→ PRD</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">03</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Review PRD for gaps</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">PRD.md (final)</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('prd')">→ PRD Review</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">04</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Split PRD into phase files</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">PHASE-1.md … PHASE-N.md</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('phases')">→ Phases</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">05</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Bootstrap project + .cursorrules</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">Full project structure</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('project-init')">→ Project Init</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">06</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Build backend (Phase 1 first)</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">Working API endpoints</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('backend')">→ Backend</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">07</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Build frontend screens</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">All screens scaffolded + implemented</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('frontend')">→ Frontend</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">08</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Wire frontend to backend</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">Fully integrated app</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('integration')">→ Integration</td></tr>
+              <tr><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--lime);font-weight:700">09</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)">Run QA checklist</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--dim)">Bug-free app</td><td style="padding:9px 14px;border-bottom:1px solid var(--border);color:var(--cyan);cursor:pointer" onclick="go('testing')">→ Testing</td></tr>
+              <tr><td style="padding:9px 14px;color:var(--lime);font-weight:700">10</td><td style="padding:9px 14px;color:var(--text)">Deploy to production</td><td style="padding:9px 14px;color:var(--dim)">🚀 Live app</td><td style="padding:9px 14px;color:var(--cyan);cursor:pointer" onclick="go('deploy')">→ Deploy</td></tr>
+            </table>
+          </div>
+
+          <div class="gtitle gtc" style="margin-top:28px">Golden Rules of Vibe Coding</div>
+          <div class="acc">
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">1. Always have a PRD before touching code</span><span class="aarrow">+</span></div><div class="abody">The agent needs a source of truth. Without a PRD, it makes assumptions that compound into architectural problems. 30 minutes writing a PRD saves 3 hours of debugging bad code. When in doubt: stop coding, update the PRD, then continue.</div></div>
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">2. One phase at a time — verify before moving forward</span><span class="aarrow">+</span></div><div class="abody">Never ask the agent to do Phase 2 work while Phase 1 is incomplete. Each phase should be verifiable: you can run the app and see Phase 1 working. Fix bugs in Phase 1 before starting Phase 2. Technical debt from unverified phases multiplies.</div></div>
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">3. Backend first, always</span><span class="aarrow">+</span></div><div class="abody">Build and test the API before the frontend. When you build them simultaneously, you can't tell which side has the bug. A working backend with curl tests gives you confidence. Then the frontend just connects to something real.</div></div>
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">4. Fresh context for each session</span><span class="aarrow">+</span></div><div class="abody">Start each Cursor session with a fresh chat. Give it: PRD.md + current CONTEXT.md + the specific phase file. Don't rely on the agent "remembering" previous sessions — it doesn't. Fresh context prevents drift and hallucination from stale information.</div></div>
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">5. Never let the agent choose the scope</span><span class="aarrow">+</span></div><div class="abody">Agents WILL add features you didn't ask for. They'll add extra validation, create new tables, add helper utilities. This seems helpful but creates unreviewed code. In your prompts: explicitly say "only implement what's in this phase file, do not add anything extra". Review every file the agent creates.</div></div>
+            <div class="aitem"><div class="ahdr" onclick="acc(this)"><span class="atext">6. Commit often — give yourself recovery points</span><span class="aarrow">+</span></div><div class="abody">Commit after every phase completion, and after every significant working state. When the agent breaks something, git reset is your best friend. Vibe coding produces a lot of "it was working 20 minutes ago" moments — commits are your undo button.</div></div>
+          </div>
+        </div>
+        <div class="pnav">
+          <button class="navbtn" onclick="go('models')">← Models</button>
+          <button class="navbtn primary" onclick="go('home')">🏠 Overview</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const PAGES=['home','idea-capture','prd','phases','project-init','backend','frontend','integration','database','ui-design','figma','testing','deploy','debug','tools','models','cheat'];
+let sbOpen=window.innerWidth>768;
+let copies=0;
+
+function go(id){
+  PAGES.forEach(p=>{
+    const el=document.getElementById(p+'-page');
+    if(el) el.classList.remove('active');
+    const n=document.getElementById('n-'+p);
+    if(n) n.classList.remove('active');
+  });
+  const pg=document.getElementById(id+'-page');
+  if(pg) pg.classList.add('active');
+  const nv=document.getElementById('n-'+id);
+  if(nv) nv.classList.add('active');
+  document.getElementById('main').scrollTo(0,0);
+  window.scrollTo(0,0);
+  if(window.innerWidth<=768&&sbOpen){
+    sbOpen=false;
+    document.getElementById('sb').classList.add('collapsed');
+  }
+}
+
+document.getElementById('sbToggle').addEventListener('click',()=>{
+  sbOpen=!sbOpen;
+  document.getElementById('sb').classList.toggle('collapsed',!sbOpen);
+});
+document.getElementById('main').addEventListener('click',()=>{
+  if(window.innerWidth<=768&&sbOpen){
+    sbOpen=false;
+    document.getElementById('sb').classList.add('collapsed');
+  }
+});
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>768&&!sbOpen){
+    sbOpen=true;
+    document.getElementById('sb').classList.remove('collapsed');
+  }
+});
+
+function cp(btn){
+  const card=btn.closest('.pcard');
+  const body=card.querySelector('.pbody');
+  navigator.clipboard.writeText(body.innerText).then(()=>{
+    btn.textContent='✓ Copied!';
+    btn.classList.add('ok');
+    copies++;
+    document.getElementById('copyCnt').textContent=`📋 ${copies} copied`;
+    setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('ok');},2500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=body.innerText;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✓ Copied!';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('ok');},2500);
+  });
+}
+
+function acc(hdr){
+  hdr.querySelector('.aarrow').classList.toggle('open');
+  hdr.nextElementSibling.classList.toggle('open');
+}
+
+function doSearch(q){
+  const val=q.toLowerCase().trim();
+  document.querySelectorAll('.pcard').forEach(c=>{
+    if(!val){c.style.display='';return;}
+    const tags=(c.dataset.tags||'').toLowerCase();
+    const title=(c.querySelector('.pcard-title')||{}).textContent||'';
+    const body=(c.querySelector('.pbody')||{}).textContent||'';
+    const match=tags.includes(val)||title.toLowerCase().includes(val)||body.toLowerCase().includes(val);
+    c.style.display=match?'':'none';
+  });
+  if(val){
+    const visiblePage=document.querySelector('.pcard:not([style*="none"])');
+    if(visiblePage){
+      const page=visiblePage.closest('.page');
+      if(page) go(page.id.replace('-page',''));
+    }
+  }
+}
+
+if(window.innerWidth<=768){
+  sbOpen=false;
+  document.getElementById('sb').classList.add('collapsed');
+}
+</script>
+</body>
+</html>

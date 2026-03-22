@@ -80,9 +80,8 @@ CREATE TABLE addresses
 
 ## 7. What is denormalization, and when should it be used?
 
-Denormalization is the process of combining tables to reduce the number of joins needed in queries, which can improve
-performance. It is used when performance needs to be optimized and when read-heavy operations are prioritized over write
-consistency.
+Denormalization is the process of combining tables to reduce the number of joins needed in queries, which can improve performance.
+- *Example*: In an e-commerce "Orders" table, you might store the `customer_name` directly in the table instead of joining with the "Users" table every time you want to print an invoice.
 
 ### **Example**:
 
@@ -159,10 +158,10 @@ WHERE user_id IN (SELECT user_id FROM orders WHERE order_id = 101);
 
 ACID stands for:
 
-- **Atomicity**: A transaction is all-or-nothing.
-- **Consistency**: The database transitions from one valid state to another.
-- **Isolation**: Transactions do not interfere with each other.
-- **Durability**: Once a transaction is committed, it is permanent.
+- **Atomicity**: A transaction is all-or-nothing. *Example*: In a bank transfer, if the money is taken from Account A but the system crashes before adding it to Account B, the whole transaction is undone.
+- **Consistency**: The database transitions from one valid state to another. *Example*: A transfer cannot occur if it would result in a negative balance that violates a constraint.
+- **Isolation**: Transactions do not interfere with each other. *Example*: If two people try to withdraw the last $100 from the same account at the same time, the system process them one after the other.
+- **Durability**: Once a transaction is committed, it is permanent. *Example*: Even if the power goes out right after a "Commit", the data is safely saved on disk.
 
 ```sql
 START TRANSACTION;
@@ -342,8 +341,8 @@ UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
 ```
 ## 28. Explain replication in MySQL.
 
-Replication is the process of copying data from one MySQL database (the master) to one or more MySQL databases (the
-slaves). It is used for load balancing, backup, and redundancy.
+Replication is the process of copying data from one MySQL database (the master) to one or more MySQL databases (the slaves).
+- *Example*: A high-traffic blog uses a **Master** for people writing new posts and **3 Slaves** to handle the millions of people just reading the posts, distributing the load.
 
 ## 29. How can you back up and restore a MySQL database?
 
@@ -361,7 +360,7 @@ A view is a virtual table based on the result of a SQL statement. It contains ro
 
 **Benefits:**
 - Simplifies complex queries
-- Provides security by restricting access to specific columns
+- Provides security by restricting access to specific columns. *Example*: An `employee_public_info` view that hides the `salary` column from the regular staff.
 - Abstracts the underlying table structure
 - Can be used to present aggregated data
 

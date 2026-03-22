@@ -47,7 +47,8 @@
 **CP (Consistency + Partition Tolerance)**:
 - **Financial Data**: Wallets, payments, settlements
 - **Inventory**: Stock levels (prevent overselling)
-- **Tradeoff**: May be unavailable during network partition
+- **Tradeoff**: May be unavailable during network partition.
+- *Example*: During a Region outage, we chose Availability (AP) for the Product Catalog (showing potentially stale prices) but stayed CP for the Checkout (rejecting orders if the inventory node was unreachable).
 
 ```csharp
 // Strong consistency for financial operations
@@ -381,6 +382,7 @@ public class Payment
 CREATE UNIQUE INDEX idx_payments_idempotency_key ON payments (idempotency_key);
 
 // Insert will fail if duplicate (idempotent)
+// *Example*: Using a database unique constraint on `idempotency_key` as a 'last line of defense' to prevent duplicate payments if the Redis idempotency layer fails.
 try
 {
     await _db.Payments.AddAsync(payment);

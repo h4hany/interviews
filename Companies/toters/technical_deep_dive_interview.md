@@ -33,6 +33,9 @@ HAVING SUM(o.total_amount) > 500
 
 💡 **Tip:** Always use clear grouping and conditional aggregates for “never ordered” constraints.
 
+> [!TIP]
+> **Antigravity Tip**: For Toters, where delivery efficiency is key, expect follow-ups on **Window Functions**. For example, how to find the 'Top 3 fastest riders per zone last week' using `DENSE_RANK() OVER (PARTITION BY zone_id ORDER BY avg_delivery_time)`. This shows you can handle complex logistical reporting.
+
 ---
 
 ## 💻 2. Backend Coding
@@ -87,6 +90,9 @@ Design a backend system to track package deliveries in real time across multiple
 * OLTP DB: PostgreSQL for core entities
 * NoSQL / Fast Cache: Redis or Cassandra for status lookup
 * Partition data by city / zone
+
+> [!TIP]
+> **Antigravity Tip**: In a tracking system for 100K+ riders, a single Redis instance will become a bottleneck. Mention **Geo-sharding**. At BrandOS (hypothetically), we would shard our real-time location cache by `city_id` or `zone_id` so each shard only handles 5-10K riders, ensuring < 10ms update latency.
 
 #### API Patterns
 

@@ -29,13 +29,14 @@ Microservices is an architectural style where applications are built as a collec
 ## 4. What is the difference between Monolith and Microservices?
 
 **Answer:**
-- **Monolith**: Single deployable unit, all functionality in one codebase.
-- **Microservices**: Multiple independent services, each with its own codebase and deployment.
+- **Monolith**: Single deployable unit. *Example*: A traditional Rails app where the frontend, backend, and background jobs are all in one repo and deployed together.
+- **Microservices**: Multiple independent services. *Example*: Amazon's architecture where "Recommendations", "Payments", and "Inventory" are all separate, independent services.
 
 ## 5. What is Service Discovery?
 
 **Answer:**
-Service Discovery allows services to find and communicate with each other dynamically, without hardcoded addresses.
+Service Discovery allows services to find and communicate with each other dynamically, without hardcoded IP addresses.
+- *Example*: **Netflix Eureka** allows service "A" to ask "Where is the Inventory service?" and get a list of active IP addresses.
 
 ## 6. What is the difference between Client-Side and Server-Side Service Discovery?
 
@@ -47,6 +48,7 @@ Service Discovery allows services to find and communicate with each other dynami
 
 **Answer:**
 API Gateway is a single entry point for clients, handling routing, authentication, rate limiting, and protocol translation.
+- *Example*: An API Gateway can receive a request from a mobile app, authenticate it, and then route it to the "Order Service" while also converting the data into a mobile-friendly JSON format.
 
 ## 8. What is the difference between API Gateway and Service Mesh?
 
@@ -122,11 +124,13 @@ Health checks monitor service availability and readiness, used by load balancers
 
 **Answer:**
 Blue-Green Deployment maintains two identical environments, switching traffic from old (blue) to new (green) version.
+- *Example*: You have a full copy of your app running v1 (Blue). You deploy v2 to environment (Green). Once Green is tested, you flip the load balancer to Green. If anything fails, you flip back to Blue instantly.
 
 ## 22. What is Canary Deployment?
 
 **Answer:**
 Canary Deployment gradually rolls out new version to a small percentage of users before full deployment.
+- *Example*: Rolling out a new "Checkout" page to only 5% of users in Germany to see if conversion rates drop or errors increase before giving it to everyone.
 
 ## 23. What is Feature Flags?
 
@@ -212,11 +216,13 @@ API Composition aggregates data from multiple services to fulfill client request
 
 **Answer:**
 BFF creates separate backend services for different client types (mobile, web), optimizing data for each client.
+- *Example*: A Mobile BFF might return a smaller JSON with only 5 fields to save bandwidth, while a Web BFF returns 20 fields for a detailed dashboard view.
 
 ## 39. What is Strangler Pattern?
 
 **Answer:**
 Strangler Pattern gradually migrates from monolith to microservices by replacing functionality incrementally.
+- *Example*: Instead of a "Big Bang" rewrite, you move the "Authentication" logic out of the monolith into a new service. All new auth requests go to the new service, while everything else stays in the monolith.
 
 ## 40. What is Microservices Best Practices?
 

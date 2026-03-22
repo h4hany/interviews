@@ -9,6 +9,7 @@ API (Application Programming Interface) is a set of protocols, tools, and defini
 
 **Answer:**
 REST (Representational State Transfer) is an architectural style for designing web services using HTTP methods (GET, POST, PUT, DELETE) and stateless communication.
+- *Example*: The Twitter (X) API allows you to fetch tweets using GET requests and post tweets using POST requests following RESTful principles.
 
 ## 3. What are REST principles?
 
@@ -23,11 +24,11 @@ REST (Representational State Transfer) is an architectural style for designing w
 ## 4. What are HTTP methods in REST?
 
 **Answer:**
-- **GET**: Retrieve resource (idempotent, safe)
-- **POST**: Create resource (not idempotent)
-- **PUT**: Update/replace resource (idempotent)
-- **PATCH**: Partial update (idempotent)
-- **DELETE**: Remove resource (idempotent)
+- **GET**: Retrieve resource (idempotent, safe). *Example*: `GET /users/1` returns user details.
+- **POST**: Create resource (not idempotent). *Example*: `POST /users` creates a new user account.
+- **PUT**: Update/replace resource (idempotent). *Example*: `PUT /users/1` replaces all user profile data.
+- **PATCH**: Partial update (idempotent). *Example*: `PATCH /users/1` updates only the user's email.
+- **DELETE**: Remove resource (idempotent). *Example*: `DELETE /users/1` deletes the user.
 
 ## 5. What is the difference between PUT and PATCH?
 
@@ -69,8 +70,8 @@ API versioning manages changes while maintaining backward compatibility:
 ## 10. What is the difference between Authentication and Authorization?
 
 **Answer:**
-- **Authentication**: Verifying who the user is (login).
-- **Authorization**: Determining what the user can do (permissions).
+- **Authentication**: Verifying who the user is (login). *Example*: Entering your password or using FaceID to log into an app.
+- **Authorization**: Determining what the user can do (permissions). *Example*: A regular user can view their profile, but an Admin can delete users.
 
 ## 11. What is API authentication methods?
 
@@ -95,6 +96,7 @@ OAuth 2.0 is an authorization framework that allows applications to obtain limit
 
 **Answer:**
 Rate limiting restricts the number of requests a client can make within a time period, preventing abuse and ensuring fair usage.
+- *Example*: GitHub's public API limits unauthenticated users to 60 requests per hour per IP address.
 
 ## 15. What is API throttling?
 
@@ -115,8 +117,8 @@ API pagination splits large result sets into smaller pages, improving performanc
 ## 18. What is the difference between Offset and Cursor Pagination?
 
 **Answer:**
-- **Offset**: Uses page number and size (`?page=1&size=10`), simple but inefficient for large datasets.
-- **Cursor**: Uses cursor/token (`?cursor=abc123`), efficient and consistent.
+- **Offset**: Uses page number and size (`?page=1&size=10`). *Example*: Seeing "Page 2 of 100" at the bottom of a search result.
+- **Cursor**: Uses cursor/token (`?cursor=abc123`). *Example*: Scrolling through a Facebook or Instagram feed where new posts load as you scroll.
 
 ## 19. What is API filtering and sorting?
 
@@ -148,8 +150,8 @@ API Gateway is a single entry point that handles routing, authentication, rate l
 ## 24. What is the difference between REST and GraphQL?
 
 **Answer:**
-- **REST**: Multiple endpoints, fixed response structure, over-fetching/under-fetching.
-- **GraphQL**: Single endpoint, flexible queries, clients request exactly what they need.
+- **REST**: Multiple endpoints, fixed response structure. *Example*: To get a movie's title and its actors, you might need two requests: `/movies/1` and `/movies/1/actors`.
+- **GraphQL**: Single endpoint, flexible queries. *Example*: You can request exactly what you want in one call: `{ movie(id: "1") { title, actors { name } } }`.
 
 ## 25. What is GraphQL?
 
@@ -200,6 +202,7 @@ Contract testing ensures API consumers and providers maintain compatible contrac
 
 **Answer:**
 CORS (Cross-Origin Resource Sharing) allows web pages to make requests to different domains, controlled by HTTP headers.
+- *Example*: A frontend hosted on `myapp.com` trying to fetch data from `api.myapp.com`. The browser will block this unless the API server explicitly sends `Access-Control-Allow-Origin: https://myapp.com`.
 
 ## 33. What is API caching?
 
@@ -248,6 +251,7 @@ API monitoring tracks API performance, availability, errors, and usage metrics f
 
 **Answer:**
 Webhook is a callback mechanism where an API sends HTTP POST requests to a URL when an event occurs.
+- *Example*: When a customer pays you via Stripe, Stripe sends a Webhook (POST request) to your server to notify you that the "payment_intent.succeeded" event happened.
 
 ## 40. What is the difference between Webhook and Polling?
 

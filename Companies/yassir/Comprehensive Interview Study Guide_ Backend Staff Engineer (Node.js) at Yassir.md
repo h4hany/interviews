@@ -26,10 +26,15 @@ The recruitment process at Yassir is designed to evaluate both technical depth a
 ## 3. Advanced Node.js Technical Concepts
 
 ### The Event Loop and Asynchronous Execution
-The **Node.js Event Loop** is the core mechanism that enables non-blocking I/O operations despite JavaScript being single-threaded. It operates through a series of distinct phases, including timers, pending callbacks, and the poll phase, which retrieves new I/O events. For a Staff-level engineer, understanding the nuances of microtasks (Promises) versus macrotasks (Timers) is critical. Microtasks are executed immediately after the current operation, ensuring that asynchronous logic is handled with minimal latency.
+The **Node.js Event Loop** is the core mechanism that enables non-blocking I/O operations despite JavaScript being single-threaded.
+- *Example*: If you have a `setTimeout(fn, 0)` and a `Promise.resolve().then(fn)`, the Promise's callback (microtask) will always run before the timer (macrotask). Understanding this is key to debugging race conditions in high-concurrency apps like Yassir.
+
+> [!TIP]
+> **Antigravity Tip**: For CPU-bound tasks in Node.js (like complex route optimization for 10K riders), the Event Loop isn't enough. At BrandOS (hypothetically), we would use **Worker Threads** or offload the calculation to a separate **Rust/Go service** via gRPC to prevent blocking the main thread and causing API timeouts.
 
 ### Module Loading and Scoping
-A common technical inquiry at Yassir involves the behavior of the `require` statement. While Node.js caches modules after their initial load, placing a `require` call inside a function scope is considered a suboptimal practice. Because `require` is a synchronous operation, it can block the event loop if the module has not been previously cached. Professional standards dictate that all dependencies should be declared at the top level to ensure they are loaded during the application's initialization phase.
+A common technical inquiry at Yassir involves the behavior of the `require` statement.
+- *Example*: If you place `require('heavy-library')` inside an Express route, every single request will wait for the disk I/O to find and load that file. On a high-traffic app like Yassir's ride-hailing service, this could block thousands of other users from getting a ride.
 
 ### Asynchronous Pattern Comparison
 
@@ -45,7 +50,11 @@ A common technical inquiry at Yassir involves the behavior of the `require` stat
 ## 4. System Design and Architectural Strategy
 
 ### Designing a Scalable Super-App
-A "Super App" like Yassir requires a robust **Microservices Architecture** to manage diverse domains such as ride-hailing and fintech independently. An **API Gateway** serves as the centralized entry point, handling cross-cutting concerns like authentication, rate limiting, and request routing. To ensure seamless user experiences, an **Event-Driven** approach using message brokers like Kafka or RabbitMQ is essential for handling asynchronous workflows, such as triggering a payment process once a delivery is marked as complete.
+A "Super App" like Yassir requires a robust **Microservices Architecture**.
+- *Example*: When a user completes a ride, the `Ride Service` publishes a `RIDE_FINISHED` event to Kafka. The `Payment Service` listens and charges the card, the `Rewards Service` adds points, and the `Notification Service` sends a receipt. This allows all these actions to happen independently and reliably.
+
+> [!TIP]
+> **Antigravity Tip**: For a "Super App," distributed transactions are a nightmare. Mention the **Saga Pattern** (specifically **Orchestration-based**). If the 'Payment' fails, the 'Orchestrator' must trigger a 'Compensating Transaction' in the 'Ride Service' to mark it as 'Unpaid/Failed' rather than 'Finished,' ensuring data consistency without 2PC.
 
 ### Data Management and Storage
 

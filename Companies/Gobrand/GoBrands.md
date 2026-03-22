@@ -69,6 +69,9 @@ i didn't work with azure before but the is no big different between it and aws
         - Deploy to AKS via Helm charts
         - Use blue/green or canary deployments for zero downtime.
 
+> [!TIP]
+> **Antigravity Tip**: When discussing Azure, mention **Azure Front Door**. It combines CDN, WAF, and global load balancing. For third-party partner integrations at Gobrand, using Front Door ensures that a partner in the US gets the same low latency as one in the EU by routing to the nearest healthy backend.
+
 ***4. Reliability: SLIs & Resilience:***
 
 - SLIs:
@@ -98,6 +101,9 @@ i didn't work with azure before but the is no big different between it and aws
 
 - Example:
   When creating an order:
+
+> [!TIP]
+> **Antigravity Tip**: If Gobrand uses **Azure Cosmos DB**, mention its **5 Consistency Levels**. For an order system, "Session" consistency is often the sweet spot—it ensures a user sees their own write immediately while keeping global latency low. Most engineers only know "Strong" vs "Eventual," so this adds clear Principal-level depth.
   Save in DB → publish OrderCreated event → inventory service handles asynchronously.
   On failure, publish OrderFailed to trigger rollback/compensations.
 

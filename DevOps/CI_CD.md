@@ -8,7 +8,8 @@ CI/CD stands for Continuous Integration and Continuous Deployment/Delivery. It a
 ## 2. What is Continuous Integration (CI)?
 
 **Answer:**
-CI is the practice of frequently integrating code changes into a shared repository, with automated builds and tests to detect issues early.
+CI is the practice of frequently integrating code changes into a shared repository, with automated builds and tests.
+- *Example*: Every time a developer pushes code to GitHub, a "Build" action is triggered that runs 500 unit tests. If any test fails, the team is notified immediately.
 
 ## 3. What is Continuous Delivery?
 
@@ -18,7 +19,8 @@ Continuous Delivery ensures code is always in a deployable state, with automated
 ## 4. What is Continuous Deployment?
 
 **Answer:**
-Continuous Deployment automatically deploys code changes to production after passing automated tests, with no manual intervention.
+Continuous Deployment automatically deploys code changes to production after passing automated tests.
+- *Example*: Merging a Pull Request to the `main` branch automatically triggers a deployment that updates the live website at `myapp.com` without any human clicking "Deploy".
 
 ## 5. What is the difference between Continuous Delivery and Continuous Deployment?
 
@@ -82,11 +84,13 @@ Pipeline as Code defines CI/CD pipelines using code (Jenkinsfile, GitHub Actions
 
 **Answer:**
 Blue-Green Deployment maintains two identical environments, switching traffic from old (blue) to new (green) version for zero downtime.
+- *Example*: You have v1 running on "Blue". You deploy v2 to "Green". After testing, you switch your AWS Route53 DNS to point to "Green". If v2 has a bug, you switch DNS back to "Blue" in seconds.
 
 ## 15. What is Canary Deployment?
 
 **Answer:**
 Canary Deployment gradually rolls out new version to a small percentage of users before full deployment.
+- *Example*: Netflix might roll out a new recommendation algorithm to only 1% of users in Brazil to monitor its performance before giving it to the other 99%.
 
 ## 16. What is Rolling Deployment?
 
@@ -97,6 +101,7 @@ Rolling Deployment updates instances gradually, replacing old instances with new
 
 **Answer:**
 Feature Flags enable toggling features without code deployment, allowing gradual rollouts and A/B testing.
+- *Example*: An "Under Maintenance" banner that you can turn ON or OFF via a dashboard (like LaunchDarkly) without having to rebuild or redeploy your code.
 
 ## 18. What is the difference between Staging and Production?
 
@@ -237,6 +242,7 @@ CI/CD Metrics track pipeline performance:
 ## 40. What is GitOps?
 
 **Answer:**
-GitOps uses Git as the single source of truth for infrastructure and application deployment, with automated synchronization.
+GitOps uses Git as the single source of truth for infrastructure and application deployment.
+- *Example*: To increase your web server count from 2 to 5, you edit a `replicas: 5` value in a YAML file in your Git repo. A tool like **ArgoCD** sees this change and automatically scales up your cluster.
 
 

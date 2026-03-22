@@ -61,7 +61,8 @@ Hooks are functions that let you "hook into" React state and lifecycle features 
 ## 6. What is `useState` hook?
 
 **Answer:**
-`useState` is a hook that allows you to add state to functional components. It returns an array with the current state value and a function to update it.
+`useState` is a hook that allows you to add state to functional components.
+- *Example*: In a search bar, you use `useState` to store the text the user is typing. Every time they type a letter, the state updates and the input field shows the new character.
 
 ### Example:
 ```jsx
@@ -82,7 +83,8 @@ function Counter() {
 ## 7. What is `useEffect` hook?
 
 **Answer:**
-`useEffect` lets you perform side effects in functional components. It's similar to `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` combined.
+`useEffect` lets you perform side effects in functional components.
+- *Example*: Fetching a user's profile from `/api/user/123` as soon as the profile page loads. The effect runs once, gets the data, and updates the state to show the profile.
 
 ### Example:
 ```jsx
@@ -129,7 +131,8 @@ useEffect(() => {
 ## 9. What is the Virtual DOM?
 
 **Answer:**
-The Virtual DOM is a JavaScript representation of the real DOM. React uses it to efficiently update the UI by comparing the virtual DOM with the previous version and only updating the changed parts (reconciliation).
+The Virtual DOM is a JavaScript representation of the real DOM.
+- *Example*: If you have a list of 1,000 items and you change the color of just one item, React updates the Virtual DOM first, realizes only one `<li>` changed, and tells the browser to update *only* that one line instead of the whole 1,000-item list.
 
 ## 10. What is the difference between props and state?
 
@@ -344,6 +347,7 @@ function Mouse({ render }) {
 
 **Answer:**
 React Context provides a way to pass data through the component tree without prop drilling.
+- *Example*: A "User Language" setting (English/Spanish). Instead of passing `lang="en"` through every single component in your app, you wrap the app in a `LanguageContext.Provider`. Any component, no matter how deep, can then access the `lang` value directly.
 
 ### Example:
 ```jsx

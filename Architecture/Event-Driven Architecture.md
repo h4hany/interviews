@@ -4,6 +4,7 @@
 
 **Answer:**
 Event-Driven Architecture is a software architecture pattern where services communicate through events. Services produce and consume events asynchronously, enabling loose coupling and scalability.
+- *Example*: When you request a ride on Uber, an "OrderCreated" event is published. The "Billing" service, "Notification" service, and "Driver" service all react to this event independently.
 
 ## 2. What are the benefits of Event-Driven Architecture?
 
@@ -38,7 +39,8 @@ Event Consumer is a service that subscribes to and processes events.
 ## 7. What is Event Broker?
 
 **Answer:**
-Event Broker is middleware that receives events from producers and delivers them to consumers (Kafka, RabbitMQ, AWS EventBridge).
+Event Broker is middleware that receives events from producers and delivers them to consumers.
+- *Example*: **Apache Kafka** is used for high-volume event streaming, while **RabbitMQ** is often used for traditional message queuing and complex routing.
 
 ## 8. What is the difference between Event Streaming and Message Queuing?
 
@@ -55,6 +57,7 @@ Pub/Sub is a messaging pattern where publishers send messages to topics/channels
 
 **Answer:**
 Event Sourcing stores all changes to application state as a sequence of events, enabling time travel and audit trails.
+- *Example*: A banking system where every deposit, withdrawal, and transfer is stored as an event. The current balance is calculated by replaying all these events from the beginning.
 
 ## 11. What is the difference between Event Sourcing and Event-Driven Architecture?
 
@@ -66,6 +69,7 @@ Event Sourcing stores all changes to application state as a sequence of events, 
 
 **Answer:**
 CQRS separates read and write operations, using different models for commands (writes) and queries (reads), often combined with Event Sourcing.
+- *Example*: On Amazon, the "Write" model handles new reviews and orders, while the "Read" model is a highly optimized, cached version of the product page shown to millions of users.
 
 ## 13. What is Event Store?
 
@@ -102,6 +106,10 @@ Event Orchestration uses a central orchestrator to coordinate service interactio
 
 **Answer:**
 Saga Pattern manages distributed transactions using a sequence of events, with compensation events for rollback.
+- *Example*: To book a trip:
+    1. Flight service reserves seat.
+    2. Hotel service reserves room.
+    3. If Payment service fails, "Cancel Seat" and "Cancel Room" events are sent to revert the state.
 
 ## 20. What is Eventual Consistency?
 
@@ -133,6 +141,7 @@ Event Deduplication prevents processing duplicate events, typically using event 
 
 **Answer:**
 DLQ stores events that couldn't be processed after multiple retries, enabling manual investigation and reprocessing.
+- *Example*: If an email service fails to send a notification after 5 attempts due to an invalid email format, the message is moved to a DLQ for an admin to fix.
 
 ## 26. What is Event Schema Registry?
 
@@ -216,6 +225,7 @@ Event-Driven Microservices combine microservices architecture with event-driven 
 
 **Answer:**
 CDC captures database changes as events, enabling event-driven integration with existing systems.
+- *Example*: When a user updates their profile in a MySQL database, a CDC tool like Debezium captures the change and pushes it to Kafka, which then updates an Elasticsearch index for faster searching.
 
 ## 40. What is the difference between Event Sourcing and Change Data Capture?
 

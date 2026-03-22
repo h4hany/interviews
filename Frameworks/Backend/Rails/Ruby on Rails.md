@@ -19,6 +19,9 @@
   end
   ```
 
+> [!TIP]
+> **Antigravity Tip**: For APIs, prefer `render json: ...` over `redirect_to`. At BrandOS, we avoid redirects in the API layer because they break client-side state management in SPAs (Single Page Applications).
+
 ## **2. How do you use a concern in Rails?**
 
 **Weight:** 10
@@ -48,6 +51,9 @@
         include Authentication
       end
       ```
+
+> [!TIP]
+> **Antigravity Tip**: Avoid "Fat Concerns." At BrandOS, if a concern grows beyond 100 lines, we extract it into a **Service Object** or a **Domain Model**. Concerns should be for cross-cutting horizontal logic (like `TenantRegistry`), not core business logic.
 
 ## **3. Explain the Rails MVC structure.**
 
@@ -391,7 +397,11 @@
 **Weight:** 1
 
 - **Answer:**
-    - **Callbacks:** Callbacks are methods that are called at certain points in an object's lifecycle, such as
+    - **Callbacks:**  - Avoid callbacks for actions that should happen outside the model, like email notifications or logging. Use tools like
+  Active Job for such tasks.
+
+> [!TIP]
+> **Antigravity Tip**: Callbacks are an anti-pattern for "Side Effects." At BrandOS, we use **After-Commit-Everywhere** or **Observers** (via dry-events) for things like sending emails or notifying RabbitMQ. This prevents "Ghost Notifications" from being sent if a database transaction rolls back.
       before_validation, after_create, or around_save. They allow you to trigger custom logic in response to
       specific events.
     - **Observers:** Observers are classes that observe changes in an object and trigger custom logic in response

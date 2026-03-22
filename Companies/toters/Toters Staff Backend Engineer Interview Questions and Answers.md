@@ -40,12 +40,12 @@ These questions delve into your technical expertise across various backend domai
 
 ### Q7: Design a scalable and fault-tolerant API for an e-commerce platform's order processing system. Consider aspects like idempotency, asynchronous processing, and error handling.
 
-**Answer Guidance:** This is a system design question. Discuss microservices architecture, API gateway, message queues (e.g., Kafka, RabbitMQ) for asynchronous processing, database choices (relational/NoSQL), caching (Redis), and load balancing. Explain how you would ensure idempotency for order creation and robust error handling with retries and dead-letter queues. Mention monitoring and alerting strategies.
-
+**Answer Guidance:** This is a system design question. Discuss microservices architecture, API gateway, message queues (e.g., Kafka, RabbitMQ) for asynchronous processing, database choices (relational/NoSQL), caching (Redis), and load balancing.
+- *Example*: To ensure **idempotency**, a client generates a `request_id` for every new order. The server stores this ID in Redis for 24 hours. if the same ID comes again, the server simply returns the existing order instead of creating a duplicate.
 ### Q8: Explain the principles of microservices architecture and when you would choose it over a monolithic architecture.
 
-**Answer Guidance:** Define microservices as small, independent, loosely coupled services. Discuss benefits like scalability, independent deployment, technology diversity, and resilience. Explain trade-offs such as increased operational complexity, distributed data management, and inter-service communication challenges. Provide scenarios where microservices are advantageous (e.g., large, complex applications with evolving requirements) and when a monolith might be preferred (e.g., small, simple applications).
-
+**Answer Guidance:** Define microservices as small, independent, loosely coupled services.
+- *Example*: During a major food festival, the "Delivery Tracking" service might see a 10x spike in traffic while "Account Settings" stays flat. In a microservices model, you only scale the Tracking pods, saving significant infrastructure costs.
 ### Q9: How do you ensure the scalability, reliability, and maintainability of backend systems?
 
 **Answer Guidance:** Discuss strategies such as:  
@@ -84,6 +84,7 @@ AND C.customer_id NOT IN (
 ```
 
 Explain each part of the query, including joins, filtering, grouping, and subqueries.
+- *Optimization Tip*: In a massive database, `NOT IN` can be slow. A more performant way is to use a `LEFT JOIN` on the excluded category and filter for `WHERE category_id IS NULL`.
 
 ### 2.4. Cloud & DevOps
 

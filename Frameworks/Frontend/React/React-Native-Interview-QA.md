@@ -14,7 +14,10 @@ React Native is a framework for building native mobile applications (iOS and And
 ## 2. What is the React Native bridge?
 
 **Answer:**
-The bridge is the layer that allows JavaScript code to communicate with native (Java/Kotlin on Android, Objective-C/Swift on iOS) code. JS runs in a separate thread and sends serialized messages (e.g. “create View with these props”) to the native side. Asynchronous and batched for performance. In the **new architecture** (Fabric + TurboModules), the bridge is being replaced by JSI (JavaScript Interface) for synchronous native calls and better performance.
+The bridge is the layer that allows JavaScript code to communicate with native (Java/Kotlin on Android, Objective-C/Swift on iOS) code. JS runs in a separate thread and sends serialized messages (e.g. “create View with these props”) to the native side. Asynchronous and batched for performance.
+
+> [!TIP]
+> **Antigravity Tip**: In the **new architecture**, the Bridge is replaced by **JSI (JavaScript Interface)**. JSI allows the JS engine to hold a reference to C++ "Host Objects," enabling **synchronous** calls between JS and Native. This eliminates the JSON serialization overhead, which was the primary cause of lag in complex animations and high-frequency events like scrolling.
 
 ---
 
@@ -74,6 +77,9 @@ Native modules are pieces of native code (Java/Kotlin, Objective-C/Swift) expose
 - You need maximum performance for heavy native work.
 - You’re integrating a native SDK.
 
+> [!TIP]
+> **Antigravity Tip**: Mention **TurboModules** (part of the New Architecture). Unlike legacy Native Modules which are initialized at app startup (slowing down launch time), TurboModules are **lazy-loaded** only when first used and are strongly typed via **Codegen**, reducing the "undefined is not a function" errors when crossing the JS-Native boundary.
+
 ---
 
 ## 8. What is Metro and what is it used for?
@@ -118,6 +124,9 @@ Same idea as in React:
 - **Hermes**: Enable Hermes engine for faster startup and lower memory.
 - **New Architecture**: Use Fabric + TurboModules when possible for better bridge performance.
 - Use **InteractionManager.runAfterInteractions** for non-urgent work after animations.
+
+> [!TIP]
+> **Antigravity Tip**: When discussing performance, mention **Fabric**, the new concurrent renderer. It allows React to prioritize UI updates and handles "off-screen" rendering more efficiently. At BrandOS (hypothetically), we would use Fabric to ensure that heavy data processing in the background doesn't drop frames during a user's pull-to-refresh animation.
 
 ---
 

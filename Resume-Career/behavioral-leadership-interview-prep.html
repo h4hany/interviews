@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root{
+      --header-h:60px;
       --bg:#07060c;--surface:#0d0b16;--surface2:#12101e;--border:#1e1a2e;
       --accent:#c084fc;--accent2:#f472b6;--accent3:#fb923c;--accent4:#34d399;--accent5:#60a5fa;
       --text:#f0eaff;--text-dim:#7868a8;--text-dimmer:#221e35;
@@ -17,16 +18,26 @@
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(192,132,252,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(244,114,182,0.015) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:0}
     body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 25%,rgba(192,132,252,0.07) 0%,transparent 50%),radial-gradient(ellipse at 85% 75%,rgba(244,114,182,0.05) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(251,146,60,0.03) 0%,transparent 55%);pointer-events:none;z-index:0}
 
-    header{position:sticky;top:0;z-index:100;background:rgba(7,6,12,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+    header{position:sticky;top:0;z-index:100;background:rgba(7,6,12,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 16px 0 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px 12px;min-height:var(--header-h);height:auto}
+    .nav-toggle{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-right:4px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--accent);cursor:pointer;transition:border-color .2s,background .2s;font-size:18px;line-height:1}
+    .nav-toggle:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
+    .nav-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
     .logo{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
     .logo-b{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:14px;font-weight:700}
     .logo span{color:var(--text-dim)}
-    .progress-bar-wrap{flex:1;max-width:300px;margin:0 24px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .progress-bar-wrap{flex:1;max-width:300px;margin:0 16px;min-width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
     .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));transition:width 0.5s ease;width:0%}
     .xp-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);padding:4px 12px;border-radius:20px}
 
-    .app{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1}
-    nav.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    .app{display:block;min-height:calc(100vh - var(--header-h));position:relative;z-index:1}
+    .sidebar-shell{min-width:0}
+    .sidebar-backdrop{position:fixed;inset:0;top:var(--header-h);background:rgba(0,0,0,.45);z-index:150;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s;pointer-events:none}
+    .app.sidebar-open .sidebar-backdrop{opacity:1;visibility:visible;pointer-events:auto}
+    nav.sidebar{position:fixed;left:0;top:var(--header-h);width:min(280px,88vw);height:calc(100vh - var(--header-h));max-height:calc(100vh - var(--header-h));border-right:1px solid var(--border);padding:20px 0;background:var(--surface);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;z-index:160;transform:translateX(-100%);transition:transform .25s ease;box-shadow:8px 0 32px rgba(0,0,0,.35)}
+    .app.sidebar-open nav.sidebar{transform:translateX(0)}
+    @media (min-width:769px){.app{display:grid;grid-template-columns:0px minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:start;transition:grid-template-columns .25s ease}.app.sidebar-open{grid-template-columns:min(280px,32vw) minmax(0,1fr)}.sidebar-shell{display:block;overflow:hidden;align-self:stretch;min-height:calc(100vh - var(--header-h))}.sidebar-backdrop{display:none!important}nav.sidebar{position:sticky;top:var(--header-h);left:auto;width:100%;max-width:min(280px,32vw);transform:none!important;box-shadow:none;z-index:1}.app:not(.sidebar-open) nav.sidebar{pointer-events:none;visibility:hidden}.app.sidebar-open nav.sidebar{pointer-events:auto;visibility:visible}main{grid-column:2;grid-row:1;min-width:0}}
+    @media (max-width:768px){.sidebar-shell{display:contents}}
     .nav-section-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dimmer);padding:16px 20px 8px;text-transform:uppercase}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-dim)}
     .nav-item:hover{color:var(--text);background:var(--surface)}
@@ -205,6 +216,7 @@
 </head>
 <body>
 <header>
+  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleSidebar()" aria-label="Open topics menu" aria-expanded="false" aria-controls="sidebarNav">☰</button>
   <div class="logo">
     <span class="logo-b">Behavioral &amp; Leadership</span>
     <span>// INTERVIEW PREP</span>
@@ -213,8 +225,10 @@
   <div class="xp-badge" id="xpBadge">⚡ 0 XP</div>
 </header>
 
-<div class="app">
-  <nav class="sidebar">
+<div class="app" id="appRoot">
+  <div class="sidebar-shell">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true" onclick="closeSidebar()"></div>
+  <nav class="sidebar" id="sidebarNav" aria-label="Topics">
     <div class="nav-section-title">Start Here</div>
     <div class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span>Home</div>
     <div class="nav-section-title">🎯 Core Framework</div>
@@ -238,6 +252,7 @@
     <div class="nav-section-title">Final Prep</div>
     <div class="nav-item" onclick="showLesson('cheatsheet')" id="nav-cheatsheet"><span class="icon">📋</span>Full Cheatsheet<span class="done-dot"></span></div>
   </nav>
+  </div>
 
   <main id="mainContent">
     <!-- HOME -->
@@ -1351,11 +1366,30 @@
     totalTopics:TOPICS.length
   };
 
+  function setSidebarOpen(open){
+    const root=document.getElementById('appRoot');
+    const btn=document.getElementById('navToggle');
+    const backdrop=document.getElementById('sidebarBackdrop');
+    if(!root||!btn) return;
+    root.classList.toggle('sidebar-open',open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
+    btn.setAttribute('aria-label',open?'Close topics menu':'Open topics menu');
+    if(backdrop) backdrop.setAttribute('aria-hidden',open?'false':'true');
+    document.body.style.overflow=open&&window.matchMedia('(max-width: 768px)').matches?'hidden':'';
+  }
+  function toggleSidebar(){
+    const root=document.getElementById('appRoot');
+    if(!root) return;
+    setSidebarOpen(!root.classList.contains('sidebar-open'));
+  }
+  function closeSidebar(){ setSidebarOpen(false); }
+
   function showPage(p){
     document.getElementById('home-page').style.display=(p==='home')?'block':'none';
     document.querySelectorAll('.lesson-page').forEach(x=>x.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
     if(p==='home') document.getElementById('nav-home').classList.add('active');
+    closeSidebar();
     updateXP();
   }
 
@@ -1367,6 +1401,7 @@
     if(l) l.classList.add('active');
     const n=document.getElementById('nav-'+id);
     if(n) n.classList.add('active');
+    closeSidebar();
     document.querySelector('main').scrollTo(0,0);
     window.scrollTo(0,0);
   }
@@ -1426,6 +1461,12 @@
     updateProgress();updateXP();
   }
   init();
+  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeSidebar();});
+  window.addEventListener('resize',()=>{
+    const root=document.getElementById('appRoot');
+    if(!root||!root.classList.contains('sidebar-open')) return;
+    document.body.style.overflow=window.matchMedia('(max-width: 768px)').matches?'hidden':'';
+  });
 </script>
 </body>
 </html>

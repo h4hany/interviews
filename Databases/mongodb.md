@@ -11,8 +11,8 @@ It is designed to handle large volumes of unstructured data and is horizontally 
 **Answer:**
 
 - **SQL databases** use a relational model and store data in tables with predefined schemas.
-- **MongoDB** is schema-less and stores data in collections of documents, which can vary in structure, providing more
-  flexibility.
+- **MongoDB** is schema-less and stores data in collections of documents, which can vary in structure.
+    - *Example*: A User document can have `social_links` for Twitter and LinkedIn, while another user in the same collection only has `email`, without needing a database migration.
 
 ## 3. What is a document in MongoDB?
 
@@ -74,6 +74,7 @@ manage large data sets efficiently.
 **Answer:**  
 A replica set is a group of MongoDB servers that maintain the same data set. It provides redundancy and high
 availability, ensuring data remains accessible even if one or more servers fail.
+- *Example*: In a 3-node replica set, if the Primary node crashes, the other two nodes hold an election and one becomes the new Primary, ensuring your app stays online with minimal downtime.
 
 ## 10. What is the default port for MongoDB?
 
@@ -90,8 +91,8 @@ The default port for MongoDB is `27017`.
 ## 12. What is an index in MongoDB?
 
 **Answer:**  
-An index in MongoDB is a data structure that improves the speed of data retrieval operations. MongoDB creates an index
-for every field in a query to make the search process faster.
+An index in MongoDB is a data structure that improves the speed of data retrieval operations.
+- *Example*: Searching for a user by `email` in a collection of 10 million users might take 5 seconds without an index (scanning every document), but only 5 milliseconds with an index.
 
 ## 13. What are the different types of indexes in MongoDB?
 
@@ -179,7 +180,8 @@ scaling, and security, and can run on AWS, Azure, and Google Cloud.
 
 **Answer:**  
 A capped collection is a fixed-size collection in MongoDB that automatically overwrites the oldest documents when it
-reaches its maximum size. It is typically used for logging.
+reaches its maximum size.
+- *Example*: Storing the last 10,000 lines of application logs. Once the 10,001st log comes in, the 1st log is automatically deleted to make room.
 
 ## 24. What is the `distinct()` function in MongoDB?
 
@@ -414,8 +416,8 @@ db.products.updateOne(
 ## 41. What is the difference between embedded documents and references in MongoDB?
 
 **Answer:**
-- **Embedded Documents**: Store related data within a single document. Best for one-to-one or one-to-few relationships where data is accessed together.
-- **References**: Store references (ObjectIds) to other documents. Best for one-to-many or many-to-many relationships, or when documents are large.
+- **Embedded Documents**: Store related data within a single document. *Example*: Storing "Line Items" inside an "Order" document because they are always read together.
+- **References**: Store references (ObjectIds) to other documents. *Example*: Storing a `user_id` inside an "Order" document because a user can have thousands of orders, and you don't want to bloat the User document.
 
 ### Example:
 ```javascript
