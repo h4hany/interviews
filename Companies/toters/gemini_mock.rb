@@ -36,3 +36,4 @@ class FlashPromotion
     LUA
   end
 end
+

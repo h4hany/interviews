@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design Arena — Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Clash+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --surface: #0e1118;
+  --surface2: #161b27;
+  --border: #1e2535;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --gold: #fbbf24;
+  --green: #10b981;
+  --red: #ef4444;
+  --orange: #f97316;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --card: #111827;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Animated star background */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(0,212,255,.04) 0,transparent 60%),
+             radial-gradient(ellipse at 80% 20%,rgba(124,58,237,.05) 0,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(6,8,16,.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.logo{
+  font-family:'Clash Display',sans-serif;
+  font-size:20px;font-weight:700;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;
+}
+.logo span{color:#fff;-webkit-text-fill-color:#fff;opacity:.3;font-weight:400}
+
+.hud{display:flex;align-items:center;gap:16px}
+.xp-bar-wrap{display:flex;align-items:center;gap:8px}
+.xp-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);white-space:nowrap}
+.xp-track{width:120px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f59e0b);border-radius:3px;transition:width .5s ease}
+.badge{
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:6px;
+  background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--accent);
+}
+.streak-badge{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:var(--orange)}
+
+/* ── TABS ── */
+.tabs{
+  position:relative;z-index:1;
+  display:flex;gap:4px;padding:20px 24px 0;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;scrollbar-width:none;
+}
+.tab{
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+  padding:10px 18px;border-radius:8px 8px 0 0;border:1px solid transparent;
+  border-bottom:none;cursor:pointer;white-space:nowrap;
+  color:var(--muted);background:transparent;
+  transition:all .2s;letter-spacing:.5px;
+}
+.tab.active{
+  background:var(--surface);border-color:var(--border);
+  border-bottom:1px solid var(--surface);
+  color:var(--accent);margin-bottom:-1px;
+}
+.tab:hover:not(.active){color:var(--text)}
+.tab .t-icon{margin-right:6px}
+
+/* ── MAIN LAYOUT ── */
+.page{display:none;position:relative;z-index:1}
+.page.active{display:block}
+
+/* ── CARDS GRID ── */
+.cards-header{
+  padding:20px 24px 0;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filt{
+  font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface);color:var(--muted);
+  cursor:pointer;transition:all .2s;font-family:'Space Mono',monospace;
+}
+.filt.on{background:var(--accent);border-color:var(--accent);color:#000}
+.progress-info{
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.progress-info .bar{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-info .bar-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s}
+
+.cards-grid{
+  padding:16px 24px 60px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;
+}
+
+/* ── QUESTION CARD ── */
+.qcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+  position:relative;
+}
+.qcard::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(135deg,rgba(0,212,255,.05),transparent);
+  opacity:0;transition:opacity .2s;pointer-events:none;
+}
+.qcard:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.qcard:hover::after{opacity:1}
+.qcard:hover{border-color:rgba(0,212,255,.25)}
+.qcard.solved{border-color:rgba(16,185,129,.3)}
+.qcard.solved::after{background:linear-gradient(135deg,rgba(16,185,129,.05),transparent);opacity:1}
+
+.qcard-top{padding:16px 16px 12px;display:flex;gap:10px;align-items:flex-start}
+.q-num{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  padding:3px 7px;border-radius:5px;white-space:nowrap;flex-shrink:0;margin-top:2px;
+  background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.15);
+}
+.q-cat{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;
+  white-space:nowrap;flex-shrink:0;margin-top:2px;letter-spacing:.4px;
+}
+.q-title{font-size:14px;font-weight:600;line-height:1.5;flex:1}
+.q-xp{
+  font-family:'Space Mono',monospace;font-size:10px;
+  color:var(--gold);flex-shrink:0;margin-top:4px;white-space:nowrap;
+}
+
+.q-tap-hint{
+  padding:6px 16px 12px;font-size:11px;color:var(--muted);
+  display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;
+}
+.qcard.solved .q-tap-hint{display:none}
+
+/* Expandable answer */
+.q-answer{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.qcard.open .q-answer,.qcard.solved .q-answer{max-height:2000px}
+
+.answer-body{
+  padding:0 16px 16px;border-top:1px solid var(--border);padding-top:14px;
+}
+.answer-section{margin-bottom:14px}
+.answer-section:last-child{margin-bottom:0}
+.answer-label{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--accent);letter-spacing:.8px;text-transform:uppercase;
+  margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.answer-label.green{color:var(--green)}
+.answer-label.gold{color:var(--gold)}
+.answer-label.orange{color:var(--orange)}
+.answer-text{font-size:13px;line-height:1.75;color:#94a3b8}
+.answer-text strong{color:var(--text);font-weight:600}
+.answer-text em{color:var(--accent);font-style:normal}
+.answer-text code{
+  font-family:'Space Mono',monospace;font-size:11px;
+  background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);
+  padding:1px 5px;border-radius:4px;color:var(--accent);
+}
+
+.real-world-box{
+  background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);
+  border-radius:8px;padding:10px 12px;margin-top:8px;
+}
+.rw-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:.6px;margin-bottom:4px}
+.rw-text{font-size:12px;line-height:1.65;color:#6ee7b7}
+
+.interview-tip{
+  background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);
+  border-radius:8px;padding:10px 12px;margin-top:8px;
+}
+.tip-label{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.6px;margin-bottom:4px}
+.tip-text{font-size:12px;line-height:1.65;color:#fde68a}
+
+.mark-btn{
+  margin-top:14px;width:100%;
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;
+  padding:10px;border-radius:8px;border:none;cursor:pointer;
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);
+  color:var(--green);transition:all .2s;
+}
+.mark-btn:hover{background:rgba(16,185,129,.2)}
+.qcard.solved .mark-btn{background:rgba(16,185,129,.2);color:#fff}
+
+/* Category colors */
+.cat-db{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.cat-scale{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.cat-cache{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
+.cat-algo{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.cat-cloud{background:rgba(124,58,237,.1);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.cat-design{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.2)}
+.cat-resilience{background:rgba(236,72,153,.1);color:#f472b6;border:1px solid rgba(236,72,153,.2)}
+.cat-interview{background:rgba(14,165,233,.1);color:#38bdf8;border:1px solid rgba(14,165,233,.2)}
+.cat-spark{background:rgba(234,179,8,.1);color:#fde047;border:1px solid rgba(234,179,8,.2)}
+.cat-ai{background:rgba(167,139,250,.1);color:#c4b5fd;border:1px solid rgba(167,139,250,.2)}
+.cat-boss{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.35)}
+
+/* ── BOSS BATTLE PAGE ── */
+.boss-page{padding:24px}
+.boss-header{
+  background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(124,58,237,.1));
+  border:1px solid rgba(239,68,68,.2);border-radius:16px;
+  padding:24px;margin-bottom:24px;text-align:center;
+}
+.boss-title{
+  font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;
+  background:linear-gradient(135deg,#ef4444,#f97316);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:6px;
+}
+.boss-subtitle{font-size:14px;color:var(--muted);margin-bottom:16px}
+.boss-hp{display:flex;align-items:center;gap:12px;justify-content:center}
+.hp-label{font-family:'Space Mono',monospace;font-size:12px;color:#ef4444}
+.hp-track{width:200px;height:10px;background:var(--border);border-radius:5px;overflow:hidden}
+.hp-fill{height:100%;background:linear-gradient(90deg,#ef4444,#f97316);border-radius:5px;transition:width .5s ease}
+
+.boss-sections{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.boss-sections{grid-template-columns:1fr}}
+
+.boss-section{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;
+}
+.boss-sec-title{
+  font-family:'Clash Display',sans-serif;font-size:16px;font-weight:600;
+  margin-bottom:4px;display:flex;align-items:center;gap:8px;
+}
+.boss-sec-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+.arch-diagram{
+  background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;font-family:'Space Mono',monospace;font-size:11px;
+  line-height:1.8;color:#94a3b8;overflow-x:auto;white-space:pre;
+}
+
+.step-list{list-style:none;counter-reset:steps}
+.step-item{
+  counter-increment:steps;
+  display:flex;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;
+}
+.step-item:last-child{border-bottom:none}
+.step-item::before{
+  content:counter(steps);
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  min-width:22px;height:22px;border-radius:50%;
+  background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+
+.trade-off-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.trade-box{
+  border-radius:8px;padding:10px;font-size:12px;line-height:1.6;
+}
+.trade-pro{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);color:#6ee7b7}
+.trade-con{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:#fca5a5}
+.trade-box strong{display:block;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;font-family:'Space Mono',monospace}
+
+.component-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;margin-bottom:8px;
+}
+.comp-name{font-weight:700;font-size:13px;margin-bottom:3px;color:var(--accent)}
+.comp-desc{font-size:12px;color:var(--muted);line-height:1.55}
+.comp-why{font-size:11px;color:var(--green);margin-top:4px;font-style:italic}
+
+/* ── CHEAT SHEET PAGE ── */
+.cheat-page{padding:24px}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.cheat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;
+}
+.cheat-title{
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+  color:var(--accent);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;
+  border-bottom:1px solid var(--border);padding-bottom:8px;
+}
+.cheat-item{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:5px 0;border-bottom:1px dashed rgba(30,37,53,.8);font-size:12px;
+}
+.cheat-item:last-child{border-bottom:none}
+.cheat-key{color:var(--muted)}
+.cheat-val{font-family:'Space Mono',monospace;font-size:11px;color:var(--text);text-align:right}
+
+/* ── XP POPUP ── */
+.xp-popup{
+  position:fixed;top:80px;right:24px;z-index:999;
+  background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(249,115,22,.1));
+  border:1px solid rgba(251,191,36,.3);border-radius:12px;
+  padding:14px 20px;display:flex;align-items:center;gap:10px;
+  transform:translateX(200%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.xp-popup.show{transform:translateX(0)}
+.xp-popup-icon{font-size:24px}
+.xp-popup-text{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--gold)}
+.xp-popup-sub{font-size:11px;color:var(--muted)}
+
+/* ── LEVEL UP OVERLAY ── */
+.levelup-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.8);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.levelup-overlay.show{opacity:1;pointer-events:all}
+.levelup-card{
+  background:var(--card);border:2px solid var(--gold);border-radius:20px;
+  padding:48px 56px;text-align:center;max-width:400px;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{from{transform:scale(.5)}to{transform:scale(1)}}
+.levelup-emoji{font-size:64px;margin-bottom:16px}
+.levelup-title{
+  font-family:'Clash Display',sans-serif;font-size:32px;font-weight:700;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.levelup-sub{font-size:15px;color:var(--muted);margin-bottom:24px}
+.levelup-close{
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+  padding:10px 24px;border-radius:8px;border:none;cursor:pointer;
+  background:var(--gold);color:#000;transition:opacity .2s;
+}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  header{padding:0 16px}
+  .hud .xp-bar-wrap{display:none}
+  .cards-header,.cards-grid,.boss-page,.cheat-page{padding-left:16px;padding-right:16px}
+  .cards-grid{grid-template-columns:1fr}
+  .tabs{padding:16px 16px 0}
+  .boss-sections{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- XP Popup -->
+<div class="xp-popup" id="xpPopup">
+  <div class="xp-popup-icon">⚡</div>
+  <div>
+    <div class="xp-popup-text" id="xpPopupText">+50 XP</div>
+    <div class="xp-popup-sub" id="xpPopupSub">Question mastered!</div>
+  </div>
+</div>
+
+<!-- Level Up Overlay -->
+<div class="levelup-overlay" id="lvlOverlay">
+  <div class="levelup-card">
+    <div class="levelup-emoji">🏆</div>
+    <div class="levelup-title" id="lvlTitle">LEVEL UP!</div>
+    <div class="levelup-sub" id="lvlSub">You reached Level 2 — System Designer</div>
+    <button class="levelup-close" onclick="closeLvl()">CONTINUE →</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">System Design <span>ARENA</span></div>
+  <div class="hud">
+    <div class="xp-bar-wrap">
+      <div class="xp-label">LVL <span id="lvlNum">1</span> · <span id="xpNum">0</span>/<span id="xpMax">200</span> XP</div>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    </div>
+    <div class="badge" id="streakBadge">🔥 0 streak</div>
+    <div class="badge">✅ <span id="solvedCount">0</span> solved</div>
+  </div>
+</header>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" data-tab="cards">📚 Study Cards</div>
+  <div class="tab" data-tab="boss">⚔️ Boss Battle — Yassir/Uber</div>
+  <div class="tab" data-tab="cheat">📋 Cheat Sheet</div>
+</div>
+
+<!-- ══════════ PAGE: STUDY CARDS ══════════ -->
+<div class="page active" id="page-cards">
+  <div class="cards-header">
+    <div class="filters" id="filterBar"></div>
+    <div class="progress-info">
+      <span id="progText">0/0</span>
+      <div class="bar"><div class="bar-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="cards-grid" id="cardGrid"></div>
+</div>
+
+<!-- ══════════ PAGE: BOSS BATTLE ══════════ -->
+<div class="page" id="page-boss">
+<div class="boss-page">
+
+  <div class="boss-header">
+    <div class="boss-title">⚔️ BOSS BATTLE — Design Yassir / Uber</div>
+    <div class="boss-subtitle">This is the final interview question. Defeat it to prove you're interview-ready.</div>
+    <div class="boss-hp">
+      <div class="hp-label">BOSS HP</div>
+      <div class="hp-track"><div class="hp-fill" id="bossHp" style="width:100%"></div></div>
+      <div class="hp-label" id="bossHpNum">100%</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Clarify -->
+  <div class="boss-section" style="margin-bottom:16px">
+    <div class="boss-sec-title">🎯 Step 1 — Clarify Requirements First</div>
+    <div class="boss-sec-sub">Always ask these before drawing anything. This alone impresses 80% of interviewers.</div>
+    <ul class="step-list">
+      <li class="step-item"><div><strong>What scale?</strong> Yassir operates in 45 cities (Algeria, Morocco, Tunisia, France). ~2M active users, ~100K active drivers. Not Uber-global but still needs serious scale.</div></li>
+      <li class="step-item"><div><strong>Core features only?</strong> Agree to focus on: ride request → driver match → real-time tracking → trip completion → payment. Not recommendations, ads, or analytics.</div></li>
+      <li class="step-item"><div><strong>Latency requirements?</strong> Driver matching must happen in under 3 seconds. Location updates every 4–5 seconds. Payment within 10 seconds of trip end.</div></li>
+      <li class="step-item"><div><strong>Consistency vs Availability?</strong> Ride matching must be strongly consistent (no double-booking). Location tracking can be eventually consistent.</div></li>
+      <li class="step-item"><div><strong>What's the traffic pattern?</strong> Peaks at morning/evening rush hours and weekends. Surge pricing implies demand spikes. System must auto-scale.</div></li>
+    </ul>
+  </div>
+
+  <div class="boss-sections">
+
+    <!-- Architecture Overview -->
+    <div class="boss-section">
+      <div class="boss-sec-title">🏗️ High-Level Architecture</div>
+      <div class="boss-sec-sub">Start with this on the whiteboard — boxes first, details later.</div>
+      <div class="arch-diagram">
+[Rider App] ──→ [API Gateway]
+[Driver App] ──→ [API Gateway]
+                      │
+          ┌───────────┼───────────┐
+          ↓           ↓           ↓
+   [Auth Service] [Location   [Ride
+                   Service]   Service]
+                      │           │
+                  [Redis GEO] [PostgreSQL
+                  (hot cache)  + MongoDB]
+                      │           │
+                  [Kafka      [Dispatch
+                  Stream]      Service]
+                      │           │
+                  [Driver     [Notif.
+                  Location DB] Service]
+                              (WebSocket
+                               + Push)</div>
+    </div>
+
+    <!-- Microservices -->
+    <div class="boss-section">
+      <div class="boss-sec-title">⚙️ Core Microservices</div>
+      <div class="boss-sec-sub">Each owns its data. Communication via REST + Kafka events.</div>
+      <div class="component-card">
+        <div class="comp-name">🚗 Location Service</div>
+        <div class="comp-desc">Receives driver GPS every 4–5s via WebSocket. Converts lat/lng to Geohash. Stores in Redis GEO (for fast proximity queries) + writes to Cassandra for history.</div>
+        <div class="comp-why">→ Redis GEOADD/GEORADIUS for O(log N) nearest-driver lookup</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">🎯 Dispatch Service</div>
+        <div class="comp-desc">Receives ride request → queries Location Service for nearby drivers → scores by ETA + rating → sends push notification to best driver → handles accept/decline with timeout retry.</div>
+        <div class="comp-why">→ Uses distributed lock (Redis SETNX) to prevent double-assignment</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">🛣️ Ride Service</div>
+        <div class="comp-desc">Manages the ride state machine: REQUESTED → ACCEPTED → ARRIVING → IN_PROGRESS → COMPLETED. Each state change is atomic in PostgreSQL. Publishes Kafka events per state change.</div>
+        <div class="comp-why">→ Strong consistency needed here — no eventual consistency tolerated</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">💳 Payment Service</div>
+        <div class="comp-desc">Triggered by COMPLETED event from Kafka. Calculates fare (distance × rate + surge). Charges stored payment method. Handles retries, refunds, receipts asynchronously.</div>
+        <div class="comp-why">→ Idempotent — uses trip_id as idempotency key to prevent double charges</div>
+      </div>
+    </div>
+
+    <!-- Location Deep Dive -->
+    <div class="boss-section">
+      <div class="boss-sec-title">📍 The Hard Part — Real-Time Location</div>
+      <div class="boss-sec-sub">This is where most candidates lose points. Know both approaches.</div>
+
+      <div style="margin-bottom:12px">
+        <div class="answer-label">GEOHASH (What Yassir/Uber actually use)</div>
+        <div class="answer-text" style="font-size:12px">
+          Convert GPS coordinates into a short string. <code>37.7564, -122.4016</code> → <code>9q8yy</code>.<br><br>
+          Nearby locations share the same prefix. Drivers in the same <em>geohash cell</em> are stored together in Redis.<br><br>
+          <strong>When rider requests ride:</strong> Hash their location → query Redis for all active drivers in that cell + 8 neighboring cells → rank by distance → dispatch.
+        </div>
+        <div class="real-world-box">
+          <div class="rw-label">🌍 Real Numbers</div>
+          <div class="rw-text">6-char geohash ≈ 1.2km × 0.6km cell. Uber processes 100M+ location updates daily. Redis GEOADD is O(log N) per write — handles this at 200K driver updates/minute easily.</div>
+        </div>
+      </div>
+
+      <div class="trade-off-grid">
+        <div class="trade-box trade-pro">
+          <strong>✅ GEOHASH PROS</strong>
+          O(1) insert speed<br>Works with any DB<br>Easy to cache<br>Simple to understand
+        </div>
+        <div class="trade-box trade-con">
+          <strong>❌ GEOHASH CONS</strong>
+          Edge case: drivers near cell boundaries may be missed<br>Fix: always query 9 cells (target + 8 neighbors)
+        </div>
+      </div>
+    </div>
+
+    <!-- Matching + Locking -->
+    <div class="boss-section">
+      <div class="boss-sec-title">🔒 Driver Matching — The Race Condition Problem</div>
+      <div class="boss-sec-sub">Two riders requesting at the same time can both be assigned the same driver. Here's how to prevent it.</div>
+
+      <ul class="step-list">
+        <li class="step-item"><div><strong>Redis Distributed Lock:</strong> When dispatch picks driver X, immediately <code>SET driver:X:lock &lt;rideId&gt; NX EX 30</code>. NX = only if not exists. If lock fails, driver is busy → try next candidate.</div></li>
+        <li class="step-item"><div><strong>Driver accepts within 15s:</strong> If no response, release lock, notify next driver. Prevents a driver from blocking rides while phone is off.</div></li>
+        <li class="step-item"><div><strong>Exactly-once guarantee:</strong> Ride state transitions use database transactions. <code>UPDATE rides SET driver_id=X WHERE id=Y AND driver_id IS NULL</code> — atomic check-and-set.</div></li>
+        <li class="step-item"><div><strong>Kafka for async work:</strong> After ACCEPTED state, Kafka event triggers notifications to rider, map updates, billing prep. The ride service itself stays fast.</div></li>
+      </ul>
+
+      <div class="interview-tip">
+        <div class="tip-label">💡 Interview Gold</div>
+        <div class="tip-text">Mentioning the distributed lock + idempotent payment key puts you in the top 10% of candidates. Most people forget these and get called out when the interviewer asks "what if two riders request at the same time?"</div>
+      </div>
+    </div>
+
+    <!-- Database Choices -->
+    <div class="boss-section">
+      <div class="boss-sec-title">🗄️ Database Strategy</div>
+      <div class="boss-sec-sub">Different data has different requirements. Don't use one DB for everything.</div>
+      <div class="component-card">
+        <div class="comp-name">Redis (In-Memory)</div>
+        <div class="comp-desc">Active driver locations (Geohash + GEORADIUS), distributed locks, session tokens, surge pricing cache. Evict after driver goes offline.</div>
+        <div class="comp-why">→ Sub-millisecond reads. Perfect for hot, fast-changing data.</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">PostgreSQL (Relational)</div>
+        <div class="comp-desc">Users, drivers, rides, payments. Strongly consistent. ACID compliant. Use read replicas for analytics. Shard by city/region at scale.</div>
+        <div class="comp-why">→ Financial data (fares, payments) must be strongly consistent.</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">Cassandra (Wide-Column)</div>
+        <div class="comp-desc">Driver location history. Append-only, time-series data. Partition key = driver_id, clustering key = timestamp. Write-heavy workload.</div>
+        <div class="comp-why">→ Handles millions of writes/sec. Eventual consistency is fine for history.</div>
+      </div>
+      <div class="component-card">
+        <div class="comp-name">Kafka (Event Stream)</div>
+        <div class="comp-desc">Decouples services. Ride state changes → Kafka topic → consumed by Notification, Payment, Analytics services independently. Replay on failure.</div>
+        <div class="comp-why">→ Prevents cascading failures. Each service processes at its own pace.</div>
+      </div>
+    </div>
+
+    <!-- Scale Numbers -->
+    <div class="boss-section">
+      <div class="boss-sec-title">📊 Back-of-Envelope Estimates</div>
+      <div class="boss-sec-sub">Always do this in the interview. Shows you think like an engineer, not just an architect.</div>
+      <div class="arch-diagram">
+Scale: Yassir — 45 cities, 2M users, 100K drivers
+
+LOCATION UPDATES:
+  100K drivers × 1 update/4s = 25,000 writes/sec
+  → Redis handles 100K+ writes/sec easily ✅
+
+RIDE REQUESTS:
+  1M rides/day = ~12 rides/sec (average)
+  Peak hour (8am): ~60 rides/sec
+  → Single API server handles 10K req/sec ✅
+
+STORAGE (location history):
+  100K drivers × 86400s/day ÷ 4 (interval)
+  = 2.16B writes/day
+  → Each record ≈ 50 bytes = ~108 GB/day
+  → Cassandra cluster with TTL=30days ✅
+
+DRIVER MATCHING LATENCY TARGET:
+  Redis GEO query: < 5ms
+  Dispatch logic: < 100ms
+  Push notification: < 500ms
+  Total: < 1 second ✅</div>
+    </div>
+
+    <!-- Resiliency -->
+    <div class="boss-section">
+      <div class="boss-sec-title">🛡️ Resiliency & Failure Handling</div>
+      <div class="boss-sec-sub">Interviewers WILL ask "what if X fails?" Be ready.</div>
+      <ul class="step-list">
+        <li class="step-item"><div><strong>Redis goes down:</strong> Fallback to PostgreSQL GIS queries (slower but works). Redis is rebuilt from driver heartbeats in seconds once back up.</div></li>
+        <li class="step-item"><div><strong>Dispatch Service crashes:</strong> Kafka consumer group rebalances. Another instance picks up. Ride remains in REQUESTED state — not lost.</div></li>
+        <li class="step-item"><div><strong>Driver app loses internet:</strong> Ride stays ACCEPTED. Rider sees "driver is connecting..." for up to 60s. After timeout, reassign to next driver.</div></li>
+        <li class="step-item"><div><strong>Payment service fails:</strong> Kafka retries. Idempotent design means retry = same result. Charge is queued and processed when service recovers.</div></li>
+        <li class="step-item"><div><strong>Entire datacenter down:</strong> Geo-routing shifts to secondary region (e.g., Casablanca → Paris backup). Data is replicated via Kafka cross-region replication.</div></li>
+      </ul>
+    </div>
+
+  </div><!-- end boss-sections -->
+
+  <!-- Final summary -->
+  <div style="margin-top:16px;background:var(--card);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:20px">
+    <div style="font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:12px">🏆 How to Score 10/10 In The Interview</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+      <div class="real-world-box"><div class="rw-label">1. Start with requirements</div><div class="rw-text">Spend 3–4 min asking what to focus on. Scope it down before drawing anything.</div></div>
+      <div class="real-world-box"><div class="rw-label">2. Draw boxes, not details</div><div class="rw-text">High-level first: API Gateway → Services → Databases. Fill details as time allows.</div></div>
+      <div class="real-world-box"><div class="rw-label">3. Name the hard problems</div><div class="rw-text">Double-booking, cold cache, GPS accuracy, surge pricing. Say what's hard even if you can't fully solve it.</div></div>
+      <div class="real-world-box"><div class="rw-label">4. State your trade-offs</div><div class="rw-text">"I chose Cassandra here because write volume is huge and eventual consistency is acceptable for location history."</div></div>
+      <div class="real-world-box"><div class="rw-label">5. Think out loud always</div><div class="rw-text">Never go silent. Even saying "let me think about what happens at peak load" scores points.</div></div>
+      <div class="real-world-box"><div class="rw-label">6. Do the math</div><div class="rw-text">Estimate: writes/sec, storage/day, latency target. Shows engineering thinking beyond just architecture diagrams.</div></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:20px">
+    <button onclick="defeatBoss()" style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;padding:16px 40px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;letter-spacing:.5px;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 24px rgba(239,68,68,.3)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">⚔️ I'VE STUDIED THIS — DEFEAT THE BOSS (+300 XP)</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PAGE: CHEAT SHEET ══════════ -->
+<div class="page" id="page-cheat">
+<div class="cheat-page">
+  <div style="margin-bottom:20px">
+    <div style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px">📋 Interview Cheat Sheet</div>
+    <div style="font-size:13px;color:var(--muted)">Quick reference for numbers, tools, and rules of thumb. Memorize these before any interview.</div>
+  </div>
+  <div class="cheat-grid">
+
+    <div class="cheat-card">
+      <div class="cheat-title">⏱️ Latency Numbers (SRE Bible)</div>
+      <div class="cheat-item"><span class="cheat-key">L1 Cache</span><span class="cheat-val">~1 ns</span></div>
+      <div class="cheat-item"><span class="cheat-key">RAM read</span><span class="cheat-val">~100 ns</span></div>
+      <div class="cheat-item"><span class="cheat-key">Redis read</span><span class="cheat-val">~1 ms</span></div>
+      <div class="cheat-item"><span class="cheat-key">SSD read</span><span class="cheat-val">~100 μs</span></div>
+      <div class="cheat-item"><span class="cheat-key">DB query (cached)</span><span class="cheat-val">~1–5 ms</span></div>
+      <div class="cheat-item"><span class="cheat-key">DB query (disk)</span><span class="cheat-val">~10–50 ms</span></div>
+      <div class="cheat-item"><span class="cheat-key">Same datacenter</span><span class="cheat-val">~1 ms</span></div>
+      <div class="cheat-item"><span class="cheat-key">Cross-continent</span><span class="cheat-val">~100–300 ms</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">📊 Availability SLAs</div>
+      <div class="cheat-item"><span class="cheat-key">99% (2-nines)</span><span class="cheat-val">87.6 hrs/yr down</span></div>
+      <div class="cheat-item"><span class="cheat-key">99.9% (3-nines)</span><span class="cheat-val">8.76 hrs/yr down</span></div>
+      <div class="cheat-item"><span class="cheat-key">99.99% (4-nines)</span><span class="cheat-val">52.6 min/yr down</span></div>
+      <div class="cheat-item"><span class="cheat-key">99.999% (5-nines)</span><span class="cheat-val">5.26 min/yr down</span></div>
+      <div class="cheat-item"><span class="cheat-key">99.9999% (6-nines)</span><span class="cheat-val">31 sec/yr down</span></div>
+      <div class="cheat-item"><span class="cheat-key">Amazon S3</span><span class="cheat-val">11-nines durability</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">⚡ Throughput Benchmarks</div>
+      <div class="cheat-item"><span class="cheat-key">Nginx (single server)</span><span class="cheat-val">~10K req/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">Redis</span><span class="cheat-val">~100K ops/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">Kafka</span><span class="cheat-val">~1M msgs/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">MySQL (simple query)</span><span class="cheat-val">~5K queries/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">Cassandra writes</span><span class="cheat-val">~1M writes/s (cluster)</span></div>
+      <div class="cheat-item"><span class="cheat-key">HDD sequential read</span><span class="cheat-val">~200 MB/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">SSD sequential read</span><span class="cheat-val">~3 GB/s</span></div>
+      <div class="cheat-item"><span class="cheat-key">Network bandwidth</span><span class="cheat-val">~10 Gbps</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">🗄️ When To Use Which DB</div>
+      <div class="cheat-item"><span class="cheat-key">User profiles, orders</span><span class="cheat-val">PostgreSQL / MySQL</span></div>
+      <div class="cheat-item"><span class="cheat-key">Session / cache</span><span class="cheat-val">Redis</span></div>
+      <div class="cheat-item"><span class="cheat-key">Time-series / logs</span><span class="cheat-val">Cassandra / InfluxDB</span></div>
+      <div class="cheat-item"><span class="cheat-key">Documents / flexible</span><span class="cheat-val">MongoDB / DynamoDB</span></div>
+      <div class="cheat-item"><span class="cheat-key">Full-text search</span><span class="cheat-val">Elasticsearch</span></div>
+      <div class="cheat-item"><span class="cheat-key">Graph relationships</span><span class="cheat-val">Neo4j / Neptune</span></div>
+      <div class="cheat-item"><span class="cheat-key">Object/files/media</span><span class="cheat-val">AWS S3 / GCS</span></div>
+      <div class="cheat-item"><span class="cheat-key">Data warehouse</span><span class="cheat-val">Redshift / BigQuery</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">🔑 Big O Quick Reference</div>
+      <div class="cheat-item"><span class="cheat-key">Hash table lookup</span><span class="cheat-val">O(1)</span></div>
+      <div class="cheat-item"><span class="cheat-key">Binary search</span><span class="cheat-val">O(log n)</span></div>
+      <div class="cheat-item"><span class="cheat-key">BST access (avg)</span><span class="cheat-val">O(log n)</span></div>
+      <div class="cheat-item"><span class="cheat-key">Linked list access</span><span class="cheat-val">O(n)</span></div>
+      <div class="cheat-item"><span class="cheat-key">Merge sort</span><span class="cheat-val">O(n log n)</span></div>
+      <div class="cheat-item"><span class="cheat-key">Bubble sort (worst)</span><span class="cheat-val">O(n²)</span></div>
+      <div class="cheat-item"><span class="cheat-key">Graph traversal BFS/DFS</span><span class="cheat-val">O(V+E)</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">☁️ CAP Theorem Mapping</div>
+      <div class="cheat-item"><span class="cheat-key">MySQL / PostgreSQL</span><span class="cheat-val">CA (no partition)</span></div>
+      <div class="cheat-item"><span class="cheat-key">MongoDB / HBase</span><span class="cheat-val">CP (consistent)</span></div>
+      <div class="cheat-item"><span class="cheat-key">DynamoDB (strong)</span><span class="cheat-val">CP</span></div>
+      <div class="cheat-item"><span class="cheat-key">DynamoDB (eventual)</span><span class="cheat-val">AP</span></div>
+      <div class="cheat-item"><span class="cheat-key">Cassandra</span><span class="cheat-val">AP (eventual)</span></div>
+      <div class="cheat-item"><span class="cheat-key">CouchDB</span><span class="cheat-val">AP</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">🧮 Estimation Shortcuts</div>
+      <div class="cheat-item"><span class="cheat-key">1M req/day</span><span class="cheat-val">~12 req/sec</span></div>
+      <div class="cheat-item"><span class="cheat-key">1B req/day</span><span class="cheat-val">~12K req/sec</span></div>
+      <div class="cheat-item"><span class="cheat-key">1 char = 1 byte</span><span class="cheat-val">UTF-8</span></div>
+      <div class="cheat-item"><span class="cheat-key">1 MB</span><span class="cheat-val">10^6 bytes</span></div>
+      <div class="cheat-item"><span class="cheat-key">1 GB</span><span class="cheat-val">10^9 bytes</span></div>
+      <div class="cheat-item"><span class="cheat-key">1 TB</span><span class="cheat-val">10^12 bytes</span></div>
+      <div class="cheat-item"><span class="cheat-key">Twitter: ~500M tweets/day</span><span class="cheat-val">~6K writes/sec</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">🎯 Interview Framework (5 Steps)</div>
+      <div class="cheat-item"><span class="cheat-key">1. Clarify</span><span class="cheat-val">3–4 min asking questions</span></div>
+      <div class="cheat-item"><span class="cheat-key">2. Estimate</span><span class="cheat-val">Scale, QPS, storage</span></div>
+      <div class="cheat-item"><span class="cheat-key">3. High-level design</span><span class="cheat-val">Big boxes on whiteboard</span></div>
+      <div class="cheat-item"><span class="cheat-key">4. Deep dive</span><span class="cheat-val">Pick 2–3 hard components</span></div>
+      <div class="cheat-item"><span class="cheat-key">5. Defend + iterate</span><span class="cheat-val">Handle interviewer's challenges</span></div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-title">🌍 Geohash Precision</div>
+      <div class="cheat-item"><span class="cheat-key">1 char</span><span class="cheat-val">5,000 km × 5,000 km</span></div>
+      <div class="cheat-item"><span class="cheat-key">3 chars</span><span class="cheat-val">156 km × 156 km</span></div>
+      <div class="cheat-item"><span class="cheat-key">5 chars</span><span class="cheat-val">4.9 km × 4.9 km</span></div>
+      <div class="cheat-item"><span class="cheat-key">6 chars</span><span class="cheat-val">1.2 km × 0.6 km</span></div>
+      <div class="cheat-item"><span class="cheat-key">8 chars</span><span class="cheat-val">38 m × 19 m</span></div>
+      <div class="cheat-item"><span class="cheat-key">Uber uses</span><span class="cheat-val">6-char geohash cells</span></div>
+      <div class="cheat-item"><span class="cheat-key">Always query</span><span class="cheat-val">Target + 8 neighbors</span></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════
+const CATS = {
+  db:        {label:'Databases',   cls:'cat-db'},
+  scale:     {label:'Scaling',     cls:'cat-scale'},
+  cache:     {label:'Caching/CDN', cls:'cat-cache'},
+  algo:      {label:'Algorithms',  cls:'cat-algo'},
+  cloud:     {label:'Cloud',       cls:'cat-cloud'},
+  design:    {label:'Design',      cls:'cat-design'},
+  resilience:{label:'Resiliency',  cls:'cat-resilience'},
+  interview: {label:'Interview',   cls:'cat-interview'},
+  spark:     {label:'Big Data',    cls:'cat-spark'},
+  ai:        {label:'Gen AI',      cls:'cat-ai'},
+};
+
+const QA = [
+// ── DATABASES ──────────────────────────────────────────────────────
+{id:1,cat:'db',xp:40,q:'What does ACID stand for, and what does each letter mean?',
+short:'Atomicity, Consistency, Isolation, Durability — the 4 guarantees of a reliable transaction.',
+long:`<strong>Atomicity</strong> — The entire transaction either succeeds completely or fails completely. There is no "half done" state. Think of it as "all or nothing."<br><br>
+<strong>Consistency</strong> — The database always moves from one valid state to another. If you have a rule saying "balance cannot be negative," that rule is enforced on every transaction, no exceptions.<br><br>
+<strong>Isolation</strong> — Concurrent transactions don't see each other's intermediate states. If two users transfer money at the same time, they don't interfere with each other.<br><br>
+<strong>Durability</strong> — Once a transaction is committed, it stays committed even if the server crashes immediately after. Data is written to persistent disk storage, not just RAM.`,
+realWorld:'When you pay on Yassir, the system debits your wallet AND credits the driver atomically. If the network drops halfway, the entire charge rolls back — you are never charged without the driver being paid.',
+tip:'In ACID, "Consistency" is about rule enforcement — it is totally different from CAP theorem Consistency (which is about reading fresh data). Interviewers love to test this distinction.'},
+
+{id:2,cat:'db',xp:50,q:'What is the CAP Theorem and how do you use it to choose a database?',
+short:'You can only guarantee 2 of 3: Consistency, Availability, Partition Tolerance.',
+long:`The CAP Theorem says a distributed database can only strongly guarantee <strong>two</strong> of these three properties simultaneously:<br><br>
+<strong>C — Consistency:</strong> Every read receives the most recent write. No stale data ever returned.<br><br>
+<strong>A — Availability:</strong> Every request gets a response (success or error). The system never refuses to answer. No single point of failure.<br><br>
+<strong>P — Partition Tolerance:</strong> The system keeps working even when network packets are dropped between nodes. In practice, this means horizontal scalability.<br><br>
+<strong>The practical reality:</strong> In modern distributed systems, network failures WILL happen, so Partition Tolerance is almost always non-negotiable. This forces a choice between C and A.<br><br>
+<em>CP systems</em> (e.g., MongoDB): Choose to return an error rather than stale data. Safe for financial systems.<br>
+<em>AP systems</em> (e.g., Cassandra): Choose to return possibly-stale data rather than refuse. Fine for social feeds.`,
+realWorld:`Yassir's ride-matching must be CP — you cannot afford two riders being assigned the same driver (inconsistency). Yassir's driver location display can be AP — showing a driver 3 seconds behind their actual position is fine.`,
+tip:`The classic interview question is "which CAP trade-off would you choose for X?" Always explain WHY based on the business consequences of inconsistency vs unavailability.`},
+
+{id:3,cat:'db',xp:45,q:'What is database sharding and how does it work?',
+short:'Splitting one large database horizontally across multiple servers using a hash function.',
+long:`Sharding (also called horizontal partitioning) splits your database table across multiple servers (shards). Each shard holds a <strong>subset</strong> of rows — not all rows.<br><br>
+<strong>How it works:</strong><br>
+1. A <em>hash function</em> takes a key (e.g., <code>user_id</code>) and maps it to a specific shard number<br>
+2. All data for that key lives on that shard<br>
+3. A router layer (e.g., mongos in MongoDB) knows how to route requests to the right shard<br><br>
+<strong>Example:</strong> <code>shard = user_id % 3</code> → User 1 → Shard 1, User 2 → Shard 2, User 3 → Shard 0<br><br>
+<strong>Challenges:</strong><br>
+• <em>Re-sharding:</em> When you add more shards, existing data must be redistributed — complex and risky<br>
+• <em>Cross-shard joins:</em> Querying data across multiple shards is slow. Design your schema to avoid them<br>
+• <em>Hotspots:</em> If one key is wildly popular (celebrity problem), one shard gets overloaded`,
+realWorld:`Yassir shards its trip database by city. All Algiers trips go to Shard 1, all Casablanca trips to Shard 2. Most queries are city-scoped so cross-shard joins are rare. Uber goes further and shards by geohash region.`,
+tip:`Always mention the celebrity/hotspot problem when discussing sharding. Then say you'd solve it by monitoring per-shard traffic and dynamically re-partitioning hot shards. This shows production awareness.`},
+
+{id:4,cat:'db',xp:35,q:'Normalized vs Denormalized data — when to use each?',
+short:'Normalized = less storage, harder reads. Denormalized = duplicate data, faster reads.',
+long:`<strong>Normalized data</strong> stores each piece of information exactly once and uses references (foreign keys) to link tables. Classic relational database design.<br><br>
+<em>Example:</em> A <code>rides</code> table has <code>rider_id</code> as a foreign key pointing to the <code>users</code> table. To get the rider's name, you JOIN the two tables.<br><br>
+<strong>Advantages:</strong> Less storage, easy updates in one place, no data inconsistency risk.<br><br>
+<strong>Denormalized data</strong> duplicates information for performance. Instead of storing <code>rider_id</code>, you store <code>rider_name</code> and <code>rider_phone</code> directly in the rides table.<br><br>
+<strong>Advantages:</strong> Single-query reads, no joins, faster at massive scale.<br><br>
+<strong>Disadvantages:</strong> If the user changes their phone number, you must update EVERY rides row — messy and eventually inconsistent.<br><br>
+<em>Rule of thumb:</em> Start normalized. Denormalize only when you measure a performance bottleneck from joins.`,
+realWorld:`Yassir's rides table is normalized — it stores driver_id and rider_id as foreign keys. However, the trip receipt (once the ride is completed) is denormalized — it stores driver name, car model, pickup address as strings, because those values should never change even if the driver updates their profile.`,
+tip:`Interviewers love this topic. The magic answer: "Start with normalized for simplicity and correct updates. Denormalize specific tables if performance profiling shows joins are a bottleneck." Shows maturity.`},
+
+{id:5,cat:'db',xp:60,q:'What is eventual consistency vs strong consistency?',
+short:'Strong = you always read the latest write. Eventual = you might read stale data for a short time.',
+long:`<strong>Strong Consistency</strong>: After a write completes, every subsequent read from any node returns that new value. The system acts as if there is only one copy of the data.<br><br>
+<em>How it's achieved:</em> Writes are considered complete only after all replicas acknowledge the change. This adds latency but guarantees correctness.<br><br>
+<strong>Eventual Consistency</strong>: After a write, replicas will <em>eventually</em> converge to the same value, but during propagation, different nodes might return different answers.<br><br>
+<em>Why it exists:</em> Requiring all replicas to agree before responding is slow. For non-critical data, it's faster to say "good enough" and let nodes sync in the background.<br><br>
+<strong>The spectrum:</strong><br>
+• Strong consistency → Banking, ride-matching, inventory<br>
+• Eventual consistency → Social media likes, driver locations, view counts<br>
+• Read-your-own-writes consistency → A middle ground. You always see your own recent writes, but others might not yet.`,
+realWorld:`On Yassir: When you request a ride, the system uses strong consistency to assign a driver (no double-booking). But when you see the count of "drivers nearby" shown on the map, that's eventually consistent — it might be 2 seconds stale and that is completely fine.`,
+tip:`Name the consistency model you're choosing for each component and explain why. "This component uses eventual consistency because stale data here causes no financial or safety risk — it just means the driver dot on the map is 3s delayed."`},
+
+// ── SCALING ──────────────────────────────────────────────────────
+{id:6,cat:'scale',xp:40,q:'Horizontal vs Vertical Scaling — what is the real difference?',
+short:'Vertical = bigger single machine. Horizontal = more machines. At scale, only horizontal works.',
+long:`<strong>Vertical Scaling (Scale Up):</strong><br>
+Add more CPU, RAM, or storage to a single server. Simple — no code changes needed. But has a hard physical limit (the biggest server AWS offers is still finite), and your single server is still a single point of failure.<br><br>
+<strong>Horizontal Scaling (Scale Out):</strong><br>
+Add more servers and distribute load across them using a load balancer. Theoretically infinite scaling. Requires servers to be <em>stateless</em> — no server stores user session data locally, so any server can handle any request.<br><br>
+<strong>Why vertical hits the wall:</strong><br>
+You can only buy so much RAM. The cost grows exponentially. One big server is still one point of failure. And at peak traffic (e.g., New Year's Eve on Yassir), you can't add RAM fast enough.<br><br>
+<strong>Why horizontal requires design changes:</strong><br>
+Sessions must be stored externally (Redis). Files must be on shared storage (S3). Database connections must be pooled. Stateful operations need distributed coordination.`,
+realWorld:`Early Yassir likely ran on one or two beefy servers (vertical). As they expanded to 45 cities, they had to horizontally scale their API servers behind a load balancer. Each server became stateless, sessions moved to Redis, and they could add servers in minutes during surge events.`,
+tip:`Interviewers expect you to default to horizontal scaling for any large system. But impress them by noting: "We can start with vertical for the database since read replicas are the first scale step, and only move to full horizontal sharding when vertical hits its limit."`},
+
+{id:7,cat:'scale',xp:45,q:'What is a load balancer and what strategies does it use?',
+short:'A load balancer distributes incoming requests across a fleet of servers to maximize throughput and availability.',
+long:`A load balancer sits between clients and your server fleet. It intercepts every incoming request and forwards it to one of the available servers, then returns the response to the client.<br><br>
+<strong>Load balancing strategies:</strong><br><br>
+<em>Round Robin:</em> Send request to server 1, then 2, then 3, then back to 1. Simple and fair, but doesn't account for server capacity differences.<br><br>
+<em>Least Connections:</em> Send to the server with the fewest active connections. Better for uneven request lengths (some requests take longer than others).<br><br>
+<em>IP Hash:</em> Hash the client's IP address to always route them to the same server. Useful for sticky sessions, but breaks if you add/remove servers.<br><br>
+<em>Weighted Round Robin:</em> Bigger servers get more requests proportional to their power. Good for mixed hardware.<br><br>
+<strong>Health checking:</strong> Load balancers continuously ping servers. If one fails to respond, it's removed from rotation automatically. This is how you get zero-downtime failover.`,
+realWorld:`Yassir's API Gateway uses a load balancer in front of its service fleet. During Algerian national holidays (peak usage), they scale out from 10 to 40 API servers and the load balancer automatically starts distributing to new instances within seconds of them starting up.`,
+tip:`Always mention health checks when discussing load balancers. Saying "the LB removes failed instances from the pool automatically" shows you understand how zero-downtime deployments work in practice.`},
+
+{id:8,cat:'scale',xp:50,q:'What are message queues and when should you use them?',
+short:'A buffer between producers and consumers that decouples services and prevents data loss under load.',
+long:`A message queue sits between two services. The <em>producer</em> writes messages to the queue without waiting. The <em>consumer</em> reads from the queue at its own pace. They are fully decoupled.<br><br>
+<strong>Why this matters:</strong><br>
+Without a queue: if your fraud detection service crashes, orders are lost forever. With a queue: orders wait safely until fraud detection recovers.<br><br>
+<strong>Key properties:</strong><br>
+• <em>Durability:</em> Messages are stored on disk, not just in memory. They survive crashes.<br>
+• <em>At-least-once delivery:</em> Consumers acknowledge each message. If they crash before ACK, the message is redelivered.<br>
+• <em>Idempotency requirement:</em> Because messages can be delivered more than once, your consumer must handle duplicates safely (use an idempotency key).<br><br>
+<strong>SQS vs Pub/Sub (Kafka):</strong><br>
+SQS: one producer, one consumer. Message is deleted after consumed. Simple queue.<br>
+Kafka: one producer, multiple consumer groups. Each group gets all messages. Good for fan-out (payment AND analytics AND notification all consume the same ride_completed event).`,
+realWorld:`When a Yassir trip completes, a single Kafka event is published. Three consumers read it independently: the Payment Service charges the rider, the Notification Service sends a receipt, and the Analytics Service updates driver earnings dashboards. All three happen asynchronously without slowing down the ride completion.`,
+tip:`Mention idempotency when discussing queues — "since Kafka guarantees at-least-once delivery, the payment service uses trip_id as an idempotency key to ensure the rider is never charged twice." This is a senior-level insight most candidates miss.`},
+
+// ── CACHING ──────────────────────────────────────────────────────
+{id:9,cat:'cache',xp:40,q:'How does caching work and what are the main eviction policies?',
+short:'Cache stores hot data in RAM for fast access. Eviction policies decide what to remove when cache is full.',
+long:`A cache is a fast in-memory store that holds copies of frequently accessed data so you avoid expensive database disk reads.<br><br>
+<strong>Cache hit:</strong> Data found in cache → returned in ~1ms. No database needed.<br>
+<strong>Cache miss:</strong> Data not in cache → fetch from database (~10-50ms), store in cache, return to client.<br><br>
+<strong>Eviction Policies (what to remove when cache is full):</strong><br><br>
+<em>LRU (Least Recently Used):</em> Remove the item not accessed for the longest time. Most common. Works well because recent access predicts future access. Implementation: doubly linked list + HashMap.<br><br>
+<em>LFU (Least Frequently Used):</em> Remove the item accessed the fewest times over a window. Better for workloads with stable hot items. More complex to implement.<br><br>
+<em>FIFO (First In, First Out):</em> Remove the oldest item added, regardless of access pattern. Simple but rarely optimal.<br><br>
+<strong>TTL (Time To Live):</strong> Items automatically expire after a set time. Prevents stale data. Critical for data that changes (e.g., driver location, pricing). Don't set TTL too short (defeats purpose) or too long (stale data).`,
+realWorld:`On Yassir, trip metadata (fare estimate, pickup address) is cached in Redis with a 30-second TTL when the rider is looking at the booking screen. Driver locations are cached with a 5-second TTL (refresh every location update). User profile data is cached for 1 hour since it rarely changes.`,
+tip:`LRU is the standard answer for most cache eviction questions. Then show depth: "For Yassir's driver location cache we also use TTL-based expiration so stale driver positions are automatically cleaned up — a driver offline for 60 seconds should disappear from the cache even if it was recently accessed."`},
+
+{id:10,cat:'cache',xp:45,q:'What is the cold start / cold cache problem and how do you solve it?',
+short:'When you restart a cache, it is empty. Every request hits the database until the cache warms up — this burst can crash the DB.',
+long:`<strong>The Problem:</strong><br>
+When you restart or deploy a new cache server, it starts completely empty. Every incoming request misses the cache and hits the database simultaneously. At scale, this "thundering herd" of database queries can overwhelm and crash your database.<br><br>
+<strong>Real scenario:</strong> You take down your Redis cache for maintenance. When it comes back up, 10,000 requests/second all hit your database instead of cache. Your database handles 2,000 queries/second normally. It collapses.<br><br>
+<strong>Solutions:</strong><br><br>
+<em>Cache warming:</em> Before exposing the new cache to production traffic, replay the previous day's request logs to pre-populate it. Only expose it once cache hit rate reaches ~80%.<br><br>
+<em>Lazy loading with circuit breaker:</em> Accept the slow period but rate-limit database queries to protect it during warmup.<br><br>
+<em>Two-tier caching:</em> Keep a local in-process cache as a fallback so at least some requests are served without hitting either Redis or the database.<br><br>
+<em>Staggered TTL:</em> Add random jitter to TTLs so all cached items don't expire simultaneously (stampede prevention).`,
+realWorld:`Yassir would pre-warm their cache after deployments by replaying the most common API calls (popular drivers, surge pricing zones, restaurant menus) before switching production traffic to the new instance. The operations team would monitor the cache hit rate and only cut over once it reached >75%.`,
+tip:`Mention the cold start problem proactively when discussing caching — "One operational concern is cold cache after a restart. Here's how we'd handle it..." This shows production experience, not just academic knowledge.`},
+
+{id:11,cat:'cache',xp:50,q:'What is a CDN and what problem does it solve?',
+short:'CDN = geographically distributed edge servers that cache static content close to users to reduce latency.',
+long:`A Content Delivery Network (CDN) is a network of servers distributed around the world. When a user requests static content (images, videos, CSS, JavaScript), the CDN serves it from the edge location physically closest to them — instead of your origin server thousands of kilometers away.<br><br>
+<strong>Why it matters:</strong><br>
+Speed of light is the fundamental limit. A request from Algiers to a server in the USA takes ~200ms just in round-trip light travel. A CDN edge server in Paris or Casablanca serves the same content in ~5ms.<br><br>
+<strong>What to put on a CDN:</strong><br>
+• Static assets: images, CSS, JavaScript, fonts<br>
+• Static web pages (HTML)<br>
+• Video files (for apps like YouTube, TikTok)<br>
+• Software downloads<br><br>
+<strong>What NOT to put on a CDN:</strong><br>
+• Dynamic user data (personalized API responses)<br>
+• Real-time data (driver locations, order status)<br>
+• Anything that changes per user or per request<br><br>
+<strong>Cost trade-off:</strong> CDNs are expensive. For large video files at scale (like YouTube), CDN costs are enormous. Be selective: only CDN the content that truly needs it.`,
+realWorld:`Yassir's driver profile photos, app icons, and map tile images are served through CloudFront CDN. When a rider in Algiers opens the app, the photos load from a CDN edge in Europe rather than a server in California. The Yassir API calls (ride requests, driver locations) bypass the CDN and go directly to backend servers.`,
+tip:`When designing any web-facing system, mention CDN for static assets unprompted. Then show nuance: "For Yassir's video promos, we'd selectively CDN only the most popular content and serve the long tail from our origin to control costs — this is the 80/20 rule applied to CDN caching."`},
+
+// ── ALGORITHMS ──────────────────────────────────────────────────────
+{id:12,cat:'algo',xp:40,q:'What is Big O notation — explain O(1), O(log n), O(n), O(n log n), O(n²)',
+short:'Big O describes how an algorithm\'s performance scales as input size grows.',
+long:`Big O notation answers: <em>"If I double my input, how much slower does this get?"</em><br><br>
+<strong>O(1) — Constant:</strong> Same speed regardless of input size. Hash table lookup, array access by index. <em>Example: Get user by ID from Redis.</em><br><br>
+<strong>O(log n) — Logarithmic:</strong> Cuts the problem in half each step. Binary search, BST lookup. Doubling input adds only 1 more step. <em>Example: Find a driver in a balanced binary search tree of 1M drivers takes ~20 comparisons.</em><br><br>
+<strong>O(n) — Linear:</strong> Proportional to input. Traverse a linked list, scan an unsorted array. <em>Example: Find all trips for a user by scanning every row in the trips table (bad — use an index instead).</em><br><br>
+<strong>O(n log n) — Linearithmic:</strong> Sorting algorithms (Merge Sort, Quicksort). Slightly worse than linear. Acceptable for most sorting needs.<br><br>
+<strong>O(n²) — Quadratic:</strong> Bubble Sort, nested loops. Doubles-doubles when input grows. Unacceptable at scale — if you have 100K drivers and use an O(n²) matching algorithm, that's 10 billion operations.`,
+realWorld:`Yassir's driver matching algorithm must be O(log n) or better. With 100K active drivers, an O(n) scan of every driver takes too long. Using Redis GEORADIUS (which uses a geohash index internally), finding nearby drivers is approximately O(log n + k) where k = number of nearby drivers returned.`,
+tip:`When discussing algorithms in system design, always connect to concrete scale numbers. "With 100K drivers, O(n) matching takes 100K operations. With Geohash + Redis, it's O(log n + neighbors) which is effectively constant. This is why the data structure choice matters."`},
+
+{id:13,cat:'algo',xp:55,q:'What is Geohashing and how is it used in ride-hailing apps?',
+short:'Geohashing converts GPS coordinates into a short string. Nearby locations share the same prefix.',
+long:`Geohashing is a geocoding technique that converts 2D GPS coordinates (latitude, longitude) into a single alphanumeric string.<br><br>
+<strong>How it works:</strong><br>
+The world is recursively divided into a grid. Each cell is assigned a character in base-32 encoding. Longer strings = smaller cells = more precision.<br><br>
+<em>Example: Algiers (36.7538, 3.0588) → geohash: <code>ewp0h7</code></em><br><br>
+<strong>Key property:</strong> Locations that share a longer prefix are geographically closer. <code>ewp0h7x</code> and <code>ewp0h7y</code> are very near each other. <code>ewp0</code> and <code>ewq0</code> are further apart.<br><br>
+<strong>How ride-hailing uses it:</strong><br>
+1. Driver sends GPS update every 4 seconds<br>
+2. Backend converts to geohash: <code>ewp0h7</code> (6 chars ≈ 1.2km × 0.6km cell)<br>
+3. Stored in Redis: <code>GEOADD active_drivers lon lat driver_id</code><br>
+4. When rider requests: <code>GEORADIUS pickup_lon pickup_lat 2km</code> → list of nearby drivers in milliseconds<br>
+5. Always query the target cell PLUS its 8 neighbors to handle boundary edge cases<br><br>
+<strong>Geohash precision guide:</strong><br>
+4 chars = ~40km, 5 chars = ~5km, 6 chars = ~1km, 8 chars = ~40m`,
+realWorld:`Uber uses 6-character geohash cells for driver location tracking and processes 100M+ location updates daily. Redis's built-in GEODIST and GEORADIUS commands use geohash internally. Yassir uses the same approach — it's the industry standard for proximity search in ride-hailing.`,
+tip:`This is THE differentiating answer in any location-based system design interview. If you can explain Geohash + the 8-neighbor boundary fix + Redis GEORADIUS, you're in the top 5% of candidates for ride-hailing design questions.`},
+
+{id:14,cat:'algo',xp:45,q:'Hash tables — why are they critical for distributed system design?',
+short:'Hash tables give O(1) lookup. In distributed systems, hashing also routes requests to the right server.',
+long:`A hash table maps a key to a value through a hash function. The hash function converts the key into an index pointing to a "bucket" where the value is stored.<br><br>
+<strong>Operations:</strong> Insert, lookup, delete — all O(1) average case. O(n) worst case if many hash collisions (rare with good hash functions).<br><br>
+<strong>Hash collisions:</strong> When two different keys produce the same bucket index. Solutions: Chaining (store a linked list in the bucket) or Open addressing (probe for the next empty slot).<br><br>
+<strong>Critical for distributed systems — Consistent Hashing:</strong><br>
+Naive hashing: <code>shard = key % num_servers</code>. Problem: adding one server changes the formula → all data must be redistributed.<br><br>
+<em>Consistent Hashing</em> (used by DynamoDB, Cassandra, Redis Cluster): Servers and keys are placed on a virtual ring. Each key is served by the next server clockwise on the ring. Adding a server only redistributes data from ONE neighbor, not the entire dataset.<br><br>
+This is how Cassandra's ring topology works — and why adding a node only impacts a fraction of the data.`,
+realWorld:`Yassir's cache layer uses consistent hashing to distribute cached driver locations across a Redis cluster. When they add a new Redis node to handle scale, only ~1/N of the cached driver data needs to move, instead of ALL data being reshuffled. This means zero downtime when scaling the cache.`,
+tip:`Consistent hashing is a senior-level topic that appears in many distributed system questions. Saying "I'd use consistent hashing for the cache tier so that adding cache nodes doesn't cause a thundering herd of cache misses" shows you've thought about operational concerns.`},
+
+// ── CLOUD ──────────────────────────────────────────────────────
+{id:15,cat:'cloud',xp:35,q:'When would you use S3 vs a database vs a cache?',
+short:'S3 = unlimited object storage. Database = structured queryable data. Cache = fast temporary data.',
+long:`These three serve fundamentally different purposes:<br><br>
+<strong>Amazon S3 (Object Store):</strong><br>
+• Store files, images, videos, backups, raw data<br>
+• Unlimited capacity, cheap per GB, ~11-nines durability<br>
+• NOT for frequent writes or low-latency queries<br>
+• Latency: 50–100ms per request<br>
+<em>Use when:</em> You need to store large files or massive amounts of unstructured data<br><br>
+<strong>Database (PostgreSQL, MongoDB, DynamoDB):</strong><br>
+• Store structured data you need to query, join, filter, sort<br>
+• ACID guarantees, indexes, relationships<br>
+• Latency: 1–50ms depending on complexity<br>
+<em>Use when:</em> You need to find, filter, or update records based on attributes<br><br>
+<strong>Cache (Redis, Memcached):</strong><br>
+• Store hot, frequently-read data in RAM for speed<br>
+• Volatile — data can be lost on restart (unless Redis persistence is enabled)<br>
+• Latency: <1ms<br>
+<em>Use when:</em> You're reading the same data many times and it doesn't change often`,
+realWorld:`Yassir stores: Driver selfie photos on S3. Trip records in PostgreSQL. Active driver locations in Redis (expires when driver goes offline). Driver location history in Cassandra. Usage analytics reports in Redshift data warehouse.`,
+tip:`A classic interview test is "where would you store X?" Give a crisp answer: storage type → why → what you're trading off. "Trip data goes in PostgreSQL because it's relational, needs ACID, and we query it by user_id, driver_id, and date range."`},
+
+{id:16,cat:'cloud',xp:40,q:'What is a data lake vs a data warehouse?',
+short:'Data lake = raw unstructured data dumped in bulk. Data warehouse = cleaned, structured, query-optimized data.',
+long:`<strong>Data Lake:</strong><br>
+A massive repository for raw data in its original format (JSON logs, CSVs, images, binary blobs). No schema enforced upfront. Think of it as a giant bucket where you dump everything and figure out structure later.<br><br>
+<em>Technology:</em> Amazon S3, Google Cloud Storage, Azure Data Lake<br>
+<em>Processing:</em> AWS Glue (schema inference) → Amazon Athena (SQL queries on raw files)<br><br>
+<strong>Data Warehouse:</strong><br>
+A structured, cleaned, heavily indexed database optimized for analytical queries (aggregations, reports, dashboards). Data is ETL'd (Extract, Transform, Load) from operational databases into the warehouse on a schedule.<br><br>
+<em>Technology:</em> Amazon Redshift, Google BigQuery, Snowflake<br><br>
+<strong>The ELT pipeline:</strong><br>
+Raw operational data → Data Lake (S3) → AWS Glue (clean/transform) → Redshift (analyze) → QuickSight (visualize)<br><br>
+<strong>When to use which:</strong><br>
+Data Lake: When you don't know yet how you'll query the data, or when data is truly unstructured<br>
+Data Warehouse: When you have regular reporting needs and a known schema`,
+realWorld:`Yassir streams all ride events (request, match, start, end, payment) to Kafka → S3 data lake. Their BI team uses AWS Glue to schema it and Redshift to answer questions like "what's the average ride time in Algiers on Friday evenings?" without touching the production database.`,
+tip:`Mentioning the ETL/ELT pipeline and naming specific tools (Glue, Athena, Redshift) shows AWS fluency. Many system design interviews for backend roles at Yassir-scale companies expect you to know this stack.`},
+
+// ── DESIGN PATTERNS ──────────────────────────────────────────────────────
+{id:17,cat:'design',xp:45,q:'What does "working backwards from the customer" mean in system design?',
+short:'Start with the customer experience you want to deliver, then design the technology to support it — not the other way around.',
+long:`This is Amazon's core design philosophy and one of the most important interview skills you can demonstrate.<br><br>
+<strong>The WRONG approach (working forwards):</strong><br>
+"I know Kafka, so I'll use Kafka for everything. I'll use microservices because they're popular. I'll add Elasticsearch because search sounds useful."<br>
+→ Technology drives decisions. You end up over-engineered.<br><br>
+<strong>The RIGHT approach (working backwards):</strong><br>
+1. What does the customer want to DO? (Book a ride in under 30 seconds)<br>
+2. What does that require? (Driver matching in <3s, real-time location, payment)<br>
+3. What scale does that imply? (100K concurrent users → horizontal scaling)<br>
+4. What latency is acceptable? (Booking: <3s. Location: <1s. Payment: <10s)<br>
+5. NOW pick technologies that meet those requirements<br><br>
+<strong>In practice:</strong> Start every system design by defining the API from the <em>client's perspective</em>. What calls does the app make? What does it need back? Design the backend to serve those calls efficiently.`,
+realWorld:`When Yassir designed their "Yassir Women" feature (female-only drivers for female riders), they started from the customer experience: "A female rider should see only female drivers on her map." That requirement drove everything: driver profile must include gender, dispatch service must filter by gender match, the location service must tag driver gender.`,
+tip:`Say this explicitly in the interview: "I'd like to work backwards from the customer experience before diving into architecture." This phrase alone signals you understand Amazon-style product thinking and earns immediate goodwill from any senior interviewer.`},
+
+{id:18,cat:'design',xp:55,q:'What are microservices and when should you use them vs a monolith?',
+short:'Microservices = independent services per domain. Monolith = one big app. Both are valid at different stages.',
+long:`<strong>Monolith:</strong><br>
+One large application that contains all features (auth, payments, notifications, matching) in a single codebase. Simple to develop, test, and deploy initially. One deployment = everything updates together.<br><br>
+<em>Problems at scale:</em> One bug can crash everything. Can only vertical-scale the whole thing. Deploy one feature = deploy everything = risky. Teams step on each other's code.<br><br>
+<strong>Microservices:</strong><br>
+Each business domain is a separate service with its own codebase, deployment, and database. They communicate via REST APIs or message queues (Kafka).<br><br>
+<em>Benefits:</em> Scale each service independently (payment gets 10x traffic during promotions → scale only payment). Different teams own different services. One service failing doesn't crash others.<br><br>
+<em>Problems:</em> Distributed systems are hard. Network failures between services. Distributed tracing is complex. Operational overhead multiplies with service count.<br><br>
+<strong>The hybrid reality:</strong><br>
+Most successful companies start monolithic and extract services when they feel the pain. Uber started monolithic in Python, then moved to microservices as they scaled.`,
+realWorld:`Yassir likely started as a monolith (common for startups). As they added food delivery and payments, those became separate services because they have fundamentally different traffic patterns and deployment needs. The ride core may still be relatively monolithic internally.`,
+tip:`Don't just say "I'd use microservices." Say: "I'd start with a modular monolith — separate modules but one deployment. When a specific module (e.g., payments) needs independent scaling or creates organizational friction, I'd extract it as a microservice." This shows maturity.`},
+
+// ── RESILIENCY ──────────────────────────────────────────────────────
+{id:19,cat:'resilience',xp:50,q:'What is a single point of failure and how do you eliminate it?',
+short:'An SPOF is any component whose failure takes down the whole system. Eliminate by adding redundancy at every layer.',
+long:`A Single Point of Failure (SPOF) is any component that, if it fails, causes the entire system to become unavailable. Identifying and eliminating SPOFs is a core part of resilient system design.<br><br>
+<strong>Common SPOFs and their solutions:</strong><br><br>
+<em>Single database host:</em> → Add hot standby with replication. On primary failure, standby is promoted within seconds.<br><br>
+<em>Single load balancer:</em> → Run two load balancers in active-passive mode. Floating IP switches on failure (e.g., AWS ALB handles this automatically).<br><br>
+<em>Single data center:</em> → Deploy across multiple Availability Zones. Use geo-routing to route users to the nearest healthy region.<br><br>
+<em>Single config server (e.g., MongoDB mongos):</em> → Always run 3 instances for majority quorum. 3 nodes can elect a new primary when 1 fails.<br><br>
+<strong>Why 3 nodes, not 2?</strong><br>
+With 2 nodes, if they disagree (split-brain), there's no majority. With 3 nodes, 2 can always outvote 1. This is why Kafka needs a minimum of 3 brokers and Cassandra recommends replication factor 3.`,
+realWorld:`In early Yassir, their dispatch server was a potential SPOF. If it crashed, no rides could be matched. They solved this by running 3 dispatch service instances behind a load balancer, with Redis storing the state (so any instance can handle any request), and Kafka ensuring that even if the dispatch crashes mid-assignment, the event is replayed.`,
+tip:`When you draw a system design diagram, the interviewer will point at components and ask "what happens if this fails?" Go through your diagram BEFORE they ask and proactively say "I notice this component is currently an SPOF — let me add redundancy here." This is leadership behavior.`},
+
+{id:20,cat:'resilience',xp:45,q:'What are availability zones and multi-region deployment?',
+short:'AZs = independent data centers within one region. Multi-region = replicated across different countries.',
+long:`<strong>Availability Zones (AZs):</strong><br>
+A cloud provider's data centers within one geographic region are divided into isolated physical facilities called Availability Zones. Each AZ has independent power, cooling, and networking.<br><br>
+If one AZ goes down (power outage, fire), the others keep running. You can replicate your services across 2–3 AZs within one region for high availability.<br><br>
+<strong>Multi-Region Deployment:</strong><br>
+For truly critical systems, you deploy across multiple geographic regions (e.g., EU-West + US-East + AP-South). If an entire region becomes unreachable (submarine cable cut, major ISP outage), traffic geo-routes to another region.<br><br>
+<strong>The trade-offs:</strong><br>
+• Multi-AZ: Relatively cheap, same latency, same legal jurisdiction. Solves datacenter-level failures.<br>
+• Multi-Region: Expensive (data must be replicated across regions), higher write latency (synchronous cross-region replication is slow), but survives regional disasters and reduces latency for global users.<br><br>
+<strong>Data sovereignty:</strong> In some countries (Algeria, EU with GDPR), user data cannot leave the country. Multi-region must respect these laws.`,
+realWorld:`Yassir's Algerian operations must keep Algerian user data within Algeria (data sovereignty laws). So they run a primary deployment in Algeria, but for their French and Canadian expansion, they run separate regional deployments. Ride data for Algerian users never crosses to European servers.`,
+tip:`Always mention data sovereignty when discussing multi-region for companies operating in regulated markets (EU, North Africa, Middle East). This shows business awareness beyond just technical architecture.`},
+
+// ── INTERVIEW SKILLS ──────────────────────────────────────────────────────
+{id:21,cat:'interview',xp:30,q:'What is the correct approach to starting a system design interview?',
+short:'Repeat the question → clarify scope → estimate scale → high-level design → deep dive on hard parts.',
+long:`<strong>Step 1 — Repeat and confirm (1 min):</strong><br>
+"You want me to design a ride-hailing service like Yassir. Let me make sure I understand the scope..." Paraphrase what you heard. Prevents wasted effort on the wrong problem.<br><br>
+<strong>Step 2 — Clarify requirements (3–5 min):</strong><br>
+Ask targeted questions: What scale? Which features? Read-heavy or write-heavy? What are the latency requirements? Any special constraints (mobile-first, offline support, data laws)?<br><br>
+<strong>Step 3 — Estimate numbers (2–3 min):</strong><br>
+Users: 2M active users. Peak rides/sec: 60. Driver location updates: 25K/sec. Storage needed: X GB/day. Show your math.<br><br>
+<strong>Step 4 — High-level design (5–8 min):</strong><br>
+Draw the big boxes: clients → API gateway → services → databases. Don't detail yet. Get something on the board that covers all requirements.<br><br>
+<strong>Step 5 — Deep dive (8–12 min):</strong><br>
+Pick the 2–3 hardest components and go deep. Driver matching, double-booking prevention, payment idempotency. Let the interviewer steer you to what they care about most.<br><br>
+<strong>Step 6 — Defend and iterate (ongoing):</strong><br>
+When challenged, don't get defensive. Say "great point — let me think about that." Incorporate feedback.`,
+realWorld:`In a real Yassir/similar interview: The first 5 minutes of requirement clarification saves 15 minutes of designing the wrong thing. Most candidates jump straight to drawing boxes and the interviewer has to stop them every 2 minutes to redirect.`,
+tip:`The biggest mistake: going silent for more than 30 seconds. Think out loud even when unsure: "I'm considering whether to use WebSockets or long-polling for real-time location updates. WebSockets are bidirectional and persistent, which suits continuous GPS updates, so let me go with that unless you have constraints against it."`},
+
+{id:22,cat:'interview',xp:35,q:'How do you handle it when an interviewer challenges your design?',
+short:'Never get defensive. Say "great point", incorporate the feedback, explain the trade-off you were making.',
+long:`Being challenged is NOT a sign you got something wrong — it's the interviewer testing how you reason and collaborate under pressure.<br><br>
+<strong>Wrong response:</strong><br>
+"No, my design is correct because..." → defensive, signals you're hard to work with.<br><br>
+<strong>Right response:</strong><br>
+"That's a great point. I was assuming X when I made that choice. If X doesn't hold, then you're right that Y would be a problem. Let me think about how to address that..." → shows intellectual honesty and collaborative thinking.<br><br>
+<strong>Typical challenges and how to handle them:</strong><br><br>
+<em>"What if the database goes down?"</em> → Describe failover: hot standby, automatic primary election, backup strategy.<br><br>
+<em>"How do you prevent two riders from getting the same driver?"</em> → Distributed lock in Redis (SETNX), atomic DB operation with WHERE driver_id IS NULL.<br><br>
+<em>"This won't scale to 100M users."</em> → Agree, then explain what you'd add: database sharding, cache layer, horizontal scaling, CDN.<br><br>
+<em>"You didn't mention security."</em> → Add: OAuth 2.0 for auth, HTTPS everywhere, rate limiting at API gateway, PII encryption at rest.`,
+realWorld:`The best hires I've seen in interviews weren't the ones who had the perfect design upfront. They were the ones who listened to feedback, said "you're right, I hadn't considered that," and quickly adapted their design. That's exactly what working in a real engineering team looks like.`,
+tip:`Practice saying "great point" or "I hadn't considered that angle" out loud, at home, until it feels natural. In the high-stress interview environment, your default response to challenge determines whether you seem collaborative or defensive.`},
+
+{id:23,cat:'interview',xp:40,q:'How do you do back-of-the-envelope calculations in interviews?',
+short:'Use round numbers, show your work, and connect the math to design decisions.',
+long:`Back-of-envelope estimates show you can reason quantitatively about scale — a critical senior engineer skill.<br><br>
+<strong>Useful approximations to memorize:</strong><br>
+• 1M requests/day ≈ 12 requests/second<br>
+• 1B requests/day ≈ 12,000 requests/second<br>
+• 1 character = 1 byte<br>
+• 1 tweet ≈ 140 bytes (text only) or ~1KB with metadata<br>
+• 1 photo ≈ 1MB compressed, 5MB raw<br>
+• 1 video minute ≈ 50–100MB<br><br>
+<strong>Example estimation — Yassir location updates:</strong><br>
+"100K active drivers × 1 update/4sec = 25,000 writes/second. Each location record ≈ 50 bytes. That's 1.25 MB/second of writes. Redis handles 100K writes/sec. We're comfortably within limits."<br><br>
+<strong>Example estimation — trip storage:</strong><br>
+"1M rides/day. Each trip record ≈ 500 bytes. 1M × 500 bytes = 500 MB/day. Over 5 years: 500 MB × 365 × 5 = ~900 GB. A single PostgreSQL server handles this fine. No sharding needed yet."<br><br>
+<strong>The key:</strong> Connect the number to a design decision. Don't calculate just to show off — calculate to justify your architecture choice.`,
+realWorld:`At Yassir's scale, the back-of-envelope math shows you DON'T need the complexity of a full Cassandra cluster for trip records — PostgreSQL handles it. This prevents over-engineering. Knowing this distinction separates 5-year engineers from 1-year engineers.`,
+tip:`Always end your calculation with a conclusion: "So at this scale, a single Redis node is sufficient for driver locations. We'd only need a Redis cluster if driver count exceeded 1M." This shows the purpose of the math, not just the math itself.`},
+
+// ── APACHE SPARK / BIG DATA ──────────────────────────────────────────────
+{id:24,cat:'spark',xp:40,q:'What is Apache Spark and when would you use it in a system design?',
+short:'Spark is a distributed data processing engine for transforming or analyzing huge datasets across a cluster.',
+long:`Apache Spark is an open-source framework for processing massive amounts of data in parallel across a cluster of machines. It replaced the older Hadoop MapReduce approach.<br><br>
+<strong>Key advantages over MapReduce:</strong><br>
+• <em>In-memory processing:</em> Spark caches intermediate results in RAM instead of writing to disk between each step. This makes it up to 100× faster than MapReduce for iterative jobs.<br>
+• <em>High-level APIs:</em> Write in Python, Scala, Java, or SQL. Spark handles the distributed execution automatically.<br>
+• <em>Unified platform:</em> Batch processing, streaming (Structured Streaming), SQL queries, and machine learning (MLlib) all in one system.<br><br>
+<strong>When to use Spark in system design:</strong><br>
+• Computing end-of-day/week analytics reports on large datasets<br>
+• ETL pipelines that transform raw data from a data lake into a structured format<br>
+• Running ML training jobs on the full dataset<br>
+• Backfilling historical data after schema changes<br><br>
+<strong>When NOT to use Spark:</strong><br>
+Never for OLTP (real-time user requests). Spark's startup overhead and batch nature make it unsuitable for low-latency APIs. It's an analytics tool, not a database.`,
+realWorld:`Yassir uses a Spark job running nightly on AWS EMR to compute: driver earnings summaries, surge pricing zone historical analysis, city-level demand forecasting. Each job reads from the S3 data lake, processes gigabytes of trip events, and writes summarized results to Redshift for the BI dashboard.`,
+tip:`When an interview question involves large-scale data processing or analytics, Spark is almost always the right tool to mention. Say: "For the analytics pipeline, I'd use Apache Spark on AWS EMR. It lets us process gigabytes of event data nightly without touching our production database."`},
+
+// ── GENERATIVE AI ──────────────────────────────────────────────────────
+{id:25,cat:'ai',xp:50,q:'What is RAG (Retrieval-Augmented Generation) and how does it fit in system design?',
+short:'RAG connects LLMs to your private data so they can answer questions about your specific domain without hallucinating.',
+long:`RAG (Retrieval-Augmented Generation) is an architecture for building AI systems that can answer questions about your own private data — without retraining the LLM.<br><br>
+<strong>The problem it solves:</strong><br>
+LLMs like GPT are trained on general internet data. They know nothing about your company's internal trip records, your driver database, or your pricing rules. You can't retrain the model every time data changes (it's extremely expensive).<br><br>
+<strong>How RAG works:</strong><br>
+1. Convert your private documents into embedding vectors (numerical representation of meaning)<br>
+2. Store those vectors in a vector database (Pinecone, Weaviate, or Elasticsearch with kNN)<br>
+3. When user asks a question: convert the question to a vector, find the most similar documents<br>
+4. Inject those relevant documents into the LLM's prompt as context<br>
+5. LLM generates an answer grounded in your actual data<br><br>
+<strong>Cost benefit:</strong> You only send the relevant 3–5 documents as context, not your entire database. Tokens = money, so this is dramatically cheaper than dumping everything into the prompt.`,
+realWorld:`A Yassir customer support chatbot could use RAG: the vector DB holds all FAQ documents, trip history summaries, and driver policies. When a rider asks "why was I charged double?", the system retrieves the relevant trip record and refund policy, injects them into the prompt, and the LLM generates a specific, accurate response — not a generic hallucinated one.`,
+tip:`RAG is becoming a standard system design component. If the system you're designing has any user-facing question-answering feature, mention RAG as the architecture. Then explain the three parts: embedding pipeline, vector store, and generation step. Bonus: mention that embeddings are also computed via an API call (OpenAI Embeddings API) — not by you.`},
+];
+
+// ════════════════════════════════════════
+// GAME STATE
+// ════════════════════════════════════════
+const LEVELS = [
+  {name:'Intern',           xpNeeded:200},
+  {name:'Junior Engineer',  xpNeeded:400},
+  {name:'Mid Engineer',     xpNeeded:700},
+  {name:'Senior Engineer',  xpNeeded:1100},
+  {name:'Staff Engineer',   xpNeeded:1600},
+  {name:'Principal Arch.',  xpNeeded:2200},
+  {name:'FAANG Ready 🏆',   xpNeeded:9999},
+];
+
+let state = JSON.parse(localStorage.getItem('sdArena') || 'null') || {
+  xp: 0, level: 0, streak: 0, solved: new Set(), bossDone: false
+};
+state.solved = new Set(state.solved);
+
+function saveState() {
+  const s = {...state, solved: [...state.solved]};
+  localStorage.setItem('sdArena', JSON.stringify(s));
+}
+
+let activeFilter = 'all';
+let openCard = null;
+
+// ════════════════════════════════════════
+// XP + LEVELING
+// ════════════════════════════════════════
+function addXP(amount, label='') {
+  state.xp += amount;
+  saveState();
+  updateHUD();
+  showXPPopup(amount, label);
+  checkLevelUp();
+}
+
+function updateHUD() {
+  const lvl = LEVELS[state.level];
+  const prev = state.level > 0 ? LEVELS[state.level-1].xpNeeded : 0;
+  const span = lvl.xpNeeded - prev;
+  const progress = state.xp - prev;
+  const pct = Math.min(100, Math.round(progress / span * 100));
+
+  document.getElementById('lvlNum').textContent = state.level + 1;
+  document.getElementById('xpNum').textContent = state.xp;
+  document.getElementById('xpMax').textContent = lvl.xpNeeded;
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('streakBadge').textContent = '🔥 ' + state.streak + ' streak';
+  document.getElementById('solvedCount').textContent = state.solved.size;
+}
+
+function checkLevelUp() {
+  const lvl = LEVELS[state.level];
+  if (state.xp >= lvl.xpNeeded && state.level < LEVELS.length - 1) {
+    state.level++;
+    saveState();
+    const newLvl = LEVELS[state.level];
+    document.getElementById('lvlTitle').textContent = 'LEVEL ' + (state.level+1) + '!';
+    document.getElementById('lvlSub').textContent = 'You are now: ' + newLvl.name;
+    document.getElementById('lvlOverlay').classList.add('show');
+  }
+}
+
+function closeLvl() {
+  document.getElementById('lvlOverlay').classList.remove('show');
+}
+
+let xpTimer;
+function showXPPopup(amount, label) {
+  document.getElementById('xpPopupText').textContent = '+' + amount + ' XP';
+  document.getElementById('xpPopupSub').textContent = label || 'Keep going!';
+  const p = document.getElementById('xpPopup');
+  p.classList.add('show');
+  clearTimeout(xpTimer);
+  xpTimer = setTimeout(() => p.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════
+document.getElementById('tabBar').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+});
+
+// ════════════════════════════════════════
+// FILTERS + PROGRESS
+// ════════════════════════════════════════
+function buildFilters() {
+  const bar = document.getElementById('filterBar');
+  const allCats = ['all', ...Object.keys(CATS)];
+  bar.innerHTML = allCats.map(c => {
+    const count = c === 'all' ? QA.length : QA.filter(q => q.cat === c).length;
+    const label = c === 'all' ? 'All' : CATS[c].label;
+    return `<div class="filt${activeFilter===c?' on':''}" data-cat="${c}">${label} ${count}</div>`;
+  }).join('');
+  bar.querySelectorAll('.filt').forEach(f => {
+    f.onclick = () => { activeFilter = f.dataset.cat; buildFilters(); renderCards(); };
+  });
+}
+
+function updateProgress() {
+  const filtered = activeFilter === 'all' ? QA : QA.filter(q => q.cat === activeFilter);
+  const done = filtered.filter(q => state.solved.has(q.id)).length;
+  const pct = filtered.length ? Math.round(done/filtered.length*100) : 0;
+  document.getElementById('progText').textContent = done + '/' + filtered.length;
+  document.getElementById('progFill').style.width = pct + '%';
+}
+
+// ════════════════════════════════════════
+// CARDS
+// ════════════════════════════════════════
+function renderCards() {
+  const filtered = activeFilter === 'all' ? QA : QA.filter(q => q.cat === activeFilter);
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = filtered.map((q,i) => {
+    const solved = state.solved.has(q.id);
+    const cat = CATS[q.cat] || {label:q.cat, cls:''};
+    return `<div class="qcard${solved?' solved':''}" id="card-${q.id}" data-id="${q.id}">
+      <div class="qcard-top">
+        <div class="q-num">Q${String(i+1).padStart(2,'0')}</div>
+        <div class="q-cat ${cat.cls}">${cat.label}</div>
+        <div class="q-title">${q.q}</div>
+        <div class="q-xp">+${q.xp} XP</div>
+      </div>
+      <div class="q-tap-hint">👆 Tap to see full explanation</div>
+      <div class="q-answer">
+        <div class="answer-body">
+          <div class="answer-section">
+            <div class="answer-label">📌 Short Answer</div>
+            <div class="answer-text">${q.short}</div>
+          </div>
+          <div class="answer-section">
+            <div class="answer-label">🔍 Deep Explanation</div>
+            <div class="answer-text">${q.long}</div>
+          </div>
+          <div class="answer-section">
+            <div class="answer-label green">🌍 Real-World Example</div>
+            <div class="real-world-box">
+              <div class="rw-label">How Yassir/Uber applies this:</div>
+              <div class="rw-text">${q.realWorld}</div>
+            </div>
+          </div>
+          <div class="answer-section">
+            <div class="answer-label gold">💡 Interview Tip</div>
+            <div class="interview-tip">
+              <div class="tip-label">What to say to impress the interviewer:</div>
+              <div class="tip-text">${q.tip}</div>
+            </div>
+          </div>
+          ${!solved ? `<button class="mark-btn" data-id="${q.id}">✅ Mark as Mastered (+${q.xp} XP)</button>` : '<div class="mark-btn">🏆 Mastered!</div>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Toggle open
+  grid.querySelectorAll('.qcard').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.mark-btn')) return;
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.qcard.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) card.classList.add('open');
+    });
+  });
+
+  // Mark as solved
+  grid.querySelectorAll('.mark-btn[data-id]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = parseInt(btn.dataset.id);
+      if (state.solved.has(id)) return;
+      state.solved.add(id);
+      state.streak++;
+      const q = QA.find(q => q.id === id);
+      addXP(q.xp, q.q.substring(0,35) + '...');
+      saveState();
+      updateProgress();
+      const card = document.getElementById('card-' + id);
+      card.classList.add('solved');
+      btn.textContent = '🏆 Mastered!';
+      btn.removeAttribute('data-id');
+    });
+  });
+
+  updateProgress();
+}
+
+// ════════════════════════════════════════
+// BOSS BATTLE
+// ════════════════════════════════════════
+function defeatBoss() {
+  if (state.bossDone) { showXPPopup(0, 'Already defeated!'); return; }
+  state.bossDone = true;
+  saveState();
+  addXP(300, 'Boss defeated! 🔥');
+  // Drain HP bar
+  let hp = 100;
+  const interval = setInterval(() => {
+    hp -= 5;
+    document.getElementById('bossHp').style.width = Math.max(0,hp) + '%';
+    document.getElementById('bossHpNum').textContent = Math.max(0,hp) + '%';
+    if (hp <= 0) clearInterval(interval);
+  }, 80);
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+buildFilters();
+renderCards();
+updateHUD();
+</script>
+</body>
+</html>

@@ -264,6 +264,7 @@ function openSidebar() {
     document.getElementById('sidebar').classList.add('open');
     document.getElementById('overlay').classList.add('show');
 }
+
 function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('show');
@@ -290,7 +291,12 @@ function bindEvents() {
     const sidebarLogo = document.getElementById('sidebarLogo');
     if (sidebarLogo) {
         sidebarLogo.addEventListener('click', () => showWelcome());
-        sidebarLogo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showWelcome(); } });
+        sidebarLogo.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showWelcome();
+            }
+        });
     }
 
     document.getElementById('breadcrumb').addEventListener('click', (e) => {
@@ -413,7 +419,10 @@ function filterTree(term) {
 
     if (!term) {
         files.forEach(f => f.style.display = '');
-        folders.forEach(f => { f.style.display = ''; f.classList.remove('open'); });
+        folders.forEach(f => {
+            f.style.display = '';
+            f.classList.remove('open');
+        });
         return;
     }
 
@@ -450,7 +459,7 @@ function setActiveFile(path) {
         if (p.classList.contains('file-tree')) break;
         p = p.parentElement;
     }
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
 /* ─────────────────────────────────────────
@@ -625,6 +634,12 @@ function showWelcome() {
                     <a href="${p('System Design/system-design-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🏗️</span>System Design
                     </a>
+                    <a href="${p('System Design/system_design_qa.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🏗️</span>System Design Udemy course summary
+                    </a>
+                          <a href="${p('System Design/system_design_game.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🏗️</span>System Design Arena
+                    </a>
                     <a href="${p('Architecture/api-distributed-event-microservices-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🧱</span>Architecture
                     </a>
@@ -689,8 +704,9 @@ async function loadFile(filePath, addToHistory = true) {
     try {
         const hash = encodeURIComponent(filePath);
         const url = BASE_PATH ? `${BASE_PATH}/#${hash}` : `/#${hash}`;
-        window.history.pushState({ file: filePath }, '', url);
-    } catch (e) { /* ignore */ }
+        window.history.pushState({file: filePath}, '', url);
+    } catch (e) { /* ignore */
+    }
 
     try {
         let fullPath = BASE_PATH ? `${BASE_PATH}/${filePath.replace(/^\//, '')}` : filePath;
@@ -729,7 +745,7 @@ async function loadFile(filePath, addToHistory = true) {
    MARKDOWN RENDERER
 ───────────────────────────────────────── */
 function renderMarkdown(markdown, filePath, addToHistory) {
-    marked.setOptions({ breaks: true, gfm: true, mangle: false, headerIds: true });
+    marked.setOptions({breaks: true, gfm: true, mangle: false, headerIds: true});
     const html = marked.parse(markdown);
 
     document.getElementById('content').innerHTML = `
@@ -750,7 +766,19 @@ function renderMarkdown(markdown, filePath, addToHistory) {
 
 function renderCodeFile(code, filePath, addToHistory) {
     const ext = filePath.split('.').pop().toLowerCase();
-    const langMap = { rb: 'ruby', js: 'javascript', ts: 'typescript', py: 'python', java: 'java', cpp: 'cpp', c: 'c', go: 'go', rs: 'rust', kt: 'kotlin', scala: 'scala' };
+    const langMap = {
+        rb: 'ruby',
+        js: 'javascript',
+        ts: 'typescript',
+        py: 'python',
+        java: 'java',
+        cpp: 'cpp',
+        c: 'c',
+        go: 'go',
+        rs: 'rust',
+        kt: 'kotlin',
+        scala: 'scala'
+    };
     const lang = langMap[ext] || ext;
     const label = filePath.split('/').pop();
     const escaped = escapeHtml(code);
@@ -791,7 +819,7 @@ function fixInternalLinks(currentPath) {
                         const id = href.split('#')[1];
                         setTimeout(() => {
                             const el = document.getElementById(id) || document.querySelector(`[id="${id}"]`);
-                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
                         }, 300);
                     }
                 }
