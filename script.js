@@ -152,6 +152,11 @@ const fileStructure = {
     "Companies": {
         "Toters": {
             "Full Interview Guide": "Companies/toters/full_interview.md",
+            "Mock Interviews": "Companies/toters/random_questions.md",
+            "Mock Interviews 2": "Companies/toters/bank.md",
+            "research": "Companies/toters/research.md",
+            "Feedback": "feedback/weak_area_1.md",
+
             "Technical Deep Dive": "Companies/toters/technical_deep_dive_interview.md",
             "Staff Backend Engineer Q&A": "Companies/toters/Toters Staff Backend Engineer Interview Questions and Answers.md"
         },
