@@ -142,3 +142,52 @@ deliveries = [
   { driver_id: "d1", eta: 7 },
   { driver_id: "d2", eta: 3 }
 ]
+
+def find_missing_menu_items(merchant_menu, cache_menu)
+  hash = {}
+  result = []
+  cache_menu.each do |item|
+    hash[item] = true
+  end
+  merchant_menu.each do |item|
+    result.push(item) unless hash[item]
+  end
+  result
+end
+
+def merge_availability(availability_windows)
+  # [[1,3],[2,6],[8,10],[15,18]]
+  return [] if availability_windows.empty?
+
+  # Step 1: sort in-place
+  availability_windows.sort_by! { |interval| interval[0] }
+
+  k = 0 # write pointer (last merged index)
+
+  (1...availability_windows.length).each do |i|
+    current = availability_windows[i]
+    last = availability_windows[k]
+
+    if current[0] <= last[1] # overlap
+      # merge into last
+      availability_windows[k][1] = [last[1], current[1]].max
+    else
+      # move forward and overwrite next position
+      k += 1
+      availability_windows[k] = current
+    end
+  end
+
+  # keep only merged part
+  availability_windows[0..k]
+end
+
+# 0   1   2   3   4   5   6   7   8   9
+#     order_______1
+#         order2
+#
+# 0   1   2   3   4   5   6   7   8   9  10   11   12   13   14   15   16   17   18   19
+#     order___1
+#         order___________2
+#                                 order__3
+#                                                                 order__________4
