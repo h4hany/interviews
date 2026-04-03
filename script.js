@@ -203,6 +203,7 @@ const fileStructure = {
     },
     "Playgrounds": {
         "Node.js": "Frameworks/Backend/node/nodejs-interview-prep.html",
+        "Node EventLoop": "Frameworks/Backend/node/nodejs-event-loop.html",
         "Ruby & Rails": "Frameworks/Backend/Rails/ruby-rails-interview-prep.html",
         "C# & .NET": "Frameworks/Backend/dotNet/dotnet-interview-prep.html",
         "Python & FastAPI": "Frameworks/Backend/pyhton/python-fastapi-prep.html",
@@ -608,6 +609,10 @@ function showWelcome() {
                 <div class="cards">
                     <a href="${p('Frameworks/Backend/node/nodejs-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">🟢</span>Node.js
+                    </a>  
+                       
+                       <a href="${p('Frameworks/Backend/node/nodejs-event-loop.html')}" target="_blank" rel="noopener" class="card">
+                        <span class="card-icon">🟢</span>Node.js Event Loop
                     </a>
                     <a href="${p('Frameworks/Backend/Rails/ruby-rails-interview-prep.html')}" target="_blank" rel="noopener" class="card">
                         <span class="card-icon">💎</span>Ruby & Rails

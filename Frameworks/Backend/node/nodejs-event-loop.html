@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node.js Event Loop — Visual Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2229;
+    --border-bright: #2d3340;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #22d3a0;
+    --green-dim: rgba(34,211,160,0.12);
+    --yellow: #f5c542;
+    --yellow-dim: rgba(245,197,66,0.12);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.12);
+    --purple: #c084fc;
+    --purple-dim: rgba(192,132,252,0.12);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.12);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- GRID BG ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(34,211,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,211,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  /* ---- HEADER ---- */
+  header { text-align: center; margin-bottom: 64px; }
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    background: var(--green-dim);
+  }
+  header h1 {
+    font-size: clamp(32px, 6vw, 60px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 40%, var(--green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  /* ---- TABS ---- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ---- SECTION TITLE ---- */
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  /* ---- LOOP DIAGRAM ---- */
+  .loop-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .phase-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .phase-box {
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .phase-box:hover, .phase-box.active {
+    border-color: var(--phase-color);
+    background: var(--phase-bg);
+    z-index: 2;
+  }
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 20px;
+  }
+  .phase-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--phase-color);
+  }
+  .phase-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .phase-detail {
+    border: 1px solid var(--border);
+    border-left: none;
+    padding: 16px 20px;
+    display: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    background: var(--surface);
+  }
+  .phase-detail.show {
+    display: flex;
+    align-items: center;
+  }
+
+  .connector {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 30px;
+    height: 36px;
+    position: relative;
+  }
+  .connector::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+  .microtask-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-left: 40px;
+    background: var(--purple-dim);
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .microtask-pill::before {
+    content: '⚡';
+    font-size: 10px;
+  }
+
+  /* ---- MICROTASK DIAGRAM ---- */
+  .micro-diagram {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  @media (max-width: 600px) {
+    .micro-diagram { grid-template-columns: 1fr; }
+    .phase-row { grid-template-columns: 1fr; }
+    .phase-detail { border-left: 1px solid var(--border); border-top: none; }
+  }
+
+  .queue-card {
+    border: 1px solid var(--border);
+    padding: 20px;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .queue-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--card-color);
+  }
+  .queue-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--card-color);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .queue-card p {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .priority-badge {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ---- CODE BLOCK ---- */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 20px 24px;
+    margin: 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    overflow-x: auto;
+    position: relative;
+  }
+  .code-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    position: absolute;
+    top: 8px;
+    right: 12px;
+  }
+  .c-comment { color: #5c6773; }
+  .c-keyword { color: var(--purple); }
+  .c-fn { color: var(--blue); }
+  .c-string { color: var(--green); }
+  .c-num { color: var(--orange); }
+  .c-log { color: var(--yellow); }
+
+  /* ---- OUTPUT TRACE ---- */
+  .trace-box {
+    border: 1px solid var(--border);
+    background: #0d1117;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .trace-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s;
+  }
+  .trace-line.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .trace-line:last-child { border-bottom: none; }
+  .trace-num {
+    color: var(--muted);
+    font-size: 10px;
+    min-width: 20px;
+    text-align: right;
+  }
+  .trace-tag {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    min-width: 80px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+  }
+  .trace-output { color: var(--text); }
+
+  .play-btn {
+    background: var(--green-dim);
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .play-btn:hover {
+    background: var(--green);
+    color: var(--bg);
+  }
+
+  /* ---- PRIORITY TABLE ---- */
+  .priority-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+  .priority-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .priority-table td {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .priority-table tr:hover td {
+    background: var(--surface);
+  }
+  .rank-num {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+  }
+
+  /* ---- QUIZ ---- */
+  .quiz-card {
+    border: 1px solid var(--border);
+    padding: 24px;
+    background: var(--surface);
+    margin-bottom: 20px;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quiz-opt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 0;
+  }
+  .quiz-opt:hover { border-color: var(--blue); color: var(--blue); }
+  .quiz-opt.correct { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: var(--red-dim); color: var(--red); }
+  .quiz-opt:disabled { cursor: not-allowed; }
+  .quiz-explanation {
+    margin-top: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+    display: none;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+  .quiz-explanation.show { display: block; }
+
+  .score-display {
+    text-align: center;
+    padding: 32px;
+    border: 1px solid var(--border);
+    margin-top: 24px;
+    display: none;
+  }
+  .score-display.show { display: block; }
+  .score-num {
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+  }
+  .score-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ---- CHEATSHEET ---- */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .cheat-grid { grid-template-columns: 1fr; } }
+
+  .cheat-card {
+    border: 1px solid var(--border);
+    padding: 18px;
+    background: var(--surface);
+    position: relative;
+  }
+  .cheat-card h3 {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--card-color, var(--green));
+    margin-bottom: 12px;
+    font-family: 'Space Mono', monospace;
+  }
+  .cheat-card ul {
+    list-style: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .cheat-card ul li::before {
+    content: '→ ';
+    color: var(--card-color, var(--green));
+  }
+
+  /* ---- LIBUV ---- */
+  .arch-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) { .arch-boxes { grid-template-columns: 1fr; } }
+  .arch-box {
+    padding: 20px;
+    background: var(--bg);
+    text-align: center;
+  }
+  .arch-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--box-color);
+    margin-bottom: 6px;
+  }
+  .arch-box p {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .arch-box .icon { font-size: 24px; margin-bottom: 10px; }
+
+  .thread-pool {
+    border: 1px solid var(--yellow);
+    padding: 20px;
+    background: var(--yellow-dim);
+    margin-top: 16px;
+  }
+  .thread-pool h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .threads-visual {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .thread-dot {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    transition: all 0.3s;
+  }
+  .thread-dot:hover {
+    background: var(--yellow);
+    color: var(--bg);
+  }
+  .plus-more {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* helpers */
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .highlight { color: var(--green); font-weight: 700; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  .info-box {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--box-color, var(--green));
+    padding: 14px 18px;
+    background: var(--surface);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin: 12px 0;
+  }
+  .info-box strong { color: var(--text); }
+
+  /* ---- ANIMATE LOOP ---- */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,160,0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(34,211,160,0); }
+  }
+  .pulse { animation: pulse-border 1.5s infinite; }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tab-content.active { animation: slide-in 0.3s ease; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="badge">NODE.JS INTERNALS</div>
+    <h1>The Event Loop<br>Visual Guide</h1>
+    <p>// A technical reference for Staff+ backend interviews<br>// Click phases to explore · Run traces · Test yourself</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('loop')">① LOOP PHASES</button>
+    <button class="tab-btn" onclick="switchTab('microtask')">② MICROTASKS</button>
+    <button class="tab-btn" onclick="switchTab('libuv')">③ LIBUV</button>
+    <button class="tab-btn" onclick="switchTab('traces')">④ EXECUTION TRACES</button>
+    <button class="tab-btn" onclick="switchTab('quiz')">⑤ QUIZ</button>
+    <button class="tab-btn" onclick="switchTab('cheat')">⑥ CHEATSHEET</button>
+  </div>
+
+  <!-- TAB 1: LOOP PHASES -->
+  <div id="tab-loop" class="tab-content active">
+    <div class="section-title">// event loop — phase by phase</div>
+
+    <div style="--phase-color:var(--purple);--phase-bg:var(--purple-dim)" class="info-box">
+      <strong>⚡ MICROTASK CHECK</strong> — runs between <em>every single phase</em> and between individual callbacks. Always before the next phase begins.
+    </div>
+
+    <div class="loop-diagram mt16">
+
+      <!-- MICROTASK START -->
+      <div class="connector">
+        <div class="microtask-pill">MICROTASK CHECK (nextTick → Promise)</div>
+      </div>
+
+      <!-- PHASE 1 -->
+      <div class="phase-row">
+        <div class="phase-box" style="--phase-color:var(--yellow);--phase-bg:var(--yellow-dim)" onclick="togglePhase(this, 'detail-timer')">
+          <span class="phase-num">01</span>
+          <div>
+            <div class="phase-name">TIMER QUEUE</div>
+            <div class="phase-sub">setTimeout · setInterval</div>
+          </div>
+        </div>
+        <div class="phase-detail" id="detail-timer">
+          Executes callbacks whose <span style="color:var(--yellow)">delay has expired</span>. A delay of 0ms is treated as ~1ms by the OS — not truly zero. Timers are checked against the current timestamp.
+        </div>
+      </div>
+      <div class="connector">
+        <div class="microtask-pill">MICROTASK CHECK (A)</div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-row">
+        <div class="phase-box" style="--phase-color:var(--blue);--phase-bg:var(--blue-dim)" onclick="togglePhase(this, 'detail-io')">
+          <span class="phase-num">02</span>
+          <div>
+            <div class="phase-name">I/O QUEUE</div>
+            <div class="phase-sub">fs.readFile · network · etc</div>
+          </div>
+        </div>
+        <div class="phase-detail" id="detail-io">
+          Handles completed async I/O callbacks (file system, sockets). Includes an <span style="color:var(--blue)">I/O polling phase</span> — the loop may block here to wait for I/O if no other work is pending.
+        </div>
+      </div>
+      <div class="connector">
+        <div class="microtask-pill">MICROTASK CHECK (B)</div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-row">
+        <div class="phase-box" style="--phase-color:var(--green);--phase-bg:var(--green-dim)" onclick="togglePhase(this, 'detail-check')">
+          <span class="phase-num">03</span>
+          <div>
+            <div class="phase-name">CHECK QUEUE</div>
+            <div class="phase-sub">setImmediate</div>
+          </div>
+        </div>
+        <div class="phase-detail" id="detail-check">
+          <span style="color:var(--green)">setImmediate()</span> callbacks run here. Inside an I/O callback, setImmediate is guaranteed to fire before any setTimeout — because we're already past the Timer phase.
+        </div>
+      </div>
+      <div class="connector">
+        <div class="microtask-pill">MICROTASK CHECK (C)</div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase-row">
+        <div class="phase-box" style="--phase-color:var(--red);--phase-bg:var(--red-dim)" onclick="togglePhase(this, 'detail-close')">
+          <span class="phase-num">04</span>
+          <div>
+            <div class="phase-name">CLOSE QUEUE</div>
+            <div class="phase-sub">socket.on('close') · cleanup</div>
+          </div>
+        </div>
+        <div class="phase-detail" id="detail-close">
+          Cleanup callbacks, e.g. <span style="color:var(--red)">socket.on('close')</span>. After this phase the loop checks active handles/requests and decides whether to do another iteration or exit.
+        </div>
+      </div>
+      <div class="connector">
+        <div class="microtask-pill">MICROTASK CHECK (D)</div>
+      </div>
+
+      <div style="padding: 12px 0 0 30px; font-family:'Space Mono',monospace; font-size:11px; color:var(--muted)">
+        ↩ Loop repeats — or exits if no more work
+      </div>
+    </div>
+
+    <div class="info-box mt24" style="--box-color:var(--blue)">
+      <strong>Interview tip:</strong> "The event loop is not a single queue — it has distinct phases each with their own queue. Microtasks (nextTick + Promises) are checked between each phase, giving them higher priority than any loop phase."
+    </div>
+  </div>
+
+  <!-- TAB 2: MICROTASKS -->
+  <div id="tab-microtask" class="tab-content">
+    <div class="section-title">// microtask queues — the highest priority</div>
+
+    <div class="micro-diagram">
+      <div class="queue-card" style="--card-color:var(--purple)">
+        <h3>
+          nextTick Queue
+          <span class="priority-badge" style="background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple)">PRIORITY 1</span>
+        </h3>
+        <p>
+          Callbacks passed to <span style="color:var(--purple)">process.nextTick()</span>.<br><br>
+          Not technically part of the event loop — it's a Node.js runtime construct. Runs before ANY phase begins. Used for: error handling, cleanup, deferred work that must happen before I/O.
+        </p>
+      </div>
+      <div class="queue-card" style="--card-color:var(--cyan)">
+        <h3>
+          Promise Queue
+          <span class="priority-badge" style="background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)">PRIORITY 2</span>
+        </h3>
+        <p>
+          Resolved Promise callbacks: <span style="color:var(--cyan)">Promise.resolve().then()</span>, async/await continuations.<br><br>
+          Runs only after the entire nextTick queue is empty. Both queues are drained fully before the loop phase advances.
+        </p>
+      </div>
+    </div>
+
+    <div class="code-block mt24">
+      <span class="code-label">EXECUTION ORDER</span>
+<span class="c-comment">// Synchronous code runs first — always</span>
+console.log(<span class="c-string">'1 - sync'</span>);
+
+<span class="c-fn">process</span>.nextTick(<span class="c-keyword">() =></span> {
+  console.log(<span class="c-string">'3 - nextTick'</span>); <span class="c-comment">// nextTick queue</span>
+});
+
+<span class="c-fn">Promise</span>.resolve().<span class="c-fn">then</span>(<span class="c-keyword">() =></span> {
+  console.log(<span class="c-string">'4 - Promise'</span>);  <span class="c-comment">// Promise queue (after nextTick)</span>
+});
+
+<span class="c-fn">setTimeout</span>(<span class="c-keyword">() =></span> {
+  console.log(<span class="c-string">'5 - timer'</span>);    <span class="c-comment">// Timer Queue phase</span>
+}, <span class="c-num">0</span>);
+
+console.log(<span class="c-string">'2 - sync'</span>);
+    </div>
+
+    <div class="info-box" style="--box-color:var(--purple)">
+      <strong>Output:</strong> 1 → 2 → 3 → 4 → 5<br>
+      Sync completes → nextTick drains → Promise drains → Event loop phase (timer)
+    </div>
+
+    <div class="code-block mt24">
+      <span class="code-label">NESTED nextTick — DANGEROUS PATTERN</span>
+<span class="c-fn">process</span>.nextTick(<span class="c-keyword">() =></span> {
+  console.log(<span class="c-string">'nextTick 1'</span>);
+  <span class="c-fn">process</span>.nextTick(<span class="c-keyword">() =></span> {
+    console.log(<span class="c-string">'nextTick 2 (nested)'</span>); <span class="c-comment">// still runs before Promise!</span>
+  });
+});
+
+<span class="c-fn">Promise</span>.resolve().<span class="c-fn">then</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'Promise'</span>));
+
+<span class="c-comment">// Output: nextTick 1 → nextTick 2 → Promise</span>
+<span class="c-comment">// Nested nextTick callbacks join the SAME drain cycle!</span>
+    </div>
+
+    <div class="info-box" style="--box-color:var(--red)">
+      <strong>⚠ Starvation risk:</strong> Recursively calling process.nextTick() can starve the event loop — it will keep processing the nextTick queue forever without advancing to I/O or timers.
+    </div>
+  </div>
+
+  <!-- TAB 3: LIBUV -->
+  <div id="tab-libuv" class="tab-content">
+    <div class="section-title">// libuv — the async foundation</div>
+
+    <div class="arch-boxes">
+      <div class="arch-box">
+        <div class="icon">🔷</div>
+        <h3 style="--box-color:var(--blue)">V8 Engine</h3>
+        <p>Compiles and executes JavaScript. The JS call stack lives here. Single-threaded.</p>
+      </div>
+      <div class="arch-box">
+        <div class="icon">⚡</div>
+        <h3 style="--box-color:var(--green)">libuv</h3>
+        <p>C library providing async I/O, event loop, and thread pool. OS abstraction layer.</p>
+      </div>
+      <div class="arch-box">
+        <div class="icon">🐧</div>
+        <h3 style="--box-color:var(--orange)">OS Kernel</h3>
+        <p>epoll (Linux), kqueue (macOS), IOCP (Windows). Handles network I/O natively.</p>
+      </div>
+    </div>
+
+    <div class="thread-pool">
+      <h3>⚙ libuv Thread Pool — UV_THREADPOOL_SIZE</h3>
+      <p class="mono" style="font-size:12px; color:var(--muted); margin-bottom:14px; font-family:'Space Mono',monospace;">Default: 4 threads. Max: 1024. Used for: File I/O, DNS lookups, crypto, zlib.</p>
+      <div class="threads-visual">
+        <div class="thread-dot">T1</div>
+        <div class="thread-dot">T2</div>
+        <div class="thread-dot">T3</div>
+        <div class="thread-dot">T4</div>
+        <div class="plus-more">← default (can increase via UV_THREADPOOL_SIZE=8)</div>
+      </div>
+    </div>
+
+    <div class="cheat-grid mt24">
+      <div class="cheat-card" style="--card-color:var(--blue)">
+        <h3>Network I/O</h3>
+        <ul>
+          <li>Handled by OS kernel directly</li>
+          <li>Does NOT use thread pool</li>
+          <li>Non-blocking via epoll/IOCP</li>
+          <li>Scales to 1000s of connections</li>
+          <li>No thread overhead</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--orange)">
+        <h3>File I/O (fs module)</h3>
+        <ul>
+          <li>Uses libuv thread pool</li>
+          <li>OS lacks async primitives for FS</li>
+          <li>Limited by UV_THREADPOOL_SIZE</li>
+          <li>Can bottleneck under heavy load</li>
+          <li>Solution: increase pool size</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box mt24" style="--box-color:var(--green)">
+      <strong>Interview answer:</strong> "Node.js achieves non-blocking I/O via libuv, which interfaces with the OS kernel for async network operations, and uses a thread pool for file system operations where the OS lacks async primitives. This is why Node.js can handle thousands of concurrent HTTP connections with a single thread."
+    </div>
+  </div>
+
+  <!-- TAB 4: EXECUTION TRACES -->
+  <div id="tab-traces" class="tab-content">
+    <div class="section-title">// execution traces — step through the output</div>
+
+    <!-- TRACE 1 -->
+    <h3 style="font-size:14px; color:var(--text); margin-bottom:12px;">Scenario 1: Classic order quiz</h3>
+    <div class="code-block">
+      <span class="code-label">SNIPPET</span>
+<span class="c-fn">setTimeout</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'A - timer'</span>), <span class="c-num">0</span>);
+<span class="c-fn">setImmediate</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'B - immediate'</span>));
+<span class="c-fn">process</span>.nextTick(<span class="c-keyword">() =></span> console.log(<span class="c-string">'C - nextTick'</span>));
+<span class="c-fn">Promise</span>.resolve().<span class="c-fn">then</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'D - promise'</span>));
+console.log(<span class="c-string">'E - sync'</span>);
+    </div>
+
+    <button class="play-btn" onclick="runTrace1()">▶ RUN TRACE</button>
+    <div class="trace-box" id="trace1">
+      <div class="trace-line" id="t1-1">
+        <span class="trace-num">1</span>
+        <span class="trace-tag" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">SYNC</span>
+        <span class="trace-output">E - sync</span>
+      </div>
+      <div class="trace-line" id="t1-2">
+        <span class="trace-num">2</span>
+        <span class="trace-tag" style="background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple)">NEXTTICK</span>
+        <span class="trace-output">C - nextTick</span>
+      </div>
+      <div class="trace-line" id="t1-3">
+        <span class="trace-num">3</span>
+        <span class="trace-tag" style="background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)">PROMISE</span>
+        <span class="trace-output">D - promise</span>
+      </div>
+      <div class="trace-line" id="t1-4">
+        <span class="trace-num">4</span>
+        <span class="trace-tag" style="background:var(--yellow-dim);color:var(--yellow);border:1px solid var(--yellow)">TIMER</span>
+        <span class="trace-output">A - timer&nbsp;&nbsp; <span style="color:var(--muted); font-size:10px">(may swap with B outside I/O context)</span></span>
+      </div>
+      <div class="trace-line" id="t1-5">
+        <span class="trace-num">5</span>
+        <span class="trace-tag" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green)">CHECK</span>
+        <span class="trace-output">B - immediate</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- TRACE 2 -->
+    <h3 style="font-size:14px; color:var(--text); margin-bottom:12px;">Scenario 2: Inside an I/O callback</h3>
+    <div class="code-block">
+      <span class="code-label">SNIPPET</span>
+<span class="c-keyword">const</span> fs = <span class="c-fn">require</span>(<span class="c-string">'fs'</span>);
+
+fs.<span class="c-fn">readFile</span>(__filename, <span class="c-keyword">() =></span> {
+  <span class="c-comment">// We are NOW inside the I/O phase</span>
+  <span class="c-fn">setTimeout</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'A - setTimeout inside I/O'</span>), <span class="c-num">0</span>);
+  <span class="c-fn">setImmediate</span>(<span class="c-keyword">() =></span> console.log(<span class="c-string">'B - setImmediate inside I/O'</span>));
+  <span class="c-fn">process</span>.nextTick(<span class="c-keyword">() =></span> console.log(<span class="c-string">'C - nextTick inside I/O'</span>));
+});
+    </div>
+
+    <button class="play-btn" onclick="runTrace2()">▶ RUN TRACE</button>
+    <div class="trace-box" id="trace2">
+      <div class="trace-line" id="t2-1">
+        <span class="trace-num">1</span>
+        <span class="trace-tag" style="background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple)">NEXTTICK</span>
+        <span class="trace-output">C - nextTick inside I/O</span>
+      </div>
+      <div class="trace-line" id="t2-2">
+        <span class="trace-num">2</span>
+        <span class="trace-tag" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green)">CHECK</span>
+        <span class="trace-output">B - setImmediate inside I/O &nbsp;<span style="color:var(--muted);font-size:10px">(GUARANTEED before timer here)</span></span>
+      </div>
+      <div class="trace-line" id="t2-3">
+        <span class="trace-num">3</span>
+        <span class="trace-tag" style="background:var(--yellow-dim);color:var(--yellow);border:1px solid var(--yellow)">TIMER</span>
+        <span class="trace-output">A - setTimeout inside I/O</span>
+      </div>
+    </div>
+
+    <div class="info-box mt16" style="--box-color:var(--green)">
+      <strong>Key insight:</strong> Outside an I/O callback, setTimeout(0) vs setImmediate is <em>nondeterministic</em>. Inside an I/O callback, setImmediate <strong>always</strong> wins because we've already passed the Timer phase in the current iteration.
+    </div>
+  </div>
+
+  <!-- TAB 5: QUIZ -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="section-title">// test yourself — interview questions</div>
+
+    <div id="quiz-container"></div>
+    <div class="score-display" id="score-display">
+      <div class="score-num" id="score-num">0/5</div>
+      <div class="score-label">// QUIZ COMPLETE — reload tab to retry</div>
+    </div>
+  </div>
+
+  <!-- TAB 6: CHEATSHEET -->
+  <div id="tab-cheat" class="tab-content">
+    <div class="section-title">// interview cheatsheet</div>
+
+    <div class="cheat-grid">
+      <div class="cheat-card" style="--card-color:var(--yellow)">
+        <h3>Loop Phases (order)</h3>
+        <ul>
+          <li>Microtasks (nextTick → Promise)</li>
+          <li>Timer Queue (setTimeout/setInterval)</li>
+          <li>Microtasks again</li>
+          <li>I/O Queue (fs, net callbacks)</li>
+          <li>Microtasks again</li>
+          <li>Check Queue (setImmediate)</li>
+          <li>Microtasks again</li>
+          <li>Close Queue (cleanup)</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--purple)">
+        <h3>Microtask Rules</h3>
+        <ul>
+          <li>Runs between EVERY phase</li>
+          <li>Also between individual callbacks</li>
+          <li>nextTick before Promise — always</li>
+          <li>Both queues fully drained first</li>
+          <li>Recursive nextTick = starvation risk</li>
+          <li>Not part of event loop itself</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--blue)">
+        <h3>I/O Behavior</h3>
+        <ul>
+          <li>Network: kernel handles it (no thread)</li>
+          <li>File I/O: libuv thread pool</li>
+          <li>Default pool size: 4 threads</li>
+          <li>Env var: UV_THREADPOOL_SIZE</li>
+          <li>I/O polling may block loop</li>
+          <li>setTimeout vs I/O = nondeterministic</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--green)">
+        <h3>setImmediate vs setTimeout(0)</h3>
+        <ul>
+          <li>Top-level: nondeterministic order</li>
+          <li>Inside I/O: setImmediate wins always</li>
+          <li>setTimeout 0ms ≈ 1ms minimum</li>
+          <li>setImmediate = Check Queue phase</li>
+          <li>setTimeout = Timer Queue phase</li>
+          <li>In I/O, Timer phase already passed</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--orange)">
+        <h3>process.nextTick</h3>
+        <ul>
+          <li>NOT part of the event loop</li>
+          <li>Queued in Node.js runtime side</li>
+          <li>Runs after current op completes</li>
+          <li>Before ANY phase including timers</li>
+          <li>Use for: error handling, cleanup</li>
+          <li>Avoid recursive calls (starvation)</li>
+        </ul>
+      </div>
+      <div class="cheat-card" style="--card-color:var(--red)">
+        <h3>Staff-level Gotchas</h3>
+        <ul>
+          <li>Blocking the loop = all I/O blocked</li>
+          <li>Heavy CPU → worker_threads</li>
+          <li>Many file ops → increase pool size</li>
+          <li>I/O polling minimizes CPU idle</li>
+          <li>Loop exits when no active handles</li>
+          <li>process.nextTick can starve I/O</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box mt24" style="--box-color:var(--green)">
+      <strong>One-liner for interviews:</strong> "Node.js event loop has 4 phases — Timer, I/O, Check, Close. Microtasks (nextTick then Promises) are drained between every phase. setImmediate is guaranteed before setTimeout inside I/O callbacks. File I/O uses a thread pool; network I/O goes through the OS kernel directly."
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---- TABS ----
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ---- PHASE TOGGLE ----
+function togglePhase(box, detailId) {
+  const detail = document.getElementById(detailId);
+  const isActive = box.classList.contains('active');
+  document.querySelectorAll('.phase-box').forEach(b => b.classList.remove('active', 'pulse'));
+  document.querySelectorAll('.phase-detail').forEach(d => d.classList.remove('show'));
+  if (!isActive) {
+    box.classList.add('active', 'pulse');
+    detail.classList.add('show');
+  }
+}
+
+// ---- TRACES ----
+function runTrace(ids) {
+  ids.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('visible');
+    }, i * 350);
+  });
+}
+
+function runTrace1() {
+  document.querySelectorAll('#trace1 .trace-line').forEach(el => el.classList.remove('visible'));
+  setTimeout(() => runTrace(['t1-1','t1-2','t1-3','t1-4','t1-5']), 100);
+}
+
+function runTrace2() {
+  document.querySelectorAll('#trace2 .trace-line').forEach(el => el.classList.remove('visible'));
+  setTimeout(() => runTrace(['t2-1','t2-2','t2-3']), 100);
+}
+
+// ---- QUIZ ----
+const questions = [
+  {
+    q: "What is the correct execution order?\n process.nextTick(A)\n Promise.resolve().then(B)\n setTimeout(C, 0)\n console.log(D)",
+    options: ["D → A → B → C", "A → B → D → C", "D → C → A → B", "D → B → A → C"],
+    correct: 0,
+    explanation: "Synchronous code (D) runs first. Then microtasks: nextTick (A) before Promise (B). Finally the Timer phase fires (C)."
+  },
+  {
+    q: "Inside an fs.readFile() callback, which runs first?",
+    options: [
+      "setTimeout(() => {}, 0)",
+      "setImmediate(() => {})",
+      "They're nondeterministic here too",
+      "process.nextTick() — but only here"
+    ],
+    correct: 1,
+    explanation: "Inside an I/O callback you're already past the Timer phase. setImmediate (Check Queue) is the very next phase, so it always fires before setTimeout loops around."
+  },
+  {
+    q: "Which operations use the libuv thread pool?",
+    options: [
+      "HTTP server connections",
+      "fs.readFile and crypto operations",
+      "TCP socket writes",
+      "All I/O operations"
+    ],
+    correct: 1,
+    explanation: "Network I/O is handled by the OS kernel directly. File system and crypto ops use the thread pool because the OS lacks consistent async primitives for them."
+  },
+  {
+    q: "What happens if you recursively call process.nextTick()?",
+    options: [
+      "It throws a stack overflow error",
+      "It works the same as a loop",
+      "It starves the event loop — I/O never runs",
+      "Node.js limits it to 1000 iterations"
+    ],
+    correct: 2,
+    explanation: "The nextTick queue is fully drained before any event loop phase. Recursive nextTick calls keep adding to the queue, starving timers and I/O indefinitely."
+  },
+  {
+    q: "What is UV_THREADPOOL_SIZE and when would you increase it?",
+    options: [
+      "Number of event loop iterations per second",
+      "Thread pool size for I/O — increase for heavy file I/O or crypto workloads",
+      "Max concurrent network connections",
+      "Stack size per async operation"
+    ],
+    correct: 1,
+    explanation: "UV_THREADPOOL_SIZE controls how many worker threads libuv can use. Default is 4. Increase it when you have heavy parallel fs or crypto operations to avoid thread pool bottleneck."
+  }
+];
+
+let answered = 0;
+let score = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${qi+1}. ${q.q.replace(/\n/g, '<br><span style="font-family:JetBrains Mono,monospace;font-size:12px;color:var(--muted);padding-left:16px;display:block">').replace(/<span[^>]*>$/, '')}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, oi) => `<button class="quiz-opt" onclick="answerQ(${qi}, ${oi}, this)">${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-explanation" id="exp-${qi}">${q.explanation}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answerQ(qi, oi, btn) {
+  const q = questions[qi];
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  if (oi === q.correct) {
+    btn.classList.add('correct');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+  }
+  document.getElementById('exp-' + qi).classList.add('show');
+  answered++;
+  if (answered === questions.length) {
+    const sd = document.getElementById('score-display');
+    document.getElementById('score-num').textContent = score + '/' + questions.length;
+    sd.classList.add('show');
+  }
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
