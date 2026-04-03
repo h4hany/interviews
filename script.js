@@ -47,6 +47,7 @@ const fileStructure = {
         ".NET/C#": "Frameworks/Backend/dotNet/00_INDEX.md",
         "Ruby on Rails": "Frameworks/Backend/Rails/Ruby on Rails.md",
         "Node.js": "Frameworks/Backend/node/Node.md",
+        "Node.js EventLoop": "Frameworks/Backend/node/NodeJS_Event_Loop_Master_Guide.md",
         "Node.js Interview Prep (HTML)": "Frameworks/Backend/node/nodejs-interview-prep.html",
         "Java & Spring Boot (50+ Q&A)": "Frameworks/Backend/java/Java-Spring-Boot-Interview-QA.md",
         "Python, Django & FastAPI (50+ Q&A)": "Frameworks/Backend/pyhton/Python-Django-FastAPI-Interview-QA.md",
