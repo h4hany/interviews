@@ -7,38 +7,48 @@
 ## 📦 Databases & CAP Theorem
 
 **Q01. What does ACID stand for, and what does each letter mean?**
-Atomicity (entire transaction succeeds or fails completely), Consistency (rules are consistently applied), Isolation (no
-transaction affected by another in-progress transaction), Durability (committed data persists even if the system
-crashes).
+
+Atomicity (entire transaction succeeds or fails completely),
+Consistency (rules are consistently applied),
+Isolation (no transaction affected by another in-progress transaction),
+Durability (committed data persists even if the system crashes).
 
 ---
 
 **Q02. What is 'Atomicity' in ACID, and why does it matter?**
-Atomicity means a database transaction either fully completes or fully rolls back — no partial writes. This prevents '
-half-baked' data from being committed when part of a complex operation fails.
+
+Atomicity means a database transaction either fully completes or fully rolls back — no partial writes.
+This prevents 'half-baked' data from being committed when part of a complex operation fails.
 
 ---
 
 **Q03. What does 'Consistency' mean in ACID vs the CAP Theorem?**
-In ACID, consistency means database rules (constraints) are always enforced. In CAP, consistency means you always read
+
+In ACID, consistency means database rules (constraints) are always enforced.
+In CAP, consistency means you always read
 the latest write immediately. These are two completely different definitions.
 
 ---
 
 **Q04. What is 'Isolation' in ACID?**
-Isolation ensures that concurrent transactions don't interfere with each other. While one transaction is writing data,
+
+Isolation ensures that concurrent transactions don't interfere with each other.
+While one transaction is writing data,
 another cannot modify that same data simultaneously, preventing race conditions.
 
 ---
 
 **Q05. What does 'Durability' mean in ACID, and when would you NOT need it?**
-Durability guarantees that committed data survives system crashes (written to persistent storage). In-memory caches are
-not durable, but they're still useful for speed — durability isn't always required.
+
+Durability guarantees that committed data survives system crashes (written to persistent storage).
+In-memory caches are not durable, but they're still useful for speed — durability isn't always required.
 
 ---
 
 **Q06. What are the three letters in the CAP Theorem, and what do they represent?**
-C = Consistency (you always read the most recent write), A = Availability (no single point of failure that can go down),
+
+C = Consistency (you always read the most recent write),
+A = Availability (no single point of failure that can go down),
 P = Partition Tolerance (you can horizontally scale/shard the data).
 
 ---
@@ -56,25 +66,31 @@ high availability (few failure points), but it's hard to horizontally partition/
 ---
 
 **Q09. Where does Cassandra fall on the CAP Theorem?**
-Cassandra favors Availability + Partition Tolerance (A+P), giving up Consistency. It uses a ring structure with no
+
+Cassandra favors Availability + Partition Tolerance (A+P), giving up Consistency. 
+It uses a ring structure with no
 single primary, so it scales horizontally and has no single point of failure, but data replication causes eventual
 consistency.
 
 ---
 
 **Q10. Where do MongoDB and DynamoDB fall on the CAP Theorem, and why?**
-They favor Consistency + Partition Tolerance (C+P), giving up Availability. They have a single primary node that is a
+
+They favor Consistency + Partition Tolerance (C+P), giving up Availability.
+They have a single primary node that is a
 potential point of failure, but elect a new primary automatically within seconds.
 
 ---
 
 **Q11. What is 'eventual consistency'?**
-In distributed databases, it takes time for data written to one node to propagate to all other nodes. During that
-window, some reads may return stale data. The system eventually becomes consistent — but not immediately.
+
+In distributed databases, it takes time for data written to one node to propagate to all other nodes. 
+During that window, some reads may return stale data. The system eventually becomes consistent — but not immediately.
 
 ---
 
 **Q12. What is denormalized data, and what are its trade-offs?**
+
 Denormalized data duplicates information across rows to enable single-query lookups without joins. Advantage: faster
 reads, fewer DB hits. Disadvantage: updates are hard (must change every row), wastes storage, risk of data going out of
 sync.
@@ -82,8 +98,9 @@ sync.
 ---
 
 **Q13. What is normalized data, and when is it preferable?**
-Normalized data stores each piece of information once and uses references (foreign keys) to relate tables. Advantages:
-less storage, easy updates in one place. It's the right default starting point — only denormalize when performance
+
+Normalized data stores each piece of information once and uses references (foreign keys) to relate tables.
+Advantages:less storage, easy updates in one place. It's the right default starting point — only denormalize when performance
 demands it.
 
 ---
