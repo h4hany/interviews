@@ -45,6 +45,29 @@ class FleetManager
   # Return an array of fulfilled request IDs.
   def process_requests(requests)
     # TODO: Implement the booking logic
+
+    fulfilled_requests = []
+
+    requests.each do |req|
+      best_equipment = @fleet
+                         .select { |eq| eq.type == req.equipment_type }
+                         .select { |eq| available?(eq.id, req.start_day, req.end_day) }
+                         .min_by(&:daily_rate)
+
+      if best_equipment
+        book_equipment(best_equipment.id, req.days)
+        fulfilled_requests << req.request_id
+      end
+    end
+
+    fulfilled_requests
+  end
+
+  private
+
+  def book_equipment(equipment_id, days_set)
+    # Merge the requested days into the equipment's booked schedule
+    @schedule[equipment_id].merge(days_set)
   end
 end
 
