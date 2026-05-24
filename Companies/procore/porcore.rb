@@ -21,6 +21,7 @@ class WorkScheduler
 
     trades.each do |trade|
       worker = get_worker(trade, used_workers)
+
       next unless worker
 
       scheduled_workers << worker.email
@@ -65,8 +66,7 @@ class WorkScheduler
 
   def get_worker(trade, used_workers)
     @workers
-      .select do |w|
-      w.trades.include?(trade) && !used_workers.include?(w.email)
+      .select do |w| w.trades.include?(trade) && !used_workers.include?(w.email)
     end
       .min_by(&:cost)
   end

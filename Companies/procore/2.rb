@@ -43,7 +43,7 @@ end
 
 # Example Usage & Test Cases
 system = AllocationSystem.new
-system.add_worker(Worker.new(1, "Alice", ["Carpentry", "Plumbing"]))
+system.add_worker(Worker.new(1, "Alice", %w[Carpentry Plumbing]))
 system.add_worker(Worker.new(2, "Bob", ["Electrical"]))
 
 # Test 1: Simple assignment
