@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>خطة تعلّم جافا سكريبت من الصفر — ٦ شهور</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #101a2e;
+      --ink-soft: #3a4763;
+      --paper: #faf7f0;
+      --paper-2: #f1ece0;
+      --panel: #0f2942;
+      --panel-2: #153a5c;
+      --gold: #d6a419;
+      --gold-light: #f0c454;
+      --coral: #c1502e;
+      --teal: #1f7a72;
+      --line: #e3ddcc;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(16, 26, 46, .08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Tajawal', sans-serif;
+      line-height: 1.7;
+    }
+
+    h1,
+    h2,
+    h3,
+    .display {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    /* ---------- HERO / TERMINAL ---------- */
+    .hero {
+      background:
+        radial-gradient(ellipse at 20% -10%, rgba(214, 164, 25, .18), transparent 55%),
+        linear-gradient(180deg, var(--panel), #0a1c30 85%);
+      color: #eef3f8;
+      padding: 56px 20px 70px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 18px;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      letter-spacing: .5px;
+      color: var(--gold-light);
+      background: rgba(214, 164, 25, .12);
+      border: 1px solid rgba(214, 164, 25, .35);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold-light);
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      margin: 0 0 14px;
+      line-height: 1.35;
+    }
+
+    .hero p.lead {
+      color: #c9d6e6;
+      font-size: 17px;
+      max-width: 620px;
+      margin: 0 0 30px;
+    }
+
+    .terminal {
+      background: #0b1c2f;
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-width: 640px;
+    }
+
+    .terminal .bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, .04);
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+    }
+
+    .terminal .bar span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .terminal .bar span:nth-child(1) {
+      background: #e6605a;
+    }
+
+    .terminal .bar span:nth-child(2) {
+      background: #e6b23d;
+    }
+
+    .terminal .bar span:nth-child(3) {
+      background: #3ecf6d;
+    }
+
+    .terminal .bar .fname {
+      margin-inline-start: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #9db2c9;
+    }
+
+    .terminal .body {
+      padding: 18px 20px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      direction: ltr;
+      text-align: left;
+      color: #d7e2ee;
+    }
+
+    .terminal .body .c {
+      color: #6fbfae;
+    }
+
+    .terminal .body .s {
+      color: #e6b23d;
+    }
+
+    .terminal .body .k {
+      color: #e6605a;
+    }
+
+    .terminal .body .f {
+      color: #7fb0e6;
+    }
+
+    .terminal .caret {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--gold-light);
+      animation: blink 1s steps(1) infinite;
+      vertical-align: -3px;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 10px;
+      padding: 12px 16px;
+      min-width: 130px;
+    }
+
+    .stat .num {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--gold-light);
+    }
+
+    .stat .lbl {
+      font-size: 12.5px;
+      color: #a9bad0;
+      margin-top: 2px;
+    }
+
+    /* ---------- INTRO NOTE ---------- */
+    .note {
+      max-width: 920px;
+      margin: -38px auto 10px;
+      padding: 0 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .note .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 24px;
+    }
+
+    .note h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+
+    .note ul {
+      margin: 10px 0 0;
+      padding-inline-start: 20px;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+
+    .note li {
+      margin-bottom: 4px;
+    }
+
+    /* ---------- SECTION HEADERS ---------- */
+    section.container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 46px 18px 10px;
+    }
+
+    .sec-head {
+      margin-bottom: 22px;
+    }
+
+    .sec-head .kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--teal);
+      letter-spacing: .4px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .sec-head h2 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    /* ---------- TOOLS ---------- */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .tool {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .tool .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--coral);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .tool h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .tool p {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--ink);
+      color: #fff !important;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 9px 14px;
+      border-radius: 8px;
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .btn:hover {
+      background: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    .btn.gold {
+      background: var(--gold);
+      color: var(--ink) !important;
+    }
+
+    .btn.gold:hover {
+      background: var(--gold-light);
+    }
+
+    .btn.outline {
+      background: transparent;
+      color: var(--ink) !important;
+      border: 1.5px solid var(--ink);
+    }
+
+    .btn.outline:hover {
+      background: var(--ink);
+      color: #fff !important;
+    }
+
+    /* ---------- MODULES (MONTHS) ---------- */
+    .module {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .module>summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 20px;
+      background: linear-gradient(90deg, #fff, var(--paper-2));
+    }
+
+    .module>summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .m-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .m-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 13px;
+      background: var(--panel);
+      color: var(--gold-light);
+      padding: 8px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .m-title {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .m-sub {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .m-chevron {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--ink-soft);
+      font-size: 20px;
+      transition: transform .2s ease;
+    }
+
+    details[open] .m-chevron {
+      transform: rotate(180deg);
+    }
+
+    .module .m-body {
+      padding: 6px 20px 20px;
+    }
+
+    .week {
+      border-top: 1px dashed var(--line);
+      padding: 18px 4px;
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 14px;
+    }
+
+    .week:first-child {
+      border-top: none;
+    }
+
+    .w-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 8px;
+      height: 40px;
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .w-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .w-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .w-hours {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--coral);
+      background: rgba(193, 80, 46, .1);
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .w-topics {
+      margin: 8px 0 12px;
+      padding-inline-start: 18px;
+      font-size: 14.5px;
+      color: var(--ink-soft);
+    }
+
+    .w-topics li {
+      margin-bottom: 2px;
+    }
+
+    .w-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .w-links .btn {
+      font-size: 13px;
+      padding: 8px 12px;
+    }
+
+    /* ---------- FOOTER TIP ---------- */
+    .tip {
+      max-width: 920px;
+      margin: 34px auto 60px;
+      padding: 0 18px;
+    }
+
+    .tip .card {
+      background: var(--panel);
+      color: #eaf0f6;
+      border-radius: var(--radius);
+      padding: 26px 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .tip h3 {
+      margin: 0 0 10px;
+      color: var(--gold-light);
+      font-size: 18px;
+    }
+
+    .tip p {
+      margin: 0 0 8px;
+      font-size: 14.5px;
+      color: #c9d6e6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 26px 18px 40px;
+      color: #9aa3b2;
+      font-size: 13px;
+    }
+
+    @media (max-width:520px) {
+      .week {
+        grid-template-columns: 44px 1fr;
+      }
+
+      .w-num {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot"></span> خطة مذاكرة شخصية — قبل بدء مادة البرمجة</span>
+      <h1>من صفر لغة برمجة…
+        عبد المالك جاهز لأول درس برمجة السنة الجاية 🎯</h1>
+      <p class="lead">خطة مقسّمة على ٦ شهور، بالعربي وبمصادر مجانية بالكامل، هدفها إنك تدخل السنة الجاية وانت فاهم
+        أساسيات البرمجة بلغة JavaScript كويس، مش بتتعلمها لأول مرة في الفصل.</p>
+
+      <div class="terminal">
+        <div class="bar"><span></span><span></span><span></span><span class="fname">plan.js</span></div>
+        <div class="body">
+          <div><span class="f">console</span>.<span class="k">log</span>(<span class="s">"مرحبًا بيك في رحلة تعلّم
+              البرمجة"</span>);</div>
+          <div style="margin-top:6px;"><span class="c">// المدة: ٦ شهور</span></div>
+          <div><span class="c">// اللغة: JavaScript</span></div>
+          <div><span class="c">// التكلفة: صفر جنيه 💸</span></div>
+          <div style="margin-top:10px;"><span class="k">let</span> status = <span class="s">"جاهز نبدأ؟"</span>;<span
+              class="caret"></span></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num">٦</div>
+          <div class="lbl">شهور</div>
+        </div>
+        <div class="stat">
+          <div class="num">٢٤</div>
+          <div class="lbl">أسبوع مذاكرة</div>
+        </div>
+        <div class="stat">
+          <div class="num">٢-٣</div>
+          <div class="lbl">ساعة أسبوعيًا</div>
+        </div>
+        <div class="stat">
+          <div class="num">٠</div>
+          <div class="lbl">جنيه تكلفة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <div class="card">
+      <h3>إزاي تستخدم الخطة دي؟ 🧭</h3>
+      <p>كل شهر متقسّم لأربع أسابيع، وكل أسبوع ليه موضوع محدد وساعات مذاكرة مقترحة ولينك فيديو مباشر يفتح على يوتيوب.
+        اضغط على اسم الشهر عشان تفتحه وتشوف أسابيعه.</p>
+      <ul>
+        <li>افتح فيديو الأسبوع وشاهده، واكتب الكود اللي بيتشرح بنفسك أول بأول — متكتفيش بالمشاهدة.</li>
+        <li>بعد ما تخلص الفيديو، افتح رابط "التدريب" وحل بيه تمارين على نفس الموضوع.</li>
+        <li>لو موضوع محتاج وقت أطول، خد وقتك فيه براحتك — الجدول مرن مش مسابقة.</li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="container">
+    <div class="sec-head">
+      <span class="kicker">// قبل ما تبدأ</span>
+      <h2>الأدوات اللي هتحتاجها (كلها مجانية)</h2>
+    </div>
+    <div class="tools-grid">
+      <div class="tool">
+        <span class="tag">STEP 01</span>
+        <h4>متصفح إنترنت</h4>
+        <p>جافا سكريبت بتشتغل جوه المتصفح على طول، فمش محتاج تنصيب اللغة نفسها زي لغات تانية. أي متصفح حديث (Chrome
+          مثلاً) هيشغّل الكود على طول.</p>
+        <a class="btn" href="https://www.google.com/chrome/" target="_blank" rel="noopener">تحميل Chrome</a>
+      </div>
+      <div class="tool">
+        <span class="tag">STEP 02</span>
+        <h4>محرر أكواد VS Code</h4>
+        <p>أشهر محرر أكواد مجاني في العالم، هتكتب فيه كل ملفات الكود بتاعتك.</p>
+        <a class="btn" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">تحميل VS Code</a>
+      </div>
+      <div class="tool">
+        <span class="tag">اختياري</span>
+        <h4>تجربة أونلاين بدون تحميل</h4>
+        <p>لو لسه مش عايز تحمّل حاجة، جرّب تكتب كود جافا سكريبت مباشرة من المتصفح.</p>
+        <a class="btn outline" href="https://www.programiz.com/javascript/online-compiler/" target="_blank"
+          rel="noopener">افتح المحرر الأونلاين</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" id="plan">
+    <div class="sec-head">
+      <span class="kicker">// الخطة كاملة</span>
+      <div style="margin-bottom: 16px;">
+        <a href="https://www.youtube.com/watch?v=i5HhhpPqNYM&amp;list=PL_IOlD6P8_LtaGm89X_vGii4q4NXPFdNU"
+          class="btn gold" target="_blank" rel="noopener">▶ برمجة أولى ثانوي 2026</a>
+      </div>
+      <h2>الشهور الستة</h2>
+    </div>
+
+    <!-- MONTH 1 -->
+    <details class="module" open>
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">01</span>
+          <div>
+            <div class="m-title">الشهر الأول — التأسيس</div>
+            <div class="m-sub">إزاي الكمبيوتر بيفكر، وأول خطوات في جافا سكريبت</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">١</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">إزاي تفكر زي المبرمج (الخوارزميات)</span><span
+                class="w-hours">٢ ساعة</span></div>
+            <ul class="w-topics">
+              <li>مفهوم الخوارزمية وحل المشكلة خطوة بخطوة</li>
+              <li>ليه بنختار JavaScript، وتجهيز المتصفح و VS Code</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/watch?v=3_KFRrlkHN8" target="_blank" rel="noopener">▶
+                فيديو: الخوارزميات وعلاقتها بالبرمجة</a>
+              <a class="btn outline" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">تثبيت
+                VS Code</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num" style="font-size: 11px;">HTML</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة في HTML</span><span class="w-hours">٣ ساعات</span>
+            </div>
+            <ul class="w-topics">
+              <li>بناء هيكل صفحة الويب الأساسي</li>
+              <li>التعرف على عناصر HTML المختلفة</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold"
+                href="https://www.youtube.com/watch?v=6QAELgirvjs&list=PLDoPjvoNmBAw_t_XWUFbBX-c9MafPk9ji"
+                target="_blank" rel="noopener">▶
+                فيديو: HTML</a>
+              <a class="btn outline" href="https://www.w3schools.com/html/default.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num" style="font-size: 12px;">CSS</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة في CSS</span><span class="w-hours">٣ ساعات</span></div>
+            <ul class="w-topics">
+              <li>تنسيق وتجميل صفحات الويب</li>
+              <li>التعرف على الألوان والخطوط والأبعاد</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold"
+                href="https://www.youtube.com/watch?v=X1ulCwyhCVM&list=PLZNz7wrFA85A-JCLYvf8CacOHIMpqO9bT"
+                target="_blank" rel="noopener">▶
+                فيديو: CSS</a>
+              <a class="btn outline" href="https://www.w3schools.com/css/default.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٢</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة الجافا سكريبت وأول سطر كود</span><span
+                class="w-hours">٣ ساعات</span></div>
+            <ul class="w-topics">
+              <li>إيه هي JavaScript ومين بيستخدمها وليه</li>
+              <li>أول أمر console.log وتشغيل الكود في المتصفح</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Introduction</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٣</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">أنواع البيانات والمتغيرات</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>المتغيرات let و const</li>
+              <li>أنواع البيانات: أرقام، نصوص، قيم منطقية</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Data Types and Variables</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٤</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">العمليات الحسابية ومراجعة الشهر</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>عوامل الجمع والطرح والضرب والقسمة (Operators, Numbers)</li>
+              <li>حل تمارين متنوعة على المتغيرات والعمليات الحسابية</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Operators & Numbers</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- MONTH 2 -->
+    <details class="module">
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">02</span>
+          <div>
+            <div class="m-title">الشهر الثاني — النصوص واتخاذ القرار</div>
+            <div class="m-sub">خلّي البرنامج "يفكر" حسب الشرط</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">٥</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">السلاسل النصية Strings ودوالها</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>التعامل مع النصوص: تقطيع، دمج، بحث</li>
+              <li>أهم الدوال الجاهزة على النصوص</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Strings And Methods</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٦</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">عوامل المقارنة والمنطق</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>عوامل المقارنة (==, ===, >, <)< /li>
+              <li>عوامل المنطق &&, ||, !</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Comparison & Logical Operators</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٧</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">الجملة الشرطية if / else</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>فكرة اتخاذ القرار داخل البرنامج</li>
+              <li>if, else if, else</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — If Condition</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٨</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">جملة Switch ومراجعة الشهر</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>استخدام switch كبديل لعدة شروط if متتالية</li>
+              <li>حل تمارين تجمع بين النصوص والشروط</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Switch Statement</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- MONTH 3 -->
+    <details class="module">
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">03</span>
+          <div>
+            <div class="m-title">الشهر الثالث — القوائم والتكرار</div>
+            <div class="m-sub">تعامل مع مجموعات من البيانات وكرر تنفيذ الكود</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">٩</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">المصفوفات Arrays ودوالها</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>إنشاء مصفوفة والتعامل مع عناصرها</li>
+              <li>إضافة وحذف وترتيب العناصر</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Arrays And Methods</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٠</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">حلقة التكرار for</span><span class="w-hours">٣ ساعات</span>
+            </div>
+            <ul class="w-topics">
+              <li>فكرة تكرار تنفيذ نفس الكود</li>
+              <li>استخدام for مع المصفوفات</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Loop For</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١١</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">حلقة while و do-while</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>الفرق بين for و while</li>
+              <li>حل تمارين تجمع بين الشرط والتكرار</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Loop While</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٢</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مشروع صغير: قائمة تسوق تفاعلية</span><span
+                class="w-hours">٣.٥ ساعة</span></div>
+            <ul class="w-topics">
+              <li>تطبيق كل حاجة اتعلمتها في مشروع واحد بسيط</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn outline" href="https://www.programiz.com/javascript/online-compiler/" target="_blank"
+                rel="noopener">جرّب الكود أونلاين</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- MONTH 4 -->
+    <details class="module">
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">04</span>
+          <div>
+            <div class="m-title">الشهر الرابع — الدوال والكائنات</div>
+            <div class="m-sub">نظّم الكود بتاعك زي المحترفين</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">١٣</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">الدوال Functions ومعاملاتها</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>ليه بنستخدم دوال، وإزاي تعرّف دالة (function)</li>
+              <li>المدخلات (parameters) والمخرجات (return)</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Function And Parameters</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٤</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">نطاق الدوال وأساسيات الكائنات</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>Scope: فين المتغير بيبقى شغّال جوه الكود</li>
+              <li>الكائنات Objects وخصائصها ودوالها</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Function Scopes & Objects</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٥</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">الكائنات Objects بالتفصيل</span><span class="w-hours">٣
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>تخزين بيانات مرتبطة ببعض داخل كائن واحد</li>
+              <li>الوصول لخصائص الكائن وتعديلها</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Objects And Methods</a>
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٦</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مشروع: لعبة تخمين الأرقام</span><span class="w-hours">٤
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>مشروع يجمع بين الدوال والشروط والحلقات مع بعض</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn outline" href="https://www.programiz.com/javascript/online-compiler/" target="_blank"
+                rel="noopener">جرّب الكود أونلاين</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- MONTH 5 -->
+    <details class="module">
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">05</span>
+          <div>
+            <div class="m-title">الشهر الخامس — التفاعل مع صفحة الويب</div>
+            <div class="m-sub">هنا بيبان سحر الجافا سكريبت الحقيقي</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">١٧</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة DOM — التحكم في عناصر الصفحة</span><span
+                class="w-hours">٣ ساعات</span></div>
+            <ul class="w-topics">
+              <li>Document Object Model: إزاي جافا سكريبت بتتحكم في صفحة HTML</li>
+              <li>اختيار عنصر من الصفحة وتغيير محتواه</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Dom</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٨</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">أحداث الصفحة (Events) و BOM</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>تنفيذ كود عند الضغط على زرار أو الكتابة في مربع نص</li>
+              <li>Browser Object Model: التعامل مع نافذة المتصفح نفسها</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — Dom Events & Bom</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">١٩</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مشروع: صفحة To-Do List تفاعلية</span><span class="w-hours">٤
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>مشروع حقيقي: صفحة ويب فيها زراير وقوائم بتتفاعل مع اللي بيضغط عليها</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn outline" href="https://www.programiz.com/javascript/online-compiler/" target="_blank"
+                rel="noopener">جرّب الكود أونلاين</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٢٠</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة مبسطة للبرمجة الكائنية (OOP)</span><span
+                class="w-hours">٣ ساعات</span></div>
+            <ul class="w-topics">
+              <li>فكرة الـ Class والـ Object بأبسط شكل ممكن</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv"
+                target="_blank" rel="noopener">▶ كورس Elzero — OOP</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- MONTH 6 -->
+    <details class="module">
+      <summary>
+        <div class="m-left">
+          <span class="m-badge">06</span>
+          <div>
+            <div class="m-title">الشهر السادس — الذكاء الاصطناعي والاستعداد النهائي</div>
+            <div class="m-sub">آخر محطة قبل أول حصة برمجة رسمية</div>
+          </div>
+        </div>
+        <span class="m-chevron">⌄</span>
+      </summary>
+      <div class="m-body">
+
+        <div class="week">
+          <div class="w-num">٢١</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مقدمة عن الذكاء الاصطناعي وتطبيقاته</span><span
+                class="w-hours">٢.٥ ساعة</span></div>
+            <ul class="w-topics">
+              <li>يظهر ضمن مادة "البرمجة والذكاء الاصطناعي" في المنهج، فمهم ياخد فكرة عامة مبسطة</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn gold" href="https://www.youtube.com/watch?v=2Z2r71d1uDI" target="_blank" rel="noopener">▶
+                فيديو: مقدمة عن الذكاء الاصطناعي</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٢٢</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">حل تمارين شاملة على كل ما سبق</span><span class="w-hours">٣.٥
+                ساعة</span></div>
+            <ul class="w-topics">
+              <li>مراجعة عامة وتثبيت المعلومات قبل المشروع الأخير</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn outline" href="https://www.w3schools.com/js/js_exercises.asp" target="_blank"
+                rel="noopener">تدريب: تمارين W3Schools</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٢٣</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مشروع التخرج النهائي</span><span class="w-hours">٤
+                ساعات</span></div>
+            <ul class="w-topics">
+              <li>مشروع من اختياره هو، يجمع فيه كل حاجة اتعلمها في الستة شهور</li>
+            </ul>
+            <div class="w-links">
+              <a class="btn outline" href="https://www.programiz.com/javascript/online-compiler/" target="_blank"
+                rel="noopener">جرّب الكود أونلاين</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="w-num">٢٤</div>
+          <div>
+            <div class="w-title-row"><span class="w-title">مراجعة أخيرة ونصائح للسنة الجديدة</span><span
+                class="w-hours">٣ ساعات</span></div>
+            <ul class="w-topics">
+              <li>مراجعة عامة على كل المفاهيم</li>
+              <li>تجهيز نفسي إنه هيدخل أول حصة وهو فاهم الأساس كويس</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+  </section>
+
+  <div class="tip">
+    <div class="card">
+      <h3>نصيحة أخيرة 💡</h3>
+      <p>البرمجة بتتعلّم بالتطبيق مش بالمشاهدة بس. لو حس إن موضوع صعب، يرجع يشوف الفيديو تاني ويجرب يكتب الكود بنفسه بدل
+        ما ينسخه. الهدف مش إنه يخلّص الخطة بسرعة، الهدف إنه يفهم كويس.</p>
+      <p>لو حصله أي مشكلة أو حاجة مش مفهومة، ممكن يدور على نفس السؤال على يوتيوب أو جوجل — كل المبرمجين بيعملوا كده طول
+        الوقت.</p>
+    </div>
+  </div>
+
+  <footer>خطة مذاكرة مُعدّة خصيصًا — جافا سكريبت من الصفر، بالعربي، ومجانًا بالكامل.</footer>
+
+</body>
+
+</html>
