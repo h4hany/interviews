@@ -1,0 +1,66 @@
+# AI-Assisted Development
+
+## 1. Overview and Engineering Philosophy
+As a Technical Lead, establishing the right engineering philosophy for AI-assisted development is critical. AI coding assistants (GitHub Copilot, Cursor, Cody, Tabnine) should be treated as **Junior Pair Programmers with Encyclopedic Knowledge but Zero Context**. 
+
+### The Core Philosophy
+- **AI is an accelerator, not an autopilot:** It accelerates typing, boilerplate generation, and API discovery. It does not replace architectural thinking, domain modeling, or edge-case handling.
+- **Context is King:** The quality of AI output is strictly bounded by the context provided (RAG, active files, explicit prompts).
+- **Verify > Trust:** The engineer remains 100% accountable for the committed code. AI shifts the engineer's role from "writer" to "editor and reviewer."
+
+## 2. Tools & Capabilities
+- **GitHub Copilot:** Excellent for in-line autocomplete, unit test generation, and standard boilerplate.
+- **Cursor:** Powerful for multi-file edits, codebase-wide querying (using embeddings/RAG), and complex refactoring workflows.
+- **Sourcegraph Cody:** Superior codebase context, good for enterprise environments with massive monorepos.
+
+## 3. Real-World Workflows & Best Practices
+
+### 3.1 AI Pair Programming
+Instead of just accepting autocomplete, senior engineers use AI interactively:
+1. **Comment-Driven Development (CDD):** Write the interface and block-level comments defining the business logic, edge cases, and expected errors. Let AI fill the implementation.
+2. **Rubber Ducking:** Use AI chat to discuss architectural decisions or algorithmic approaches before writing code.
+3. **Refactoring:** "Extract this block into a generic utility function and update all references in the current file."
+
+### 3.2 Code Generation Best Practices
+- **Define constraints early:** "Write a Python function to parse this JSON. Use Pydantic V2, do not use regex, handle missing optional fields gracefully, and raise a custom `ValidationError`."
+- **Iterative refinement:** Don't ask for a 500-line class. Ask for the interface, review it, then ask to implement one method at a time.
+- **Provide examples (Few-Shot Prompting):** "Follow the error handling pattern used in `src/handlers/payment.ts`."
+
+### 3.3 When AI Helps vs Hinders
+**Helps:**
+- Boilerplate generation (DTOs, Mappers, ORM models)
+- Unit tests for pure functions
+- Regex generation and explanation
+- Translating code between languages (e.g., Python to Go)
+
+**Hinders:**
+- Complex, domain-specific business logic
+- Highly coupled legacy code refactoring (often hallucinates variables)
+- Security-critical cryptographic implementations
+- Debugging race conditions in distributed systems
+
+## 4. Establishing Team Standards for AI Usage
+
+A Tech Lead must define boundaries:
+- **No sensitive data in prompts:** Ensure Enterprise tiers are used so data isn't trained on. Do not paste production secrets or PII into standard ChatGPT.
+- **Mandatory understanding:** Engineers must be able to explain every line of AI-generated code they commit. "The AI wrote it" is an unacceptable excuse in a PR.
+- **Tool standardisation:** Standardise on 1-2 approved tools to ensure security compliance and share prompt libraries.
+
+## 5. Measuring AI Productivity Gains
+- **Don't measure Lines of Code (LoC):** AI inflates LoC.
+- **Measure Lead Time for Changes:** Time from first commit to deployment.
+- **Measure PR Review Time:** Is AI generating messy code that bogs down reviews?
+- **Developer Satisfaction (DevEx):** Surveys on how much "grunt work" is reduced.
+
+## 6. Interview Questions
+
+### Question 1: How do you establish standards for AI tool usage in your team?
+**What they are testing:** Leadership, risk management, understanding of DevEx vs Security tradeoffs.
+**Short Answer:** I focus on three pillars: Security (data privacy and IP), Quality (engineers must own the code and understand it), and Enablement (sharing effective prompts and workflows).
+**Detailed Answer:** First, I ensure we have enterprise agreements for tools like Copilot so our code isn't used for training. Second, I establish a "Zero Trust" policy for AI output—the engineer is fully accountable. I update our Definition of Done to explicitly state that all AI-generated code must be manually verified for edge cases and security flaws. Finally, I run bi-weekly "AI workshops" where the team shares effective prompts and workflows (like using Cursor's codebase indexing) to upskill the entire team, preventing a divide between power-users and non-users.
+**Common Mistakes:** Banning AI entirely (kills productivity) or letting everyone use whatever free tools they want (massive security/IP risk).
+**Strong TL Answer:** Moves beyond just "rules" and discusses creating a *culture* of responsible AI use, including updating CI/CD pipelines to catch common AI hallucinations (like deprecated API usage).
+
+### Question 2: An engineer pushes a PR heavily generated by AI. It works, but it's overly complex and doesn't follow team patterns. How do you handle this?
+**What they are testing:** Mentoring, code review culture, managing AI-induced technical debt.
+**Strong TL Answer:** I would treat it as a coaching opportunity. In the PR, I'd point out that while the code is functional, maintainability is key. I'd ask the engineer to explain a complex block of the AI code. If they can't, I explain the "accountability rule." I would then pair-program with them to show how to better prompt the AI—providing it with our internal style guide or existing pattern examples before asking it to generate code, ensuring the output aligns with our architecture.
